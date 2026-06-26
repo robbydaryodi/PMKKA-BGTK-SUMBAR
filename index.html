@@ -183,6 +183,14 @@
             <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
                 <div class="p-6 border-b border-slate-100 bg-slate-50/50 flex flex-col sm:flex-row gap-3 justify-between items-start sm:items-center">
                     <h2 class="text-lg font-bold text-slate-800">Monitoring Progress Sekolah</h2>
+                    <select id="filterJenjang" onchange="renderMode1()" class="border-slate-300 rounded-lg text-sm px-3 py-2 shadow-sm focus:ring-primary focus:border-primary">
+                        <option value="ALL">Semua Jenjang</option>
+                        <option value="PAUD">PAUD</option>
+                        <option value="SD">SD</option>
+                        <option value="SMP">SMP</option>
+                        <option value="SMA">SMA</option>
+                        <option value="SMK">SMK</option>
+                    </select>
                 </div>
                 <div class="overflow-x-auto">
                     <table class="w-full min-w-[600px] text-left text-sm whitespace-nowrap">
@@ -748,17 +756,25 @@
 
         function renderMode1() {
             const tbody = document.getElementById('tableMode1');
+            const filterVal = document.getElementById('filterJenjang') ? document.getElementById('filterJenjang').value : 'ALL';
             let html = '';
             
             const schoolsToRender = TARGET_SCHOOLS.length > 0 ? TARGET_SCHOOLS : Object.keys(adminDataMaster);
+            let displayIndex = 1;
             
-            schoolsToRender.forEach((npsn, index) => {
+            schoolsToRender.forEach((npsn) => {
                 let schoolName = `Sekolah (${npsn})`;
+                let jenjang = '';
                 if (adminDataMaster[npsn]) {
                     const firstTeacherKey = Object.keys(adminDataMaster[npsn])[0];
                     if (firstTeacherKey) {
                         schoolName = adminDataMaster[npsn][firstTeacherKey].asal_sekolah || schoolName;
+                        jenjang = (adminDataMaster[npsn][firstTeacherKey].jenjang || '').toUpperCase();
                     }
+                }
+
+                if (filterVal !== 'ALL' && !jenjang.includes(filterVal)) {
+                    return; // Skip if filter doesn't match
                 }
 
                 const konfirmasi = adminDataKonfirmasi[npsn] || {};
@@ -781,9 +797,9 @@
 
                 html += `
                     <tr class="hover:bg-slate-50">
-                        <td class="px-6 py-4 text-center">${index + 1}</td>
+                        <td class="px-6 py-4 text-center">${displayIndex++}</td>
                         <td class="px-6 py-4">
-                            <div class="font-medium text-slate-800">${schoolName}</div>
+                            <div class="font-medium text-slate-800">${schoolName} <span class="ml-1 text-xs px-2 py-0.5 bg-slate-100 text-slate-500 rounded">${jenjang}</span></div>
                             <div class="text-xs text-slate-400">NPSN: ${npsn}</div>
                         </td>
                         <td class="px-6 py-4 text-center">${statusBadge}</td>
@@ -792,7 +808,7 @@
                 `;
             });
             
-            if (html === '') html = '<tr><td colspan="4" class="px-6 py-8 text-center text-slate-500">Tidak ada data.</td></tr>';
+            if (html === '') html = '<tr><td colspan="4" class="px-6 py-8 text-center text-slate-500">Tidak ada data untuk jenjang ini.</td></tr>';
             tbody.innerHTML = html;
         }
 
