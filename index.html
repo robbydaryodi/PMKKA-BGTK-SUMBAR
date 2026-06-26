@@ -769,7 +769,7 @@
                     const firstTeacherKey = Object.keys(adminDataMaster[npsn])[0];
                     if (firstTeacherKey) {
                         schoolName = adminDataMaster[npsn][firstTeacherKey].asal_sekolah || schoolName;
-                        jenjang = (adminDataMaster[npsn][firstTeacherKey].jenjang || '').toUpperCase();
+                        jenjang = (adminDataMaster[npsn][firstTeacherKey].jenjang || adminDataMaster[npsn][firstTeacherKey]['Jenjang'] || '').toUpperCase();
                     }
                 }
 
@@ -1051,7 +1051,7 @@ Gunakan format output JSON murni (hanya JSON, tanpa backtick, tanpa markdown) se
                 resultBox.classList.add('hidden');
 
                 const genAI = new window.GoogleGenerativeAI(apiKey);
-                const model = genAI.getGenerativeModel({ model: "gemini-pro" });
+                const model = genAI.getGenerativeModel({ model: "gemini-flash-latest" });
                 
                 const result = await model.generateContent(prompt);
                 const response = result.response;
