@@ -766,10 +766,21 @@
                 let schoolName = `Sekolah (${npsn})`;
                 let jenjang = '';
                 if (adminDataMaster[npsn]) {
-                    const firstTeacherKey = Object.keys(adminDataMaster[npsn])[0];
+                    const keys = Object.keys(adminDataMaster[npsn]);
+                    
+                    // Cari jenjang dari salah satu PTK di sekolah ini
+                    for (let k of keys) {
+                        let j = adminDataMaster[npsn][k].jenjang || adminDataMaster[npsn][k]['Jenjang'];
+                        if (j) {
+                            jenjang = j.toString().toUpperCase();
+                            break;
+                        }
+                    }
+
+                    // Cari nama sekolah
+                    const firstTeacherKey = keys[0];
                     if (firstTeacherKey) {
-                        schoolName = adminDataMaster[npsn][firstTeacherKey].asal_sekolah || schoolName;
-                        jenjang = (adminDataMaster[npsn][firstTeacherKey].jenjang || adminDataMaster[npsn][firstTeacherKey]['Jenjang'] || '').toUpperCase();
+                        schoolName = adminDataMaster[npsn][firstTeacherKey].asal_sekolah || adminDataMaster[npsn][firstTeacherKey]['Satuan Pendidikan'] || schoolName;
                     }
                 }
 
