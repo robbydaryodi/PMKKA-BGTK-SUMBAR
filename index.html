@@ -151,14 +151,7 @@
                 </div>
                 
                 <div class="p-6">
-                    <div id="aiApiKeySection" class="mb-6 p-4 bg-slate-50 border border-slate-200 rounded-lg">
-                        <label class="block text-sm font-medium text-slate-700 mb-2">Google Gemini API Key</label>
-                        <div class="flex flex-col sm:flex-row gap-3">
-                            <input type="password" id="inputGeminiKey" class="flex-1 border-slate-300 rounded-lg shadow-sm focus:ring-primary focus:border-primary px-4 py-3 sm:py-2 border text-sm" placeholder="Masukkan API Key AI Studio Anda...">
-                            <button onclick="saveGeminiKey()" class="w-full sm:w-auto bg-slate-800 hover:bg-slate-900 text-white px-6 py-3 sm:py-2 rounded-lg font-medium transition-colors text-sm">Simpan</button>
-                        </div>
-                        <p class="text-xs text-slate-500 mt-2">API Key hanya disimpan di browser Anda (lokal) dan tidak akan dikirim ke server kita.</p>
-                    </div>
+                    <!-- API Key Section Removed for automatic embedded key -->
 
                     <div id="aiSkeleton" class="hidden animate-pulse">
                         <div class="h-4 bg-slate-200 rounded w-3/4 mb-4"></div>
@@ -363,10 +356,16 @@
         const view = urlParams.get('view');
 
         if (view === 'admin') {
-            document.getElementById('view-admin').classList.remove('hidden');
-            document.getElementById('navAdminLink').innerText = 'Kembali ke Beranda';
-            document.getElementById('navAdminLink').href = '?';
-            initAdmin();
+            const pwd = prompt("Masukkan password Admin:");
+            if (pwd === "adminbgtk") {
+                document.getElementById('view-admin').classList.remove('hidden');
+                document.getElementById('navAdminLink').innerText = 'Kembali ke Beranda';
+                document.getElementById('navAdminLink').href = '?';
+                initAdmin();
+            } else {
+                alert("Password salah!");
+                window.location.href = "?";
+            }
         } else {
             document.getElementById('view-main').classList.remove('hidden');
         }
@@ -960,23 +959,6 @@
         // ==========================================
         // GEMINI AI INTEGRATION
         // ==========================================
-        document.addEventListener('DOMContentLoaded', () => {
-            const savedKey = localStorage.getItem('GEMINI_API_KEY');
-            if (savedKey) {
-                document.getElementById('inputGeminiKey').value = savedKey;
-            }
-        });
-
-        function saveGeminiKey() {
-            const key = document.getElementById('inputGeminiKey').value.trim();
-            if (key) {
-                localStorage.setItem('GEMINI_API_KEY', key);
-                alert('API Key berhasil disimpan di browser lokal!');
-            } else {
-                alert('API Key tidak boleh kosong.');
-            }
-        }
-
         function copyWADraft() {
             const textarea = document.getElementById('aiWaDraft');
             textarea.select();
@@ -985,10 +967,7 @@
         }
 
         async function generateAISummary() {
-            const apiKey = document.getElementById('inputGeminiKey').value.trim();
-            if (!apiKey) {
-                return alert('Silakan masukkan Gemini API Key terlebih dahulu lalu klik Simpan!');
-            }
+            const apiKey = "AIzaSyCGEml2DhviWEFxWFAWfiW6aDPD1VeIJlg";
             if (!window.GoogleGenerativeAI) {
                 return alert('SDK Gemini belum termuat sepenuhnya. Coba muat ulang halaman ini.');
             }
@@ -1040,7 +1019,7 @@ Diberikan data statistik konfirmasi kehadiran peserta (Kepala Sekolah & Guru) se
 
 Tugas Anda:
 1. Buatkan "Ringkasan Eksekutif" dalam 2-3 kalimat yang profesional mengenai kondisi konfirmasi saat ini.
-2. Buatkan "Draf Pesan WhatsApp" yang sopan, ramah, dan profesional (menggunakan bahasa Indonesia yang baik) untuk dikirimkan kepada sekolah-sekolah yang belum mengisi agar segera melakukan konfirmasi. Pesan WA tersebut harus siap pakai.
+2. Buatkan "Draf Pesan WhatsApp" yang sopan, ramah, dan profesional (menggunakan bahasa Indonesia yang baik) untuk dikirimkan kepada sekolah-sekolah yang belum mengisi agar segera melakukan konfirmasi. Pesan WA tersebut WAJIB menyertakan link pengisian ini: https://pmkka-bgtk-sumbar.vercel.app agar mereka bisa langsung klik.
 
 Gunakan format output JSON murni (hanya JSON, tanpa backtick, tanpa markdown) seperti format berikut:
 {
