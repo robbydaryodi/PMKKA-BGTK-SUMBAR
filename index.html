@@ -814,7 +814,10 @@
                             <div class="font-medium text-slate-800">${schoolName} <span class="ml-1 text-xs px-2 py-0.5 bg-slate-100 text-slate-500 rounded">${jenjang}</span></div>
                             <div class="text-xs text-slate-400">NPSN: ${npsn}</div>
                         </td>
-                        <td class="px-6 py-4 text-center">${statusBadge}</td>
+                        <td class="px-6 py-4 text-center">
+                            ${statusBadge}
+                            ${(hasKS || numGuru > 0) ? `<button onclick="resetData('${npsn}')" class="ml-2 px-2 py-1 bg-red-100 text-red-600 hover:bg-red-200 hover:text-red-700 rounded text-xs font-semibold transition-colors" title="Batal/Reset Data">Reset</button>` : ''}
+                        </td>
                         <td class="px-6 py-4 text-slate-600 text-xs font-medium">${keterangan}</td>
                     </tr>
                 `;
@@ -822,6 +825,17 @@
             
             if (html === '') html = '<tr><td colspan="4" class="px-6 py-8 text-center text-slate-500">Tidak ada data untuk jenjang ini.</td></tr>';
             tbody.innerHTML = html;
+        }
+
+        function resetData(npsn) {
+            const pwd = prompt('PERINGATAN: Ini akan menghapus semua data konfirmasi dari sekolah ini. Masukkan password admin ("adminbgtk") untuk melanjutkan:');
+            if (pwd === "adminbgtk") {
+                firebase.database().ref('konfirmasi_sekolah/' + npsn).remove()
+                    .then(() => alert('Data konfirmasi berhasil dibatalkan dan dihapus!'))
+                    .catch(e => alert('Gagal menghapus data: ' + e.message));
+            } else if (pwd !== null) {
+                alert('Password salah. Batal menghapus data.');
+            }
         }
 
         function renderMode2() {
