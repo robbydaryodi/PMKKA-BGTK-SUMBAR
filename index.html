@@ -121,11 +121,11 @@
         <!-- AI Panel moved to viewModeAI below -->
 
         <!-- TOGGLE SWITCH -->
-        <div class="flex justify-center mb-8">
-            <div class="bg-slate-100 p-1 rounded-xl flex flex-wrap justify-center gap-1 shadow-inner">
-                <button onclick="switchAdminView('mode1')" id="btnMode1" class="px-6 py-2.5 rounded-lg text-sm font-bold transition-all shadow-sm bg-white text-indigo-700 flex items-center gap-2">Progress Sekolah</button>
-                <button onclick="switchAdminView('mode2')" id="btnMode2" class="px-6 py-2.5 rounded-lg text-sm font-medium transition-all text-slate-500 hover:text-slate-700 flex items-center gap-2">Rencana Pengkelasan</button>
-                <button onclick="switchAdminView('mode_ai')" id="btnModeAI" class="px-6 py-2.5 rounded-lg text-sm font-medium transition-all text-slate-500 hover:text-slate-700 flex items-center gap-2">Ringkasan AI</button>
+        <div class="flex justify-center mb-6 px-4 md:px-0">
+            <div class="bg-slate-100 p-1.5 rounded-xl flex flex-col sm:flex-row w-full sm:w-auto gap-1.5 shadow-inner">
+                <button onclick="switchAdminView('mode1')" id="btnMode1" class="w-full sm:w-auto justify-center px-6 py-3 sm:py-2.5 rounded-lg text-sm font-bold transition-all shadow-sm bg-white text-indigo-700 flex items-center gap-2">Progress Sekolah</button>
+                <button onclick="switchAdminView('mode2')" id="btnMode2" class="w-full sm:w-auto justify-center px-6 py-3 sm:py-2.5 rounded-lg text-sm font-medium transition-all text-slate-500 hover:text-slate-700 flex items-center gap-2">Rencana Pengkelasan</button>
+                <button onclick="switchAdminView('mode_ai')" id="btnModeAI" class="w-full sm:w-auto justify-center px-6 py-3 sm:py-2.5 rounded-lg text-sm font-medium transition-all text-slate-500 hover:text-slate-700 flex items-center gap-2">Ringkasan AI</button>
             </div>
         </div>
 
@@ -153,9 +153,9 @@
                 <div class="p-6">
                     <div id="aiApiKeySection" class="mb-6 p-4 bg-slate-50 border border-slate-200 rounded-lg">
                         <label class="block text-sm font-medium text-slate-700 mb-2">Google Gemini API Key</label>
-                        <div class="flex gap-2">
-                            <input type="password" id="inputGeminiKey" class="flex-1 border-slate-300 rounded-lg shadow-sm focus:ring-primary focus:border-primary px-4 py-2 border text-sm" placeholder="Masukkan API Key AI Studio Anda...">
-                            <button onclick="saveGeminiKey()" class="bg-slate-800 hover:bg-slate-900 text-white px-4 py-2 rounded-lg font-medium transition-colors text-sm">Simpan</button>
+                        <div class="flex flex-col sm:flex-row gap-3">
+                            <input type="password" id="inputGeminiKey" class="flex-1 border-slate-300 rounded-lg shadow-sm focus:ring-primary focus:border-primary px-4 py-3 sm:py-2 border text-sm" placeholder="Masukkan API Key AI Studio Anda...">
+                            <button onclick="saveGeminiKey()" class="w-full sm:w-auto bg-slate-800 hover:bg-slate-900 text-white px-6 py-3 sm:py-2 rounded-lg font-medium transition-colors text-sm">Simpan</button>
                         </div>
                         <p class="text-xs text-slate-500 mt-2">API Key hanya disimpan di browser Anda (lokal) dan tidak akan dikirim ke server kita.</p>
                     </div>
@@ -188,11 +188,11 @@
         <!-- MODE 1: PROGRESS SEKOLAH -->
         <div id="viewMode1" class="fade-in">
             <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
-                <div class="p-6 border-b border-slate-100 bg-slate-50/50 flex justify-between items-center">
+                <div class="p-6 border-b border-slate-100 bg-slate-50/50 flex flex-col sm:flex-row gap-3 justify-between items-start sm:items-center">
                     <h2 class="text-lg font-bold text-slate-800">Monitoring Progress Sekolah</h2>
                 </div>
                 <div class="overflow-x-auto">
-                    <table class="w-full text-left text-sm">
+                    <table class="w-full min-w-[600px] text-left text-sm whitespace-nowrap">
                         <thead class="bg-slate-50 text-slate-500">
                             <tr>
                                 <th class="px-6 py-4 font-medium w-16 text-center">No</th>
@@ -255,12 +255,15 @@
             
             <!-- Modal Body -->
             <div class="p-6">
-                <!-- Step 1: Input NPSN -->
-                <div id="stepNpsn">
+                <!-- Step 1: Search NPSN -->
+                <div id="stepSearchNpsn" class="mb-4">
                     <label class="block text-sm font-medium text-slate-700 mb-2">Masukkan NPSN Sekolah Anda</label>
-                    <div class="flex gap-2">
-                        <input type="text" id="inputNpsn" class="flex-1 border-slate-300 rounded-lg shadow-sm focus:ring-primary focus:border-primary px-4 py-2 border" placeholder="Contoh: 10310877">
-                        <button onclick="searchNpsn()" id="btnSearch" class="bg-primary hover:bg-indigo-700 text-white px-4 py-2 rounded-lg font-medium transition-colors flex items-center justify-center min-w-[100px]">Cari</button>
+                    <div class="flex flex-col sm:flex-row gap-3">
+                        <input type="number" id="inputNpsn" class="flex-1 border-slate-300 rounded-lg shadow-sm focus:ring-primary focus:border-primary px-4 py-3 sm:py-2 border" placeholder="Contoh: 10300011" onkeypress="if(event.key === 'Enter') searchNpsn()">
+                        <button onclick="searchNpsn()" id="btnSearch" class="w-full sm:w-auto bg-primary hover:bg-blue-700 text-white px-6 py-3 sm:py-2 rounded-lg font-medium transition-colors shadow-sm flex items-center justify-center gap-2">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                            Cari
+                        </button>
                     </div>
                     <p id="npsnError" class="text-red-500 text-sm mt-2 hidden"></p>
                 </div>
@@ -683,8 +686,8 @@
             const view2 = document.getElementById('viewMode2');
             const viewAI = document.getElementById('viewModeAI');
 
-            const activeBtnClass = "px-6 py-2.5 rounded-lg text-sm font-bold transition-all shadow-sm bg-white text-indigo-700 flex items-center gap-2";
-            const inactiveBtnClass = "px-6 py-2.5 rounded-lg text-sm font-medium transition-all text-slate-500 hover:text-slate-700 flex items-center gap-2";
+            const activeBtnClass = "w-full sm:w-auto justify-center px-6 py-3 sm:py-2.5 rounded-lg text-sm font-bold transition-all shadow-sm bg-white text-indigo-700 flex items-center gap-2";
+            const inactiveBtnClass = "w-full sm:w-auto justify-center px-6 py-3 sm:py-2.5 rounded-lg text-sm font-medium transition-all text-slate-500 hover:text-slate-700 flex items-center gap-2";
 
             btn1.className = mode === 'mode1' ? activeBtnClass : inactiveBtnClass;
             btn2.className = mode === 'mode2' ? activeBtnClass : inactiveBtnClass;
