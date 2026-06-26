@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Import Data Master Guru ke Firebase</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Firebase SDK v10 (compat for simplicity in this standalone script) -->
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+</head>
+<body class="bg-gray-100 min-h-screen p-8 text-gray-800">
+    <div class="max-w-3xl mx-auto bg-white p-8 rounded-xl shadow-lg">
+        <h1 class="text-2xl font-bold mb-6 text-indigo-600">Database Importer (Data Mentah -> Firebase)</h1>
+        
+        <div class="mb-6">
+            <p id="fbStatus" class="text-sm font-semibold text-green-600">✅ Menyiapkan koneksi Firebase...</p>
+        </div>
+
+        <div class="mb-6 transition-opacity duration-300" id="uploadSection">
+            <label class="block text-sm font-medium mb-2">Pilih File JSON (misal: master_guru-ks_raw.json):</label>
+            <input type="file" id="jsonFile" accept=".json" class="block w-full text-sm text-gray-500
+                file:mr-4 file:py-2 file:px-4
+                file:rounded-full file:border-0
+                file:text-sm file:font-semibold
+                file:bg-indigo-50 file:text-indigo-700
+                hover:file:bg-indigo-100"
+            />
+            
+            <button onclick="processAndUpload()" class="mt-4 w-full bg-green-600 text-white px-4 py-3 rounded-lg shadow hover:bg-green-700 font-bold transition">Proses & Upload ke Firebase</button>
+        </div>
+
+        <div id="logArea" class="bg-gray-900 text-green-400 p-4 rounded-lg h-64 overflow-y-auto font-mono text-sm hidden">
+            <!-- Logs will appear here -->
+        </div>
+    </div>
+
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyCAMKzhVnGGUxdVKAWeoPXYTAZvPSq6yKY",
+            authDomain: "sekolah-model-2026.firebaseapp.com",
+            databaseURL: "https://sekolah-model-2026-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "sekolah-model-2026",
+            storageBucket: "sekolah-model-2026.firebasestorage.app",
+            messagingSenderId: "1014570073770",
+            appId: "1:1014570073770:web:770e7e6cef2a52a3825ad3"
+        };
+
+        if (firebase.apps.length === 0) {
+            firebase.initializeApp(firebaseConfig);
+        }
+        const db = firebase.database();
+        document.getElementById('fbStatus').innerText = '✅ Firebase Berhasil Diinisialisasi';
+
+        function log(message) {
+            const logArea = document.getElementById('logArea');
+            logArea.classList.remove('hidden');
+            logArea.innerHTML += `<div>${message}</div>`;
+            logArea.scrollTop = logArea.scrollHeight;
+        }
+
+        async function processAndUpload() {
+            const fileInput = document.getElementById('jsonFile');
+            if (fileInput.files.length === 0) {
+                alert('Pilih file JSON terlebih dahulu!');
+                return;
+            }
+
+            const file = fileInput.files[0];
+            log(`Membaca file ${file.name}...`);
+            
+            const reader = new FileReader();
+            reader.onload = async function(e) {
+                try {
+                    const data = JSON.parse(e.target.result);
+                    log(`Berhasil membaca ${data.length} baris data.`);
+                    
+                    const masterGuru = {};
+                    
+                    data.forEach((item, index) => {
+                        const npsn = item["NPSN"];
+                        if (!npsn) return;
+                        
+                        if (!masterGuru[npsn]) {
+                            masterGuru[npsn] = {};
+                        }
+                        
+                        const safeEmail = item["Email"] || item["Username"] || `no-email-${index}`;
+                        const guruId = "guru_" + (item["NIK"] || Math.random().toString(36).substr(2, 9));
+                        
+                        masterGuru[npsn][guruId] = {
+                            nama: item["Nama Lengkap"],
+                            jenis_ptk: item["Jenis PTK"],
+                            email: safeEmail,
+                            asal_sekolah: item["Satuan Pendidikan"]
+                        };
+                    });
+                    
+                    log(`Data dikelompokkan menjadi ${Object.keys(masterGuru).length} sekolah berdasarkan NPSN.`);
+                    log('Mulai mengunggah ke Firebase node "master_guru"...');
+                    
+                    // Gunakan update() untuk setiap NPSN agar tidak menimpa data file sebelumnya
+                    const npsnKeys = Object.keys(masterGuru);
+                    for (let i = 0; i < npsnKeys.length; i++) {
+                        const npsn = npsnKeys[i];
+                        await db.ref(`master_guru/${npsn}`).update(masterGuru[npsn]);
+                    }
+                    
+                    log('✅ Upload Selesai! Data master_guru siap digunakan.');
+                } catch(err) {
+                    log('❌ Error: ' + err.message);
+                    console.error(err);
+                }
+            };
+            reader.readAsText(file);
+        }
+    </script>
+</body>
+</html>

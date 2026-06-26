@@ -1,0 +1,8 @@
+const firebaseConfig = {
+  apiKey: "AIzaSyCAMKzhVnGGUxdVKAWeoPXYTAZvPSq6yKY",
+  authDomain: "sekolah-model-2026.firebaseapp.com",
+  projectId: "sekolah-model-2026",
+  storageBucket: "sekolah-model-2026.firebasestorage.app",
+  messagingSenderId: "1014570073770",
+  appId: "1:1014570073770:web:770e7e6cef2a52a3825ad3"
+};

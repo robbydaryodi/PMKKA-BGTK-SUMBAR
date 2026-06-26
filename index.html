@@ -1,0 +1,1081 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistem Konfirmasi Guru Sekolah Model 2026</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    colors: {
+                        primary: '#4f46e5', // Indigo 600
+                        secondary: '#0f172a', // Slate 900
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        /* Custom Scrollbar & Animations */
+        body { background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%); min-height: 100vh; }
+        .glass-card { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.3); }
+        .spinner { border: 3px solid rgba(79, 70, 229, 0.2); border-left-color: #4f46e5; border-radius: 50%; width: 24px; height: 24px; animation: spin 1s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .fade-in { animation: fadeIn 0.3s ease-in forwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+
+    <!-- SDK Gemini (Google AI) -->
+    <script type="importmap">
+      {
+        "imports": {
+          "@google/generative-ai": "https://esm.run/@google/generative-ai"
+        }
+      }
+    </script>
+    <script type="module">
+        import { GoogleGenerativeAI } from '@google/generative-ai';
+        window.GoogleGenerativeAI = GoogleGenerativeAI;
+    </script>
+
+    <!-- Firebase v10+ (Compat for easy CDN usage in single file) -->
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+</head>
+<body class="text-slate-800 antialiased">
+
+    <!-- Navbar -->
+    <nav class="bg-white/80 backdrop-blur-md border-b border-slate-200 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16 items-center">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-primary rounded-xl flex items-center justify-center text-white font-bold text-xl shadow-lg shadow-indigo-500/30">B</div>
+                    <span class="font-bold text-xl tracking-tight text-slate-900">BGTK Sumatera Barat <span class="text-slate-300 font-normal mx-2">|</span> <span class="text-primary">Sekolah Model 2026</span></span>
+                </div>
+                <div>
+                    <a href="?view=admin" id="navAdminLink" class="text-sm font-medium text-slate-500 hover:text-primary transition-colors">Admin Login</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- MAIN VIEW -->
+    <div id="view-main" class="hidden max-w-5xl mx-auto px-4 py-12">
+        <div class="text-center mb-12">
+            <h1 class="text-4xl font-extrabold text-slate-900 tracking-tight sm:text-5xl mb-4">Konfirmasi Kehadiran</h1>
+            <p class="text-lg text-slate-600 max-w-2xl mx-auto">Program Sekolah Model 2026 oleh <strong class="text-indigo-600">BGTK Sumatera Barat</strong>.<br/>Silakan pilih peran Anda untuk melakukan konfirmasi partisipasi.</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <!-- Card Pengawas -->
+            <div onclick="alert('Data Pengawas Terkunci (Default Sistem)')" class="glass-card rounded-2xl p-8 cursor-pointer transform hover:-translate-y-2 hover:shadow-2xl transition-all duration-300 text-center group">
+                <div class="w-16 h-16 mx-auto bg-slate-100 text-slate-600 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-primary group-hover:text-white transition-colors">
+                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+                </div>
+                <h3 class="text-xl font-bold text-slate-900 mb-2">Pengawas</h3>
+                <p class="text-slate-500 text-sm">Akses untuk Pengawas Sekolah.</p>
+            </div>
+
+            <!-- Card Kepala Sekolah -->
+            <div onclick="openModal('ks')" class="glass-card rounded-2xl p-8 cursor-pointer transform hover:-translate-y-2 hover:shadow-2xl transition-all duration-300 text-center group border-2 border-transparent hover:border-indigo-100 relative overflow-hidden">
+                <div class="absolute top-0 right-0 w-32 h-32 bg-indigo-500/10 rounded-full blur-3xl -mr-16 -mt-16"></div>
+                <div class="w-16 h-16 mx-auto bg-indigo-50 text-indigo-600 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-primary group-hover:text-white transition-colors">
+                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
+                </div>
+                <h3 class="text-xl font-bold text-slate-900 mb-2">Kepala Sekolah</h3>
+                <p class="text-slate-500 text-sm">Konfirmasi kehadiran KS atau tunjuk perwakilan.</p>
+            </div>
+
+            <!-- Card Guru -->
+            <div onclick="openModal('guru')" class="glass-card rounded-2xl p-8 cursor-pointer transform hover:-translate-y-2 hover:shadow-2xl transition-all duration-300 text-center group border-2 border-transparent hover:border-teal-100 relative overflow-hidden">
+                <div class="absolute top-0 left-0 w-32 h-32 bg-teal-500/10 rounded-full blur-3xl -ml-16 -mt-16"></div>
+                <div class="w-16 h-16 mx-auto bg-teal-50 text-teal-600 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-teal-500 group-hover:text-white transition-colors">
+                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+                </div>
+                <h3 class="text-xl font-bold text-slate-900 mb-2">Guru</h3>
+                <p class="text-slate-500 text-sm">Pilih maksimal 2 guru sebagai peserta inti.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ADMIN VIEW -->
+    <div id="view-admin" class="hidden max-w-7xl mx-auto px-4 py-8 fade-in">
+        <div class="flex justify-between items-center mb-8">
+            <div>
+                <h1 class="text-3xl font-bold text-slate-900">Dashboard Admin</h1>
+                <p class="text-slate-500">Monitoring status konfirmasi sekolah</p>
+            </div>
+        </div>
+
+        <!-- AI Panel moved to viewModeAI below -->
+
+        <!-- TOGGLE SWITCH -->
+        <div class="flex justify-center mb-8">
+            <div class="bg-slate-100 p-1 rounded-xl flex flex-wrap justify-center gap-1 shadow-inner">
+                <button onclick="switchAdminView('mode1')" id="btnMode1" class="px-6 py-2.5 rounded-lg text-sm font-bold transition-all shadow-sm bg-white text-indigo-700 flex items-center gap-2">Progress Sekolah</button>
+                <button onclick="switchAdminView('mode2')" id="btnMode2" class="px-6 py-2.5 rounded-lg text-sm font-medium transition-all text-slate-500 hover:text-slate-700 flex items-center gap-2">Rencana Pengkelasan</button>
+                <button onclick="switchAdminView('mode_ai')" id="btnModeAI" class="px-6 py-2.5 rounded-lg text-sm font-medium transition-all text-slate-500 hover:text-slate-700 flex items-center gap-2">Ringkasan AI</button>
+            </div>
+        </div>
+
+        <!-- MODE AI: ANALISIS & RINGKASAN -->
+        <div id="viewModeAI" class="hidden fade-in">
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
+                <div class="p-6 border-b border-slate-100 bg-gradient-to-r from-indigo-50/50 to-teal-50/50 flex flex-col md:flex-row justify-between items-center gap-4">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 bg-indigo-100 text-indigo-600 rounded-lg flex items-center justify-center">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                        </div>
+                        <div>
+                            <h2 class="text-lg font-bold text-slate-800">Analisis & Ringkasan AI (Gemini)</h2>
+                            <p class="text-xs text-slate-500">Buat ringkasan kondisi dan draf tagihan WA otomatis</p>
+                        </div>
+                    </div>
+                    <div>
+                        <button onclick="generateAISummary()" id="btnGenerateAI" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg font-medium shadow-sm transition-all flex items-center gap-2 text-sm w-full md:w-auto justify-center">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 002-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
+                            Generate Ringkasan
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="p-6">
+                    <div id="aiApiKeySection" class="mb-6 p-4 bg-slate-50 border border-slate-200 rounded-lg">
+                        <label class="block text-sm font-medium text-slate-700 mb-2">Google Gemini API Key</label>
+                        <div class="flex gap-2">
+                            <input type="password" id="inputGeminiKey" class="flex-1 border-slate-300 rounded-lg shadow-sm focus:ring-primary focus:border-primary px-4 py-2 border text-sm" placeholder="Masukkan API Key AI Studio Anda...">
+                            <button onclick="saveGeminiKey()" class="bg-slate-800 hover:bg-slate-900 text-white px-4 py-2 rounded-lg font-medium transition-colors text-sm">Simpan</button>
+                        </div>
+                        <p class="text-xs text-slate-500 mt-2">API Key hanya disimpan di browser Anda (lokal) dan tidak akan dikirim ke server kita.</p>
+                    </div>
+
+                    <div id="aiSkeleton" class="hidden animate-pulse">
+                        <div class="h-4 bg-slate-200 rounded w-3/4 mb-4"></div>
+                        <div class="h-4 bg-slate-200 rounded w-full mb-4"></div>
+                        <div class="h-4 bg-slate-200 rounded w-5/6 mb-8"></div>
+                        <div class="h-24 bg-slate-200 rounded w-full"></div>
+                    </div>
+
+                    <div id="aiResult" class="hidden">
+                        <div class="mb-6 bg-indigo-50/50 p-4 rounded-lg border border-indigo-100">
+                            <h4 class="text-xs font-bold text-indigo-800 mb-2 uppercase tracking-wider flex items-center gap-2"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg> Ringkasan Eksekutif</h4>
+                            <div id="aiSummaryText" class="text-slate-700 text-sm leading-relaxed whitespace-pre-wrap"></div>
+                        </div>
+                        
+                        <div>
+                            <h4 class="text-xs font-bold text-emerald-800 mb-2 uppercase tracking-wider flex items-center gap-2"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/></svg> Draf Pesan WhatsApp</h4>
+                            <div class="relative">
+                                <textarea id="aiWaDraft" class="w-full h-32 border-slate-200 rounded-lg shadow-inner bg-slate-50 text-sm p-4 text-slate-700 focus:ring-0 focus:border-slate-300" readonly></textarea>
+                                <button onclick="copyWADraft()" class="absolute top-2 right-2 bg-white border border-slate-200 text-slate-600 hover:text-indigo-600 px-3 py-1 rounded text-xs font-medium shadow-sm transition-colors flex items-center gap-1"><svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg> Copy</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- MODE 1: PROGRESS SEKOLAH -->
+        <div id="viewMode1" class="fade-in">
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
+                <div class="p-6 border-b border-slate-100 bg-slate-50/50 flex justify-between items-center">
+                    <h2 class="text-lg font-bold text-slate-800">Monitoring Progress Sekolah</h2>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-sm">
+                        <thead class="bg-slate-50 text-slate-500">
+                            <tr>
+                                <th class="px-6 py-4 font-medium w-16 text-center">No</th>
+                                <th class="px-6 py-4 font-medium">NPSN / Nama Sekolah</th>
+                                <th class="px-6 py-4 font-medium text-center">Status</th>
+                                <th class="px-6 py-4 font-medium">Keterangan Kuota</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tableMode1" class="divide-y divide-slate-100">
+                            <tr><td colspan="4" class="px-6 py-8 text-center"><div class="spinner mx-auto mb-2"></div>Memuat data...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- MODE 2: RENCANA PENGKELASAN -->
+        <div id="viewMode2" class="hidden fade-in">
+            <!-- Tabs -->
+            <div class="flex space-x-2 border-b border-slate-200 mb-6 overflow-x-auto pb-2">
+                <button onclick="switchTabMode2('ps')" id="tab_ps" class="tab-btn active px-4 py-2 border-b-2 font-medium text-sm border-indigo-600 text-indigo-600 whitespace-nowrap">Kelas Pengawas</button>
+                <button onclick="switchTabMode2('ks')" id="tab_ks" class="tab-btn px-4 py-2 border-b-2 font-medium text-sm border-transparent text-slate-500 hover:text-slate-700 whitespace-nowrap">Kelas Kepala Sekolah</button>
+                <button onclick="switchTabMode2('guru_sd')" id="tab_guru_sd" class="tab-btn px-4 py-2 border-b-2 font-medium text-sm border-transparent text-slate-500 hover:text-slate-700 whitespace-nowrap">Kelas Guru (PAUD-SD)</button>
+                <button onclick="switchTabMode2('guru_smp')" id="tab_guru_smp" class="tab-btn px-4 py-2 border-b-2 font-medium text-sm border-transparent text-slate-500 hover:text-slate-700 whitespace-nowrap">Kelas Guru (SMP-SMA-SMK)</button>
+            </div>
+
+            <!-- Table Container -->
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
+                <div class="p-4 border-b border-slate-100 bg-slate-50/50 flex justify-between items-center">
+                    <h2 id="mode2TableTitle" class="text-md font-bold text-slate-800">Data Kelas Pengawas</h2>
+                    <button onclick="exportCSVMode2()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg text-sm font-medium shadow-sm transition-colors flex items-center gap-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                        Export CSV
+                    </button>
+                </div>
+                <div class="overflow-x-auto w-full">
+                    <table class="w-max min-w-full text-left text-sm whitespace-nowrap">
+                        <thead class="bg-slate-50 text-slate-500">
+                            <tr id="tableMode2Head">
+                                <!-- Headers dynamically rendered -->
+                            </tr>
+                        </thead>
+                        <tbody id="tableMode2Body" class="divide-y divide-slate-100">
+                            <tr><td class="px-6 py-8 text-center"><div class="spinner mx-auto mb-2"></div>Memuat data...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL -->
+    <div id="modalOverlay" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
+        <div id="modalContent" class="bg-white rounded-2xl shadow-2xl w-full max-w-xl max-h-[90vh] overflow-y-auto transform scale-95 opacity-0 transition-all duration-300">
+            <!-- Modal Header -->
+            <div class="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50 rounded-t-2xl">
+                <h3 id="modalTitle" class="text-lg font-bold text-slate-800">Konfirmasi</h3>
+                <button onclick="closeModal()" class="text-slate-400 hover:text-slate-600 p-1"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg></button>
+            </div>
+            
+            <!-- Modal Body -->
+            <div class="p-6">
+                <!-- Step 1: Input NPSN -->
+                <div id="stepNpsn">
+                    <label class="block text-sm font-medium text-slate-700 mb-2">Masukkan NPSN Sekolah Anda</label>
+                    <div class="flex gap-2">
+                        <input type="text" id="inputNpsn" class="flex-1 border-slate-300 rounded-lg shadow-sm focus:ring-primary focus:border-primary px-4 py-2 border" placeholder="Contoh: 10310877">
+                        <button onclick="searchNpsn()" id="btnSearch" class="bg-primary hover:bg-indigo-700 text-white px-4 py-2 rounded-lg font-medium transition-colors flex items-center justify-center min-w-[100px]">Cari</button>
+                    </div>
+                    <p id="npsnError" class="text-red-500 text-sm mt-2 hidden"></p>
+                </div>
+
+                <!-- Step 2: Form KS -->
+                <div id="stepFormKS" class="hidden fade-in mt-6 pt-6 border-t border-slate-100">
+                    <div class="mb-4 bg-indigo-50 text-indigo-800 p-4 rounded-lg">
+                        <p class="font-semibold" id="ksSchoolName"></p>
+                        <p class="text-sm">Kepala Sekolah: <span id="ksName" class="font-bold"></span></p>
+                    </div>
+                    <label class="block text-sm font-medium text-slate-700 mb-3">Konfirmasi Kehadiran Kepala Sekolah</label>
+                    <div class="space-y-3">
+                        <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-slate-50 transition-colors">
+                            <input type="radio" name="ks_status" value="Sesuai" class="w-4 h-4 text-primary focus:ring-primary border-gray-300" onchange="toggleKsDelegasi(false)">
+                            <span class="ml-3 font-medium text-slate-700">Hadir (Sesuai Data)</span>
+                        </label>
+                        <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-slate-50 transition-colors">
+                            <input type="radio" name="ks_status" value="Berubah" class="w-4 h-4 text-primary focus:ring-primary border-gray-300" onchange="toggleKsDelegasi(true)">
+                            <span class="ml-3 font-medium text-slate-700">Berhalangan / Diwakilkan</span>
+                        </label>
+                    </div>
+
+                    <!-- KS Delegasi Form -->
+                    <div id="ksDelegasiForm" class="hidden mt-4 space-y-4 bg-slate-50 p-4 rounded-lg border border-slate-200">
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-1">Pilih Guru Pengganti</label>
+                            <select id="ksSelectGuru" class="w-full border-slate-300 rounded-lg shadow-sm focus:ring-primary focus:border-primary px-4 py-2 border">
+                                <!-- Options populated by JS -->
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-1">Email belajar.id Pengganti</label>
+                            <input type="email" id="ksEmailGuru" class="w-full border-slate-300 rounded-lg shadow-sm focus:ring-primary focus:border-primary px-4 py-2 border" placeholder="nama@guru.sma.belajar.id">
+                        </div>
+                    </div>
+
+                    <button onclick="submitKS()" id="btnSubmitKS" class="w-full mt-6 bg-green-600 hover:bg-green-700 text-white px-4 py-3 rounded-lg font-bold transition-colors shadow-lg shadow-green-600/30">Simpan Konfirmasi KS</button>
+                </div>
+
+                <!-- Step 3: Form Guru -->
+                <div id="stepFormGuru" class="hidden fade-in mt-6 pt-6 border-t border-slate-100">
+                    <div class="mb-4 bg-teal-50 text-teal-800 p-4 rounded-lg">
+                        <p class="font-semibold" id="guruSchoolName"></p>
+                        <p class="text-sm">Pilih maksimal 2 guru (wajib input email belajar.id).</p>
+                    </div>
+                    
+                    <div class="max-h-64 overflow-y-auto pr-2 space-y-2" id="guruListContainer">
+                        <!-- Checkboxes populated by JS -->
+                    </div>
+
+                    <p id="guruError" class="text-red-500 text-sm mt-3 hidden"></p>
+                    <button onclick="submitGuru()" id="btnSubmitGuru" class="w-full mt-6 bg-green-600 hover:bg-green-700 text-white px-4 py-3 rounded-lg font-bold transition-colors shadow-lg shadow-green-600/30">Simpan Pilihan Guru</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Application Logic -->
+    <script>
+        /**
+         * FIREBASE CONFIGURATION
+         * ----------------------------------------------------
+         * PASTIKAN ANDA MENGGANTI NILAI DI BAWAH INI DENGAN
+         * FIREBASE CONFIG ANDA SENDIRI!
+         */
+        const firebaseConfig = {
+  	 apiKey: "AIzaSyCAMKzhVnGGUxdVKAWeoPXYTAZvPSq6yKY",
+  	 authDomain: "sekolah-model-2026.firebaseapp.com",
+     databaseURL: "https://sekolah-model-2026-default-rtdb.asia-southeast1.firebasedatabase.app",
+  	 projectId: "sekolah-model-2026",
+  	 storageBucket: "sekolah-model-2026.firebasestorage.app",
+  	 messagingSenderId: "1014570073770",
+  	 appId: "1:1014570073770:web:770e7e6cef2a52a3825ad3"
+	};
+
+        // Inisialisasi Firebase HANYA JIKA config telah diisi
+        let db;
+        if (Object.keys(firebaseConfig).length > 0 && firebaseConfig.apiKey) {
+            firebase.initializeApp(firebaseConfig);
+            db = firebase.database();
+        } else {
+            console.warn("⚠️ Firebase config belum diatur. Harap edit index.html dan masukkan config Anda.");
+        }
+
+        // ==========================================
+        // STATE MANAGEMENT
+        // ==========================================
+        let currentRole = null; // 'ks' or 'guru'
+        let currentNpsn = null;
+        let fetchedTeachers = null; // Object of teachers from master_guru
+
+        // ==========================================
+        // ROUTER & VIEW LOGIC
+        // ==========================================
+        const urlParams = new URLSearchParams(window.location.search);
+        const view = urlParams.get('view');
+
+        if (view === 'admin') {
+            document.getElementById('view-admin').classList.remove('hidden');
+            document.getElementById('navAdminLink').innerText = 'Kembali ke Beranda';
+            document.getElementById('navAdminLink').href = '?';
+            initAdmin();
+        } else {
+            document.getElementById('view-main').classList.remove('hidden');
+        }
+
+        // ==========================================
+        // MODAL LOGIC
+        // ==========================================
+        function openModal(role) {
+            currentRole = role;
+            document.getElementById('modalTitle').innerText = role === 'ks' ? 'Konfirmasi Kepala Sekolah' : 'Pemilihan Guru Peserta';
+            
+            // Reset modal state
+            currentNpsn = null;
+            fetchedTeachers = null;
+            document.getElementById('inputNpsn').value = '';
+            document.getElementById('npsnError').classList.add('hidden');
+            document.getElementById('stepFormKS').classList.add('hidden');
+            document.getElementById('stepFormGuru').classList.add('hidden');
+            document.getElementById('ksDelegasiForm').classList.add('hidden');
+            
+            // Show modal
+            const overlay = document.getElementById('modalOverlay');
+            const content = document.getElementById('modalContent');
+            overlay.classList.remove('hidden');
+            overlay.classList.add('flex');
+            // small delay for transition
+            setTimeout(() => {
+                content.classList.remove('scale-95', 'opacity-0');
+                content.classList.add('scale-100', 'opacity-100');
+            }, 10);
+        }
+
+        function closeModal() {
+            const overlay = document.getElementById('modalOverlay');
+            const content = document.getElementById('modalContent');
+            content.classList.remove('scale-100', 'opacity-100');
+            content.classList.add('scale-95', 'opacity-0');
+            setTimeout(() => {
+                overlay.classList.add('hidden');
+                overlay.classList.remove('flex');
+            }, 300);
+        }
+
+        // ==========================================
+        // NPSN SEARCH LOGIC
+        // ==========================================
+        async function searchNpsn() {
+            if(!db) return alert("Firebase belum dikonfigurasi di script!");
+            
+            const npsn = document.getElementById('inputNpsn').value.trim();
+            const err = document.getElementById('npsnError');
+            const btn = document.getElementById('btnSearch');
+
+            if (!npsn) {
+                err.innerText = "NPSN wajib diisi";
+                err.classList.remove('hidden');
+                return;
+            }
+
+            err.classList.add('hidden');
+            btn.innerHTML = '<div class="spinner border-white border-left-transparent"></div>';
+            btn.disabled = true;
+
+            try {
+                const snapshot = await db.ref(`master_guru/${npsn}`).once('value');
+                if (!snapshot.exists()) {
+                    err.innerText = `Data NPSN ${npsn} tidak ditemukan.`;
+                    err.classList.remove('hidden');
+                } else {
+                    currentNpsn = npsn;
+                    fetchedTeachers = snapshot.val();
+                    setupForm();
+                }
+            } catch (error) {
+                console.error(error);
+                err.innerText = "Gagal memuat data dari database.";
+                err.classList.remove('hidden');
+            } finally {
+                btn.innerHTML = 'Cari';
+                btn.disabled = false;
+            }
+        }
+
+        function setupForm() {
+            const schoolName = Object.values(fetchedTeachers)[0]?.asal_sekolah || `Sekolah (NPSN: ${currentNpsn})`;
+            
+            if (currentRole === 'ks') {
+                // Find KS
+                const keys = Object.keys(fetchedTeachers);
+                const ksKey = keys.find(k => {
+                    const j = fetchedTeachers[k].jenis_ptk;
+                    return j && (j.toLowerCase().includes('kepala') || j.toLowerCase().includes('kepsek') || j.toLowerCase() === 'ks');
+                });
+                
+                let ksName = "Tidak ditemukan data Kepala Sekolah spesifik";
+                if (ksKey) {
+                    ksName = fetchedTeachers[ksKey].nama;
+                }
+                
+                document.getElementById('ksSchoolName').innerText = schoolName;
+                document.getElementById('ksName').innerText = ksName;
+                
+                // Populate Dropdown for delegates (exclude KS)
+                const select = document.getElementById('ksSelectGuru');
+                select.innerHTML = '<option value="">-- Pilih Guru --</option>';
+                keys.forEach(k => {
+                    if (k !== ksKey) {
+                        select.innerHTML += `<option value="${k}">${fetchedTeachers[k].nama}</option>`;
+                    }
+                });
+
+                document.getElementById('stepFormKS').classList.remove('hidden');
+            } 
+            else if (currentRole === 'guru') {
+                document.getElementById('guruSchoolName').innerText = schoolName;
+                const container = document.getElementById('guruListContainer');
+                container.innerHTML = '';
+                
+                Object.keys(fetchedTeachers).forEach(k => {
+                    const t = fetchedTeachers[k];
+                    // Skip if it's the KS
+                    if (t.jenis_ptk && (t.jenis_ptk.toLowerCase().includes('kepala') || t.jenis_ptk.toLowerCase().includes('kepsek') || t.jenis_ptk.toLowerCase() === 'ks')) return;
+                    
+                    container.innerHTML += `
+                        <div class="border rounded-lg p-3 hover:bg-slate-50 transition-colors guru-item">
+                            <label class="flex items-start cursor-pointer">
+                                <input type="checkbox" value="${k}" class="mt-1 w-4 h-4 text-primary focus:ring-primary border-gray-300 guru-checkbox" onchange="handleGuruCheck(this)">
+                                <div class="ml-3 w-full">
+                                    <span class="block font-medium text-slate-700">${t.nama}</span>
+                                    <input type="email" id="email_${k}" class="mt-2 w-full text-sm border-slate-300 rounded focus:ring-primary focus:border-primary px-2 py-1 border hidden guru-email-input" placeholder="Email belajar.id">
+                                </div>
+                            </label>
+                        </div>
+                    `;
+                });
+                document.getElementById('stepFormGuru').classList.remove('hidden');
+            }
+        }
+
+        // ==========================================
+        // KEPALA SEKOLAH LOGIC
+        // ==========================================
+        function toggleKsDelegasi(show) {
+            const form = document.getElementById('ksDelegasiForm');
+            if (show) {
+                form.classList.remove('hidden');
+            } else {
+                form.classList.add('hidden');
+            }
+        }
+
+        async function submitKS() {
+            const statusRadios = document.getElementsByName('ks_status');
+            let selectedStatus = null;
+            for (let r of statusRadios) {
+                if (r.checked) selectedStatus = r.value;
+            }
+
+            if (!selectedStatus) return alert("Pilih status kehadiran KS.");
+
+            const dataToSave = {
+                status_data: selectedStatus,
+                timestamp: firebase.database.ServerValue.TIMESTAMP
+            };
+
+            if (selectedStatus === 'Berubah') {
+                const delegateKey = document.getElementById('ksSelectGuru').value;
+                const delegateEmail = document.getElementById('ksEmailGuru').value.trim();
+                
+                if (!delegateKey || !delegateEmail) {
+                    return alert("Silakan pilih guru pengganti dan isi email belajar.id");
+                }
+                if (!delegateEmail.includes('belajar.id')) {
+                    if(!confirm("Email tidak mengandung 'belajar.id'. Yakin ingin melanjutkan?")) return;
+                }
+                
+                dataToSave.nama_pengganti = fetchedTeachers[delegateKey].nama;
+                dataToSave.email_pengganti = delegateEmail;
+                dataToSave.id_pengganti = delegateKey;
+            }
+
+            const btn = document.getElementById('btnSubmitKS');
+            const originalText = btn.innerText;
+            btn.innerHTML = '<div class="spinner border-white border-left-transparent mx-auto"></div>';
+            btn.disabled = true;
+
+            try {
+                await db.ref(`konfirmasi_peserta/${currentNpsn}/kepala_sekolah`).set(dataToSave);
+                alert("Data konfirmasi Kepala Sekolah berhasil disimpan!");
+                closeModal();
+            } catch (err) {
+                console.error(err);
+                alert("Gagal menyimpan data: " + err.message);
+            } finally {
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            }
+        }
+
+        // ==========================================
+        // GURU LOGIC
+        // ==========================================
+        function handleGuruCheck(checkbox) {
+            const emailInput = document.getElementById('email_' + checkbox.value);
+            const allChecked = document.querySelectorAll('.guru-checkbox:checked');
+            
+            if (checkbox.checked) {
+                if (allChecked.length > 2) {
+                    checkbox.checked = false;
+                    alert("Maksimal hanya 2 guru yang dapat dipilih.");
+                    return;
+                }
+                emailInput.classList.remove('hidden');
+                emailInput.required = true;
+            } else {
+                emailInput.classList.add('hidden');
+                emailInput.required = false;
+                emailInput.value = '';
+            }
+        }
+
+        async function submitGuru() {
+            const checkedBoxes = document.querySelectorAll('.guru-checkbox:checked');
+            const err = document.getElementById('guruError');
+            
+            if (checkedBoxes.length === 0) {
+                err.innerText = "Pilih minimal 1 guru.";
+                err.classList.remove('hidden');
+                return;
+            }
+            if (checkedBoxes.length > 2) {
+                err.innerText = "Maksimal 2 guru.";
+                err.classList.remove('hidden');
+                return;
+            }
+
+            err.classList.add('hidden');
+            
+            const guruTerpilih = {
+                timestamp: firebase.database.ServerValue.TIMESTAMP
+            };
+
+            let isValid = true;
+            checkedBoxes.forEach(cb => {
+                const k = cb.value;
+                const email = document.getElementById('email_' + k).value.trim();
+                if (!email) {
+                    isValid = false;
+                    err.innerText = `Email untuk ${fetchedTeachers[k].nama} wajib diisi.`;
+                    err.classList.remove('hidden');
+                } else {
+                    guruTerpilih[k] = {
+                        nama: fetchedTeachers[k].nama,
+                        email_belajar: email
+                    };
+                }
+            });
+
+            if (!isValid) return;
+
+            const btn = document.getElementById('btnSubmitGuru');
+            const originalText = btn.innerText;
+            btn.innerHTML = '<div class="spinner border-white border-left-transparent mx-auto"></div>';
+            btn.disabled = true;
+
+            try {
+                await db.ref(`konfirmasi_peserta/${currentNpsn}/guru_terpilih`).set(guruTerpilih);
+                alert("Data pilihan guru berhasil disimpan!");
+                closeModal();
+            } catch (err) {
+                console.error(err);
+                alert("Gagal menyimpan data: " + err.message);
+            } finally {
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            }
+        }
+
+        // ==========================================
+        // ADMIN DASHBOARD LOGIC
+        // ==========================================
+        let adminDataMaster = {};
+        let adminDataKonfirmasi = {};
+        // Daftar Dummy 24 Sekolah (Jika ingin dilock, edit disini. Jika kosong, akan baca dari master_guru)
+        // const TARGET_SCHOOLS = ['10310877', '10303499', ...]; 
+        const TARGET_SCHOOLS = []; // Empty means fetch all distinct NPSNs from master
+
+        async function initAdmin() {
+            if(!db) return;
+            
+            try {
+                // Fetch Master first to know all schools
+                db.ref('master_guru').once('value', (snapMaster) => {
+                    adminDataMaster = snapMaster.val() || {};
+                    
+                    // Listen to konfirmasi_peserta realtime
+                    db.ref('konfirmasi_peserta').on('value', (snapKonf) => {
+                        adminDataKonfirmasi = snapKonf.val() || {};
+                        renderAdminData();
+                    });
+                });
+            } catch (error) {
+                console.error("Admin fetch error:", error);
+            }
+        }
+
+        let currentAdminMode = 'mode1';
+        let currentMode2Tab = 'ps';
+
+        function switchAdminView(mode) {
+            currentAdminMode = mode;
+            
+            const btn1 = document.getElementById('btnMode1');
+            const btn2 = document.getElementById('btnMode2');
+            const btnAI = document.getElementById('btnModeAI');
+            const view1 = document.getElementById('viewMode1');
+            const view2 = document.getElementById('viewMode2');
+            const viewAI = document.getElementById('viewModeAI');
+
+            const activeBtnClass = "px-6 py-2.5 rounded-lg text-sm font-bold transition-all shadow-sm bg-white text-indigo-700 flex items-center gap-2";
+            const inactiveBtnClass = "px-6 py-2.5 rounded-lg text-sm font-medium transition-all text-slate-500 hover:text-slate-700 flex items-center gap-2";
+
+            btn1.className = mode === 'mode1' ? activeBtnClass : inactiveBtnClass;
+            btn2.className = mode === 'mode2' ? activeBtnClass : inactiveBtnClass;
+            btnAI.className = mode === 'mode_ai' ? activeBtnClass : inactiveBtnClass;
+
+            if (mode === 'mode1') {
+                view1.classList.remove('hidden');
+                view2.classList.add('hidden');
+                viewAI.classList.add('hidden');
+            } else if (mode === 'mode2') {
+                view1.classList.add('hidden');
+                view2.classList.remove('hidden');
+                viewAI.classList.add('hidden');
+            } else if (mode === 'mode_ai') {
+                view1.classList.add('hidden');
+                view2.classList.add('hidden');
+                viewAI.classList.remove('hidden');
+            }
+            renderAdminData();
+        }
+
+        function switchTabMode2(tabId) {
+            currentMode2Tab = tabId;
+            
+            const tabs = ['ps', 'ks', 'guru_sd', 'guru_smp'];
+            tabs.forEach(t => {
+                const el = document.getElementById('tab_' + t);
+                if (t === tabId) {
+                    el.className = "tab-btn active px-4 py-2 border-b-2 font-medium text-sm border-indigo-600 text-indigo-600 whitespace-nowrap";
+                } else {
+                    el.className = "tab-btn px-4 py-2 border-b-2 font-medium text-sm border-transparent text-slate-500 hover:text-slate-700 whitespace-nowrap";
+                }
+            });
+            
+            const titles = {
+                'ps': 'Data Kelas Pengawas',
+                'ks': 'Data Kelas Kepala Sekolah',
+                'guru_sd': 'Data Kelas Guru (PAUD-SD)',
+                'guru_smp': 'Data Kelas Guru (SMP-SMA-SMK)'
+            };
+            document.getElementById('mode2TableTitle').innerText = titles[tabId];
+            
+            renderAdminData();
+        }
+
+        const MASTER_COLUMNS = [
+            'name', 'email', 'jenjang', 'kode_provinsi', 'kode_kabupaten', 
+            'kode_kecamatan', 'mata_pelajaran', 'jenis_ptk', 'nuptk', 'npsn', 
+            'ptk_id_simpkb', 'tanggal_lahir', 'no_hp', 'role'
+        ];
+
+        function renderAdminData() {
+            if (currentAdminMode === 'mode1') {
+                renderMode1();
+            } else {
+                renderMode2();
+            }
+        }
+
+        function renderMode1() {
+            const tbody = document.getElementById('tableMode1');
+            let html = '';
+            
+            const schoolsToRender = TARGET_SCHOOLS.length > 0 ? TARGET_SCHOOLS : Object.keys(adminDataMaster);
+            
+            schoolsToRender.forEach((npsn, index) => {
+                let schoolName = `Sekolah (${npsn})`;
+                if (adminDataMaster[npsn]) {
+                    const firstTeacherKey = Object.keys(adminDataMaster[npsn])[0];
+                    if (firstTeacherKey) {
+                        schoolName = adminDataMaster[npsn][firstTeacherKey].asal_sekolah || schoolName;
+                    }
+                }
+
+                const konfirmasi = adminDataKonfirmasi[npsn] || {};
+                const hasKS = konfirmasi.kepala_sekolah ? true : false;
+                const numGuru = konfirmasi.guru_terpilih ? Object.keys(konfirmasi.guru_terpilih).filter(k=>k!=='timestamp').length : 0;
+                
+                let statusBadge = '';
+                if (hasKS && numGuru >= 2) {
+                    statusBadge = `<span class="px-2 py-1 bg-green-100 text-green-700 rounded-full text-xs font-semibold">Selesai</span>`;
+                } else if (hasKS || numGuru > 0) {
+                    statusBadge = `<span class="px-2 py-1 bg-amber-100 text-amber-700 rounded-full text-xs font-semibold">Belum Lengkap</span>`;
+                } else {
+                    statusBadge = `<span class="px-2 py-1 bg-red-100 text-red-700 rounded-full text-xs font-semibold">Belum Mengisi</span>`;
+                }
+                
+                let keterangan = `Lengkap (3/3)`;
+                if (!hasKS || numGuru < 2) {
+                    keterangan = `KS: ${hasKS ? 1 : 0}/1, Guru: ${numGuru}/2`;
+                }
+
+                html += `
+                    <tr class="hover:bg-slate-50">
+                        <td class="px-6 py-4 text-center">${index + 1}</td>
+                        <td class="px-6 py-4">
+                            <div class="font-medium text-slate-800">${schoolName}</div>
+                            <div class="text-xs text-slate-400">NPSN: ${npsn}</div>
+                        </td>
+                        <td class="px-6 py-4 text-center">${statusBadge}</td>
+                        <td class="px-6 py-4 text-slate-600 text-xs font-medium">${keterangan}</td>
+                    </tr>
+                `;
+            });
+            
+            if (html === '') html = '<tr><td colspan="4" class="px-6 py-8 text-center text-slate-500">Tidak ada data.</td></tr>';
+            tbody.innerHTML = html;
+        }
+
+        function renderMode2() {
+            const thead = document.getElementById('tableMode2Head');
+            const tbody = document.getElementById('tableMode2Body');
+            
+            // Render Headers
+            let headHtml = MASTER_COLUMNS.map(col => `<th class="px-6 py-4 font-medium">${col}</th>`).join('');
+            thead.innerHTML = headHtml;
+            
+            let html = '';
+            let rowCounter = 1;
+            
+            const schoolsToRender = TARGET_SCHOOLS.length > 0 ? TARGET_SCHOOLS : Object.keys(adminDataMaster);
+
+            schoolsToRender.forEach(npsn => {
+                const konfirmasi = adminDataKonfirmasi[npsn] || {};
+                
+                if (currentMode2Tab === 'ps') {
+                    if (adminDataMaster[npsn]) {
+                        const keys = Object.keys(adminDataMaster[npsn]);
+                        const psKey = keys.find(k => {
+                            const j = adminDataMaster[npsn][k].jenis_ptk;
+                            return j && (j.toLowerCase() === 'ps' || j.toLowerCase().includes('pengawas'));
+                        });
+                        if (psKey) html += generateRowHtml(rowCounter++, adminDataMaster[npsn][psKey]);
+                    }
+                } 
+                else if (currentMode2Tab === 'ks') {
+                    const ksKonf = konfirmasi.kepala_sekolah;
+                    if (ksKonf && ksKonf.status_data === 'Berubah' && ksKonf.id_pengganti) {
+                        // Find pengganti in master
+                        if (adminDataMaster[npsn] && adminDataMaster[npsn][ksKonf.id_pengganti]) {
+                            let mergedData = { ...adminDataMaster[npsn][ksKonf.id_pengganti] };
+                            mergedData.nama = ksKonf.nama_pengganti;
+                            mergedData.email = ksKonf.email_pengganti;
+                            html += generateRowHtml(rowCounter++, mergedData, true);
+                        } else {
+                            html += generateRowHtml(rowCounter++, { nama: ksKonf.nama_pengganti, email: ksKonf.email_pengganti, npsn: npsn }, true);
+                        }
+                    } else {
+                        // Find original KS (either 'Sama' or no action)
+                        if (adminDataMaster[npsn]) {
+                            const keys = Object.keys(adminDataMaster[npsn]);
+                            const ksKey = keys.find(k => {
+                                const j = adminDataMaster[npsn][k].jenis_ptk;
+                                return j && (j.toLowerCase().includes('kepala') || j.toLowerCase().includes('kepsek') || j.toLowerCase() === 'ks');
+                            });
+                            if (ksKey) html += generateRowHtml(rowCounter++, adminDataMaster[npsn][ksKey]);
+                        }
+                    }
+                }
+                else if (currentMode2Tab === 'guru_sd' || currentMode2Tab === 'guru_smp') {
+                    if (konfirmasi.guru_terpilih) {
+                        const guruKeys = Object.keys(konfirmasi.guru_terpilih).filter(k => k !== 'timestamp');
+                        guruKeys.forEach(gKey => {
+                            if (adminDataMaster[npsn] && adminDataMaster[npsn][gKey]) {
+                                const gData = adminDataMaster[npsn][gKey];
+                                const jenjang = (gData.jenjang || '').toUpperCase();
+                                
+                                const isSmpSmaSmk = jenjang.includes('SMP') || jenjang.includes('SMA') || jenjang.includes('SMK');
+                                
+                                if (currentMode2Tab === 'guru_smp' && isSmpSmaSmk) {
+                                    let mergedData = { ...gData };
+                                    mergedData.email = konfirmasi.guru_terpilih[gKey].email_belajar || gData.email;
+                                    html += generateRowHtml(rowCounter++, mergedData);
+                                } else if (currentMode2Tab === 'guru_sd' && !isSmpSmaSmk) {
+                                    let mergedData = { ...gData };
+                                    mergedData.email = konfirmasi.guru_terpilih[gKey].email_belajar || gData.email;
+                                    html += generateRowHtml(rowCounter++, mergedData);
+                                }
+                            }
+                        });
+                    }
+                }
+            });
+            
+            if (html === '') html = `<tr><td colspan="${MASTER_COLUMNS.length}" class="px-6 py-8 text-center text-slate-500">Tidak ada data konfirmasi untuk kelas ini.</td></tr>`;
+            tbody.innerHTML = html;
+        }
+
+        function generateRowHtml(no, data, isPengganti = false) {
+            let colsHtml = '';
+            
+            // Role selalu "murid" untuk pengkelasan App Pusat
+            let roleValue = 'murid';
+
+            MASTER_COLUMNS.forEach(col => {
+                if (col === 'name') {
+                    colsHtml += `<td class="px-6 py-4">${data.nama || data['Nama Lengkap'] || ''} ${isPengganti ? '<span class="text-xs text-red-500 ml-1 font-bold">(Pengganti)</span>' : ''}</td>`;
+                } else if (col === 'email') {
+                    colsHtml += `<td class="px-6 py-4">${data.email || data['Email'] || ''}</td>`;
+                } else if (col === 'jenjang') {
+                    colsHtml += `<td class="px-6 py-4">${data.jenjang || data['Jenjang'] || ''}</td>`;
+                } else if (col === 'kode_provinsi') {
+                    colsHtml += `<td class="px-6 py-4"></td>`;
+                } else if (col === 'kode_kabupaten') {
+                    colsHtml += `<td class="px-6 py-4"></td>`;
+                } else if (col === 'kode_kecamatan') {
+                    colsHtml += `<td class="px-6 py-4"></td>`;
+                } else if (col === 'mata_pelajaran') {
+                    colsHtml += `<td class="px-6 py-4"></td>`;
+                } else if (col === 'jenis_ptk') {
+                    colsHtml += `<td class="px-6 py-4">${data.jenis_ptk || data['Jenis PTK'] || ''}</td>`;
+                } else if (col === 'nuptk') {
+                    colsHtml += `<td class="px-6 py-4">${data.nuptk || data['NUPTK'] || ''}</td>`;
+                } else if (col === 'npsn') {
+                    colsHtml += `<td class="px-6 py-4">${data.npsn || data['NPSN'] || ''}</td>`;
+                } else if (col === 'ptk_id_simpkb') {
+                    colsHtml += `<td class="px-6 py-4"></td>`;
+                } else if (col === 'tanggal_lahir') {
+                    colsHtml += `<td class="px-6 py-4"></td>`;
+                } else if (col === 'no_hp') {
+                    colsHtml += `<td class="px-6 py-4">${data.no_hp || data['No HP'] || ''}</td>`;
+                } else if (col === 'role') {
+                    colsHtml += `<td class="px-6 py-4">${roleValue}</td>`;
+                } else {
+                    colsHtml += `<td class="px-6 py-4"></td>`;
+                }
+            });
+            return `<tr class="hover:bg-slate-50 text-sm whitespace-nowrap">${colsHtml}</tr>`;
+        }
+
+        // ==========================================
+        // EXPORT CSV LOGIC
+        // ==========================================
+        function exportCSVMode2() {
+            const tbody = document.getElementById('tableMode2Body');
+            const rows = tbody.querySelectorAll('tr');
+            
+            if (rows.length === 0 || rows[0].innerText.includes('Tidak ada data')) {
+                return alert("Tidak ada data untuk diexport pada kelas ini.");
+            }
+
+            let csvContent = "data:text/csv;charset=utf-8,";
+            
+            // Add Header
+            csvContent += MASTER_COLUMNS.join(",") + "\n";
+            
+            // Add Rows
+            rows.forEach(tr => {
+                const tds = tr.querySelectorAll('td');
+                if (tds.length === MASTER_COLUMNS.length) {
+                    let rowData = [];
+                    tds.forEach(td => {
+                        let text = td.innerText.replace(/"/g, '""'); // escape quotes
+                        text = text.replace('(Pengganti)', '').trim();
+                        rowData.push(`"${text}"`);
+                    });
+                    csvContent += rowData.join(",") + "\n";
+                }
+            });
+
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", `Data_Kelas_${currentMode2Tab.toUpperCase()}.csv`);
+            document.body.appendChild(link); // Required for FF
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        // ==========================================
+        // GEMINI AI INTEGRATION
+        // ==========================================
+        document.addEventListener('DOMContentLoaded', () => {
+            const savedKey = localStorage.getItem('GEMINI_API_KEY');
+            if (savedKey) {
+                document.getElementById('inputGeminiKey').value = savedKey;
+            }
+        });
+
+        function saveGeminiKey() {
+            const key = document.getElementById('inputGeminiKey').value.trim();
+            if (key) {
+                localStorage.setItem('GEMINI_API_KEY', key);
+                alert('API Key berhasil disimpan di browser lokal!');
+            } else {
+                alert('API Key tidak boleh kosong.');
+            }
+        }
+
+        function copyWADraft() {
+            const textarea = document.getElementById('aiWaDraft');
+            textarea.select();
+            document.execCommand('copy');
+            alert('Draf WhatsApp berhasil disalin ke clipboard!');
+        }
+
+        async function generateAISummary() {
+            const apiKey = document.getElementById('inputGeminiKey').value.trim();
+            if (!apiKey) {
+                return alert('Silakan masukkan Gemini API Key terlebih dahulu lalu klik Simpan!');
+            }
+            if (!window.GoogleGenerativeAI) {
+                return alert('SDK Gemini belum termuat sepenuhnya. Coba muat ulang halaman ini.');
+            }
+
+            const btn = document.getElementById('btnGenerateAI');
+            const skeleton = document.getElementById('aiSkeleton');
+            const resultBox = document.getElementById('aiResult');
+            const summaryText = document.getElementById('aiSummaryText');
+            const waDraft = document.getElementById('aiWaDraft');
+
+            // Collect Data
+            const schoolsToRender = TARGET_SCHOOLS.length > 0 ? TARGET_SCHOOLS : Object.keys(adminDataMaster);
+            let totalTarget = schoolsToRender.length;
+            let confirmedCount = 0;
+            let unconfirmedSchools = [];
+            let ksDiwakilkanCount = 0;
+
+            schoolsToRender.forEach(npsn => {
+                const k = adminDataKonfirmasi[npsn];
+                const hasKS = k && k.kepala_sekolah ? true : false;
+                const hasGuru = k && k.guru_terpilih ? true : false;
+                
+                let schoolName = `Sekolah (${npsn})`;
+                if (adminDataMaster[npsn]) {
+                    const firstTeacherKey = Object.keys(adminDataMaster[npsn])[0];
+                    if (firstTeacherKey) schoolName = adminDataMaster[npsn][firstTeacherKey].asal_sekolah || schoolName;
+                }
+
+                if (hasKS || hasGuru) {
+                    confirmedCount++;
+                    if (hasKS && k.kepala_sekolah.status_data === 'Berubah') {
+                        ksDiwakilkanCount++;
+                    }
+                } else {
+                    unconfirmedSchools.push(schoolName);
+                }
+            });
+
+            const unconfirmedCount = unconfirmedSchools.length;
+            const schoolNamesStr = unconfirmedSchools.slice(0, 10).join(', ') + (unconfirmedCount > 10 ? ' dan lainnya...' : '');
+
+            const prompt = `
+Anda adalah asisten admin Sekolah Model 2026. 
+Diberikan data statistik konfirmasi kehadiran peserta (Kepala Sekolah & Guru) sebagai berikut:
+- Total sekolah target: ${totalTarget}
+- Sekolah yang sudah merespons/mengisi: ${confirmedCount}
+- Sekolah yang BELUM mengisi sama sekali: ${unconfirmedCount} (yaitu: ${schoolNamesStr})
+- Kepala Sekolah yang berhalangan hadir dan diwakilkan: ${ksDiwakilkanCount}
+
+Tugas Anda:
+1. Buatkan "Ringkasan Eksekutif" dalam 2-3 kalimat yang profesional mengenai kondisi konfirmasi saat ini.
+2. Buatkan "Draf Pesan WhatsApp" yang sopan, ramah, dan profesional (menggunakan bahasa Indonesia yang baik) untuk dikirimkan kepada sekolah-sekolah yang belum mengisi agar segera melakukan konfirmasi. Pesan WA tersebut harus siap pakai.
+
+Gunakan format output JSON murni (hanya JSON, tanpa backtick, tanpa markdown) seperti format berikut:
+{
+  "ringkasan": "teks ringkasan di sini...",
+  "wa_draft": "teks draft wa di sini..."
+}
+`;
+
+            try {
+                btn.disabled = true;
+                btn.innerHTML = '<div class="spinner border-white border-left-transparent w-4 h-4"></div> Memproses...';
+                skeleton.classList.remove('hidden');
+                resultBox.classList.add('hidden');
+
+                const genAI = new window.GoogleGenerativeAI(apiKey);
+                const model = genAI.getGenerativeModel({ model: "gemini-flash-latest" });
+                
+                const result = await model.generateContent(prompt);
+                const response = result.response;
+                // Bersihkan respon jika ada markdown formatting dari model
+                let text = response.text().replace(/```json/gi, '').replace(/```/g, '').trim();
+                
+                const parsed = JSON.parse(text);
+                
+                summaryText.innerHTML = parsed.ringkasan;
+                waDraft.value = parsed.wa_draft;
+
+                skeleton.classList.add('hidden');
+                resultBox.classList.remove('hidden');
+            } catch (error) {
+                console.error(error);
+                alert('Gagal menghasilkan ringkasan AI. Pastikan API Key benar dan Anda terhubung ke internet. Detail error: ' + error.message);
+                skeleton.classList.add('hidden');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 002-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg> Generate Ringkasan';
+            }
+        }
+    </script>
+</body>
+</html>
