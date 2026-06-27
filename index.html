@@ -307,6 +307,14 @@
 
                 <!-- Step 3: Form Guru -->
                 <div id="stepFormGuru" class="hidden fade-in mt-6 pt-6 border-t border-slate-100">
+                    <div id="mapelWarningGuru" class="hidden mb-4 bg-amber-50 text-amber-800 p-4 rounded-lg border border-amber-200 shadow-sm">
+                        <p class="font-bold mb-1 flex items-center gap-2">
+                            <svg class="w-5 h-5 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                            Peringatan Kebutuhan Mapel
+                        </p>
+                        <p class="text-sm">Berdasarkan data kuota Dinas, sekolah Anda direkomendasikan mengirim guru pengampu: <strong id="mapelTextGuru"></strong></p>
+                    </div>
+                    
                     <div class="mb-4 bg-teal-50 text-teal-800 p-4 rounded-lg">
                         <p class="font-semibold" id="guruSchoolName"></p>
                         <p class="text-sm">Pilih maksimal 2 guru (wajib input email belajar.id).</p>
@@ -357,6 +365,7 @@
         let currentRole = null; // 'ks' or 'guru'
         let currentNpsn = null;
         let fetchedTeachers = null; // Object of teachers from master_guru
+        let kebutuhanMapelData = null; // Store specific NPSN mapel requirements
 
         // ==========================================
         // ROUTER & VIEW LOGIC
@@ -440,6 +449,9 @@
 
             try {
                 const snapshot = await db.ref(`master_guru/${npsn}`).once('value');
+                const mapelSnap = await db.ref(`kebutuhan_mapel/${npsn}`).once('value');
+                kebutuhanMapelData = mapelSnap.val();
+
                 if (!snapshot.exists()) {
                     err.innerText = `Data NPSN ${npsn} tidak ditemukan.`;
                     err.classList.remove('hidden');
@@ -510,6 +522,21 @@
                         </div>
                     `;
                 });
+                
+                // Show Mapel Warning if exists
+                const mapelWarningGuru = document.getElementById('mapelWarningGuru');
+                if (kebutuhanMapelData) {
+                    const reqMapels = [kebutuhanMapelData.mapel_1, kebutuhanMapelData.mapel_2].filter(Boolean);
+                    if (reqMapels.length > 0) {
+                        document.getElementById('mapelTextGuru').innerText = reqMapels.join(' dan ');
+                        mapelWarningGuru.classList.remove('hidden');
+                    } else {
+                        mapelWarningGuru.classList.add('hidden');
+                    }
+                } else {
+                    mapelWarningGuru.classList.add('hidden');
+                }
+
                 document.getElementById('stepFormGuru').classList.remove('hidden');
             }
         }
