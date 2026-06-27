@@ -830,7 +830,7 @@
         function resetData(npsn) {
             const pwd = prompt('PERINGATAN: Ini akan menghapus semua data konfirmasi dari sekolah ini. Masukkan password admin ("adminbgtk") untuk melanjutkan:');
             if (pwd === "adminbgtk") {
-                firebase.database().ref('konfirmasi_sekolah/' + npsn).remove()
+                firebase.database().ref('konfirmasi_peserta/' + npsn).remove()
                     .then(() => alert('Data konfirmasi berhasil dibatalkan dan dihapus!'))
                     .catch(e => alert('Gagal menghapus data: ' + e.message));
             } else if (pwd !== null) {
