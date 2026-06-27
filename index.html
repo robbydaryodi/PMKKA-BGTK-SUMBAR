@@ -108,6 +108,57 @@
                 <p class="text-slate-500 text-sm">Pilih maksimal 2 guru sebagai peserta inti.</p>
             </div>
         </div>
+        
+        <!-- Button to Public Directory -->
+        <div class="mt-12 text-center">
+            <button onclick="openPublicDirectory()" class="bg-slate-900 hover:bg-slate-800 text-white px-8 py-4 rounded-xl font-bold transition-all shadow-xl hover:shadow-2xl flex items-center gap-3 mx-auto transform hover:-translate-y-1">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+                Lihat Daftar Peserta Terkonfirmasi
+            </button>
+        </div>
+    </div>
+
+    <!-- PUBLIC DIRECTORY VIEW -->
+    <div id="view-public-peserta" class="hidden max-w-7xl mx-auto px-4 py-8 fade-in">
+        <div class="flex justify-between items-center mb-8">
+            <div>
+                <button onclick="closePublicDirectory()" class="text-indigo-600 font-medium mb-2 flex items-center gap-1 hover:text-indigo-800 transition-colors">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+                    Kembali
+                </button>
+                <h1 class="text-3xl font-bold text-slate-900">Daftar Peserta Terkonfirmasi</h1>
+                <p class="text-slate-500">Daftar lengkap peserta (Pengawas, Kepala Sekolah, Guru) dari seluruh sekolah</p>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
+            <div class="p-6 border-b border-slate-100 bg-slate-50 flex flex-col md:flex-row gap-4 justify-between items-center">
+                <div class="flex space-x-2 overflow-x-auto w-full md:w-auto">
+                    <button onclick="switchPublicTab('ps')" id="pubTab_ps" class="px-6 py-2.5 rounded-lg font-bold text-sm transition-all bg-indigo-600 text-white shadow-sm whitespace-nowrap">Pengawas</button>
+                    <button onclick="switchPublicTab('ks')" id="pubTab_ks" class="px-6 py-2.5 rounded-lg font-medium text-sm transition-all bg-white text-slate-600 hover:bg-slate-50 border border-slate-200 whitespace-nowrap">Kepala Sekolah</button>
+                    <button onclick="switchPublicTab('guru')" id="pubTab_guru" class="px-6 py-2.5 rounded-lg font-medium text-sm transition-all bg-white text-slate-600 hover:bg-slate-50 border border-slate-200 whitespace-nowrap">Guru</button>
+                </div>
+                <div class="w-full md:w-72">
+                    <div class="relative">
+                        <input type="text" id="publicSearch" onkeyup="filterPublicTable()" placeholder="Cari nama atau sekolah..." class="w-full pl-10 pr-4 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500">
+                        <svg class="w-4 h-4 text-slate-400 absolute left-3 top-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="overflow-x-auto">
+                <table class="w-max min-w-full text-left text-sm whitespace-nowrap">
+                    <thead class="bg-slate-50 text-slate-500 border-b border-slate-200">
+                        <tr id="pubTableHead">
+                            <!-- JS Generated -->
+                        </tr>
+                    </thead>
+                    <tbody id="pubTableBody" class="divide-y divide-slate-100">
+                        <tr><td class="px-6 py-8 text-center text-slate-500"><div class="spinner mx-auto mb-2"></div>Memuat data...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
 
     <!-- ADMIN VIEW -->
@@ -1227,6 +1278,210 @@ Gunakan format output JSON murni (hanya JSON, tanpa backtick, tanpa markdown) se
                 btn.disabled = false;
                 btn.innerHTML = '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 002-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg> Generate Ringkasan';
             }
+        }
+        // ==========================================
+        // PUBLIC DIRECTORY LOGIC
+        // ==========================================
+        let publicDataPS = [];
+        let publicDataKS = [];
+        let publicDataGuru = [];
+        let currentPublicTab = 'ps';
+
+        function openPublicDirectory() {
+            document.getElementById('view-main').classList.add('hidden');
+            document.getElementById('view-public-peserta').classList.remove('hidden');
+            if(publicDataPS.length === 0) {
+                loadPublicData();
+            }
+        }
+
+        function closePublicDirectory() {
+            document.getElementById('view-public-peserta').classList.add('hidden');
+            document.getElementById('view-main').classList.remove('hidden');
+        }
+
+        function switchPublicTab(tab) {
+            currentPublicTab = tab;
+            const btnPS = document.getElementById('pubTab_ps');
+            const btnKS = document.getElementById('pubTab_ks');
+            const btnGuru = document.getElementById('pubTab_guru');
+
+            const activeClass = "px-6 py-2.5 rounded-lg font-bold text-sm transition-all bg-indigo-600 text-white shadow-sm whitespace-nowrap";
+            const inactiveClass = "px-6 py-2.5 rounded-lg font-medium text-sm transition-all bg-white text-slate-600 hover:bg-slate-50 border border-slate-200 whitespace-nowrap";
+
+            btnPS.className = tab === 'ps' ? activeClass : inactiveClass;
+            btnKS.className = tab === 'ks' ? activeClass : inactiveClass;
+            btnGuru.className = tab === 'guru' ? activeClass : inactiveClass;
+
+            renderPublicTable();
+        }
+
+        async function loadPublicData() {
+            try {
+                // Set loading state
+                document.getElementById('pubTableBody').innerHTML = '<tr><td colspan="5" class="px-6 py-8 text-center text-slate-500"><div class="spinner mx-auto mb-2"></div>Memuat data dari server...</td></tr>';
+                
+                // Fetch Master Guru
+                const snapMaster = await db.ref('master_guru').once('value');
+                const masterData = snapMaster.val() || {};
+
+                // Fetch Konfirmasi
+                const snapKonf = await db.ref('konfirmasi_peserta').once('value');
+                const konfData = snapKonf.val() || {};
+
+                publicDataPS = [];
+                publicDataKS = [];
+                publicDataGuru = [];
+
+                // Process data
+                for (const npsn in masterData) {
+                    const schoolMaster = masterData[npsn];
+                    const schoolKonf = konfData[npsn] || {};
+
+                    for (const uid in schoolMaster) {
+                        const person = schoolMaster[uid];
+                        
+                        if (person.jenis_ptk === 'PS') {
+                            publicDataPS.push({
+                                nama: person.nama,
+                                jabatan: 'Pengawas',
+                                npsn: npsn,
+                                sekolah: person.asal_sekolah || '-',
+                                status: 'Default'
+                            });
+                        } else if (person.jenis_ptk === 'KS') {
+                            let nama = person.nama;
+                            let status = 'Hadir';
+                            let statusClass = 'bg-emerald-100 text-emerald-700 border border-emerald-200';
+
+                            if (schoolKonf.ks_delegasi && schoolKonf.ks_delegasi.nama) {
+                                nama = schoolKonf.ks_delegasi.nama;
+                                status = 'Diwakilkan';
+                                statusClass = 'bg-amber-100 text-amber-700 border border-amber-200';
+                            }
+                            
+                            publicDataKS.push({
+                                nama: nama,
+                                jabatan: 'Kepala Sekolah',
+                                npsn: npsn,
+                                sekolah: person.asal_sekolah || '-',
+                                status: `<span class="px-2.5 py-1 rounded-full text-xs font-bold ${statusClass}">${status}</span>`
+                            });
+                        }
+                    }
+
+                    // Process Guru
+                    if (schoolKonf.guru_terpilih) {
+                        const listGuru = Object.values(schoolKonf.guru_terpilih);
+                        listGuru.forEach(g => {
+                            publicDataGuru.push({
+                                nama: g.nama,
+                                jabatan: 'Guru',
+                                mapel: g.mapel_pilihan || '-',
+                                npsn: npsn,
+                                sekolah: g.asal_sekolah || '-'
+                            });
+                        });
+                    }
+                }
+                
+                // Sort data alphabetically
+                publicDataPS.sort((a,b) => a.nama.localeCompare(b.nama));
+                publicDataKS.sort((a,b) => a.nama.localeCompare(b.nama));
+                publicDataGuru.sort((a,b) => a.nama.localeCompare(b.nama));
+
+                renderPublicTable();
+
+            } catch(e) {
+                console.error(e);
+                document.getElementById('pubTableBody').innerHTML = '<tr><td colspan="5" class="px-6 py-8 text-center text-red-500">Gagal memuat data. Silakan coba lagi.</td></tr>';
+            }
+        }
+
+        function renderPublicTable() {
+            const head = document.getElementById('pubTableHead');
+            const body = document.getElementById('pubTableBody');
+            
+            let htmlHead = '';
+            let htmlBody = '';
+            
+            let dataToRender = [];
+            if(currentPublicTab === 'ps') {
+                dataToRender = publicDataPS;
+                htmlHead = `
+                    <th class="px-6 py-4 font-bold">No</th>
+                    <th class="px-6 py-4 font-bold">Nama Lengkap</th>
+                    <th class="px-6 py-4 font-bold">Instansi/Sekolah Binaan</th>
+                `;
+            } else if (currentPublicTab === 'ks') {
+                dataToRender = publicDataKS;
+                htmlHead = `
+                    <th class="px-6 py-4 font-bold">No</th>
+                    <th class="px-6 py-4 font-bold">Nama Lengkap (Sesuai Konfirmasi)</th>
+                    <th class="px-6 py-4 font-bold">Asal Sekolah</th>
+                    <th class="px-6 py-4 font-bold text-center">Status Kehadiran</th>
+                `;
+            } else {
+                dataToRender = publicDataGuru;
+                htmlHead = `
+                    <th class="px-6 py-4 font-bold">No</th>
+                    <th class="px-6 py-4 font-bold">Nama Lengkap</th>
+                    <th class="px-6 py-4 font-bold">Mata Pelajaran (Rencana Pusat)</th>
+                    <th class="px-6 py-4 font-bold">Asal Sekolah</th>
+                `;
+            }
+            
+            head.innerHTML = htmlHead;
+
+            // Filtering logic
+            const keyword = document.getElementById('publicSearch').value.toLowerCase();
+            if (keyword) {
+                dataToRender = dataToRender.filter(item => 
+                    item.nama.toLowerCase().includes(keyword) || 
+                    (item.sekolah && item.sekolah.toLowerCase().includes(keyword)) ||
+                    (item.mapel && item.mapel.toLowerCase().includes(keyword))
+                );
+            }
+
+            if(dataToRender.length === 0) {
+                htmlBody = `<tr><td colspan="5" class="px-6 py-8 text-center text-slate-500">Belum ada data atau tidak ditemukan.</td></tr>`;
+            } else {
+                dataToRender.forEach((item, idx) => {
+                    if (currentPublicTab === 'ps') {
+                        htmlBody += `
+                            <tr class="hover:bg-slate-50 transition-colors">
+                                <td class="px-6 py-4 font-medium text-slate-500">${idx+1}</td>
+                                <td class="px-6 py-4 font-bold text-slate-900">${item.nama}</td>
+                                <td class="px-6 py-4 text-slate-600">${item.sekolah}</td>
+                            </tr>
+                        `;
+                    } else if (currentPublicTab === 'ks') {
+                        htmlBody += `
+                            <tr class="hover:bg-slate-50 transition-colors">
+                                <td class="px-6 py-4 font-medium text-slate-500">${idx+1}</td>
+                                <td class="px-6 py-4 font-bold text-slate-900">${item.nama}</td>
+                                <td class="px-6 py-4 text-slate-600">${item.sekolah}</td>
+                                <td class="px-6 py-4 text-center">${item.status}</td>
+                            </tr>
+                        `;
+                    } else {
+                        htmlBody += `
+                            <tr class="hover:bg-slate-50 transition-colors">
+                                <td class="px-6 py-4 font-medium text-slate-500">${idx+1}</td>
+                                <td class="px-6 py-4 font-bold text-slate-900">${item.nama}</td>
+                                <td class="px-6 py-4 text-slate-600"><span class="px-2 py-1 bg-indigo-50 text-indigo-700 border border-indigo-100 rounded-md text-xs font-semibold whitespace-nowrap">${item.mapel}</span></td>
+                                <td class="px-6 py-4 text-slate-600">${item.sekolah}</td>
+                            </tr>
+                        `;
+                    }
+                });
+            }
+
+            body.innerHTML = htmlBody;
+        }
+
+        function filterPublicTable() {
+            renderPublicTable();
         }
     </script>
 </body>
