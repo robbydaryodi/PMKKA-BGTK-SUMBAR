@@ -997,10 +997,12 @@
                                 if (currentMode2Tab === 'guru_smp' && isSmpSmaSmk) {
                                     let mergedData = { ...gData };
                                     mergedData.email = konfirmasi.guru_terpilih[gKey].email_belajar || gData.email;
+                                    mergedData.mata_pelajaran = konfirmasi.guru_terpilih[gKey].mapel_pilihan || gData.mata_pelajaran;
                                     html += generateRowHtml(rowCounter++, mergedData);
                                 } else if (currentMode2Tab === 'guru_sd' && !isSmpSmaSmk) {
                                     let mergedData = { ...gData };
                                     mergedData.email = konfirmasi.guru_terpilih[gKey].email_belajar || gData.email;
+                                    mergedData.mata_pelajaran = konfirmasi.guru_terpilih[gKey].mapel_pilihan || gData.mata_pelajaran;
                                     html += generateRowHtml(rowCounter++, mergedData);
                                 }
                             }
