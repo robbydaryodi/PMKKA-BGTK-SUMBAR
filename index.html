@@ -42,6 +42,9 @@
     <!-- Firebase v10+ (Compat for easy CDN usage in single file) -->
     <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+    
+    <!-- SheetJS for Excel Export -->
+    <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
 </head>
 <body class="text-slate-800 antialiased">
 
@@ -239,10 +242,16 @@
             <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
                 <div class="p-4 border-b border-slate-100 bg-slate-50/50 flex justify-between items-center">
                     <h2 id="mode2TableTitle" class="text-md font-bold text-slate-800">Data Kelas Pengawas</h2>
-                    <button onclick="exportCSVMode2()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg text-sm font-medium shadow-sm transition-colors flex items-center gap-2">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
-                        Export CSV
-                    </button>
+                    <div class="flex gap-2">
+                        <button onclick="exportCSVMode2()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg text-sm font-medium shadow-sm transition-colors flex items-center gap-2">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                            Export CSV
+                        </button>
+                        <button onclick="exportXLSXMode2()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm font-medium shadow-sm transition-colors flex items-center gap-2">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                            Export XLSX
+                        </button>
+                    </div>
                 </div>
                 <div class="overflow-x-auto w-full">
                     <table class="w-max min-w-full text-left text-sm whitespace-nowrap">
@@ -1248,6 +1257,137 @@
             document.body.appendChild(link); // Required for FF
             link.click();
             document.body.removeChild(link);
+        }
+
+        function exportXLSXMode2() {
+            if (typeof XLSX === 'undefined') {
+                alert("Library Excel belum dimuat. Coba refresh halaman.");
+                return;
+            }
+
+            const schoolsToRender = TARGET_SCHOOLS.length > 0 ? TARGET_SCHOOLS : Object.keys(adminDataMaster);
+            let excelData = [];
+            let rowCounter = 1;
+
+            schoolsToRender.forEach(npsn => {
+                const konfirmasi = adminDataKonfirmasi[npsn] || {};
+                let targetList = [];
+
+                if (currentMode2Tab === 'ps') {
+                    const psKonf = konfirmasi.ps_delegasi;
+                    if (psKonf && psKonf.status_data === 'Berubah') {
+                        targetList.push({
+                            nik: psKonf.nik_pengganti || '',
+                            email: psKonf.email_pengganti || '',
+                            namaLengkap: psKonf.nama_pengganti || '',
+                            noHp: psKonf.hp_pengganti || '',
+                            jenis: 'PS'
+                        });
+                    } else if (adminDataMaster[npsn]) {
+                        const keys = Object.keys(adminDataMaster[npsn]);
+                        const psKey = keys.find(k => {
+                            const j = adminDataMaster[npsn][k].jenis_ptk;
+                            return j && (j.toLowerCase() === 'ps' || j.toLowerCase().includes('pengawas'));
+                        });
+                        if (psKey) {
+                            targetList.push({
+                                nik: psKey.replace('guru_', ''),
+                                email: adminDataMaster[npsn][psKey].email || '',
+                                namaLengkap: adminDataMaster[npsn][psKey].nama || '',
+                                noHp: adminDataMaster[npsn][psKey].no_hp || '',
+                                jenis: 'PS'
+                            });
+                        }
+                    }
+                } 
+                else if (currentMode2Tab === 'ks') {
+                    const ksKonf = konfirmasi.kepala_sekolah;
+                    if (ksKonf && ksKonf.status_data === 'Berubah' && ksKonf.id_pengganti) {
+                        const pKey = ksKonf.id_pengganti;
+                        let email = ksKonf.email_pengganti || '';
+                        let nama = ksKonf.nama_pengganti || '';
+                        let noHp = '';
+                        if (adminDataMaster[npsn] && adminDataMaster[npsn][pKey]) {
+                            noHp = adminDataMaster[npsn][pKey].no_hp || '';
+                        }
+                        targetList.push({
+                            nik: pKey.replace('guru_', ''),
+                            email: email,
+                            namaLengkap: nama,
+                            noHp: noHp,
+                            jenis: 'KS'
+                        });
+                    } else if (adminDataMaster[npsn]) {
+                        const keys = Object.keys(adminDataMaster[npsn]);
+                        const ksKey = keys.find(k => {
+                            const j = adminDataMaster[npsn][k].jenis_ptk;
+                            return j && (j.toLowerCase().includes('kepala') || j.toLowerCase().includes('kepsek') || j.toLowerCase() === 'ks');
+                        });
+                        if (ksKey) {
+                            targetList.push({
+                                nik: ksKey.replace('guru_', ''),
+                                email: adminDataMaster[npsn][ksKey].email || '',
+                                namaLengkap: adminDataMaster[npsn][ksKey].nama || '',
+                                noHp: adminDataMaster[npsn][ksKey].no_hp || '',
+                                jenis: 'KS'
+                            });
+                        }
+                    }
+                }
+                else if (currentMode2Tab === 'guru_sd' || currentMode2Tab === 'guru_smp') {
+                    if (konfirmasi.guru_terpilih) {
+                        const guruKeys = Object.keys(konfirmasi.guru_terpilih).filter(k => k !== 'timestamp');
+                        guruKeys.forEach(gKey => {
+                            if (adminDataMaster[npsn] && adminDataMaster[npsn][gKey]) {
+                                const gData = adminDataMaster[npsn][gKey];
+                                const jenjang = (gData.jenjang || '').toUpperCase();
+                                const isSmpSmaSmk = jenjang.includes('SMP') || jenjang.includes('SMA') || jenjang.includes('SMK');
+                                
+                                if ((currentMode2Tab === 'guru_smp' && isSmpSmaSmk) || (currentMode2Tab === 'guru_sd' && !isSmpSmaSmk)) {
+                                    targetList.push({
+                                        nik: gKey.replace('guru_', ''),
+                                        email: konfirmasi.guru_terpilih[gKey].email_belajar || gData.email || '',
+                                        namaLengkap: gData.nama || '',
+                                        noHp: gData.no_hp || '',
+                                        jenis: 'Guru'
+                                    });
+                                }
+                            }
+                        });
+                    }
+                }
+
+                targetList.forEach(t => {
+                    let names = t.namaLengkap.trim().split(' ');
+                    let namaDepan = names[0] || '';
+                    let namaBelakang = names.length > 1 ? names.slice(1).join(' ') : '';
+                    
+                    let nikFinal = t.nik;
+                    if (nikFinal.length !== 16 && isNaN(nikFinal)) {
+                        nikFinal = ''; 
+                    }
+
+                    excelData.push({
+                        "No": rowCounter++,
+                        "NIK *": nikFinal,
+                        "Email *": t.email,
+                        "NPSN *": npsn,
+                        "Nama Depan *": namaDepan,
+                        "Nama Belakang": namaBelakang,
+                        "No WA *": t.noHp,
+                        "Jenis * (KS/PS/Guru/Tutor/Pamong/Pendidik/Mentor/Penilik)": t.jenis
+                    });
+                });
+            });
+
+            if (excelData.length === 0) {
+                return alert("Tidak ada data untuk diexport pada kelas ini.");
+            }
+
+            const ws = XLSX.utils.json_to_sheet(excelData);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "Data Peserta");
+            XLSX.writeFile(wb, `Import_Peserta_${currentMode2Tab.toUpperCase()}.xlsx`);
         }
 
         // ==========================================
