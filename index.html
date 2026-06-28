@@ -13,6 +13,9 @@
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
     <script>
         tailwind.config = {
             theme: {
@@ -166,7 +169,11 @@
             <div class="p-4 flex-1 overflow-y-auto">
                 <div class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-3 px-3">BGTK Sumatera Barat</div>
                 <nav class="space-y-1">
-                    <button onclick="switchAdminView('mode1')" id="btnMode1" class="flex items-center gap-3 px-3 py-2.5 rounded-lg font-medium bg-indigo-50 text-indigo-700 transition-colors w-full text-left">
+                    <button onclick="switchAdminView('mode0')" id="btnMode0" class="flex items-center gap-3 px-3 py-2.5 rounded-lg font-medium bg-indigo-50 text-indigo-700 transition-colors w-full text-left">
+                        <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+                        <span class="text-sm">Dashboard Utama</span>
+                    </button>
+                    <button onclick="switchAdminView('mode1')" id="btnMode1" class="flex items-center gap-3 px-3 py-2.5 rounded-lg font-medium text-slate-600 hover:bg-slate-50 transition-colors w-full text-left">
                         <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
                         <span class="text-sm">Progress Sekolah</span>
                     </button>
@@ -196,8 +203,85 @@
             <div class="flex-1 overflow-auto p-6 md:p-8">
 
 
+        <!-- MODE 0: DASHBOARD UTAMA -->
+        <div id="viewMode0" class="fade-in">
+            <!-- Top Metrics Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                <!-- Total Schools -->
+                <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm flex items-center">
+                    <div class="p-3 bg-blue-100 text-blue-600 rounded-lg">
+                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1v1H9V7zm5 0h1v1h-1V7zm-5 4h1v1H9v-1zm5 0h1v1h-1v-1zm-5 4h1v1H9v-1zm5 0h1v1h-1v-1z"/></svg>
+                    </div>
+                    <div class="ml-4">
+                        <h3 class="text-sm font-medium text-slate-500">Total Sekolah</h3>
+                        <p class="text-2xl font-bold text-slate-800" id="dash_total_schools">0</p>
+                    </div>
+                </div>
+                <!-- Selesai -->
+                <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm flex items-center">
+                    <div class="p-3 bg-green-100 text-green-600 rounded-lg">
+                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                    </div>
+                    <div class="ml-4">
+                        <h3 class="text-sm font-medium text-slate-500">Selesai (100%)</h3>
+                        <p class="text-2xl font-bold text-slate-800" id="dash_selesai">0</p>
+                    </div>
+                </div>
+                <!-- Proses -->
+                <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm flex items-center">
+                    <div class="p-3 bg-amber-100 text-amber-600 rounded-lg">
+                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                    </div>
+                    <div class="ml-4">
+                        <h3 class="text-sm font-medium text-slate-500">Sedang Proses</h3>
+                        <p class="text-2xl font-bold text-slate-800" id="dash_proses">0</p>
+                    </div>
+                </div>
+                <!-- Belum Mulai -->
+                <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm flex items-center">
+                    <div class="p-3 bg-red-100 text-red-600 rounded-lg">
+                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                    </div>
+                    <div class="ml-4">
+                        <h3 class="text-sm font-medium text-slate-500">Belum Mulai</h3>
+                        <p class="text-2xl font-bold text-slate-800" id="dash_belum">0</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Charts Row 1: Pie Charts for Roles -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+                <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm flex flex-col items-center">
+                    <h3 class="text-lg font-bold text-slate-700 mb-4 text-center w-full">Progres Pengawas</h3>
+                    <div class="w-full max-w-[200px] aspect-square relative">
+                        <canvas id="chartPS"></canvas>
+                    </div>
+                </div>
+                <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm flex flex-col items-center">
+                    <h3 class="text-lg font-bold text-slate-700 mb-4 text-center w-full">Progres Kepala Sekolah</h3>
+                    <div class="w-full max-w-[200px] aspect-square relative">
+                        <canvas id="chartKS"></canvas>
+                    </div>
+                </div>
+                <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm flex flex-col items-center">
+                    <h3 class="text-lg font-bold text-slate-700 mb-4 text-center w-full">Progres Guru</h3>
+                    <div class="w-full max-w-[200px] aspect-square relative">
+                        <canvas id="chartGuru"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Charts Row 2: Bar Chart for Jenjang -->
+            <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm mb-8">
+                <h3 class="text-lg font-bold text-slate-700 mb-4">Tingkat Penyelesaian Berdasarkan Jenjang</h3>
+                <div class="w-full h-64">
+                    <canvas id="chartJenjang"></canvas>
+                </div>
+            </div>
+        </div>
+
         <!-- MODE 1: PROGRESS SEKOLAH -->
-        <div id="viewMode1" class="fade-in">
+        <div id="viewMode1" class="hidden fade-in">
             <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
                 <div class="p-6 border-b border-slate-100 bg-slate-50/50 flex flex-col sm:flex-row gap-3 justify-between items-start sm:items-center">
                     <h2 class="text-lg font-bold text-slate-800">Monitoring Progress Sekolah</h2>
@@ -993,30 +1077,38 @@
             }
         }
 
-        let currentAdminMode = 'mode1';
+        let currentAdminMode = 'mode0';
         let currentMode2Tab = 'ps';
 
         function switchAdminView(mode) {
             currentAdminMode = mode;
+            const btn0 = document.getElementById('btnMode0');
             const btn1 = document.getElementById('btnMode1');
             const btn2 = document.getElementById('btnMode2');
+            const view0 = document.getElementById('viewMode0');
             const view1 = document.getElementById('viewMode1');
             const view2 = document.getElementById('viewMode2');
 
             const activeBtnClass = "flex items-center gap-3 px-3 py-2.5 rounded-lg font-medium bg-indigo-50 text-indigo-700 transition-colors w-full text-left";
             const inactiveBtnClass = "flex items-center gap-3 px-3 py-2.5 rounded-lg font-medium text-slate-600 hover:bg-slate-50 transition-colors w-full text-left";
 
+            if (btn0) btn0.className = mode === 'mode0' ? activeBtnClass : inactiveBtnClass;
             btn1.className = mode === 'mode1' ? activeBtnClass : inactiveBtnClass;
             btn2.className = mode === 'mode2' ? activeBtnClass : inactiveBtnClass;
 
             const pageTitle = document.getElementById('adminPageTitle');
-            if (mode === 'mode1') {
+            if (view0) view0.classList.add('hidden');
+            view1.classList.add('hidden');
+            view2.classList.add('hidden');
+
+            if (mode === 'mode0') {
+                pageTitle.innerText = "Dashboard Utama";
+                if (view0) view0.classList.remove('hidden');
+            } else if (mode === 'mode1') {
                 pageTitle.innerText = "Progress Sekolah";
                 view1.classList.remove('hidden');
-                view2.classList.add('hidden');
             } else if (mode === 'mode2') {
                 pageTitle.innerText = "Rencana Pengkelasan Pusat";
-                view1.classList.add('hidden');
                 view2.classList.remove('hidden');
             }
             renderAdminData();
@@ -1068,11 +1160,174 @@
         ];
 
         function renderAdminData() {
-            if (currentAdminMode === 'mode1') {
+            if (currentAdminMode === 'mode0') {
+                renderDashboard();
+            } else if (currentAdminMode === 'mode1') {
                 renderMode1();
             } else {
                 renderMode2();
             }
+        }
+
+        let dashCharts = {};
+
+        function renderDashboard() {
+            const schoolsToRender = TARGET_SCHOOLS.length > 0 ? TARGET_SCHOOLS : Object.keys(adminDataMaster);
+            
+            let total = schoolsToRender.length;
+            let selesai = 0;
+            let proses = 0;
+            let belum = 0;
+
+            let ksHadir = 0, ksWakil = 0, ksBelum = 0;
+            let psHadir = 0, psWakil = 0, psBelum = 0;
+            let guruLengkap = 0, guruKurang = 0, guruBelum = 0;
+
+            let jenjangData = { 'PAUD': 0, 'SD': 0, 'SMP': 0, 'SMA': 0, 'SMK': 0 };
+            let jenjangTotal = { 'PAUD': 0, 'SD': 0, 'SMP': 0, 'SMA': 0, 'SMK': 0 };
+
+            schoolsToRender.forEach(npsn => {
+                const konf = adminDataKonfirmasi[npsn] || {};
+                const master = adminDataMaster[npsn] || {};
+                const keys = Object.keys(master);
+
+                let j = '';
+                for (let k of keys) {
+                    let jj = master[k].jenjang || master[k]['Jenjang'];
+                    if (jj) {
+                        j = jj.toString().toUpperCase();
+                        break;
+                    }
+                }
+                
+                let isSelesai = false;
+                let hasData = false;
+
+                // Cek KS
+                if (konf.kepala_sekolah) {
+                    hasData = true;
+                    if (konf.kepala_sekolah.status_data === 'Berubah') ksWakil++;
+                    else ksHadir++;
+                } else {
+                    ksBelum++;
+                }
+
+                // Cek PS
+                if (konf.ps_delegasi) {
+                    hasData = true;
+                    if (konf.ps_delegasi.status_data === 'Berubah') psWakil++;
+                    else psHadir++;
+                } else {
+                    psBelum++;
+                }
+
+                // Cek Guru
+                const numGuru = konf.guru_terpilih ? Object.keys(konf.guru_terpilih).filter(k=>k!=='timestamp').length : 0;
+                if (numGuru >= 2) guruLengkap++;
+                else if (numGuru > 0) guruKurang++;
+                else guruBelum++;
+
+                if (numGuru > 0) hasData = true;
+
+                if (konf.kepala_sekolah && konf.ps_delegasi && numGuru >= 2) {
+                    isSelesai = true;
+                    selesai++;
+                } else if (hasData) {
+                    proses++;
+                } else {
+                    belum++;
+                }
+
+                // Bar Chart Data
+                for (let level in jenjangTotal) {
+                    if (j.includes(level)) {
+                        jenjangTotal[level]++;
+                        if (isSelesai) jenjangData[level]++;
+                    }
+                }
+            });
+
+            document.getElementById('dash_total_schools').innerText = total;
+            document.getElementById('dash_selesai').innerText = selesai;
+            document.getElementById('dash_proses').innerText = proses;
+            document.getElementById('dash_belum').innerText = belum;
+
+            // Destroy existing charts to prevent memory leaks / overlay issues
+            if (dashCharts.ps) dashCharts.ps.destroy();
+            if (dashCharts.ks) dashCharts.ks.destroy();
+            if (dashCharts.guru) dashCharts.guru.destroy();
+            if (dashCharts.jenjang) dashCharts.jenjang.destroy();
+
+            const chartConfig = {
+                type: 'doughnut',
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'bottom' }
+                    }
+                }
+            };
+
+            dashCharts.ps = new Chart(document.getElementById('chartPS'), {
+                ...chartConfig,
+                data: {
+                    labels: ['Hadir', 'Diwakilkan', 'Belum Mengisi'],
+                    datasets: [{
+                        data: [psHadir, psWakil, psBelum],
+                        backgroundColor: ['#22c55e', '#f59e0b', '#cbd5e1']
+                    }]
+                }
+            });
+
+            dashCharts.ks = new Chart(document.getElementById('chartKS'), {
+                ...chartConfig,
+                data: {
+                    labels: ['Hadir', 'Diwakilkan', 'Belum Mengisi'],
+                    datasets: [{
+                        data: [ksHadir, ksWakil, ksBelum],
+                        backgroundColor: ['#22c55e', '#f59e0b', '#cbd5e1']
+                    }]
+                }
+            });
+
+            dashCharts.guru = new Chart(document.getElementById('chartGuru'), {
+                ...chartConfig,
+                data: {
+                    labels: ['Lengkap (2)', 'Kurang (1)', 'Belum Mengisi'],
+                    datasets: [{
+                        data: [guruLengkap, guruKurang, guruBelum],
+                        backgroundColor: ['#22c55e', '#f59e0b', '#cbd5e1']
+                    }]
+                }
+            });
+
+            // Jenjang Bar Chart (Percentage completion)
+            const jenjangLabels = Object.keys(jenjangTotal);
+            const jenjangPercentages = jenjangLabels.map(l => jenjangTotal[l] === 0 ? 0 : Math.round((jenjangData[l] / jenjangTotal[l]) * 100));
+
+            dashCharts.jenjang = new Chart(document.getElementById('chartJenjang'), {
+                type: 'bar',
+                data: {
+                    labels: jenjangLabels,
+                    datasets: [{
+                        label: 'Persentase Selesai (%)',
+                        data: jenjangPercentages,
+                        backgroundColor: '#4f46e5',
+                        borderRadius: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: { beginAtZero: true, max: 100 }
+                    },
+                    plugins: {
+                        legend: { display: false }
+                    }
+                }
+            });
         }
 
         function renderMode1() {
