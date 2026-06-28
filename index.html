@@ -1494,14 +1494,24 @@
 
                     // Process Guru
                     if (schoolKonf.guru_terpilih) {
-                        const listGuru = Object.values(schoolKonf.guru_terpilih);
-                        listGuru.forEach(g => {
+                        const listGuruKeys = Object.keys(schoolKonf.guru_terpilih).filter(k => k !== 'timestamp');
+                        listGuruKeys.forEach(gKey => {
+                            const g = schoolKonf.guru_terpilih[gKey];
+                            let asalSekolah = '-';
+                            if (schoolMaster[gKey] && schoolMaster[gKey].asal_sekolah) {
+                                asalSekolah = schoolMaster[gKey].asal_sekolah;
+                            } else if (schoolMaster) {
+                                // Fallback: cari asal_sekolah dari entitas lain di sekolah yang sama
+                                const anyKey = Object.keys(schoolMaster).find(k => schoolMaster[k].asal_sekolah);
+                                if (anyKey) asalSekolah = schoolMaster[anyKey].asal_sekolah;
+                            }
+
                             publicDataGuru.push({
                                 nama: g.nama,
                                 jabatan: 'Guru',
                                 mapel: g.mapel_pilihan || '-',
                                 npsn: npsn,
-                                sekolah: g.asal_sekolah || '-'
+                                sekolah: asalSekolah
                             });
                         });
                     }
