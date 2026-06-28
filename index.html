@@ -273,7 +273,7 @@
     </div>
 
     <!-- MODAL -->
-    <div id="modalOverlay" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
+    <div id="modalOverlay" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-[60] hidden items-center justify-center p-4">
         <div id="modalContent" class="bg-white rounded-2xl shadow-2xl w-full max-w-xl max-h-[90vh] overflow-y-auto transform scale-95 opacity-0 transition-all duration-300">
             <!-- Modal Header -->
             <div class="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50 rounded-t-2xl">
@@ -1059,7 +1059,7 @@
                     <tr class="hover:bg-slate-50">
                         <td class="px-6 py-4 text-center">${displayIndex++}</td>
                         <td class="px-6 py-4">
-                            <div class="font-medium text-slate-800">${schoolName} <span class="ml-1 text-xs px-2 py-0.5 bg-slate-100 text-slate-500 rounded">${jenjang}</span></div>
+                            <div class="font-medium text-indigo-600 cursor-pointer hover:underline" onclick="showSchoolDetailAdmin('${npsn}')">${schoolName} <span class="ml-1 text-xs px-2 py-0.5 bg-slate-100 text-slate-500 rounded no-underline">${jenjang}</span></div>
                             <div class="text-xs text-slate-400">NPSN: ${npsn}</div>
                         </td>
                         <td class="px-6 py-4 text-center">
@@ -1073,6 +1073,121 @@
             
             if (html === '') html = '<tr><td colspan="4" class="px-6 py-8 text-center text-slate-500">Tidak ada data untuk jenjang ini.</td></tr>';
             tbody.innerHTML = html;
+        }
+
+        function showSchoolDetailAdmin(npsn) {
+            const konfirmasi = adminDataKonfirmasi[npsn] || {};
+            const master = adminDataMaster[npsn] || {};
+            
+            // Find school name
+            let schoolName = `Sekolah (${npsn})`;
+            const keys = Object.keys(master);
+            if (keys.length > 0) {
+                schoolName = master[keys[0]].asal_sekolah || master[keys[0]]['Satuan Pendidikan'] || schoolName;
+            }
+
+            document.getElementById('adminDetailTitle').innerText = schoolName;
+
+            // Get PS
+            const psKey = keys.find(k => master[k].jenis_ptk && (master[k].jenis_ptk.toLowerCase() === 'ps' || master[k].jenis_ptk.toLowerCase().includes('pengawas')));
+            let psDisplay = '<span class="text-slate-400 italic">Belum dikonfirmasi</span>';
+            if (konfirmasi.ps_delegasi && konfirmasi.ps_delegasi.status_data === 'Berubah') {
+                psDisplay = `<span class="text-amber-600 font-semibold">${konfirmasi.ps_delegasi.nama_pengganti} <span class="text-xs bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded ml-1">Pengganti</span></span>`;
+            } else if (psKey && konfirmasi.ps_delegasi) {
+                psDisplay = `<span class="text-emerald-600 font-semibold">${master[psKey].nama}</span>`;
+            }
+
+            // Get KS
+            const ksKey = keys.find(k => master[k].jenis_ptk && (master[k].jenis_ptk.toLowerCase().includes('kepala') || master[k].jenis_ptk.toLowerCase().includes('kepsek') || master[k].jenis_ptk.toLowerCase() === 'ks'));
+            let ksDisplay = '<span class="text-slate-400 italic">Belum dikonfirmasi</span>';
+            if (konfirmasi.kepala_sekolah && konfirmasi.kepala_sekolah.status_data === 'Berubah') {
+                ksDisplay = `<span class="text-amber-600 font-semibold">${konfirmasi.kepala_sekolah.nama_pengganti} <span class="text-xs bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded ml-1">Pengganti</span></span>`;
+            } else if (konfirmasi.kepala_sekolah && konfirmasi.kepala_sekolah.status_data === 'Sama' && ksKey) {
+                ksDisplay = `<span class="text-emerald-600 font-semibold">${master[ksKey].nama}</span>`;
+            }
+
+            // Get Guru
+            let guruDisplay = '';
+            if (konfirmasi.guru_terpilih) {
+                const listGuruKeys = Object.keys(konfirmasi.guru_terpilih).filter(k => k !== 'timestamp');
+                if (listGuruKeys.length > 0) {
+                    guruDisplay = '<ul class="list-disc pl-4 text-sm mt-1">';
+                    listGuruKeys.forEach(gKey => {
+                        const g = konfirmasi.guru_terpilih[gKey];
+                        guruDisplay += `<li><span class="font-semibold text-slate-800">${g.nama}</span> <span class="text-xs text-indigo-600 font-medium ml-1">(${g.mapel_pilihan})</span></li>`;
+                    });
+                    guruDisplay += '</ul>';
+                } else {
+                    guruDisplay = '<span class="text-slate-400 italic">Belum memilih guru</span>';
+                }
+            } else {
+                guruDisplay = '<span class="text-slate-400 italic">Belum memilih guru</span>';
+            }
+
+            let contentHtml = `
+                <div class="space-y-4">
+                    <!-- KS -->
+                    <div class="bg-white p-4 border border-slate-200 rounded-xl">
+                        <div class="flex justify-between items-start mb-2">
+                            <h4 class="font-bold text-slate-700">Kepala Sekolah</h4>
+                            <button onclick="adminOpenForm('${npsn}', 'ks')" class="text-xs bg-indigo-50 text-indigo-600 px-3 py-1.5 rounded-lg font-medium hover:bg-indigo-100 transition-colors">Pilih KS</button>
+                        </div>
+                        <div class="text-sm">${ksDisplay}</div>
+                    </div>
+
+                    <!-- Guru -->
+                    <div class="bg-white p-4 border border-slate-200 rounded-xl">
+                        <div class="flex justify-between items-start mb-2">
+                            <h4 class="font-bold text-slate-700">Guru Peserta (Maks. 2)</h4>
+                            <button onclick="adminOpenForm('${npsn}', 'guru')" class="text-xs bg-indigo-50 text-indigo-600 px-3 py-1.5 rounded-lg font-medium hover:bg-indigo-100 transition-colors">Pilih Guru</button>
+                        </div>
+                        <div class="text-sm">${guruDisplay}</div>
+                    </div>
+                    
+                    <!-- PS -->
+                    <div class="bg-white p-4 border border-slate-200 rounded-xl">
+                        <div class="flex justify-between items-start mb-2">
+                            <h4 class="font-bold text-slate-700">Pengawas</h4>
+                            <button onclick="adminOpenForm('${npsn}', 'ps')" class="text-xs bg-indigo-50 text-indigo-600 px-3 py-1.5 rounded-lg font-medium hover:bg-indigo-100 transition-colors">Pilih Pengawas</button>
+                        </div>
+                        <div class="text-sm">${psDisplay}</div>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('adminDetailContent').innerHTML = contentHtml;
+            document.getElementById('adminDetailModal').classList.remove('hidden');
+            document.getElementById('adminDetailModal').classList.add('flex');
+        }
+
+        async function adminOpenForm(npsn, role) {
+            document.getElementById('adminDetailModal').classList.add('hidden');
+            document.getElementById('adminDetailModal').classList.remove('flex');
+            
+            // Set required globals
+            currentNpsn = npsn;
+            
+            // Check if we need to fetch master data and mapel
+            if (!adminDataMaster[npsn]) {
+                const snapshot = await db.ref(`master_guru/${npsn}`).once('value');
+                fetchedTeachers = snapshot.val();
+            } else {
+                fetchedTeachers = adminDataMaster[npsn];
+            }
+            
+            const mapelSnap = await db.ref(`kebutuhan_mapel/${npsn}`).once('value');
+            kebutuhanMapelData = mapelSnap.val();
+
+            // Open the public form modal
+            openModal(role);
+            
+            // Pre-fill NPSN
+            document.getElementById('inputNpsn').value = npsn;
+            
+            // Skip NPSN step visually
+            document.getElementById('stepInputNpsn').classList.add('hidden');
+            
+            setupForm();
         }
 
         function resetData(npsn) {
@@ -1632,5 +1747,23 @@
             renderPublicTable();
         }
     </script>
+    <!-- ADMIN DETAIL MODAL -->
+    <div id="adminDetailModal" class="hidden fixed inset-0 z-[60] bg-slate-900/40 backdrop-blur-sm items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-xl w-full max-w-lg overflow-hidden fade-in relative flex flex-col max-h-[90vh]">
+            <div class="px-6 py-5 border-b border-slate-100 flex justify-between items-center bg-white sticky top-0 z-10">
+                <h3 class="text-xl font-bold text-slate-800" id="adminDetailTitle">Detail Sekolah</h3>
+                <button onclick="document.getElementById('adminDetailModal').classList.add('hidden')" class="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-50 rounded-full transition-colors">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                </button>
+            </div>
+            <div class="p-6 overflow-y-auto" id="adminDetailContent">
+                <!-- Content will be injected here by showSchoolDetailAdmin() -->
+            </div>
+            <div class="px-6 py-4 bg-slate-50 border-t border-slate-100 flex justify-end">
+                <button onclick="document.getElementById('adminDetailModal').classList.add('hidden')" class="px-5 py-2.5 font-medium text-slate-600 hover:bg-slate-200 bg-slate-100 rounded-xl transition-colors">Tutup</button>
+            </div>
+        </div>
+    </div>
+
 </body>
 </html>
