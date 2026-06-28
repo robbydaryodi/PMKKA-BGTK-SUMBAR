@@ -210,15 +210,16 @@
                         <option value="SMK">SMK</option>
                     </select>
                 </div>
+                <!-- Mode 1 Tabs -->
+                <div class="flex space-x-2 border-b border-slate-200 px-6 pt-4 pb-0 overflow-x-auto">
+                    <button onclick="switchTabMode1('ps')" id="tab_mode1_ps" class="tab-btn-mode1 active px-4 py-2 border-b-2 font-medium text-sm border-indigo-600 text-indigo-600 whitespace-nowrap">Progress Pengawas</button>
+                    <button onclick="switchTabMode1('ks')" id="tab_mode1_ks" class="tab-btn-mode1 px-4 py-2 border-b-2 font-medium text-sm border-transparent text-slate-500 hover:text-slate-700 whitespace-nowrap">Progress Kepala Sekolah</button>
+                    <button onclick="switchTabMode1('guru')" id="tab_mode1_guru" class="tab-btn-mode1 px-4 py-2 border-b-2 font-medium text-sm border-transparent text-slate-500 hover:text-slate-700 whitespace-nowrap">Progress Guru</button>
+                </div>
                 <div class="overflow-x-auto">
                     <table class="w-full min-w-[600px] text-left text-sm whitespace-nowrap">
-                        <thead class="bg-slate-50 text-slate-500">
-                            <tr>
-                                <th class="px-6 py-4 font-medium w-16 text-center">No</th>
-                                <th class="px-6 py-4 font-medium">NPSN / Nama Sekolah</th>
-                                <th class="px-6 py-4 font-medium text-center">Status</th>
-                                <th class="px-6 py-4 font-medium">Keterangan Kuota</th>
-                            </tr>
+                        <thead id="theadMode1" class="bg-slate-50 text-slate-500">
+                            <!-- Headers populated by JS -->
                         </thead>
                         <tbody id="tableMode1" class="divide-y divide-slate-100">
                             <tr><td colspan="4" class="px-6 py-8 text-center"><div class="spinner mx-auto mb-2"></div>Memuat data...</td></tr>
@@ -318,13 +319,33 @@
                     <div id="ksDelegasiForm" class="hidden mt-4 space-y-4 bg-slate-50 p-4 rounded-lg border border-slate-200">
                         <div>
                             <label class="block text-sm font-medium text-slate-700 mb-1">Pilih Guru Pengganti</label>
-                            <select id="ksSelectGuru" class="w-full border-slate-300 rounded-lg shadow-sm focus:ring-primary focus:border-primary px-4 py-2 border">
+                            <select id="ksSelectGuru" onchange="handleKsSelectChange()" class="w-full border-slate-300 rounded-lg shadow-sm focus:ring-primary focus:border-primary px-4 py-2 border">
                                 <!-- Options populated by JS -->
                             </select>
                         </div>
-                        <div>
+                        <div id="ksInternalEmailDiv">
                             <label class="block text-sm font-medium text-slate-700 mb-1">Email belajar.id Pengganti</label>
                             <input type="email" id="ksEmailGuru" class="w-full border-slate-300 rounded-lg shadow-sm focus:ring-primary focus:border-primary px-4 py-2 border" placeholder="nama@guru.sma.belajar.id">
+                        </div>
+                        
+                        <!-- Manual Inputs for External Replacement -->
+                        <div id="ksLuarSekolahForm" class="hidden space-y-4 pt-2 border-t border-slate-200">
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 mb-1">Nama Lengkap Pengganti</label>
+                                <input type="text" id="ksGantiNama" class="w-full border-slate-300 rounded-lg shadow-sm focus:ring-primary focus:border-primary px-4 py-2 border" placeholder="Nama Lengkap">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 mb-1">NIK Pengganti</label>
+                                <input type="number" id="ksGantiNik" class="w-full border-slate-300 rounded-lg shadow-sm focus:ring-primary focus:border-primary px-4 py-2 border" placeholder="Contoh: 137xxxxxxxxxxx">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 mb-1">No HP Pengganti</label>
+                                <input type="number" id="ksGantiHp" class="w-full border-slate-300 rounded-lg shadow-sm focus:ring-primary focus:border-primary px-4 py-2 border" placeholder="Contoh: 0812xxxxxx">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 mb-1">Email Pengganti</label>
+                                <input type="email" id="ksGantiEmailLuar" class="w-full border-slate-300 rounded-lg shadow-sm focus:ring-primary focus:border-primary px-4 py-2 border" placeholder="nama@email.com">
+                            </div>
                         </div>
                     </div>
 
@@ -572,7 +593,12 @@
                         select.innerHTML += `<option value="${k}">${fetchedTeachers[k].nama}</option>`;
                     }
                 });
+                select.innerHTML += '<option value="Luar Sekolah" class="font-semibold text-indigo-600">-- Guru / Pihak Luar Sekolah --</option>';
 
+                // Reset manual form visibility
+                document.getElementById('ksLuarSekolahForm').classList.add('hidden');
+                document.getElementById('ksInternalEmailDiv').classList.remove('hidden');
+                
                 document.getElementById('stepFormKS').classList.remove('hidden');
             } 
             else if (currentRole === 'ps') {
@@ -657,9 +683,20 @@
             }
         }
 
+        function handleKsSelectChange() {
+            const val = document.getElementById('ksSelectGuru').value;
+            if (val === 'Luar Sekolah') {
+                document.getElementById('ksLuarSekolahForm').classList.remove('hidden');
+                document.getElementById('ksInternalEmailDiv').classList.add('hidden');
+            } else {
+                document.getElementById('ksLuarSekolahForm').classList.add('hidden');
+                document.getElementById('ksInternalEmailDiv').classList.remove('hidden');
+            }
+        }
+
         async function submitKS() {
             const statusRadios = document.getElementsByName('ks_status');
-            let selectedStatus = null;
+            let selectedStatus = '';
             for (let r of statusRadios) {
                 if (r.checked) selectedStatus = r.value;
             }
@@ -673,18 +710,38 @@
 
             if (selectedStatus === 'Berubah') {
                 const delegateKey = document.getElementById('ksSelectGuru').value;
-                const delegateEmail = document.getElementById('ksEmailGuru').value.trim();
+                if (!delegateKey) return alert("Silakan pilih guru/pihak pengganti.");
                 
-                if (!delegateKey || !delegateEmail) {
-                    return alert("Silakan pilih guru pengganti dan isi email belajar.id");
+                if (delegateKey === 'Luar Sekolah') {
+                    const nama = document.getElementById('ksGantiNama').value.trim();
+                    const nik = document.getElementById('ksGantiNik').value.trim();
+                    const hp = document.getElementById('ksGantiHp').value.trim();
+                    const email = document.getElementById('ksGantiEmailLuar').value.trim();
+                    
+                    if(!nama || !nik || !hp || !email) {
+                        return alert("Lengkapi semua data pengganti KS (Nama, NIK, No HP, Email)!");
+                    }
+                    if (!email.includes('belajar.id') && !confirm("Email tidak mengandung 'belajar.id'. Yakin ingin melanjutkan?")) return;
+                    
+                    dataToSave.nama_pengganti = nama;
+                    dataToSave.nik_pengganti = nik;
+                    dataToSave.hp_pengganti = hp;
+                    dataToSave.email_pengganti = email;
+                    dataToSave.id_pengganti = "LUAR_SEKOLAH";
+                } else {
+                    const delegateEmail = document.getElementById('ksEmailGuru').value.trim();
+                    
+                    if (!delegateEmail) {
+                        return alert("Silakan isi email belajar.id pengganti");
+                    }
+                    if (!delegateEmail.includes('belajar.id')) {
+                        if(!confirm("Email tidak mengandung 'belajar.id'. Yakin ingin melanjutkan?")) return;
+                    }
+                    
+                    dataToSave.nama_pengganti = fetchedTeachers[delegateKey].nama;
+                    dataToSave.email_pengganti = delegateEmail;
+                    dataToSave.id_pengganti = delegateKey;
                 }
-                if (!delegateEmail.includes('belajar.id')) {
-                    if(!confirm("Email tidak mengandung 'belajar.id'. Yakin ingin melanjutkan?")) return;
-                }
-                
-                dataToSave.nama_pengganti = fetchedTeachers[delegateKey].nama;
-                dataToSave.email_pengganti = delegateEmail;
-                dataToSave.id_pengganti = delegateKey;
             }
 
             const btn = document.getElementById('btnSubmitKS');
@@ -964,6 +1021,21 @@
             }
             renderAdminData();
         }
+        let currentMode1Tab = 'ps';
+
+        function switchTabMode1(tabId) {
+            currentMode1Tab = tabId;
+            const tabs = ['ps', 'ks', 'guru'];
+            tabs.forEach(t => {
+                const el = document.getElementById('tab_mode1_' + t);
+                if (t === tabId) {
+                    el.className = "tab-btn-mode1 active px-4 py-2 border-b-2 font-medium text-sm border-indigo-600 text-indigo-600 whitespace-nowrap";
+                } else {
+                    el.className = "tab-btn-mode1 px-4 py-2 border-b-2 font-medium text-sm border-transparent text-slate-500 hover:text-slate-700 whitespace-nowrap";
+                }
+            });
+            renderMode1();
+        }
 
         function switchTabMode2(tabId) {
             currentMode2Tab = tabId;
@@ -1004,10 +1076,27 @@
         }
 
         function renderMode1() {
+            const thead = document.getElementById('theadMode1');
             const tbody = document.getElementById('tableMode1');
             const filterVal = document.getElementById('filterJenjang') ? document.getElementById('filterJenjang').value : 'ALL';
             let html = '';
             
+            let theadHtml = `
+                <tr>
+                    <th class="px-6 py-4 font-medium w-16 text-center">No</th>
+                    <th class="px-6 py-4 font-medium">NPSN / Nama Sekolah</th>
+            `;
+
+            if (currentMode1Tab === 'ps') {
+                theadHtml += `<th class="px-6 py-4 font-medium text-center">Status Pengawas</th><th class="px-6 py-4 font-medium">Nama Pengawas</th>`;
+            } else if (currentMode1Tab === 'ks') {
+                theadHtml += `<th class="px-6 py-4 font-medium text-center">Status KS</th><th class="px-6 py-4 font-medium">Nama Kepala Sekolah</th>`;
+            } else {
+                theadHtml += `<th class="px-6 py-4 font-medium text-center">Status Guru</th><th class="px-6 py-4 font-medium">Keterangan Kuota</th>`;
+            }
+            theadHtml += `</tr>`;
+            thead.innerHTML = theadHtml;
+
             const schoolsToRender = TARGET_SCHOOLS.length > 0 ? TARGET_SCHOOLS : Object.keys(adminDataMaster);
             let displayIndex = 1;
             
@@ -1038,23 +1127,58 @@
                 }
 
                 const konfirmasi = adminDataKonfirmasi[npsn] || {};
-                const hasKS = konfirmasi.kepala_sekolah ? true : false;
-                const numGuru = konfirmasi.guru_terpilih ? Object.keys(konfirmasi.guru_terpilih).filter(k=>k!=='timestamp').length : 0;
-                
+                const master = adminDataMaster[npsn] || {};
+                const keys = Object.keys(master);
+
                 let statusBadge = '';
-                if (hasKS && numGuru >= 2) {
-                    statusBadge = `<span class="px-2 py-1 bg-green-100 text-green-700 rounded-full text-xs font-semibold">Selesai</span>`;
-                } else if (hasKS || numGuru > 0) {
-                    statusBadge = `<span class="px-2 py-1 bg-amber-100 text-amber-700 rounded-full text-xs font-semibold">Belum Lengkap</span>`;
+                let extraCol = '';
+
+                if (currentMode1Tab === 'ps') {
+                    const psKey = keys.find(k => master[k].jenis_ptk && (master[k].jenis_ptk.toLowerCase() === 'ps' || master[k].jenis_ptk.toLowerCase().includes('pengawas')));
+                    const psData = konfirmasi.ps_delegasi;
+                    
+                    if (psData) {
+                        if (psData.status_data === 'Berubah') {
+                            statusBadge = `<span class="px-2 py-1 bg-amber-100 text-amber-700 rounded-full text-xs font-semibold">Diwakilkan</span>`;
+                            extraCol = `<span class="font-medium text-slate-800">${psData.nama_pengganti}</span> <span class="text-xs bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded ml-1">Pengganti</span>`;
+                        } else {
+                            statusBadge = `<span class="px-2 py-1 bg-green-100 text-green-700 rounded-full text-xs font-semibold">Hadir</span>`;
+                            extraCol = `<span class="font-medium text-slate-800">${psKey ? master[psKey].nama : 'Ada di Data'}</span>`;
+                        }
+                    } else {
+                        statusBadge = `<span class="px-2 py-1 bg-slate-100 text-slate-500 rounded-full text-xs font-semibold">Belum Mengisi</span>`;
+                        extraCol = `<span class="text-slate-400 italic">Belum dikonfirmasi</span>`;
+                    }
+                } else if (currentMode1Tab === 'ks') {
+                    const ksKey = keys.find(k => master[k].jenis_ptk && (master[k].jenis_ptk.toLowerCase().includes('kepala') || master[k].jenis_ptk.toLowerCase().includes('kepsek') || master[k].jenis_ptk.toLowerCase() === 'ks'));
+                    const ksData = konfirmasi.kepala_sekolah;
+                    
+                    if (ksData) {
+                        if (ksData.status_data === 'Berubah') {
+                            statusBadge = `<span class="px-2 py-1 bg-amber-100 text-amber-700 rounded-full text-xs font-semibold">Diwakilkan</span>`;
+                            extraCol = `<span class="font-medium text-slate-800">${ksData.nama_pengganti}</span> <span class="text-xs bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded ml-1">Pengganti</span>`;
+                        } else {
+                            statusBadge = `<span class="px-2 py-1 bg-green-100 text-green-700 rounded-full text-xs font-semibold">Hadir</span>`;
+                            extraCol = `<span class="font-medium text-slate-800">${ksKey ? master[ksKey].nama : 'Ada di Data'}</span>`;
+                        }
+                    } else {
+                        statusBadge = `<span class="px-2 py-1 bg-slate-100 text-slate-500 rounded-full text-xs font-semibold">Belum Mengisi</span>`;
+                        extraCol = `<span class="text-slate-400 italic">Belum dikonfirmasi</span>`;
+                    }
                 } else {
-                    statusBadge = `<span class="px-2 py-1 bg-red-100 text-red-700 rounded-full text-xs font-semibold">Belum Mengisi</span>`;
-                }
-                
-                let keterangan = `Lengkap (3/3)`;
-                if (!hasKS || numGuru < 2) {
-                    keterangan = `KS: ${hasKS ? 1 : 0}/1, Guru: ${numGuru}/2`;
+                    const numGuru = konfirmasi.guru_terpilih ? Object.keys(konfirmasi.guru_terpilih).filter(k=>k!=='timestamp').length : 0;
+                    if (numGuru >= 2) {
+                        statusBadge = `<span class="px-2 py-1 bg-green-100 text-green-700 rounded-full text-xs font-semibold">Selesai</span>`;
+                    } else if (numGuru > 0) {
+                        statusBadge = `<span class="px-2 py-1 bg-amber-100 text-amber-700 rounded-full text-xs font-semibold">Belum Lengkap</span>`;
+                    } else {
+                        statusBadge = `<span class="px-2 py-1 bg-red-100 text-red-700 rounded-full text-xs font-semibold">Belum Mengisi</span>`;
+                    }
+                    extraCol = `Guru: ${numGuru}/2`;
                 }
 
+                const hasData = (konfirmasi.kepala_sekolah || konfirmasi.ps_delegasi || konfirmasi.guru_terpilih);
+                
                 html += `
                     <tr class="hover:bg-slate-50">
                         <td class="px-6 py-4 text-center">${displayIndex++}</td>
@@ -1064,9 +1188,9 @@
                         </td>
                         <td class="px-6 py-4 text-center">
                             ${statusBadge}
-                            ${(hasKS || numGuru > 0) ? `<button onclick="resetData('${npsn}')" class="ml-2 px-2 py-1 bg-red-100 text-red-600 hover:bg-red-200 hover:text-red-700 rounded text-xs font-semibold transition-colors" title="Batal/Reset Data">Reset</button>` : ''}
+                            ${hasData ? `<button onclick="resetData('${npsn}')" class="ml-2 px-2 py-1 bg-red-100 text-red-600 hover:bg-red-200 hover:text-red-700 rounded text-xs font-semibold transition-colors" title="Batal/Reset Data">Reset</button>` : ''}
                         </td>
-                        <td class="px-6 py-4 text-slate-600 text-xs font-medium">${keterangan}</td>
+                        <td class="px-6 py-4 text-slate-600 text-xs font-medium">${extraCol}</td>
                     </tr>
                 `;
             });
