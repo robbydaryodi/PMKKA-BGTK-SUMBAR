@@ -1464,20 +1464,30 @@
                         const person = schoolMaster[uid];
                         
                         if (person.jenis_ptk === 'PS') {
+                            let nama = person.nama;
+                            let status = 'Hadir';
+                            let statusClass = 'bg-emerald-100 text-emerald-700 border border-emerald-200';
+
+                            if (schoolKonf.ps_delegasi && schoolKonf.ps_delegasi.status_data === 'Berubah') {
+                                nama = schoolKonf.ps_delegasi.nama_pengganti || nama;
+                                status = 'Diwakilkan';
+                                statusClass = 'bg-amber-100 text-amber-700 border border-amber-200';
+                            }
+
                             publicDataPS.push({
-                                nama: person.nama,
+                                nama: nama,
                                 jabatan: 'Pengawas',
                                 npsn: npsn,
                                 sekolah: person.asal_sekolah || '-',
-                                status: 'Default'
+                                status: `<span class="px-2.5 py-1 rounded-full text-xs font-bold ${statusClass}">${status}</span>`
                             });
                         } else if (person.jenis_ptk === 'KS') {
                             let nama = person.nama;
                             let status = 'Hadir';
                             let statusClass = 'bg-emerald-100 text-emerald-700 border border-emerald-200';
 
-                            if (schoolKonf.ks_delegasi && schoolKonf.ks_delegasi.nama) {
-                                nama = schoolKonf.ks_delegasi.nama;
+                            if (schoolKonf.kepala_sekolah && schoolKonf.kepala_sekolah.status_data === 'Berubah') {
+                                nama = schoolKonf.kepala_sekolah.nama_pengganti || nama;
                                 status = 'Diwakilkan';
                                 statusClass = 'bg-amber-100 text-amber-700 border border-amber-200';
                             }
