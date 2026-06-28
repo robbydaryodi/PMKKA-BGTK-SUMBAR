@@ -80,12 +80,13 @@
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
             <!-- Card Pengawas -->
-            <div onclick="alert('Data Pengawas Terkunci (Default Sistem)')" class="glass-card rounded-2xl p-8 cursor-pointer transform hover:-translate-y-2 hover:shadow-2xl transition-all duration-300 text-center group">
-                <div class="w-16 h-16 mx-auto bg-slate-100 text-slate-600 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-primary group-hover:text-white transition-colors">
+            <div onclick="openModal('ps')" class="glass-card rounded-2xl p-8 cursor-pointer transform hover:-translate-y-2 hover:shadow-2xl transition-all duration-300 text-center group border-2 border-transparent hover:border-amber-100 relative overflow-hidden">
+                <div class="absolute top-0 right-0 w-32 h-32 bg-amber-500/10 rounded-full blur-3xl -mr-16 -mt-16"></div>
+                <div class="w-16 h-16 mx-auto bg-amber-50 text-amber-600 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-primary group-hover:text-white transition-colors">
                     <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
                 </div>
                 <h3 class="text-xl font-bold text-slate-900 mb-2">Pengawas</h3>
-                <p class="text-slate-500 text-sm">Akses untuk Pengawas Sekolah.</p>
+                <p class="text-slate-500 text-sm">Konfirmasi kehadiran atau delegasi tugas.</p>
             </div>
 
             <!-- Card Kepala Sekolah -->
@@ -382,6 +383,47 @@
                     <button onclick="submitKS()" id="btnSubmitKS" class="w-full mt-6 bg-green-600 hover:bg-green-700 text-white px-4 py-3 rounded-lg font-bold transition-colors shadow-lg shadow-green-600/30">Simpan Konfirmasi KS</button>
                 </div>
 
+                <!-- Step 2b: Form PS -->
+                <div id="stepFormPS" class="hidden fade-in mt-6 pt-6 border-t border-slate-100">
+                    <div class="mb-4 bg-amber-50 text-amber-800 p-4 rounded-lg">
+                        <p class="font-semibold" id="psSchoolName"></p>
+                        <p class="text-sm">Pengawas Default: <span id="psName" class="font-bold"></span></p>
+                    </div>
+                    <label class="block text-sm font-medium text-slate-700 mb-3">Konfirmasi Kehadiran Pengawas</label>
+                    <div class="space-y-3">
+                        <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-slate-50 transition-colors">
+                            <input type="radio" name="ps_status" value="Sesuai" class="w-4 h-4 text-primary focus:ring-primary border-gray-300" onchange="togglePsDelegasi(false)">
+                            <span class="ml-3 font-medium text-slate-700">Hadir (Sesuai Data)</span>
+                        </label>
+                        <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-slate-50 transition-colors">
+                            <input type="radio" name="ps_status" value="Berubah" class="w-4 h-4 text-primary focus:ring-primary border-gray-300" onchange="togglePsDelegasi(true)">
+                            <span class="ml-3 font-medium text-slate-700">Berhalangan / Diwakilkan</span>
+                        </label>
+                    </div>
+
+                    <!-- PS Delegasi Form -->
+                    <div id="psDelegasiForm" class="hidden mt-4 space-y-4 bg-slate-50 p-4 rounded-lg border border-slate-200">
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-1">Nama Lengkap Pengganti</label>
+                            <input type="text" id="psGantiNama" class="w-full border-slate-300 rounded-lg shadow-sm focus:ring-primary focus:border-primary px-4 py-2 border" placeholder="Nama Lengkap">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-1">NIK Pengganti</label>
+                            <input type="number" id="psGantiNik" class="w-full border-slate-300 rounded-lg shadow-sm focus:ring-primary focus:border-primary px-4 py-2 border" placeholder="Contoh: 137xxxxxxxxxxx">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-1">No HP Pengganti</label>
+                            <input type="number" id="psGantiHp" class="w-full border-slate-300 rounded-lg shadow-sm focus:ring-primary focus:border-primary px-4 py-2 border" placeholder="Contoh: 0812xxxxxx">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-1">Email Pengganti</label>
+                            <input type="email" id="psGantiEmail" class="w-full border-slate-300 rounded-lg shadow-sm focus:ring-primary focus:border-primary px-4 py-2 border" placeholder="nama@email.com">
+                        </div>
+                    </div>
+
+                    <button onclick="submitPS()" id="btnSubmitPS" class="w-full mt-6 bg-green-600 hover:bg-green-700 text-white px-4 py-3 rounded-lg font-bold transition-colors shadow-lg shadow-green-600/30">Simpan Konfirmasi Pengawas</button>
+                </div>
+
                 <!-- Step 3: Form Guru -->
                 <div id="stepFormGuru" class="hidden fade-in mt-6 pt-6 border-t border-slate-100">
                     <div id="mapelWarningGuru" class="hidden mb-4 bg-amber-50 text-amber-800 p-4 rounded-lg border border-amber-200 shadow-sm">
@@ -474,7 +516,9 @@
         // ==========================================
         function openModal(role) {
             currentRole = role;
-            document.getElementById('modalTitle').innerText = role === 'ks' ? 'Konfirmasi Kepala Sekolah' : 'Pemilihan Guru Peserta';
+            if (role === 'ks') document.getElementById('modalTitle').innerText = 'Konfirmasi Kepala Sekolah';
+            else if (role === 'ps') document.getElementById('modalTitle').innerText = 'Konfirmasi Pengawas';
+            else document.getElementById('modalTitle').innerText = 'Pemilihan Guru Peserta';
             
             // Reset modal state
             currentNpsn = null;
@@ -482,8 +526,10 @@
             document.getElementById('inputNpsn').value = '';
             document.getElementById('npsnError').classList.add('hidden');
             document.getElementById('stepFormKS').classList.add('hidden');
+            if(document.getElementById('stepFormPS')) document.getElementById('stepFormPS').classList.add('hidden');
             document.getElementById('stepFormGuru').classList.add('hidden');
             document.getElementById('ksDelegasiForm').classList.add('hidden');
+            if(document.getElementById('psDelegasiForm')) document.getElementById('psDelegasiForm').classList.add('hidden');
             
             // Show modal
             const overlay = document.getElementById('modalOverlay');
@@ -581,6 +627,23 @@
 
                 document.getElementById('stepFormKS').classList.remove('hidden');
             } 
+            else if (currentRole === 'ps') {
+                const keys = Object.keys(fetchedTeachers);
+                const psKey = keys.find(k => {
+                    const j = fetchedTeachers[k].jenis_ptk;
+                    return j && j.toUpperCase() === 'PS';
+                });
+                
+                let psName = "Tidak ditemukan data Pengawas spesifik";
+                if (psKey) {
+                    psName = fetchedTeachers[psKey].nama;
+                }
+                
+                document.getElementById('psSchoolName').innerText = schoolName;
+                document.getElementById('psName').innerText = psName;
+                
+                document.getElementById('stepFormPS').classList.remove('hidden');
+            }
             else if (currentRole === 'guru') {
                 document.getElementById('guruSchoolName').innerText = schoolName;
                 const container = document.getElementById('guruListContainer');
@@ -695,6 +758,69 @@
         }
 
         // ==========================================
+        // PENGAWAS LOGIC
+        // ==========================================
+        function togglePsDelegasi(isDelegasi) {
+            const form = document.getElementById('psDelegasiForm');
+            if (isDelegasi) {
+                form.classList.remove('hidden');
+            } else {
+                form.classList.add('hidden');
+            }
+        }
+
+        async function submitPS() {
+            const radios = document.getElementsByName('ps_status');
+            let selectedStatus = null;
+            for (let i = 0; i < radios.length; i++) {
+                if (radios[i].checked) {
+                    selectedStatus = radios[i].value;
+                    break;
+                }
+            }
+
+            if (!selectedStatus) return alert("Pilih status kehadiran Pengawas.");
+
+            const dataToSave = {
+                status_data: selectedStatus,
+                timestamp: firebase.database.ServerValue.TIMESTAMP
+            };
+
+            if (selectedStatus === 'Berubah') {
+                const delegateNama = document.getElementById('psGantiNama').value.trim();
+                const delegateNik = document.getElementById('psGantiNik').value.trim();
+                const delegateHp = document.getElementById('psGantiHp').value.trim();
+                const delegateEmail = document.getElementById('psGantiEmail').value.trim();
+                
+                if (!delegateNama || !delegateNik || !delegateHp || !delegateEmail) {
+                    return alert("Silakan lengkapi semua data pengganti Pengawas.");
+                }
+                
+                dataToSave.nama_pengganti = delegateNama;
+                dataToSave.nik_pengganti = delegateNik;
+                dataToSave.hp_pengganti = delegateHp;
+                dataToSave.email_pengganti = delegateEmail;
+            }
+
+            const btn = document.getElementById('btnSubmitPS');
+            const originalText = btn.innerText;
+            btn.innerHTML = '<div class="spinner border-white border-left-transparent mx-auto"></div>';
+            btn.disabled = true;
+
+            try {
+                await db.ref(`konfirmasi_peserta/${currentNpsn}/ps_delegasi`).set(dataToSave);
+                alert("Data konfirmasi Pengawas berhasil disimpan!");
+                closeModal();
+            } catch (err) {
+                console.error(err);
+                alert("Gagal menyimpan data: " + err.message);
+            } finally {
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            }
+        }
+
+        // ==========================================
         // GURU LOGIC
         // ==========================================
         function handleGuruCheck(checkbox) {
@@ -747,6 +873,10 @@
                 const options = sel.querySelectorAll('option');
                 options.forEach(opt => {
                     if (opt.value === "") return;
+                    if (opt.value.toUpperCase().includes("PAUD")) {
+                        opt.disabled = false;
+                        return;
+                    }
                     if (selectedValues.includes(opt.value) && sel.value !== opt.value) {
                         opt.disabled = true;
                     } else {
@@ -1036,13 +1166,24 @@
                 const konfirmasi = adminDataKonfirmasi[npsn] || {};
                 
                 if (currentMode2Tab === 'ps') {
-                    if (adminDataMaster[npsn]) {
-                        const keys = Object.keys(adminDataMaster[npsn]);
-                        const psKey = keys.find(k => {
-                            const j = adminDataMaster[npsn][k].jenis_ptk;
-                            return j && (j.toLowerCase() === 'ps' || j.toLowerCase().includes('pengawas'));
-                        });
-                        if (psKey) html += generateRowHtml(rowCounter++, adminDataMaster[npsn][psKey]);
+                    const psKonf = konfirmasi.ps_delegasi;
+                    if (psKonf && psKonf.status_data === 'Berubah') {
+                        html += generateRowHtml(rowCounter++, {
+                            nama: psKonf.nama_pengganti,
+                            npsn: npsn,
+                            nuptk: psKonf.nik_pengganti,
+                            no_hp: psKonf.hp_pengganti,
+                            email: psKonf.email_pengganti
+                        }, true);
+                    } else {
+                        if (adminDataMaster[npsn]) {
+                            const keys = Object.keys(adminDataMaster[npsn]);
+                            const psKey = keys.find(k => {
+                                const j = adminDataMaster[npsn][k].jenis_ptk;
+                                return j && (j.toLowerCase() === 'ps' || j.toLowerCase().includes('pengawas'));
+                            });
+                            if (psKey) html += generateRowHtml(rowCounter++, adminDataMaster[npsn][psKey]);
+                        }
                     }
                 } 
                 else if (currentMode2Tab === 'ks') {
@@ -1260,12 +1401,17 @@ Gunakan format output JSON murni (hanya JSON, tanpa backtick, tanpa markdown) se
                 resultBox.classList.add('hidden');
 
                 const genAI = new window.GoogleGenerativeAI(apiKey);
-                const model = genAI.getGenerativeModel({ model: "gemini-flash-latest" });
+                const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
                 
                 const result = await model.generateContent(prompt);
                 const response = result.response;
-                // Bersihkan respon jika ada markdown formatting dari model
-                let text = response.text().replace(/```json/gi, '').replace(/```/g, '').trim();
+                
+                let text = response.text();
+                // Ekstrak JSON menggunakan regex untuk menghindari teks tambahan dari model
+                const jsonMatch = text.match(/\{[\s\S]*\}/);
+                if (jsonMatch) {
+                    text = jsonMatch[0];
+                }
                 
                 const parsed = JSON.parse(text);
                 
@@ -1414,8 +1560,9 @@ Gunakan format output JSON murni (hanya JSON, tanpa backtick, tanpa markdown) se
                 dataToRender = publicDataPS;
                 htmlHead = `
                     <th class="px-6 py-4 font-bold">No</th>
-                    <th class="px-6 py-4 font-bold">Nama Lengkap</th>
+                    <th class="px-6 py-4 font-bold">Nama Lengkap (Sesuai Konfirmasi)</th>
                     <th class="px-6 py-4 font-bold">Instansi/Sekolah Binaan</th>
+                    <th class="px-6 py-4 font-bold text-center">Status Kehadiran</th>
                 `;
             } else if (currentPublicTab === 'ks') {
                 dataToRender = publicDataKS;
@@ -1456,6 +1603,7 @@ Gunakan format output JSON murni (hanya JSON, tanpa backtick, tanpa markdown) se
                                 <td class="px-6 py-4 font-medium text-slate-500">${idx+1}</td>
                                 <td class="px-6 py-4 font-bold text-slate-900">${item.nama}</td>
                                 <td class="px-6 py-4 text-slate-600">${item.sekolah}</td>
+                                <td class="px-6 py-4 text-center">${item.status}</td>
                             </tr>
                         `;
                     } else if (currentPublicTab === 'ks') {
