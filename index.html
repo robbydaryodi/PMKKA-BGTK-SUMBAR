@@ -161,9 +161,13 @@
     <div id="view-admin" class="hidden fixed inset-0 z-50 bg-slate-50 flex overflow-hidden fade-in">
         
         <!-- SIDEBAR -->
-        <aside class="w-64 bg-white border-r border-slate-200 flex flex-col shadow-sm flex-shrink-0">
-            <div class="h-16 flex items-center px-6 border-b border-slate-200">
+        <div id="adminSidebarOverlay" class="fixed inset-0 bg-slate-900/50 z-40 hidden md:hidden" onclick="toggleSidebar()"></div>
+        <aside id="adminSidebar" class="w-64 bg-white border-r border-slate-200 flex flex-col shadow-sm flex-shrink-0 absolute md:relative z-50 h-full transition-transform transform -translate-x-full md:translate-x-0">
+            <div class="h-16 flex items-center justify-between px-6 border-b border-slate-200">
                 <span class="text-xl font-extrabold text-slate-800">Sekolah Model</span>
+                <button onclick="toggleSidebar()" class="md:hidden text-slate-500 hover:text-slate-800 focus:outline-none">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
             </div>
             
             <div class="p-4 flex-1 overflow-y-auto">
@@ -195,7 +199,10 @@
         <!-- MAIN CONTENT -->
         <main class="flex-1 flex flex-col min-w-0">
             <!-- TOP BAR -->
-            <header class="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-8 flex-shrink-0">
+            <header class="h-16 bg-white border-b border-slate-200 flex items-center px-4 md:px-8 flex-shrink-0">
+                <button onclick="toggleSidebar()" class="md:hidden mr-4 text-slate-600 hover:text-slate-900 focus:outline-none">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+                </button>
                 <h2 class="text-lg font-bold text-slate-800" id="adminPageTitle">Dashboard Admin</h2>
             </header>
             
@@ -1052,6 +1059,18 @@
         // ==========================================
         // ADMIN DASHBOARD LOGIC
         // ==========================================
+        function toggleSidebar() {
+            const sidebar = document.getElementById('adminSidebar');
+            const overlay = document.getElementById('adminSidebarOverlay');
+            if (sidebar.classList.contains('-translate-x-full')) {
+                sidebar.classList.remove('-translate-x-full');
+                overlay.classList.remove('hidden');
+            } else {
+                sidebar.classList.add('-translate-x-full');
+                overlay.classList.add('hidden');
+            }
+        }
+
         let adminDataMaster = {};
         let adminDataKonfirmasi = {};
         // Daftar Dummy 24 Sekolah (Jika ingin dilock, edit disini. Jika kosong, akan baca dari master_guru)
@@ -1088,6 +1107,12 @@
             const view0 = document.getElementById('viewMode0');
             const view1 = document.getElementById('viewMode1');
             const view2 = document.getElementById('viewMode2');
+
+            // Close sidebar on mobile
+            if (window.innerWidth < 768) {
+                document.getElementById('adminSidebar').classList.add('-translate-x-full');
+                document.getElementById('adminSidebarOverlay').classList.add('hidden');
+            }
 
             const activeBtnClass = "flex items-center gap-3 px-3 py-2.5 rounded-lg font-medium bg-indigo-50 text-indigo-700 transition-colors w-full text-left";
             const inactiveBtnClass = "flex items-center gap-3 px-3 py-2.5 rounded-lg font-medium text-slate-600 hover:bg-slate-50 transition-colors w-full text-left";
@@ -1349,7 +1374,7 @@
             } else {
                 theadHtml += `<th class="px-6 py-4 font-medium text-center">Status Guru</th><th class="px-6 py-4 font-medium">Keterangan Kuota</th>`;
             }
-            theadHtml += `</tr>`;
+            theadHtml += `<th class="px-6 py-4 font-medium text-center w-24">Aksi</th></tr>`;
             thead.innerHTML = theadHtml;
 
             const schoolsToRender = TARGET_SCHOOLS.length > 0 ? TARGET_SCHOOLS : Object.keys(adminDataMaster);
@@ -1443,9 +1468,11 @@
                         </td>
                         <td class="px-6 py-4 text-center">
                             ${statusBadge}
-                            ${hasData ? `<button onclick="resetData('${npsn}')" class="ml-2 px-2 py-1 bg-red-100 text-red-600 hover:bg-red-200 hover:text-red-700 rounded text-xs font-semibold transition-colors" title="Batal/Reset Data">Reset</button>` : ''}
                         </td>
                         <td class="px-6 py-4 text-slate-600 text-xs font-medium">${extraCol}</td>
+                        <td class="px-6 py-4 text-center">
+                            ${hasData ? `<button onclick="resetData('${npsn}')" class="px-2 py-1 bg-red-100 text-red-600 hover:bg-red-200 hover:text-red-700 rounded text-xs font-semibold transition-colors shadow-sm" title="Batal/Reset Data">Reset</button>` : `<span class="text-slate-300 text-xs">-</span>`}
+                        </td>
                     </tr>
                 `;
             });
