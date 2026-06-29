@@ -1640,7 +1640,7 @@
                                 no_hp: psKonf.hp_pengganti,
                                 email: psKonf.email_pengganti
                             }, true);
-                        } else if (psKonf.status_data === 'Sama') {
+                        } else if (psKonf.status_data === 'Sesuai') {
                             if (adminDataMaster[npsn]) {
                                 const keys = Object.keys(adminDataMaster[npsn]);
                                 const psKey = keys.find(k => {
@@ -1665,7 +1665,7 @@
                             } else {
                                 html += generateRowHtml(rowCounter++, { nama: ksKonf.nama_pengganti, email: ksKonf.email_pengganti, npsn: npsn }, true);
                             }
-                        } else if (ksKonf.status_data === 'Sama') {
+                        } else if (ksKonf.status_data === 'Sesuai') {
                             if (adminDataMaster[npsn]) {
                                 const keys = Object.keys(adminDataMaster[npsn]);
                                 const ksKey = keys.find(k => {
@@ -1805,62 +1805,70 @@
 
                 if (currentMode2Tab === 'ps') {
                     const psKonf = konfirmasi.ps_delegasi;
-                    if (psKonf && psKonf.status_data === 'Berubah') {
-                        targetList.push({
-                            nik: psKonf.nik_pengganti || '',
-                            email: psKonf.email_pengganti || '',
-                            namaLengkap: psKonf.nama_pengganti || '',
-                            noHp: psKonf.hp_pengganti || '',
-                            jenis: 'PS'
-                        });
-                    } else if (adminDataMaster[npsn]) {
-                        const keys = Object.keys(adminDataMaster[npsn]);
-                        const psKey = keys.find(k => {
-                            const j = adminDataMaster[npsn][k].jenis_ptk;
-                            return j && (j.toLowerCase() === 'ps' || j.toLowerCase().includes('pengawas'));
-                        });
-                        if (psKey) {
+                    if (psKonf) {
+                        if (psKonf.status_data === 'Berubah') {
                             targetList.push({
-                                nik: psKey.replace('guru_', ''),
-                                email: adminDataMaster[npsn][psKey].email || adminDataMaster[npsn][psKey]['Email'] || '',
-                                namaLengkap: adminDataMaster[npsn][psKey].nama || adminDataMaster[npsn][psKey]['Nama Lengkap'] || '',
-                                noHp: adminDataMaster[npsn][psKey].no_hp || adminDataMaster[npsn][psKey]['No HP'] || '',
+                                nik: psKonf.nik_pengganti || '',
+                                email: psKonf.email_pengganti || '',
+                                namaLengkap: psKonf.nama_pengganti || '',
+                                noHp: psKonf.hp_pengganti || '',
                                 jenis: 'PS'
                             });
+                        } else if (psKonf.status_data === 'Sesuai') {
+                            if (adminDataMaster[npsn]) {
+                                const keys = Object.keys(adminDataMaster[npsn]);
+                                const psKey = keys.find(k => {
+                                    const j = adminDataMaster[npsn][k].jenis_ptk;
+                                    return j && (j.toLowerCase() === 'ps' || j.toLowerCase().includes('pengawas'));
+                                });
+                                if (psKey) {
+                                    targetList.push({
+                                        nik: psKey.replace('guru_', ''),
+                                        email: adminDataMaster[npsn][psKey].email || adminDataMaster[npsn][psKey]['Email'] || '',
+                                        namaLengkap: adminDataMaster[npsn][psKey].nama || adminDataMaster[npsn][psKey]['Nama Lengkap'] || '',
+                                        noHp: adminDataMaster[npsn][psKey].no_hp || adminDataMaster[npsn][psKey]['No HP'] || '',
+                                        jenis: 'PS'
+                                    });
+                                }
+                            }
                         }
                     }
                 } 
                 else if (currentMode2Tab === 'ks') {
                     const ksKonf = konfirmasi.kepala_sekolah;
-                    if (ksKonf && ksKonf.status_data === 'Berubah' && ksKonf.id_pengganti) {
-                        const pKey = ksKonf.id_pengganti;
-                        let email = ksKonf.email_pengganti || '';
-                        let nama = ksKonf.nama_pengganti || '';
-                        let noHp = '';
-                        if (adminDataMaster[npsn] && adminDataMaster[npsn][pKey]) {
-                            noHp = adminDataMaster[npsn][pKey].no_hp || '';
-                        }
-                        targetList.push({
-                            nik: pKey.replace('guru_', ''),
-                            email: email,
-                            namaLengkap: nama,
-                            noHp: noHp,
-                            jenis: 'KS'
-                        });
-                    } else if (adminDataMaster[npsn]) {
-                        const keys = Object.keys(adminDataMaster[npsn]);
-                        const ksKey = keys.find(k => {
-                            const j = adminDataMaster[npsn][k].jenis_ptk;
-                            return j && (j.toLowerCase().includes('kepala') || j.toLowerCase().includes('kepsek') || j.toLowerCase() === 'ks');
-                        });
-                        if (ksKey) {
+                    if (ksKonf) {
+                        if (ksKonf.status_data === 'Berubah' && ksKonf.id_pengganti) {
+                            const pKey = ksKonf.id_pengganti;
+                            let email = ksKonf.email_pengganti || '';
+                            let nama = ksKonf.nama_pengganti || '';
+                            let noHp = '';
+                            if (adminDataMaster[npsn] && adminDataMaster[npsn][pKey]) {
+                                noHp = adminDataMaster[npsn][pKey].no_hp || '';
+                            }
                             targetList.push({
-                                nik: ksKey.replace('guru_', ''),
-                                email: adminDataMaster[npsn][ksKey].email || adminDataMaster[npsn][ksKey]['Email'] || '',
-                                namaLengkap: adminDataMaster[npsn][ksKey].nama || adminDataMaster[npsn][ksKey]['Nama Lengkap'] || '',
-                                noHp: adminDataMaster[npsn][ksKey].no_hp || adminDataMaster[npsn][ksKey]['No HP'] || '',
+                                nik: pKey.replace('guru_', ''),
+                                email: email,
+                                namaLengkap: nama,
+                                noHp: noHp,
                                 jenis: 'KS'
                             });
+                        } else if (ksKonf.status_data === 'Sesuai') {
+                            if (adminDataMaster[npsn]) {
+                                const keys = Object.keys(adminDataMaster[npsn]);
+                                const ksKey = keys.find(k => {
+                                    const j = adminDataMaster[npsn][k].jenis_ptk;
+                                    return j && (j.toLowerCase().includes('kepala') || j.toLowerCase().includes('kepsek') || j.toLowerCase() === 'ks');
+                                });
+                                if (ksKey) {
+                                    targetList.push({
+                                        nik: ksKey.replace('guru_', ''),
+                                        email: adminDataMaster[npsn][ksKey].email || adminDataMaster[npsn][ksKey]['Email'] || '',
+                                        namaLengkap: adminDataMaster[npsn][ksKey].nama || adminDataMaster[npsn][ksKey]['Nama Lengkap'] || '',
+                                        noHp: adminDataMaster[npsn][ksKey].no_hp || adminDataMaster[npsn][ksKey]['No HP'] || '',
+                                        jenis: 'KS'
+                                    });
+                                }
+                            }
                         }
                     }
                 }
