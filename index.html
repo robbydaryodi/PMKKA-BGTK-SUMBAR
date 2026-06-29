@@ -1822,9 +1822,9 @@
                         if (psKey) {
                             targetList.push({
                                 nik: psKey.replace('guru_', ''),
-                                email: adminDataMaster[npsn][psKey].email || '',
-                                namaLengkap: adminDataMaster[npsn][psKey].nama || '',
-                                noHp: adminDataMaster[npsn][psKey].no_hp || '',
+                                email: adminDataMaster[npsn][psKey].email || adminDataMaster[npsn][psKey]['Email'] || '',
+                                namaLengkap: adminDataMaster[npsn][psKey].nama || adminDataMaster[npsn][psKey]['Nama Lengkap'] || '',
+                                noHp: adminDataMaster[npsn][psKey].no_hp || adminDataMaster[npsn][psKey]['No HP'] || '',
                                 jenis: 'PS'
                             });
                         }
@@ -1856,9 +1856,9 @@
                         if (ksKey) {
                             targetList.push({
                                 nik: ksKey.replace('guru_', ''),
-                                email: adminDataMaster[npsn][ksKey].email || '',
-                                namaLengkap: adminDataMaster[npsn][ksKey].nama || '',
-                                noHp: adminDataMaster[npsn][ksKey].no_hp || '',
+                                email: adminDataMaster[npsn][ksKey].email || adminDataMaster[npsn][ksKey]['Email'] || '',
+                                namaLengkap: adminDataMaster[npsn][ksKey].nama || adminDataMaster[npsn][ksKey]['Nama Lengkap'] || '',
+                                noHp: adminDataMaster[npsn][ksKey].no_hp || adminDataMaster[npsn][ksKey]['No HP'] || '',
                                 jenis: 'KS'
                             });
                         }
@@ -1882,9 +1882,9 @@
                                 if (isMatch) {
                                     targetList.push({
                                         nik: gKey.replace('guru_', ''),
-                                        email: konfirmasi.guru_terpilih[gKey].email_belajar || gData.email || '',
-                                        namaLengkap: gData.nama || '',
-                                        noHp: gData.no_hp || '',
+                                        email: konfirmasi.guru_terpilih[gKey].email_belajar || gData.email || gData['Email'] || '',
+                                        namaLengkap: gData.nama || gData['Nama Lengkap'] || '',
+                                        noHp: gData.no_hp || gData['No HP'] || '',
                                         jenis: 'Guru'
                                     });
                                 }
