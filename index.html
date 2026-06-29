@@ -1625,46 +1625,49 @@
                 
                 if (currentMode2Tab === 'ps') {
                     const psKonf = konfirmasi.ps_delegasi;
-                    if (psKonf && psKonf.status_data === 'Berubah') {
-                        html += generateRowHtml(rowCounter++, {
-                            nama: psKonf.nama_pengganti,
-                            npsn: npsn,
-                            nuptk: psKonf.nik_pengganti,
-                            no_hp: psKonf.hp_pengganti,
-                            email: psKonf.email_pengganti
-                        }, true);
-                    } else {
-                        if (adminDataMaster[npsn]) {
-                            const keys = Object.keys(adminDataMaster[npsn]);
-                            const psKey = keys.find(k => {
-                                const j = adminDataMaster[npsn][k].jenis_ptk;
-                                return j && (j.toLowerCase() === 'ps' || j.toLowerCase().includes('pengawas'));
-                            });
-                            if (psKey) html += generateRowHtml(rowCounter++, adminDataMaster[npsn][psKey]);
+                    if (psKonf) {
+                        if (psKonf.status_data === 'Berubah') {
+                            html += generateRowHtml(rowCounter++, {
+                                nama: psKonf.nama_pengganti,
+                                npsn: npsn,
+                                nuptk: psKonf.nik_pengganti,
+                                no_hp: psKonf.hp_pengganti,
+                                email: psKonf.email_pengganti
+                            }, true);
+                        } else if (psKonf.status_data === 'Sama') {
+                            if (adminDataMaster[npsn]) {
+                                const keys = Object.keys(adminDataMaster[npsn]);
+                                const psKey = keys.find(k => {
+                                    const j = adminDataMaster[npsn][k].jenis_ptk;
+                                    return j && (j.toLowerCase() === 'ps' || j.toLowerCase().includes('pengawas'));
+                                });
+                                if (psKey) html += generateRowHtml(rowCounter++, adminDataMaster[npsn][psKey]);
+                            }
                         }
                     }
                 } 
                 else if (currentMode2Tab === 'ks') {
                     const ksKonf = konfirmasi.kepala_sekolah;
-                    if (ksKonf && ksKonf.status_data === 'Berubah' && ksKonf.id_pengganti) {
-                        // Find pengganti in master
-                        if (adminDataMaster[npsn] && adminDataMaster[npsn][ksKonf.id_pengganti]) {
-                            let mergedData = { ...adminDataMaster[npsn][ksKonf.id_pengganti] };
-                            mergedData.nama = ksKonf.nama_pengganti;
-                            mergedData.email = ksKonf.email_pengganti;
-                            html += generateRowHtml(rowCounter++, mergedData, true);
-                        } else {
-                            html += generateRowHtml(rowCounter++, { nama: ksKonf.nama_pengganti, email: ksKonf.email_pengganti, npsn: npsn }, true);
-                        }
-                    } else {
-                        // Find original KS (either 'Sama' or no action)
-                        if (adminDataMaster[npsn]) {
-                            const keys = Object.keys(adminDataMaster[npsn]);
-                            const ksKey = keys.find(k => {
-                                const j = adminDataMaster[npsn][k].jenis_ptk;
-                                return j && (j.toLowerCase().includes('kepala') || j.toLowerCase().includes('kepsek') || j.toLowerCase() === 'ks');
-                            });
-                            if (ksKey) html += generateRowHtml(rowCounter++, adminDataMaster[npsn][ksKey]);
+                    if (ksKonf) {
+                        if (ksKonf.status_data === 'Berubah') {
+                            // Find pengganti in master
+                            if (adminDataMaster[npsn] && adminDataMaster[npsn][ksKonf.id_pengganti]) {
+                                let mergedData = { ...adminDataMaster[npsn][ksKonf.id_pengganti] };
+                                mergedData.nama = ksKonf.nama_pengganti;
+                                mergedData.email = ksKonf.email_pengganti;
+                                html += generateRowHtml(rowCounter++, mergedData, true);
+                            } else {
+                                html += generateRowHtml(rowCounter++, { nama: ksKonf.nama_pengganti, email: ksKonf.email_pengganti, npsn: npsn }, true);
+                            }
+                        } else if (ksKonf.status_data === 'Sama') {
+                            if (adminDataMaster[npsn]) {
+                                const keys = Object.keys(adminDataMaster[npsn]);
+                                const ksKey = keys.find(k => {
+                                    const j = adminDataMaster[npsn][k].jenis_ptk;
+                                    return j && (j.toLowerCase().includes('kepala') || j.toLowerCase().includes('kepsek') || j.toLowerCase() === 'ks');
+                                });
+                                if (ksKey) html += generateRowHtml(rowCounter++, adminDataMaster[npsn][ksKey]);
+                            }
                         }
                     }
                 }
