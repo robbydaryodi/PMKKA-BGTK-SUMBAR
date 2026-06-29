@@ -1864,16 +1864,22 @@
                         }
                     }
                 }
-                else if (currentMode2Tab === 'guru_sd' || currentMode2Tab === 'guru_smp') {
+                else if (currentMode2Tab.startsWith('guru_')) {
                     if (konfirmasi.guru_terpilih) {
                         const guruKeys = Object.keys(konfirmasi.guru_terpilih).filter(k => k !== 'timestamp');
                         guruKeys.forEach(gKey => {
                             if (adminDataMaster[npsn] && adminDataMaster[npsn][gKey]) {
                                 const gData = adminDataMaster[npsn][gKey];
                                 const jenjang = (gData.jenjang || '').toUpperCase();
-                                const isSmpSmaSmk = jenjang.includes('SMP') || jenjang.includes('SMA') || jenjang.includes('SMK');
                                 
-                                if ((currentMode2Tab === 'guru_smp' && isSmpSmaSmk) || (currentMode2Tab === 'guru_sd' && !isSmpSmaSmk)) {
+                                let isMatch = false;
+                                if (currentMode2Tab === 'guru_paud' && jenjang.includes('PAUD')) isMatch = true;
+                                else if (currentMode2Tab === 'guru_sd' && jenjang.includes('SD')) isMatch = true;
+                                else if (currentMode2Tab === 'guru_smp' && jenjang.includes('SMP')) isMatch = true;
+                                else if (currentMode2Tab === 'guru_sma' && jenjang.includes('SMA')) isMatch = true;
+                                else if (currentMode2Tab === 'guru_smk' && jenjang.includes('SMK')) isMatch = true;
+                                
+                                if (isMatch) {
                                     targetList.push({
                                         nik: gKey.replace('guru_', ''),
                                         email: konfirmasi.guru_terpilih[gKey].email_belajar || gData.email || '',
