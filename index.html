@@ -1986,13 +1986,14 @@
 
                     for (const uid in schoolMaster) {
                         const person = schoolMaster[uid];
-                        
-                        if (person.jenis_ptk === 'PS') {
+                        if (person.jenis_ptk && (person.jenis_ptk.toLowerCase() === 'ps' || person.jenis_ptk.toLowerCase().includes('pengawas'))) {
+                            if (!schoolKonf.ps_delegasi) continue; // Hanya tampilkan yang sudah konfirmasi
+
                             let nama = person.nama;
                             let status = 'Hadir';
                             let statusClass = 'bg-emerald-100 text-emerald-700 border border-emerald-200';
 
-                            if (schoolKonf.ps_delegasi && schoolKonf.ps_delegasi.status_data === 'Berubah') {
+                            if (schoolKonf.ps_delegasi.status_data === 'Berubah') {
                                 nama = schoolKonf.ps_delegasi.nama_pengganti || nama;
                                 status = 'Diwakilkan';
                                 statusClass = 'bg-amber-100 text-amber-700 border border-amber-200';
@@ -2005,12 +2006,14 @@
                                 sekolah: person.asal_sekolah || '-',
                                 status: `<span class="px-2.5 py-1 rounded-full text-xs font-bold ${statusClass}">${status}</span>`
                             });
-                        } else if (person.jenis_ptk === 'KS') {
+                        } else if (person.jenis_ptk && (person.jenis_ptk.toLowerCase().includes('kepala') || person.jenis_ptk.toLowerCase().includes('kepsek') || person.jenis_ptk.toLowerCase() === 'ks')) {
+                            if (!schoolKonf.kepala_sekolah) continue; // Hanya tampilkan yang sudah konfirmasi
+
                             let nama = person.nama;
                             let status = 'Hadir';
                             let statusClass = 'bg-emerald-100 text-emerald-700 border border-emerald-200';
 
-                            if (schoolKonf.kepala_sekolah && schoolKonf.kepala_sekolah.status_data === 'Berubah') {
+                            if (schoolKonf.kepala_sekolah.status_data === 'Berubah') {
                                 nama = schoolKonf.kepala_sekolah.nama_pengganti || nama;
                                 status = 'Diwakilkan';
                                 statusClass = 'bg-amber-100 text-amber-700 border border-amber-200';
