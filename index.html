@@ -1505,7 +1505,7 @@
             let psDisplay = '<span class="text-slate-400 italic">Belum dikonfirmasi</span>';
             if (konfirmasi.ps_delegasi && konfirmasi.ps_delegasi.status_data === 'Berubah') {
                 psDisplay = `<span class="text-amber-600 font-semibold">${konfirmasi.ps_delegasi.nama_pengganti} <span class="text-xs bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded ml-1">Pengganti</span></span>`;
-            } else if (psKey && konfirmasi.ps_delegasi) {
+            } else if (psKey && konfirmasi.ps_delegasi && konfirmasi.ps_delegasi.status_data === 'Sesuai') {
                 psDisplay = `<span class="text-emerald-600 font-semibold">${master[psKey].nama}</span>`;
             }
 
@@ -1514,7 +1514,7 @@
             let ksDisplay = '<span class="text-slate-400 italic">Belum dikonfirmasi</span>';
             if (konfirmasi.kepala_sekolah && konfirmasi.kepala_sekolah.status_data === 'Berubah') {
                 ksDisplay = `<span class="text-amber-600 font-semibold">${konfirmasi.kepala_sekolah.nama_pengganti} <span class="text-xs bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded ml-1">Pengganti</span></span>`;
-            } else if (konfirmasi.kepala_sekolah && konfirmasi.kepala_sekolah.status_data === 'Sama' && ksKey) {
+            } else if (konfirmasi.kepala_sekolah && konfirmasi.kepala_sekolah.status_data === 'Sesuai' && ksKey) {
                 ksDisplay = `<span class="text-emerald-600 font-semibold">${master[ksKey].nama}</span>`;
             }
 
