@@ -326,8 +326,11 @@
             <div class="flex space-x-2 border-b border-slate-200 mb-6 overflow-x-auto pb-2">
                 <button onclick="switchTabMode2('ps')" id="tab_ps" class="tab-btn active px-4 py-2 border-b-2 font-medium text-sm border-indigo-600 text-indigo-600 whitespace-nowrap">Kelas Pengawas</button>
                 <button onclick="switchTabMode2('ks')" id="tab_ks" class="tab-btn px-4 py-2 border-b-2 font-medium text-sm border-transparent text-slate-500 hover:text-slate-700 whitespace-nowrap">Kelas Kepala Sekolah</button>
-                <button onclick="switchTabMode2('guru_sd')" id="tab_guru_sd" class="tab-btn px-4 py-2 border-b-2 font-medium text-sm border-transparent text-slate-500 hover:text-slate-700 whitespace-nowrap">Kelas Guru (PAUD-SD)</button>
-                <button onclick="switchTabMode2('guru_smp')" id="tab_guru_smp" class="tab-btn px-4 py-2 border-b-2 font-medium text-sm border-transparent text-slate-500 hover:text-slate-700 whitespace-nowrap">Kelas Guru (SMP-SMA-SMK)</button>
+                <button onclick="switchTabMode2('guru_paud')" id="tab_guru_paud" class="tab-btn px-4 py-2 border-b-2 font-medium text-sm border-transparent text-slate-500 hover:text-slate-700 whitespace-nowrap">Guru PAUD</button>
+                <button onclick="switchTabMode2('guru_sd')" id="tab_guru_sd" class="tab-btn px-4 py-2 border-b-2 font-medium text-sm border-transparent text-slate-500 hover:text-slate-700 whitespace-nowrap">Guru SD</button>
+                <button onclick="switchTabMode2('guru_smp')" id="tab_guru_smp" class="tab-btn px-4 py-2 border-b-2 font-medium text-sm border-transparent text-slate-500 hover:text-slate-700 whitespace-nowrap">Guru SMP</button>
+                <button onclick="switchTabMode2('guru_sma')" id="tab_guru_sma" class="tab-btn px-4 py-2 border-b-2 font-medium text-sm border-transparent text-slate-500 hover:text-slate-700 whitespace-nowrap">Guru SMA</button>
+                <button onclick="switchTabMode2('guru_smk')" id="tab_guru_smk" class="tab-btn px-4 py-2 border-b-2 font-medium text-sm border-transparent text-slate-500 hover:text-slate-700 whitespace-nowrap">Guru SMK</button>
             </div>
 
             <!-- Table Container -->
@@ -1157,7 +1160,7 @@
         function switchTabMode2(tabId) {
             currentMode2Tab = tabId;
             
-            const tabs = ['ps', 'ks', 'guru_sd', 'guru_smp'];
+            const tabs = ['ps', 'ks', 'guru_paud', 'guru_sd', 'guru_smp', 'guru_sma', 'guru_smk'];
             tabs.forEach(t => {
                 const el = document.getElementById('tab_' + t);
                 if (t === tabId) {
@@ -1170,8 +1173,11 @@
             const titles = {
                 'ps': 'Data Kelas Pengawas',
                 'ks': 'Data Kelas Kepala Sekolah',
-                'guru_sd': 'Data Kelas Guru (PAUD-SD)',
-                'guru_smp': 'Data Kelas Guru (SMP-SMA-SMK)'
+                'guru_paud': 'Data Kelas Guru (PAUD)',
+                'guru_sd': 'Data Kelas Guru (SD)',
+                'guru_smp': 'Data Kelas Guru (SMP)',
+                'guru_sma': 'Data Kelas Guru (SMA)',
+                'guru_smk': 'Data Kelas Guru (SMK)'
             };
             document.getElementById('mode2TableTitle').innerText = titles[tabId];
             
@@ -1671,7 +1677,7 @@
                         }
                     }
                 }
-                else if (currentMode2Tab === 'guru_sd' || currentMode2Tab === 'guru_smp') {
+                else if (currentMode2Tab.startsWith('guru_')) {
                     if (konfirmasi.guru_terpilih) {
                         const guruKeys = Object.keys(konfirmasi.guru_terpilih).filter(k => k !== 'timestamp');
                         guruKeys.forEach(gKey => {
@@ -1679,14 +1685,14 @@
                                 const gData = adminDataMaster[npsn][gKey];
                                 const jenjang = (gData.jenjang || '').toUpperCase();
                                 
-                                const isSmpSmaSmk = jenjang.includes('SMP') || jenjang.includes('SMA') || jenjang.includes('SMK');
+                                let isMatch = false;
+                                if (currentMode2Tab === 'guru_paud' && jenjang.includes('PAUD')) isMatch = true;
+                                else if (currentMode2Tab === 'guru_sd' && jenjang.includes('SD')) isMatch = true;
+                                else if (currentMode2Tab === 'guru_smp' && jenjang.includes('SMP')) isMatch = true;
+                                else if (currentMode2Tab === 'guru_sma' && jenjang.includes('SMA')) isMatch = true;
+                                else if (currentMode2Tab === 'guru_smk' && jenjang.includes('SMK')) isMatch = true;
                                 
-                                if (currentMode2Tab === 'guru_smp' && isSmpSmaSmk) {
-                                    let mergedData = { ...gData };
-                                    mergedData.email = konfirmasi.guru_terpilih[gKey].email_belajar || gData.email;
-                                    mergedData.mata_pelajaran = konfirmasi.guru_terpilih[gKey].mapel_pilihan || gData.mata_pelajaran;
-                                    html += generateRowHtml(rowCounter++, mergedData);
-                                } else if (currentMode2Tab === 'guru_sd' && !isSmpSmaSmk) {
+                                if (isMatch) {
                                     let mergedData = { ...gData };
                                     mergedData.email = konfirmasi.guru_terpilih[gKey].email_belajar || gData.email;
                                     mergedData.mata_pelajaran = konfirmasi.guru_terpilih[gKey].mapel_pilihan || gData.mata_pelajaran;
