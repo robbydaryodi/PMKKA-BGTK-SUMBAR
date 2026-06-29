@@ -1694,7 +1694,7 @@
                                 
                                 if (isMatch) {
                                     let mergedData = { ...gData };
-                                    mergedData.email = konfirmasi.guru_terpilih[gKey].email_belajar || gData.email;
+                                    mergedData.email = gData.email || gData['Email'] || konfirmasi.guru_terpilih[gKey].email_belajar;
                                     mergedData.mata_pelajaran = konfirmasi.guru_terpilih[gKey].mapel_pilihan || gData.mata_pelajaran;
                                     html += generateRowHtml(rowCounter++, mergedData);
                                 }
@@ -1882,7 +1882,7 @@
                                 if (isMatch) {
                                     targetList.push({
                                         nik: gKey.replace('guru_', ''),
-                                        email: konfirmasi.guru_terpilih[gKey].email_belajar || gData.email || gData['Email'] || '',
+                                        email: gData.email || gData['Email'] || konfirmasi.guru_terpilih[gKey].email_belajar || '',
                                         namaLengkap: gData.nama || gData['Nama Lengkap'] || '',
                                         noHp: gData.no_hp || gData['No HP'] || '',
                                         jenis: 'Guru'
