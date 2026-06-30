@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daftar Hadir Peserta Zoom</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .spinner {
+            border: 3px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top: 3px solid #ffffff;
+            width: 24px;
+            height: 24px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
+</head>
+<body class="bg-slate-50 min-h-screen">
+    <!-- User View (Form) -->
+    <div id="view-form" class="hidden">
+        <div class="bg-indigo-600 text-white pb-24">
+            <div class="max-w-2xl mx-auto px-4 pt-12 pb-8 text-center">
+                <img src="logo.png" alt="Logo" class="h-16 mx-auto mb-4 bg-white p-2 rounded-xl shadow-lg" onerror="this.style.display='none'">
+                <h1 class="text-3xl font-extrabold tracking-tight mb-2">Daftar Hadir</h1>
+                <p class="text-indigo-100">Silakan isi form kehadiran berikut untuk kegiatan hari ini.</p>
+            </div>
+        </div>
+
+        <div class="max-w-2xl mx-auto px-4 -mt-16 pb-12">
+            <div class="bg-white rounded-2xl shadow-xl p-6 md:p-8">
+                <form id="absenForm" onsubmit="submitAbsen(event)">
+                    <div class="space-y-6">
+                        <div>
+                            <label class="block text-sm font-semibold text-slate-700 mb-1">Nama Lengkap (beserta gelar)</label>
+                            <input type="text" id="nama" required class="w-full px-4 py-3 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors" placeholder="Contoh: Budi Santoso, S.Pd., M.Pd.">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-semibold text-slate-700 mb-1">Instansi / Asal Sekolah</label>
+                            <input type="text" id="instansi" required class="w-full px-4 py-3 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors" placeholder="Contoh: SMAN 1 Padang">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-semibold text-slate-700 mb-1">Jabatan</label>
+                            <select id="jabatan" required class="w-full px-4 py-3 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors">
+                                <option value="" disabled selected>Pilih Jabatan</option>
+                                <option value="Kepala Sekolah">Kepala Sekolah</option>
+                                <option value="Pengawas">Pengawas</option>
+                                <option value="Guru">Guru</option>
+                                <option value="Dinas Pendidikan">Dinas Pendidikan</option>
+                                <option value="Lainnya">Lainnya</option>
+                            </select>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-semibold text-slate-700 mb-1">Kabupaten / Kota</label>
+                            <select id="kabkota" required class="w-full px-4 py-3 border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors">
+                                <option value="" disabled selected>Pilih Kabupaten/Kota</option>
+                                <option value="Kabupaten Agam">Kabupaten Agam</option>
+                                <option value="Kabupaten Dharmasraya">Kabupaten Dharmasraya</option>
+                                <option value="Kabupaten Kepulauan Mentawai">Kabupaten Kepulauan Mentawai</option>
+                                <option value="Kabupaten Lima Puluh Kota">Kabupaten Lima Puluh Kota</option>
+                                <option value="Kabupaten Padang Pariaman">Kabupaten Padang Pariaman</option>
+                                <option value="Kabupaten Pasaman">Kabupaten Pasaman</option>
+                                <option value="Kabupaten Pasaman Barat">Kabupaten Pasaman Barat</option>
+                                <option value="Kabupaten Pesisir Selatan">Kabupaten Pesisir Selatan</option>
+                                <option value="Kabupaten Sijunjung">Kabupaten Sijunjung</option>
+                                <option value="Kabupaten Solok">Kabupaten Solok</option>
+                                <option value="Kabupaten Solok Selatan">Kabupaten Solok Selatan</option>
+                                <option value="Kabupaten Tanah Datar">Kabupaten Tanah Datar</option>
+                                <option value="Kota Bukittinggi">Kota Bukittinggi</option>
+                                <option value="Kota Padang">Kota Padang</option>
+                                <option value="Kota Padang Panjang">Kota Padang Panjang</option>
+                                <option value="Kota Pariaman">Kota Pariaman</option>
+                                <option value="Kota Payakumbuh">Kota Payakumbuh</option>
+                                <option value="Kota Sawahlunto">Kota Sawahlunto</option>
+                                <option value="Kota Solok">Kota Solok</option>
+                                <option value="Lainnya">Lainnya (Luar Sumatera Barat)</option>
+                            </select>
+                        </div>
+
+                        <button type="submit" id="btnSubmit" class="w-full mt-6 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-4 rounded-xl font-bold transition-all shadow-lg shadow-indigo-600/30 flex justify-center items-center">
+                            Kirim Kehadiran
+                        </button>
+                    </div>
+                </form>
+                
+                <!-- Success Message -->
+                <div id="successMessage" class="hidden text-center py-8">
+                    <div class="w-16 h-16 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                    </div>
+                    <h2 class="text-2xl font-bold text-slate-800 mb-2">Terima Kasih!</h2>
+                    <p class="text-slate-600">Kehadiran Anda telah berhasil dicatat oleh sistem.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin View -->
+    <div id="view-admin" class="hidden min-h-screen bg-slate-100">
+        <nav class="bg-indigo-700 text-white shadow-lg sticky top-0 z-30">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex items-center justify-between h-16">
+                    <div class="font-bold text-lg">Admin - Daftar Hadir</div>
+                    <button onclick="exportCSV()" class="bg-white text-indigo-700 px-4 py-2 rounded-lg font-bold text-sm hover:bg-indigo-50 shadow">Export CSV</button>
+                </div>
+            </div>
+        </nav>
+        
+        <div class="max-w-7xl mx-auto px-4 py-8">
+            <div class="bg-white rounded-xl shadow overflow-hidden">
+                <div class="px-6 py-4 border-b border-slate-200 flex justify-between items-center">
+                    <h2 class="font-bold text-slate-800">Total Hadir: <span id="totalHadir" class="text-indigo-600 text-xl">0</span></h2>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-slate-50 text-slate-500 text-sm border-b border-slate-200">
+                                <th class="px-6 py-4 font-semibold">Waktu (WIB)</th>
+                                <th class="px-6 py-4 font-semibold">Nama Lengkap</th>
+                                <th class="px-6 py-4 font-semibold">Instansi</th>
+                                <th class="px-6 py-4 font-semibold">Jabatan</th>
+                                <th class="px-6 py-4 font-semibold">Kab/Kota</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tableAdmin" class="divide-y divide-slate-200">
+                            <tr><td colspan="5" class="px-6 py-8 text-center text-slate-500"><div class="spinner border-indigo-600 border-t-transparent mx-auto mb-2"></div>Memuat data...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // FIREBASE CONFIG
+        const firebaseConfig = {
+            apiKey: "AIzaSyCAMKzhVnGGUxdVKAWeoPXYTAZvPSq6yKY",
+            authDomain: "sekolah-model-2026.firebaseapp.com",
+            databaseURL: "https://sekolah-model-2026-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "sekolah-model-2026",
+            storageBucket: "sekolah-model-2026.firebasestorage.app",
+            messagingSenderId: "1014570073770",
+            appId: "1:1014570073770:web:770e7e6cef2a52a3825ad3"
+        };
+        
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+
+        // ROUTING
+        const urlParams = new URLSearchParams(window.location.search);
+        const isAdmin = urlParams.get('view') === 'admin';
+        
+        if (isAdmin) {
+            const pwd = prompt("Masukkan password Admin:");
+            if (pwd === "adminbgtk") {
+                document.getElementById('view-admin').classList.remove('hidden');
+                loadAdminData();
+            } else {
+                alert("Password salah!");
+                window.location.href = "absen.html";
+            }
+        } else {
+            document.getElementById('view-form').classList.remove('hidden');
+        }
+
+        // =======================================
+        // FORM SUBMIT
+        // =======================================
+        async function submitAbsen(e) {
+            e.preventDefault();
+            const btn = document.getElementById('btnSubmit');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<div class="spinner"></div>';
+            btn.disabled = true;
+
+            const data = {
+                nama: document.getElementById('nama').value.trim(),
+                instansi: document.getElementById('instansi').value.trim(),
+                jabatan: document.getElementById('jabatan').value,
+                kabkota: document.getElementById('kabkota').value,
+                timestamp: firebase.database.ServerValue.TIMESTAMP
+            };
+
+            try {
+                await db.ref('daftar_hadir').push(data);
+                document.getElementById('absenForm').classList.add('hidden');
+                document.getElementById('successMessage').classList.remove('hidden');
+            } catch (err) {
+                console.error(err);
+                alert("Gagal mengirim data. Silakan coba lagi. " + err.message);
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            }
+        }
+
+        // =======================================
+        // ADMIN
+        // =======================================
+        let adminDataList = [];
+
+        function loadAdminData() {
+            db.ref('daftar_hadir').on('value', (snap) => {
+                const data = snap.val();
+                const tbody = document.getElementById('tableAdmin');
+                let html = '';
+                adminDataList = [];
+
+                if (data) {
+                    // Convert to array and sort by timestamp (newest first)
+                    for (const key in data) {
+                        adminDataList.push({ id: key, ...data[key] });
+                    }
+                    adminDataList.sort((a, b) => b.timestamp - a.timestamp);
+
+                    document.getElementById('totalHadir').innerText = adminDataList.length;
+
+                    adminDataList.forEach(item => {
+                        const date = new Date(item.timestamp);
+                        const dateStr = date.toLocaleString('id-ID', { timeZone: 'Asia/Jakarta' });
+                        
+                        html += `
+                            <tr class="hover:bg-slate-50 transition-colors">
+                                <td class="px-6 py-4 text-sm text-slate-500">${dateStr}</td>
+                                <td class="px-6 py-4 text-sm font-semibold text-slate-800">${item.nama}</td>
+                                <td class="px-6 py-4 text-sm text-slate-600">${item.instansi}</td>
+                                <td class="px-6 py-4 text-sm text-slate-600">${item.jabatan}</td>
+                                <td class="px-6 py-4 text-sm text-slate-600">${item.kabkota}</td>
+                            </tr>
+                        `;
+                    });
+                } else {
+                    document.getElementById('totalHadir').innerText = "0";
+                    html = '<tr><td colspan="5" class="px-6 py-8 text-center text-slate-500">Belum ada data kehadiran.</td></tr>';
+                }
+                
+                tbody.innerHTML = html;
+            });
+        }
+
+        function exportCSV() {
+            if (adminDataList.length === 0) return alert("Belum ada data.");
+
+            let csv = "Waktu (WIB),Nama Lengkap,Instansi/Asal Sekolah,Jabatan,Kabupaten/Kota\n";
+            
+            adminDataList.forEach(item => {
+                const date = new Date(item.timestamp);
+                const dateStr = date.toLocaleString('id-ID', { timeZone: 'Asia/Jakarta' });
+                
+                // Escape quotes
+                const nama = `"${item.nama.replace(/"/g, '""')}"`;
+                const instansi = `"${item.instansi.replace(/"/g, '""')}"`;
+                const jabatan = `"${item.jabatan.replace(/"/g, '""')}"`;
+                const kabkota = `"${item.kabkota.replace(/"/g, '""')}"`;
+                const waktu = `"${dateStr}"`;
+                
+                csv += `${waktu},${nama},${instansi},${jabatan},${kabkota}\n`;
+            });
+
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement("a");
+            const url = URL.createObjectURL(blob);
+            link.setAttribute("href", url);
+            link.setAttribute("download", `Daftar_Hadir_${new Date().getTime()}.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+    </script>
+</body>
+</html>
