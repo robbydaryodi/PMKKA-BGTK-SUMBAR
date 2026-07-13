@@ -2279,7 +2279,9 @@
                 let html = '<div class="space-y-4">';
                 let selectOptions = '<option value="">Pilih Sekolah...</option>';
                 for(const npsn in allSchools) {
-                    selectOptions += `<option value="${npsn}">${allSchools[npsn].sekolah} (${npsn})</option>`;
+                    const firstTeacher = Object.values(allSchools[npsn])[0];
+                    const namaSekolah = (firstTeacher && firstTeacher.asal_sekolah) ? firstTeacher.asal_sekolah : `Sekolah ${npsn}`;
+                    selectOptions += `<option value="${npsn}">${namaSekolah} (${npsn})</option>`;
                 }
                 document.getElementById('selectAssignSekolah').innerHTML = selectOptions;
 
@@ -2289,7 +2291,8 @@
                     
                     let badges = "";
                     sekolahFasil.forEach(npsn => {
-                        const namaSekolah = allSchools[npsn] ? allSchools[npsn].sekolah : npsn;
+                        const firstTeacher = allSchools[npsn] ? Object.values(allSchools[npsn])[0] : null;
+                        const namaSekolah = (firstTeacher && firstTeacher.asal_sekolah) ? firstTeacher.asal_sekolah : npsn;
                         badges += `<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 mr-2 mb-2">
                             ${namaSekolah}
                             <button type="button" onclick="hapusAssign('${f.id}', '${npsn}')" class="flex-shrink-0 ml-1.5 inline-flex text-blue-400 focus:outline-none focus:text-blue-500">

@@ -121,6 +121,8 @@
          </div>
     </div>
 
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
     <script>
         const firebaseConfig = {
             apiKey: "AIzaSyCAMKzhVnGGUxdVKAWeoPXYTAZvPSq6yKY",
@@ -214,7 +216,8 @@
 
             let html = '';
             mySchools.forEach(npsn => {
-                const schoolName = allSchools[npsn] ? allSchools[npsn].sekolah : npsn;
+                const firstTeacher = allSchools[npsn] ? Object.values(allSchools[npsn])[0] : null;
+                const schoolName = (firstTeacher && firstTeacher.asal_sekolah) ? firstTeacher.asal_sekolah : npsn;
                 const schoolJadwal = allJadwal[npsn] || {};
 
                 let kunjunganHtml = '<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-6">';
