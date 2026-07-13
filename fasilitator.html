@@ -121,8 +121,8 @@
          </div>
     </div>
 
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
     <script>
         const firebaseConfig = {
             apiKey: "AIzaSyCAMKzhVnGGUxdVKAWeoPXYTAZvPSq6yKY",
@@ -140,10 +140,11 @@
         let allSchools = {};
         
         async function init() {
-            const snapFasil = await db.ref('fasilitator').once('value');
-            fasilData = snapFasil.val() || {};
-            
-            const select = document.getElementById('loginFasilId');
+            try {
+                const snapFasil = await db.ref('fasilitator').once('value');
+                fasilData = snapFasil.val() || {};
+                
+                const select = document.getElementById('loginFasilId');
             let options = '<option value="">-- Pilih Nama Anda --</option>';
             for(let key in fasilData) {
                 options += `<option value="${key}">${fasilData[key].nama}</option>`;
@@ -154,6 +155,11 @@
             if(storedFasilId && fasilData[storedFasilId]) {
                 loggedInFasil = fasilData[storedFasilId];
                 showDashboard();
+            }
+            } catch(e) {
+                console.error(e);
+                alert("Gagal memuat data fasilitator: " + e.message);
+                document.getElementById('loginFasilId').innerHTML = '<option value="">Gagal Memuat Data</option>';
             }
         }
         init();
