@@ -177,13 +177,25 @@
                         <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
                         <span class="text-sm">Dashboard Utama</span>
                     </button>
-                    <button onclick="switchAdminView('mode1')" id="btnMode1" class="flex items-center gap-3 px-3 py-2.5 rounded-lg font-medium text-slate-600 hover:bg-slate-50 transition-colors w-full text-left">
-                        <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
-                        <span class="text-sm">Progress Sekolah</span>
+                    <button onclick="toggleSubmenu('submenuVerifikasi')" class="flex items-center justify-between px-3 py-2.5 rounded-lg font-medium text-slate-600 hover:bg-slate-50 transition-colors w-full text-left">
+                        <div class="flex items-center gap-3">
+                            <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                            <span class="text-sm">Verifikasi Peserta</span>
+                        </div>
+                        <svg class="w-4 h-4 transition-transform duration-200" id="icon_submenuVerifikasi" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
                     </button>
-                    <button onclick="switchAdminView('mode2')" id="btnMode2" class="flex items-center gap-3 px-3 py-2.5 rounded-lg font-medium text-slate-600 hover:bg-slate-50 transition-colors w-full text-left">
-                        <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
-                        <span class="text-sm">Rencana Pengkelasan</span>
+                    <div id="submenuVerifikasi" class="hidden pl-8 pr-2 space-y-1 mt-1">
+                        <button onclick="switchAdminView('mode1')" id="btnMode1" class="flex items-center gap-3 px-3 py-2 rounded-lg font-medium text-slate-500 hover:text-slate-800 hover:bg-slate-50 transition-colors w-full text-left text-sm">
+                            Progress Sekolah
+                        </button>
+                        <button onclick="switchAdminView('mode2')" id="btnMode2" class="flex items-center gap-3 px-3 py-2 rounded-lg font-medium text-slate-500 hover:text-slate-800 hover:bg-slate-50 transition-colors w-full text-left text-sm">
+                            Rencana Pengkelasan
+                        </button>
+                    </div>
+
+                    <button onclick="switchAdminView('mode3')" id="btnMode3" class="flex items-center gap-3 px-3 py-2.5 rounded-lg font-medium text-slate-600 hover:bg-slate-50 transition-colors w-full text-left mt-2 border-t border-slate-100 pt-2">
+                        <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+                        <span class="text-sm">Manajemen Fasilitator</span>
                     </button>
                     
                     <a href="absen.html?view=admin" target="_blank" class="flex items-center gap-3 px-3 py-2.5 rounded-lg font-medium text-slate-600 hover:bg-slate-50 transition-colors w-full text-left mt-2 border-t border-slate-100 pt-2">
@@ -366,6 +378,49 @@
                     </table>
                 </div>
             </div>
+        </div>
+
+        <!-- MODE 3: MANAJEMEN FASILITATOR -->
+        <div id="viewMode3" class="hidden fade-in">
+             <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-6 mb-6">
+                 <h2 class="text-lg font-bold text-slate-800 mb-4">Tambah Fasilitator</h2>
+                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                     <input type="text" id="inputFasilNama" placeholder="Nama Fasilitator" class="border-slate-300 rounded-lg shadow-sm focus:ring-indigo-500 px-4 py-2 border w-full">
+                     <input type="number" id="inputFasilHp" placeholder="No HP" class="border-slate-300 rounded-lg shadow-sm focus:ring-indigo-500 px-4 py-2 border w-full">
+                 </div>
+                 <button onclick="tambahFasil()" class="mt-4 bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2 rounded-lg font-medium shadow-sm transition-colors">Tambah Fasilitator</button>
+             </div>
+             
+             <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
+                 <div class="p-4 border-b border-slate-100 bg-slate-50/50 flex justify-between items-center">
+                     <h2 class="text-md font-bold text-slate-800">Daftar Fasilitator & Assign Sekolah</h2>
+                     <a href="fasilitator.html" target="_blank" class="bg-teal-600 hover:bg-teal-700 text-white px-4 py-2 rounded-lg text-sm font-medium shadow-sm transition-colors">Buka Portal Fasilitator</a>
+                 </div>
+                 <div class="p-4" id="listFasilContainer">
+                     <div class="text-center text-slate-500 py-4"><div class="spinner mx-auto mb-2"></div>Memuat data...</div>
+                 </div>
+             </div>
+             
+             <!-- Modal for Assigning School -->
+             <div id="modalAssignSekolah" class="hidden fixed inset-0 z-[60] bg-slate-900/50 flex items-center justify-center p-4">
+                 <div class="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden">
+                     <div class="p-4 border-b border-slate-200 flex justify-between items-center bg-slate-50">
+                         <h3 class="font-bold text-slate-800">Assign Sekolah ke Fasil</h3>
+                         <button onclick="closeModalAssign()" class="text-slate-400 hover:text-slate-600 p-1"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg></button>
+                     </div>
+                     <div class="p-4">
+                         <input type="hidden" id="assignFasilId">
+                         <label class="block text-sm font-medium text-slate-700 mb-1">Pilih Sekolah</label>
+                         <select id="selectAssignSekolah" class="w-full border-slate-300 rounded-lg shadow-sm focus:ring-primary focus:border-primary px-4 py-2 border mb-4">
+                            <option value="">Pilih Sekolah...</option>
+                         </select>
+                         <button onclick="simpanAssignSekolah()" class="w-full bg-primary hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors">Simpan Assign</button>
+                         <div id="assignSchoolList" class="mt-4 border-t pt-4 space-y-2">
+                            <!-- Assigned schools for this fasil shown here -->
+                         </div>
+                     </div>
+                 </div>
+             </div>
         </div>
     <!-- CLOSE ADMIN VIEW -->
             </div>
@@ -1112,9 +1167,11 @@
             const btn0 = document.getElementById('btnMode0');
             const btn1 = document.getElementById('btnMode1');
             const btn2 = document.getElementById('btnMode2');
+            const btn3 = document.getElementById('btnMode3');
             const view0 = document.getElementById('viewMode0');
             const view1 = document.getElementById('viewMode1');
             const view2 = document.getElementById('viewMode2');
+            const view3 = document.getElementById('viewMode3');
 
             // Close sidebar on mobile
             if (window.innerWidth < 768) {
@@ -1128,11 +1185,13 @@
             if (btn0) btn0.className = mode === 'mode0' ? activeBtnClass : inactiveBtnClass;
             btn1.className = mode === 'mode1' ? activeBtnClass : inactiveBtnClass;
             btn2.className = mode === 'mode2' ? activeBtnClass : inactiveBtnClass;
+            if (btn3) btn3.className = mode === 'mode3' ? activeBtnClass : inactiveBtnClass;
 
             const pageTitle = document.getElementById('adminPageTitle');
             if (view0) view0.classList.add('hidden');
             view1.classList.add('hidden');
             view2.classList.add('hidden');
+            if (view3) view3.classList.add('hidden');
 
             if (mode === 'mode0') {
                 pageTitle.innerText = "Dashboard Utama";
@@ -1143,6 +1202,10 @@
             } else if (mode === 'mode2') {
                 pageTitle.innerText = "Rencana Pengkelasan Pusat";
                 view2.classList.remove('hidden');
+            } else if (mode === 'mode3') {
+                pageTitle.innerText = "Manajemen Fasilitator";
+                if (view3) view3.classList.remove('hidden');
+                loadFasilitatorData();
             }
             renderAdminData();
         }
@@ -2182,6 +2245,140 @@
 
         function filterPublicTable() {
             renderPublicTable();
+        }        
+        // --- FACILITATOR ADMIN LOGIC ---
+        let allSchools = {};
+        
+        async function tambahFasil() {
+            const nama = document.getElementById('inputFasilNama').value.trim();
+            const hp = document.getElementById('inputFasilHp').value.trim();
+            if(!nama || !hp) return alert("Nama dan No HP wajib diisi");
+            
+            const fasilId = "fasil_" + Date.now();
+            await firebase.database().ref('fasilitator/' + fasilId).set({
+                id: fasilId,
+                nama: nama,
+                hp: hp
+            });
+            document.getElementById('inputFasilNama').value = "";
+            document.getElementById('inputFasilHp').value = "";
+            loadFasilitatorData();
+        }
+
+        async function loadFasilitatorData() {
+            try {
+                const snap = await firebase.database().ref('fasilitator').once('value');
+                const fasils = snap.val() || {};
+                
+                const snapSekolah = await firebase.database().ref('master_guru').once('value');
+                allSchools = snapSekolah.val() || {};
+                
+                const snapAssign = await firebase.database().ref('fasilitator_sekolah').once('value');
+                const assigned = snapAssign.val() || {};
+                
+                let html = '<div class="space-y-4">';
+                let selectOptions = '<option value="">Pilih Sekolah...</option>';
+                for(const npsn in allSchools) {
+                    selectOptions += `<option value="${npsn}">${allSchools[npsn].sekolah} (${npsn})</option>`;
+                }
+                document.getElementById('selectAssignSekolah').innerHTML = selectOptions;
+
+                for (const key in fasils) {
+                    const f = fasils[key];
+                    const sekolahFasil = assigned[f.id] || [];
+                    
+                    let badges = "";
+                    sekolahFasil.forEach(npsn => {
+                        const namaSekolah = allSchools[npsn] ? allSchools[npsn].sekolah : npsn;
+                        badges += `<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 mr-2 mb-2">
+                            ${namaSekolah}
+                            <button type="button" onclick="hapusAssign('${f.id}', '${npsn}')" class="flex-shrink-0 ml-1.5 inline-flex text-blue-400 focus:outline-none focus:text-blue-500">
+                                <svg class="h-4 w-4" stroke="currentColor" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                            </button>
+                        </span>`;
+                    });
+                    
+                    html += `
+                    <div class="border border-slate-200 p-4 rounded-xl shadow-sm flex flex-col md:flex-row justify-between items-start md:items-center">
+                        <div class="mb-3 md:mb-0">
+                            <h4 class="font-bold text-slate-800 text-lg">${f.nama}</h4>
+                            <p class="text-sm text-slate-500 mb-2">No HP: ${f.hp} | Sandi Default: ${f.hp.slice(-6)}</p>
+                            <div>${badges || '<span class="text-xs text-slate-400 italic">Belum ada sekolah</span>'}</div>
+                        </div>
+                        <div class="flex gap-2">
+                            <button onclick="openModalAssign('${f.id}')" class="bg-indigo-50 text-indigo-700 hover:bg-indigo-100 px-4 py-2 rounded-lg text-sm font-medium transition-colors">Assign Sekolah</button>
+                            <button onclick="hapusFasil('${f.id}')" class="bg-red-50 text-red-600 hover:bg-red-100 px-4 py-2 rounded-lg text-sm font-medium transition-colors">Hapus</button>
+                        </div>
+                    </div>`;
+                }
+                html += '</div>';
+                if(Object.keys(fasils).length === 0) html = '<p class="text-center text-slate-500 py-4">Belum ada data fasilitator.</p>';
+                
+                document.getElementById('listFasilContainer').innerHTML = html;
+            } catch(e) {
+                console.error("Error loading fasilitator", e);
+            }
+        }
+
+        function openModalAssign(fasilId) {
+            document.getElementById('assignFasilId').value = fasilId;
+            document.getElementById('selectAssignSekolah').value = "";
+            document.getElementById('modalAssignSekolah').classList.remove('hidden');
+        }
+
+        function closeModalAssign() {
+            document.getElementById('modalAssignSekolah').classList.add('hidden');
+        }
+
+        async function simpanAssignSekolah() {
+            const fasilId = document.getElementById('assignFasilId').value;
+            const npsn = document.getElementById('selectAssignSekolah').value;
+            if(!npsn) return alert("Pilih sekolah dulu");
+            
+            try {
+                const ref = firebase.database().ref('fasilitator_sekolah/' + fasilId);
+                const snap = await ref.once('value');
+                let arr = snap.val() || [];
+                if(!arr.includes(npsn)) {
+                    arr.push(npsn);
+                    await ref.set(arr);
+                }
+                closeModalAssign();
+                loadFasilitatorData();
+            } catch(e) {
+                alert("Error");
+            }
+        }
+
+        async function hapusAssign(fasilId, npsn) {
+            if(!confirm("Hapus assign sekolah ini?")) return;
+            try {
+                const ref = firebase.database().ref('fasilitator_sekolah/' + fasilId);
+                const snap = await ref.once('value');
+                let arr = snap.val() || [];
+                arr = arr.filter(x => x !== npsn);
+                await ref.set(arr);
+                loadFasilitatorData();
+            } catch(e) {}
+        }
+        
+        async function hapusFasil(id) {
+            if(!confirm("Yakin hapus fasilitator ini?")) return;
+            await firebase.database().ref('fasilitator/' + id).remove();
+            await firebase.database().ref('fasilitator_sekolah/' + id).remove();
+            loadFasilitatorData();
+        }
+
+        function toggleSubmenu(menuId) {
+            const el = document.getElementById(menuId);
+            const icon = document.getElementById('icon_' + menuId);
+            if (el.classList.contains('hidden')) {
+                el.classList.remove('hidden');
+                if(icon) icon.classList.add('rotate-180');
+            } else {
+                el.classList.add('hidden');
+                if(icon) icon.classList.remove('rotate-180');
+            }
         }
     </script>
     <!-- ADMIN DETAIL MODAL -->
