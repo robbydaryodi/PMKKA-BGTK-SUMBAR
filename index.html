@@ -466,6 +466,23 @@
 
         </div>
         
+        <div id="viewMode8" class="hidden fade-in">
+             <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
+                 <div class="p-4 border-b border-slate-100 bg-slate-50/50 flex justify-between items-center">
+                     <h2 class="text-md font-bold text-slate-800">Pengaturan Rentang Waktu Kunjungan</h2>
+                     <button onclick="simpanSettingJadwal()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg font-bold text-sm shadow-sm transition-colors">Simpan Pengaturan</button>
+                 </div>
+                 <div class="p-6">
+                     <div class="bg-indigo-50 text-indigo-800 text-sm p-4 rounded-lg mb-6">
+                         Tetapkan rentang tanggal (Mulai s.d Selesai) untuk masing-masing tahap kunjungan. Fasilitator hanya dapat mengisi tanggal pelaksanaan di dalam rentang ini. Pastikan rentang Kunjungan berikutnya lebih lambat dari Kunjungan sebelumnya.
+                     </div>
+                     <div class="space-y-4 max-w-3xl" id="settingJadwalContainer">
+                         <!-- Loaded via JS -->
+                     </div>
+                 </div>
+             </div>
+        </div>
+
     <!-- CLOSE ADMIN VIEW -->
             </div>
         </main>
@@ -1325,12 +1342,14 @@
             const btn3 = document.getElementById('btnMode3');
             const btn4 = document.getElementById('btnMode4');
             const btn5 = document.getElementById('btnMode5');
+            const btn8 = document.getElementById('btnMode8');
             const view0 = document.getElementById('viewMode0');
             const view1 = document.getElementById('viewMode1');
             const view2 = document.getElementById('viewMode2');
             const view3 = document.getElementById('viewMode3');
             const view4 = document.getElementById('viewMode4');
             const view5 = document.getElementById('viewMode5');
+            const view8 = document.getElementById('viewMode8');
 
             // Close sidebar on mobile
             if (window.innerWidth < 768) {
@@ -1347,6 +1366,7 @@
             if (btn3) btn3.className = mode === 'mode3' ? activeBtnClass : inactiveBtnClass;
             if (btn4) btn4.className = mode === 'mode4' ? activeBtnClass : inactiveBtnClass;
             if (btn5) btn5.className = mode === 'mode5' ? activeBtnClass : inactiveBtnClass;
+            if (btn8) btn8.className = mode === 'mode8' ? activeBtnClass : inactiveBtnClass;
             const btn7 = document.getElementById('btnMode7');
             if (btn7) btn7.className = mode === 'mode7' ? activeBtnClass : inactiveBtnClass;
 
@@ -1357,6 +1377,7 @@
             if (view3) view3.classList.add('hidden');
             if (view4) view4.classList.add('hidden');
             if (view5) view5.classList.add('hidden');
+            if (view8) view8.classList.add('hidden');
             const view7 = document.getElementById('viewMode7');
             if (view7) view7.classList.add('hidden');
 
@@ -2700,6 +2721,70 @@
             }
         }
         
+        async function loadSettingJadwal() {
+            try {
+                document.getElementById('settingJadwalContainer').innerHTML = '<div class="text-center text-slate-500 py-4"><div class="spinner mx-auto mb-2"></div>Memuat data...</div>';
+                const snap = await firebase.database().ref('setting_jadwal').once('value');
+                const data = snap.val() || {};
+                
+                let html = '';
+                for(let i=1; i<=6; i++) {
+                    const row = data[`kunjungan_${i}`] || { start_date: '', end_date: '' };
+                    html += `
+                        <div class="flex flex-col sm:flex-row items-start sm:items-center gap-4 bg-slate-50 p-4 rounded-xl border border-slate-200">
+                            <div class="w-full sm:w-32 font-bold text-slate-700">Kunjungan ${i}</div>
+                            <div class="flex-1 w-full grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-xs font-medium text-slate-500 mb-1">Tanggal Mulai</label>
+                                    <input type="date" id="setJadwal_start_${i}" value="${row.start_date}" class="w-full border-slate-300 rounded-lg shadow-sm focus:ring-indigo-500 px-3 py-2 border text-sm">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-medium text-slate-500 mb-1">Tanggal Selesai</label>
+                                    <input type="date" id="setJadwal_end_${i}" value="${row.end_date}" class="w-full border-slate-300 rounded-lg shadow-sm focus:ring-indigo-500 px-3 py-2 border text-sm">
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }
+                document.getElementById('settingJadwalContainer').innerHTML = html;
+            } catch(e) {
+                console.error(e);
+                alert("Gagal memuat pengaturan jadwal.");
+            }
+        }
+        
+        async function simpanSettingJadwal() {
+            try {
+                const settings = {};
+                let lastEndDate = null;
+                
+                for(let i=1; i<=6; i++) {
+                    const start = document.getElementById(`setJadwal_start_${i}`).value;
+                    const end = document.getElementById(`setJadwal_end_${i}`).value;
+                    
+                    if (start || end) {
+                        if (!start || !end) {
+                            return alert(`Kunjungan ${i} harus memiliki kedua tanggal (Mulai dan Selesai) jika ingin diatur.`);
+                        }
+                        if (new Date(start) > new Date(end)) {
+                            return alert(`Tanggal Mulai Kunjungan ${i} tidak boleh lebih besar dari Tanggal Selesai.`);
+                        }
+                        if (lastEndDate && new Date(start) < new Date(lastEndDate)) {
+                            return alert(`Tanggal Mulai Kunjungan ${i} tidak boleh lebih awal dari Tanggal Selesai kunjungan sebelumnya.`);
+                        }
+                        lastEndDate = end;
+                    }
+                    settings[`kunjungan_${i}`] = { start_date: start, end_date: end };
+                }
+                
+                await firebase.database().ref('setting_jadwal').set(settings);
+                alert("Pengaturan jadwal berhasil disimpan!");
+            } catch(e) {
+                console.error(e);
+                alert("Terjadi kesalahan saat menyimpan pengaturan jadwal.");
+            }
+        }
+
         async function loadJadwalFasilData() {
             try {
                 const dbRef = firebase.database();

@@ -244,6 +244,7 @@
         let fasilData = {};
         let loggedInFasil = null;
         let allSchools = {};
+        let globalSettingJadwal = {};
         
         const rubrikData = {
             A: [
@@ -336,6 +337,9 @@
             try {
                 const snapFasil = await db.ref('fasilitator').once('value');
                 fasilData = snapFasil.val() || {};
+                
+                const snapSetting = await db.ref('setting_jadwal').once('value');
+                globalSettingJadwal = snapSetting.val() || {};
                 
                 const select = document.getElementById('loginFasilId');
             let options = '<option value="">-- Pilih Nama Anda --</option>';
@@ -495,7 +499,17 @@
             document.getElementById('aturId').value = kunjunganId;
             document.getElementById('modalAturSub').innerText = `${schoolName} - Kunjungan ${kunjunganId}`;
             
-            document.getElementById('aturTanggal').value = '';
+            const aturTanggalInput = document.getElementById('aturTanggal');
+            aturTanggalInput.value = '';
+            aturTanggalInput.removeAttribute('min');
+            aturTanggalInput.removeAttribute('max');
+            
+            if (globalSettingJadwal[`kunjungan_${kunjunganId}`]) {
+                const rules = globalSettingJadwal[`kunjungan_${kunjunganId}`];
+                if (rules.start_date) aturTanggalInput.setAttribute('min', rules.start_date);
+                if (rules.end_date) aturTanggalInput.setAttribute('max', rules.end_date);
+            }
+            
             document.getElementById('aturStatus').value = 'Direncanakan';
             
             const modal = document.getElementById('modalAturJadwal');
