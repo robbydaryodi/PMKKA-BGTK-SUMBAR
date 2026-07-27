@@ -2409,6 +2409,36 @@
                     </div>
                 `;
 
+                // Render Daftar Hadir
+                if (data.daftar_hadir) {
+                    const pesertaList = Object.values(data.daftar_hadir).sort((a,b) => a.timestamp - b.timestamp);
+                    html += `
+                        <div class="mt-6 border-t border-slate-200 pt-4">
+                            <h4 class="font-bold text-slate-800 mb-3 text-sm uppercase">Daftar Hadir Peserta (${pesertaList.length} Orang)</h4>
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-sm text-left text-slate-500">
+                                    <thead class="text-xs text-slate-700 uppercase bg-slate-50">
+                                        <tr>
+                                            <th scope="col" class="px-4 py-2">No</th>
+                                            <th scope="col" class="px-4 py-2">Nama</th>
+                                            <th scope="col" class="px-4 py-2">Jabatan</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        ${pesertaList.map((p, idx) => `
+                                            <tr class="bg-white border-b hover:bg-slate-50">
+                                                <td class="px-4 py-2 font-medium text-slate-900">${idx + 1}</td>
+                                                <td class="px-4 py-2">${p.nama}</td>
+                                                <td class="px-4 py-2">${p.jabatan}</td>
+                                            </tr>
+                                        `).join('')}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    `;
+                }
+
                 document.getElementById('modalBacaLaporanContent').innerHTML = html;
                 document.getElementById('modalBacaLaporan').classList.remove('hidden');
             } catch(e) {

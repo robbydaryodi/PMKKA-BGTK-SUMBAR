@@ -219,6 +219,9 @@
              
              <!-- Footer Modal -->
              <div class="p-4 border-t border-slate-100 bg-white shrink-0 flex gap-3">
+                 <button type="button" onclick="salinLinkKehadiran()" class="flex-none bg-indigo-100 hover:bg-indigo-200 text-indigo-700 px-4 py-3 rounded-xl font-bold transition-colors shadow-sm" title="Salin Link Daftar Hadir">
+                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path></svg>
+                 </button>
                  <button type="button" onclick="generateWordReport()" class="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-3 rounded-xl font-bold transition-colors shadow-sm text-lg">Cetak Laporan</button>
                  <button type="button" onclick="simpanKunjungan()" class="flex-1 bg-primary hover:bg-blue-700 text-white px-6 py-3 rounded-xl font-bold transition-colors shadow-sm text-lg">Simpan Laporan & Jadwal</button>
              </div>
@@ -581,6 +584,21 @@
             modal.classList.add('hidden');
         }
 
+        
+        function salinLinkKehadiran() {
+            const npsn = document.getElementById('inputKunjunganNpsn').value;
+            const kId = document.getElementById('inputKunjunganId').value;
+            const sekolah = document.getElementById('infoNamaSekolah').value;
+            
+            const url = window.location.origin + '/kehadiran.html?npsn=' + npsn + '&kunjungan=' + kId + '&sekolah=' + encodeURIComponent(sekolah);
+            
+            navigator.clipboard.writeText(url).then(() => {
+                alert("Tautan daftar hadir berhasil disalin! Silakan bagikan ke grup WA peserta:\n" + url);
+            }).catch(err => {
+                alert("Gagal menyalin tautan: " + url);
+            });
+        }
+        
         async function simpanKunjungan() {
             const npsn = document.getElementById('inputKunjunganNpsn').value;
             const kId = document.getElementById('inputKunjunganId').value;
@@ -680,8 +698,22 @@
             const kekuatan = cats[0].name;
             const evaluasi = cats[cats.length - 1].name;
 
+            // Fetch Daftar Hadir
+            const npsnVal = document.getElementById('inputKunjunganNpsn').value;
+            const kIdVal = document.getElementById('inputKunjunganId').value;
+            let daftarHadirList = [];
+            try {
+                const hadirSnap = await db.ref(`jadwal_kunjungan/${npsnVal}/kunjungan_${kIdVal}/daftar_hadir`).once('value');
+                if(hadirSnap.exists()) {
+                    const data = hadirSnap.val();
+                    daftarHadirList = Object.values(data).sort((a,b) => a.timestamp - b.timestamp);
+                }
+            } catch(e) {
+                console.error("Gagal mengambil daftar hadir", e);
+            }
+
             // DOCX Generation
-            const { Document, Packer, Paragraph, TextRun, HeadingLevel, PageBreak, AlignmentType } = window.docx;
+            const { Document, Packer, Paragraph, TextRun, HeadingLevel, PageBreak, AlignmentType, Table, TableRow, TableCell, WidthType, BorderStyle } = window.docx;
 
             // Helper for justified paragraphs
             const justifyPara = (text) => new Paragraph({
@@ -716,6 +748,40 @@
                         createHeading("PELAKSANAAN KEGIATAN", HeadingLevel.HEADING_1),
                         justifyPara("Kegiatan pendampingan dan pemantauan implementasi Pembelajaran Mendalam (PM) serta Koding dan Kecerdasan Artifisial (KKA) telah dilaksanakan pada tanggal " + (tgl || ".......") + " bertempat di " + namaSekolah + "."),
                         justifyPara("Proses fasilitasi ini dipandu langsung oleh Fasilitator " + namaFasil + ". Saat ini, sekolah tersebut sedang berada pada tahapan " + (tahap || ".......") + " berdasarkan siklus TET (Targeted Evaluation & Teaching). Selama observasi berlangsung, terpantau bahwa partisipasi guru dalam mengadopsi dan mendiskusikan materi tergolong " + partisipasi + ". Keterlibatan ini menjadi indikator penting dalam mengukur kesiapan ekosistem sekolah menuju transformasi digital yang bermakna."),
+                        new Paragraph({ text: "Daftar Hadir Peserta:", font: "Times New Roman", size: 24, bold: true, spacing: { before: 200, after: 100 } }),
+                        
+                        daftarHadirList.length === 0 ? 
+                            new Paragraph({ text: "Tidak ada data kehadiran yang tercatat secara digital pada sistem.", font: "Times New Roman", size: 24, italics: true, spacing: { after: 200 } }) 
+                            : 
+                            new Table({
+                                width: { size: 100, type: WidthType.PERCENTAGE },
+                                borders: {
+                                    top: { style: BorderStyle.SINGLE, size: 1 },
+                                    bottom: { style: BorderStyle.SINGLE, size: 1 },
+                                    left: { style: BorderStyle.SINGLE, size: 1 },
+                                    right: { style: BorderStyle.SINGLE, size: 1 },
+                                    insideHorizontal: { style: BorderStyle.SINGLE, size: 1 },
+                                    insideVertical: { style: BorderStyle.SINGLE, size: 1 },
+                                },
+                                rows: [
+                                    new TableRow({
+                                        children: [
+                                            new TableCell({ children: [new Paragraph({ text: "No", bold: true, alignment: AlignmentType.CENTER })], width: { size: 10, type: WidthType.PERCENTAGE } }),
+                                            new TableCell({ children: [new Paragraph({ text: "Nama Lengkap", bold: true, alignment: AlignmentType.CENTER })], width: { size: 50, type: WidthType.PERCENTAGE } }),
+                                            new TableCell({ children: [new Paragraph({ text: "Jabatan", bold: true, alignment: AlignmentType.CENTER })], width: { size: 40, type: WidthType.PERCENTAGE } })
+                                        ]
+                                    }),
+                                    ...daftarHadirList.map((peserta, idx) => 
+                                        new TableRow({
+                                            children: [
+                                                new TableCell({ children: [new Paragraph({ text: (idx + 1).toString(), alignment: AlignmentType.CENTER })] }),
+                                                new TableCell({ children: [new Paragraph({ text: peserta.nama })] }),
+                                                new TableCell({ children: [new Paragraph({ text: peserta.jabatan })] })
+                                            ]
+                                        })
+                                    )
+                                ]
+                            }),
                         
                         // BAB III
                         new Paragraph({ children: [new PageBreak()] }),
