@@ -157,6 +157,16 @@
                                      <option value="Refleksi/Measure & Reflect">Refleksi / Measure & Reflect</option>
                                  </select>
                              </div>
+                             
+                             <div class="mt-4 sm:col-span-2">
+                                <label class="block text-sm font-bold text-slate-800 mb-2">Partisipasi Guru</label>
+                                <div class="flex gap-4">
+                                    <label class="flex items-center gap-2 text-sm"><input type="radio" name="partisipasi_guru" value="Rendah" class="text-indigo-600 focus:ring-indigo-500"> Rendah</label>
+                                    <label class="flex items-center gap-2 text-sm"><input type="radio" name="partisipasi_guru" value="Sedang" class="text-indigo-600 focus:ring-indigo-500"> Sedang</label>
+                                    <label class="flex items-center gap-2 text-sm"><input type="radio" name="partisipasi_guru" value="Tinggi" class="text-indigo-600 focus:ring-indigo-500"> Tinggi</label>
+                                </div>
+                             </div>
+
                          </div>
                      </div>
                  </section>
@@ -196,7 +206,7 @@
                              <textarea id="catatanPelaksanaan" rows="3" class="w-full border-slate-300 rounded-lg shadow-sm focus:ring-primary focus:border-primary px-4 py-2 border" placeholder="Tuliskan jalannya siklus TET..."></textarea>
                          </div>
                          <div>
-                             <label class="block text-sm font-medium text-slate-700 mb-1">Kendala Ditemukan</label>
+                             <label class="block text-sm font-medium text-slate-700 mb-1">Kendala dan Solusi</label>
                              <textarea id="kendalaDitemukan" rows="2" class="w-full border-slate-300 rounded-lg shadow-sm focus:ring-primary focus:border-primary px-4 py-2 border" placeholder="Deskripsi hambatan..."></textarea>
                          </div>
                          <div>
@@ -208,8 +218,9 @@
              </div>
              
              <!-- Footer Modal -->
-             <div class="p-4 border-t border-slate-100 bg-white shrink-0">
-                 <button onclick="simpanKunjungan()" class="w-full bg-primary hover:bg-blue-700 text-white px-6 py-3 rounded-xl font-bold transition-colors shadow-sm text-lg">Simpan Laporan & Jadwal</button>
+             <div class="p-4 border-t border-slate-100 bg-white shrink-0 flex gap-3">
+                 <button type="button" onclick="generateWordReport()" class="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-3 rounded-xl font-bold transition-colors shadow-sm text-lg">Cetak Laporan</button>
+                 <button type="button" onclick="simpanKunjungan()" class="flex-1 bg-primary hover:bg-blue-700 text-white px-6 py-3 rounded-xl font-bold transition-colors shadow-sm text-lg">Simpan Laporan & Jadwal</button>
              </div>
          </div>
     </div>
@@ -509,6 +520,7 @@
             document.getElementById('infoNamaFasil').value = loggedInFasil ? loggedInFasil.nama : '';
             document.getElementById('inputKunjunganTanggal').value = '';
             document.getElementById('inputSiklusTet').value = '';
+            document.querySelectorAll('input[name="partisipasi_guru"]').forEach(r => r.checked = false);
             
             // Clear rubrik
             ['A', 'B', 'C'].forEach(cat => {
@@ -531,6 +543,10 @@
                 if(data) {
                     document.getElementById('inputKunjunganTanggal').value = data.tanggal && data.tanggal !== '-' ? data.tanggal : '';
                     document.getElementById('inputSiklusTet').value = data.tahap_siklus_tet || '';
+                    if(data.partisipasi_guru) {
+                        const el = document.querySelector('input[name="partisipasi_guru"][value="' + data.partisipasi_guru + '"]');
+                        if(el) el.checked = true;
+                    }
                     document.getElementById('catatanPelaksanaan').value = data.catatan_pelaksanaan_tet || '';
                     document.getElementById('kendalaDitemukan').value = data.kendala_ditemukan || '';
                     document.getElementById('rekomendasiTindakLanjut').value = data.rekomendasi_tindak_lanjut || '';
@@ -578,6 +594,7 @@
                 nama_fasilitator: document.getElementById('infoNamaFasil').value,
                 tanggal: tanggal,
                 tahap_siklus_tet: document.getElementById('inputSiklusTet').value,
+                partisipasi_guru: document.querySelector('input[name="partisipasi_guru"]:checked')?.value || '',
                 catatan_pelaksanaan_tet: document.getElementById('catatanPelaksanaan').value,
                 kendala_ditemukan: document.getElementById('kendalaDitemukan').value,
                 rekomendasi_tindak_lanjut: document.getElementById('rekomendasiTindakLanjut').value,
@@ -612,5 +629,127 @@
             alert("Laporan instrumen observasi berhasil disimpan!");
         }
     </script>
+
+    <!-- DOCX Library -->
+    <script src="https://unpkg.com/docx@9.0.0/build/index.iife.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+    <script>
+        async function generateWordReport() {
+            if (!window.docx) {
+                alert("Library docx belum dimuat. Coba lagi dalam beberapa detik.");
+                return;
+            }
+            
+            // Get basic info
+            const namaFasil = document.getElementById('infoNamaFasil').value;
+            const namaSekolah = document.getElementById('infoNamaSekolah').value;
+            const tgl = document.getElementById('inputKunjunganTanggal').value;
+            const tahap = document.getElementById('inputSiklusTet').value;
+            const partisipasiEl = document.querySelector('input[name="partisipasi_guru"]:checked');
+            const partisipasi = partisipasiEl ? partisipasiEl.value : "Belum dinilai";
+            const kendala = document.getElementById('kendalaDitemukan').value || '-';
+            const rekomendasi = document.getElementById('rekomendasiTindakLanjut').value || '-';
+
+            // Get Rubrik Scores (13 indicators)
+            const rubrikA = ['A1_pm_bermakna', 'A2_pm_otonomi', 'A3_pm_refleksi', 'A4_kka_projek', 'A5_kka_kompetensi'];
+            const rubrikB = ['B1_pm_efektif', 'B2_pm_asesmen', 'B3_kka_literasi', 'B4_kka_kontekstual'];
+            const rubrikC = ['C1_pm_memimpin', 'C2_pm_supervisi', 'C3_kka_sumberdaya', 'C4_kka_kemitraan'];
+            
+            let sumA=0, sumB=0, sumC=0;
+            rubrikA.forEach(id => sumA += parseInt(document.querySelector('input[name="'+id+'"]:checked')?.value || 0));
+            rubrikB.forEach(id => sumB += parseInt(document.querySelector('input[name="'+id+'"]:checked')?.value || 0));
+            rubrikC.forEach(id => sumC += parseInt(document.querySelector('input[name="'+id+'"]:checked')?.value || 0));
+            
+            const avgA = rubrikA.length > 0 ? (sumA / rubrikA.length) : 0;
+            const avgB = rubrikB.length > 0 ? (sumB / rubrikB.length) : 0;
+            const avgC = rubrikC.length > 0 ? (sumC / rubrikC.length) : 0;
+            const totalAvg = (avgA + avgB + avgC) / 3;
+
+            let statusUtama = "";
+            if (totalAvg < 2) statusUtama = "Pra Berkembang";
+            else if (totalAvg < 3) statusUtama = "Berkembang";
+            else if (totalAvg < 4) statusUtama = "Maju";
+            else statusUtama = "Unggul";
+
+            const cats = [
+                { name: "Keunggulan Belajar Murid", avg: avgA },
+                { name: "Keunggulan Mengajar Pendidik", avg: avgB },
+                { name: "Keunggulan Kepemimpinan Kepala Sekolah", avg: avgC }
+            ];
+            cats.sort((a, b) => b.avg - a.avg);
+            const kekuatan = cats[0].name;
+            const evaluasi = cats[cats.length - 1].name;
+
+            // DOCX Generation
+            const { Document, Packer, Paragraph, TextRun, HeadingLevel, PageBreak, AlignmentType } = window.docx;
+
+            // Helper for justified paragraphs
+            const justifyPara = (text) => new Paragraph({
+                children: [new TextRun({ text: text, font: "Times New Roman", size: 24 })],
+                alignment: AlignmentType.JUSTIFIED,
+                spacing: { after: 200, line: 360 }
+            });
+
+            // Helper for headings
+            const createHeading = (text, level) => new Paragraph({
+                text: text,
+                heading: level,
+                alignment: AlignmentType.CENTER,
+                spacing: { before: 400, after: 200 }
+            });
+
+            const doc = new Document({
+                sections: [{
+                    properties: {},
+                    children: [
+                        createHeading("BAB I", HeadingLevel.HEADING_1),
+                        createHeading("PENDAHULUAN", HeadingLevel.HEADING_1),
+                        new Paragraph({ text: "A. Latar Belakang Kegiatan", heading: HeadingLevel.HEADING_2, spacing: { before: 300, after: 150 } }),
+                        justifyPara("Indonesia menghadapi tantangan yang semakin kompleks di tengah dinamika global yang penuh ketidakpastian. Salah satu tantangan utama adalah krisis pembelajaran yang berdampak pada rendahnya kualitas hasil belajar murid, meskipun akses terhadap pendidikan dasar dan menengah telah meningkat. Hasil studi internasional, seperti Programme for International Student Assessment (PISA), menunjukkan bahwa kemampuan literasi dan numerasi murid Indonesia masih berada pada tingkat yang rendah."),
+                        justifyPara("Dalam konteks tersebut, pembelajaran mendalam hadir sebagai pendekatan yang menekankan pembelajaran yang memuliakan, berkesadaran, bermakna, dan menggembirakan melalui integrasi olah pikir, olah hati, olah rasa, dan olah raga secara holistik. Pendekatan ini diterapkan pada semua mata pelajaran, termasuk mata pelajaran koding dan kecerdasan artifisial, sebagai bagian dari upaya mempersiapkan murid menghadapi perkembangan teknologi dan tantangan masa depan."),
+                        justifyPara("Kelompok Kerja menjadi salah satu wadah strategis dalam mendukung peningkatan kompetensi pendidik melalui kolaborasi, berbagi praktik baik, refleksi pembelajaran, dan pengembangan profesional berkelanjutan. Agar Kelompok Kerja dapat berjalan secara efektif, diperlukan fasilitator yang memiliki kompetensi dalam memandu proses belajar, mengelola diskusi kolaboratif, serta mengintegrasikan pendekatan pembelajaran mendalam, koding, dan kecerdasan artifisial dalam kegiatan pengembangan profesional guru."),
+                        justifyPara("Berdasarkan hal tersebut, Balai Guru dan Tenaga Kependidikan (BGTK) Provinsi Sumatera Barat menyelenggarakan kegiatan ToT Fasilitator Kelompok Kerja Pendidik dalam Implementasi Pembelajaran Mendalam, Serta Koding dan Kecerdasan Artifisial. Sebagai tindak lanjut, program pendampingan dan pemantauan pun dilaksanakan langsung kepada sekolah binaan, yakni di " + namaSekolah + ", guna memastikan penerapan metode ini berjalan sesuai dengan tujuan nasional."),
+                        
+                        // BAB II
+                        new Paragraph({ children: [new PageBreak()] }),
+                        createHeading("BAB II", HeadingLevel.HEADING_1),
+                        createHeading("PELAKSANAAN KEGIATAN", HeadingLevel.HEADING_1),
+                        justifyPara("Kegiatan pendampingan dan pemantauan implementasi Pembelajaran Mendalam (PM) serta Koding dan Kecerdasan Artifisial (KKA) telah dilaksanakan pada tanggal " + (tgl || ".......") + " bertempat di " + namaSekolah + "."),
+                        justifyPara("Proses fasilitasi ini dipandu langsung oleh Fasilitator " + namaFasil + ". Saat ini, sekolah tersebut sedang berada pada tahapan " + (tahap || ".......") + " berdasarkan siklus TET (Targeted Evaluation & Teaching). Selama observasi berlangsung, terpantau bahwa partisipasi guru dalam mengadopsi dan mendiskusikan materi tergolong " + partisipasi + ". Keterlibatan ini menjadi indikator penting dalam mengukur kesiapan ekosistem sekolah menuju transformasi digital yang bermakna."),
+                        
+                        // BAB III
+                        new Paragraph({ children: [new PageBreak()] }),
+                        createHeading("BAB III", HeadingLevel.HEADING_1),
+                        createHeading("HASIL PELAKSANAAN DAN EVALUASI", HeadingLevel.HEADING_1),
+                        justifyPara("Berdasarkan hasil observasi menggunakan instrumen penilaian skala 1-4, didapatkan rata-rata capaian sebagai berikut: Aspek Keunggulan Belajar Murid (" + avgA.toFixed(2) + "), Aspek Keunggulan Mengajar Pendidik (" + avgB.toFixed(2) + "), dan Aspek Keunggulan Kepemimpinan Kepala Sekolah (" + avgC.toFixed(2) + ")."),
+                        justifyPara("Dari data tersebut, keunggulan utama " + namaSekolah + " saat ini terlihat pada aspek " + kekuatan + ". Sebaliknya, area yang masih menjadi tantangan dan memerlukan perhatian ekstra adalah aspek " + evaluasi + "."),
+                        new Paragraph({ text: "Kendala dan Solusi di Lapangan:", font: "Times New Roman", size: 24, bold: true, spacing: { before: 200, after: 100 } }),
+                        justifyPara(kendala),
+
+                        // BAB IV
+                        new Paragraph({ children: [new PageBreak()] }),
+                        createHeading("BAB IV", HeadingLevel.HEADING_1),
+                        createHeading("PENUTUP", HeadingLevel.HEADING_1),
+                        justifyPara("Berdasarkan akumulasi nilai seluruh rubrik observasi (Rata-rata: " + totalAvg.toFixed(2) + "), secara umum " + namaSekolah + " dapat dikategorikan berada pada tahap " + statusUtama.toUpperCase() + " dalam implementasi PM dan KKA."),
+                        new Paragraph({ text: "Rekomendasi Tindak Lanjut:", font: "Times New Roman", size: 24, bold: true, spacing: { before: 200, after: 100 } }),
+                        justifyPara(rekomendasi),
+
+                        // LAMPIRAN
+                        new Paragraph({ children: [new PageBreak()] }),
+                        createHeading("LAMPIRAN", HeadingLevel.HEADING_1),
+                        justifyPara("(Halaman ini disediakan untuk melampirkan foto dokumentasi kegiatan dan daftar hadir peserta)")
+                    ],
+                }],
+            });
+
+            try {
+                const blob = await Packer.toBlob(doc);
+                saveAs(blob, "Laporan_Kunjungan_" + namaSekolah.replace(/\s+/g, "_") + ".docx");
+            } catch(e) {
+                console.error(e);
+                alert("Gagal mencetak dokumen. Pastikan browser mendukung fitur unduhan.");
+            }
+        }
+</script>
 </body>
 </html>
