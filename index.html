@@ -193,14 +193,25 @@
                         </button>
                     </div>
 
-                    <button onclick="switchAdminView('mode3')" id="btnMode3" class="flex items-center gap-3 px-3 py-2.5 rounded-lg font-medium text-slate-600 hover:bg-slate-50 transition-colors w-full text-left mt-2 border-t border-slate-100 pt-2">
-                        <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
-                        <span class="text-sm">Manajemen Fasilitator</span>
+                    <button onclick="toggleSubmenu('submenuFasil')" class="flex items-center justify-between px-3 py-2.5 rounded-lg font-medium text-slate-600 hover:bg-slate-50 transition-colors w-full text-left mt-2 border-t border-slate-100 pt-2">
+                        <div class="flex items-center gap-3">
+                            <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+                            <span class="text-sm">Manajemen Fasilitator</span>
+                        </div>
+                        <svg class="w-4 h-4 transition-transform duration-200" id="icon_submenuFasil" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
                     </button>
-                    
-                    <button onclick="switchAdminView('mode4')" id="btnMode4" class="flex items-center gap-3 px-3 py-2.5 rounded-lg font-medium text-slate-600 hover:bg-slate-50 transition-colors w-full text-left mt-1">
-                        <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-                        <span class="text-sm">Jadwal & Laporan Fasil</span>
+                    <div id="submenuFasil" class="hidden pl-8 pr-2 space-y-1 mt-1">
+                        <button onclick="switchAdminView('mode3')" id="btnMode3" class="flex items-center gap-3 px-3 py-2 rounded-lg font-medium text-slate-500 hover:text-slate-800 hover:bg-slate-50 transition-colors w-full text-left text-sm">
+                            Data Fasilitator
+                        </button>
+                        <button onclick="switchAdminView('mode4')" id="btnMode4" class="flex items-center gap-3 px-3 py-2 rounded-lg font-medium text-slate-500 hover:text-slate-800 hover:bg-slate-50 transition-colors w-full text-left text-sm">
+                            Jadwal & Laporan
+                        </button>
+                    </div>
+
+                    <button onclick="switchAdminView('mode5')" id="btnMode5" class="flex items-center gap-3 px-3 py-2.5 rounded-lg font-medium text-slate-600 hover:bg-slate-50 transition-colors w-full text-left mt-2 border-t border-slate-100 pt-2">
+                        <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1v1H9V7zm5 0h1v1h-1V7zm-5 4h1v1H9v-1zm5 0h1v1h-1v-1zm-5 4h1v1H9v-1zm5 0h1v1h-1v-1z"/></svg>
+                        <span class="text-sm">Manajemen Sekolah</span>
                     </button>
                     
                     <a href="absen.html?view=admin" target="_blank" class="flex items-center gap-3 px-3 py-2.5 rounded-lg font-medium text-slate-600 hover:bg-slate-50 transition-colors w-full text-left mt-2 border-t border-slate-100 pt-2">
@@ -431,6 +442,40 @@
                      </div>
                      <div class="p-4 border-t border-slate-100 bg-slate-50 shrink-0">
                          <button onclick="document.getElementById('modalBacaLaporan').classList.add('hidden')" class="w-full bg-slate-200 hover:bg-slate-300 text-slate-800 px-6 py-2 rounded-xl font-bold transition-colors">Tutup</button>
+                     </div>
+                 </div>
+             </div>
+        </div>
+
+        <div id="viewMode5" class="hidden fade-in">
+             <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
+                 <div class="p-4 border-b border-slate-100 bg-slate-50/50 flex justify-between items-center">
+                     <h2 class="text-md font-bold text-slate-800">Assign Fasilitator ke Sekolah</h2>
+                 </div>
+                 <div class="p-4" id="listManajemenSekolahContainer">
+                     <div class="text-center text-slate-500 py-4"><div class="spinner mx-auto mb-2"></div>Memuat data...</div>
+                 </div>
+             </div>
+             
+             <!-- MODAL ASSIGN FASIL TO SCHOOL -->
+             <div id="modalAssignFasilSekolah" class="hidden fixed inset-0 z-50 bg-slate-900/50 flex items-center justify-center p-4">
+                 <div class="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden fade-in">
+                     <div class="p-4 border-b border-slate-100 bg-slate-50 flex justify-between items-center">
+                         <div>
+                            <h3 class="font-bold text-slate-800 text-lg">Pilih Fasilitator</h3>
+                            <p class="text-sm text-slate-500" id="modalSekolahName"></p>
+                         </div>
+                         <button onclick="document.getElementById('modalAssignFasilSekolah').classList.add('hidden')" class="text-slate-400 hover:text-slate-600 p-2"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg></button>
+                     </div>
+                     <div class="p-6 space-y-4">
+                         <input type="hidden" id="assignNpsn">
+                         <div>
+                             <label class="block text-sm font-medium text-slate-700 mb-1">Fasilitator Pendamping</label>
+                             <select id="selectAssignFasil" class="w-full border-slate-300 rounded-lg shadow-sm focus:ring-primary focus:border-primary px-4 py-2 border">
+                                 <!-- Options diisi via JS -->
+                             </select>
+                         </div>
+                         <button onclick="simpanFasilUntukSekolah()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2.5 rounded-xl font-bold transition-colors shadow-sm">Simpan</button>
                      </div>
                  </div>
              </div>
@@ -1209,11 +1254,13 @@
             const btn2 = document.getElementById('btnMode2');
             const btn3 = document.getElementById('btnMode3');
             const btn4 = document.getElementById('btnMode4');
+            const btn5 = document.getElementById('btnMode5');
             const view0 = document.getElementById('viewMode0');
             const view1 = document.getElementById('viewMode1');
             const view2 = document.getElementById('viewMode2');
             const view3 = document.getElementById('viewMode3');
             const view4 = document.getElementById('viewMode4');
+            const view5 = document.getElementById('viewMode5');
 
             // Close sidebar on mobile
             if (window.innerWidth < 768) {
@@ -1229,6 +1276,7 @@
             btn2.className = mode === 'mode2' ? activeBtnClass : inactiveBtnClass;
             if (btn3) btn3.className = mode === 'mode3' ? activeBtnClass : inactiveBtnClass;
             if (btn4) btn4.className = mode === 'mode4' ? activeBtnClass : inactiveBtnClass;
+            if (btn5) btn5.className = mode === 'mode5' ? activeBtnClass : inactiveBtnClass;
 
             const pageTitle = document.getElementById('adminPageTitle');
             if (view0) view0.classList.add('hidden');
@@ -1236,6 +1284,7 @@
             view2.classList.add('hidden');
             if (view3) view3.classList.add('hidden');
             if (view4) view4.classList.add('hidden');
+            if (view5) view5.classList.add('hidden');
 
             if (mode === 'mode0') {
                 pageTitle.innerText = "Dashboard Utama";
@@ -1254,6 +1303,10 @@
                 pageTitle.innerText = "Jadwal & Laporan Fasilitator";
                 if (view4) view4.classList.remove('hidden');
                 loadJadwalFasilData();
+            } else if (mode === 'mode5') {
+                pageTitle.innerText = "Manajemen Sekolah";
+                if (view5) view5.classList.remove('hidden');
+                renderManajemenSekolah();
             }
             renderAdminData();
         }
@@ -2361,6 +2414,139 @@
             } catch(e) {
                 console.error("Gagal membuka laporan", e);
                 alert("Data laporan tidak valid.");
+            }
+        }
+
+
+        async function renderManajemenSekolah() {
+            try {
+                document.getElementById('listManajemenSekolahContainer').innerHTML = '<div class="text-center text-slate-500 py-4"><div class="spinner mx-auto mb-2"></div>Memuat data...</div>';
+                
+                const dbRef = firebase.database();
+                const [snapFasil, snapSekolah, snapAssign] = await Promise.all([
+                    dbRef.ref('fasilitator').once('value'),
+                    dbRef.ref('master_guru').once('value'),
+                    dbRef.ref('fasilitator_sekolah').once('value')
+                ]);
+
+                window.fasilitatorListMode5 = snapFasil.val() || {};
+                const allSchools = snapSekolah.val() || {};
+                const assigned = snapAssign.val() || {}; // { fasilId: [npsn1, npsn2] }
+
+                // Reverse mapping: npsn -> fasilId
+                const schoolToFasil = {};
+                for (const fId in assigned) {
+                    const npsns = assigned[fId] || [];
+                    npsns.forEach(n => {
+                        schoolToFasil[n] = fId;
+                    });
+                }
+
+                const schoolsToRender = TARGET_SCHOOLS.length > 0 ? TARGET_SCHOOLS : Object.keys(adminDataMaster);
+
+                let html = `
+                    <div class="overflow-x-auto rounded-lg border border-slate-200">
+                        <table class="w-full text-left border-collapse text-sm whitespace-nowrap">
+                            <thead class="bg-slate-50 border-b border-slate-200 text-slate-600">
+                                <tr>
+                                    <th class="px-6 py-4 font-medium w-16 text-center">No</th>
+                                    <th class="px-6 py-4 font-medium">NPSN</th>
+                                    <th class="px-6 py-4 font-medium">Nama Sekolah</th>
+                                    <th class="px-6 py-4 font-medium">Fasilitator Pendamping</th>
+                                    <th class="px-6 py-4 font-medium text-center w-32">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-100">
+                `;
+
+                schoolsToRender.forEach((npsn, idx) => {
+                    const firstTeacher = allSchools[npsn] ? Object.values(allSchools[npsn])[0] : null;
+                    const schoolName = (firstTeacher && firstTeacher.asal_sekolah) ? firstTeacher.asal_sekolah : '-';
+                    
+                    const fasilId = schoolToFasil[npsn];
+                    const fasilName = fasilId && window.fasilitatorListMode5[fasilId] ? window.fasilitatorListMode5[fasilId].nama : '<span class="text-slate-400 italic">Belum ditugaskan</span>';
+
+                    html += `
+                        <tr class="hover:bg-slate-50/50 transition-colors">
+                            <td class="px-6 py-4 text-center text-slate-500">${idx + 1}</td>
+                            <td class="px-6 py-4 font-medium text-slate-700">${npsn}</td>
+                            <td class="px-6 py-4 text-slate-600">${schoolName}</td>
+                            <td class="px-6 py-4 text-slate-800 font-medium">${fasilName}</td>
+                            <td class="px-6 py-4 text-center">
+                                <button onclick="bukaModalSetFasil('${npsn}', '${schoolName.replace(/'/g, "\\'").replace(/"/g, '&quot;')}', '${fasilId || ''}')" class="text-xs bg-indigo-50 text-indigo-600 hover:bg-indigo-100 px-3 py-1.5 rounded font-medium transition-colors">Ubah Fasilitator</button>
+                            </td>
+                        </tr>
+                    `;
+                });
+
+                html += `
+                            </tbody>
+                        </table>
+                    </div>
+                `;
+
+                document.getElementById('listManajemenSekolahContainer').innerHTML = html;
+
+            } catch (e) {
+                console.error(e);
+                document.getElementById('listManajemenSekolahContainer').innerHTML = '<div class="text-center text-red-500 py-4">Gagal memuat data.</div>';
+            }
+        }
+
+        function bukaModalSetFasil(npsn, schoolName, currentFasilId) {
+            document.getElementById('assignNpsn').value = npsn;
+            document.getElementById('modalSekolahName').innerText = schoolName + ' (' + npsn + ')';
+
+            const select = document.getElementById('selectAssignFasil');
+            let optionsHtml = '<option value="">-- Pilih Fasilitator --</option>';
+            
+            for (const fId in window.fasilitatorListMode5) {
+                const f = window.fasilitatorListMode5[fId];
+                optionsHtml += `<option value="${fId}" ${fId === currentFasilId ? 'selected' : ''}>${f.nama}</option>`;
+            }
+            select.innerHTML = optionsHtml;
+
+            document.getElementById('modalAssignFasilSekolah').classList.remove('hidden');
+        }
+
+        async function simpanFasilUntukSekolah() {
+            const npsn = document.getElementById('assignNpsn').value;
+            const newFasilId = document.getElementById('selectAssignFasil').value;
+
+            try {
+                const dbRef = firebase.database().ref('fasilitator_sekolah');
+                const snap = await dbRef.once('value');
+                const assigned = snap.val() || {};
+
+                const updates = {};
+
+                // 1. Hapus npsn dari fasilitator yang memilikinya sekarang
+                for (const fId in assigned) {
+                    let npsns = assigned[fId] || [];
+                    if (npsns.includes(npsn)) {
+                        npsns = npsns.filter(n => n !== npsn);
+                        updates[fId] = npsns;
+                    }
+                }
+
+                // 2. Tambahkan npsn ke fasilitator baru jika dipilih
+                if (newFasilId) {
+                    let newFasilNpsns = updates[newFasilId] || assigned[newFasilId] || [];
+                    if (!newFasilNpsns.includes(npsn)) {
+                        newFasilNpsns.push(npsn);
+                    }
+                    updates[newFasilId] = newFasilNpsns;
+                }
+
+                await dbRef.update(updates);
+                
+                document.getElementById('modalAssignFasilSekolah').classList.add('hidden');
+                alert('Fasilitator berhasil diupdate!');
+                renderManajemenSekolah();
+                
+            } catch (e) {
+                console.error(e);
+                alert('Gagal mengupdate fasilitator');
             }
         }
 
