@@ -241,7 +241,10 @@
             </div>
         </div>
 
-        <div id="viewMode6" class="hidden fade-in">
+        <!-- MODE 1: PROGRESS SEKOLAH -->
+        <div id="viewMode1" class="hidden fade-in">
+            <!-- Statistik Konfirmasi dari mode6 lama -->
+            
             <!-- Top Metrics Cards -->
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
                 <!-- Total Schools -->
@@ -317,8 +320,10 @@
             </div>
         </div>
 
-        <!-- MODE 1: PROGRESS SEKOLAH -->
-        <div id="viewMode1" class="hidden fade-in">
+        
+            <!-- Tabel Progress -->
+            <div class="border-t border-slate-200 my-8 pt-8"></div>
+
             <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
                 <div class="p-6 border-b border-slate-100 bg-slate-50/50 flex flex-col sm:flex-row gap-3 justify-between items-start sm:items-center">
                     <h2 class="text-lg font-bold text-slate-800">Monitoring Progress Sekolah</h2>
@@ -1320,8 +1325,8 @@
             if (btn3) btn3.className = mode === 'mode3' ? activeBtnClass : inactiveBtnClass;
             if (btn4) btn4.className = mode === 'mode4' ? activeBtnClass : inactiveBtnClass;
             if (btn5) btn5.className = mode === 'mode5' ? activeBtnClass : inactiveBtnClass;
-            const btn6 = document.getElementById('btnMode6');
-            if (btn6) btn6.className = mode === 'mode6' ? activeBtnClass : inactiveBtnClass;
+            const btn7 = document.getElementById('btnMode7');
+            if (btn7) btn7.className = mode === 'mode7' ? activeBtnClass : inactiveBtnClass;
 
             const pageTitle = document.getElementById('adminPageTitle');
             if (view0) view0.classList.add('hidden');
@@ -1330,8 +1335,8 @@
             if (view3) view3.classList.add('hidden');
             if (view4) view4.classList.add('hidden');
             if (view5) view5.classList.add('hidden');
-            const view6 = document.getElementById('viewMode6');
-            if (view6) view6.classList.add('hidden');
+            const view7 = document.getElementById('viewMode7');
+            if (view7) view7.classList.add('hidden');
 
             if (mode === 'mode0') {
                 pageTitle.innerText = "Dashboard Utama";
@@ -1407,12 +1412,11 @@
         ];
 
         function renderAdminData() {
-            if (currentAdminMode === 'mode6') {
-                renderDashboard();
-            } else if (currentAdminMode === 'mode0') {
+            if (currentAdminMode === 'mode0') {
                 renderNewDashboard();
             } else if (currentAdminMode === 'mode1') {
                 renderMode1();
+                renderDashboard(); // because charts are now inside mode1
             } else if (currentAdminMode === 'mode2') {
                 renderMode2();
             }
