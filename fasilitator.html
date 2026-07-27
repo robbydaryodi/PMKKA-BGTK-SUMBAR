@@ -235,7 +235,7 @@
                     if(jData.status === 'Batal/Ditunda') statusColor = "bg-red-100 text-red-700";
 
                     kunjunganHtml += `
-                        <div class="border border-slate-200 rounded-xl p-4 hover:border-indigo-300 transition-colors cursor-pointer group" onclick="bukaModalKunjungan('${npsn}', '${schoolName}', ${i})">
+                        <div class="border border-slate-200 rounded-xl p-4 hover:border-indigo-300 transition-colors cursor-pointer group" onclick="bukaModalKunjungan('${npsn}', '${schoolName.replace(/'/g, "\\'").replace(/"/g, '&quot;')}', ${i})">
                             <div class="flex justify-between items-center mb-2">
                                 <span class="font-bold text-slate-800">Kunjungan ${i}</span>
                                 <span class="px-2 py-1 rounded text-xs font-bold ${statusColor}">${jData.status}</span>
@@ -267,6 +267,15 @@
             document.getElementById('modalKunjunganTitle').innerText = `Kunjungan Ke-${kunjunganId}`;
             document.getElementById('modalKunjunganSub').innerText = schoolName;
             
+            // Clear or set loading state
+            document.getElementById('inputKunjunganTanggal').value = '';
+            document.getElementById('inputKunjunganStatus').value = 'Direncanakan';
+            document.getElementById('inputKunjunganCatatan').value = 'Memuat...';
+
+            const modal = document.getElementById('modalKunjungan');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            
             db.ref(`jadwal_kunjungan/${npsn}/kunjungan_${kunjunganId}`).once('value').then(snap => {
                 const data = snap.val();
                 if(data) {
@@ -278,12 +287,16 @@
                     document.getElementById('inputKunjunganStatus').value = 'Direncanakan';
                     document.getElementById('inputKunjunganCatatan').value = '';
                 }
-                document.getElementById('modalKunjungan').classList.remove('hidden');
+            }).catch(e => {
+                console.error(e);
+                document.getElementById('inputKunjunganCatatan').value = '';
             });
         }
 
         function closeModalKunjungan() {
-            document.getElementById('modalKunjungan').classList.add('hidden');
+            const modal = document.getElementById('modalKunjungan');
+            modal.classList.remove('flex');
+            modal.classList.add('hidden');
         }
 
         async function simpanKunjungan() {
