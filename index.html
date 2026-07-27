@@ -401,30 +401,37 @@
                  </div>
              </div>
              
-             <!-- Modal for Assigning School -->
-             <div id="modalAssignSekolah" class="hidden fixed inset-0 z-[60] bg-slate-900/50 flex items-center justify-center p-4">
-                 <div class="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden">
-                     <div class="p-4 border-b border-slate-200 flex justify-between items-center bg-slate-50">
-                         <h3 class="font-bold text-slate-800">Assign Sekolah ke Fasil</h3>
-                         <button onclick="closeModalAssign()" class="text-slate-400 hover:text-slate-600 p-1"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg></button>
-                     </div>
-                     <div class="p-4">
-                         <input type="hidden" id="assignFasilId">
-                         <label class="block text-sm font-medium text-slate-700 mb-1">Pilih Sekolah</label>
-                         <select id="selectAssignSekolah" class="w-full border-slate-300 rounded-lg shadow-sm focus:ring-primary focus:border-primary px-4 py-2 border mb-4">
-                            <option value="">Pilih Sekolah...</option>
-                         </select>
-                         <button onclick="simpanAssignSekolah()" class="w-full bg-primary hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors">Simpan Assign</button>
-                         <div id="assignSchoolList" class="mt-4 border-t pt-4 space-y-2">
-                            <!-- Assigned schools for this fasil shown here -->
-                         </div>
-                     </div>
-                 </div>
-             </div>
+
         </div>
     <!-- CLOSE ADMIN VIEW -->
             </div>
         </main>
+    </div>
+
+    <!-- MODAL ASSIGN SEKOLAH -->
+    <div id="modalAssignSekolah" class="hidden fixed inset-0 z-[100] bg-slate-900/50 backdrop-blur-sm items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-xl w-full max-w-lg max-h-[90vh] overflow-hidden flex flex-col">
+            <div class="p-4 border-b border-slate-200 flex justify-between items-center bg-slate-50">
+                <h3 class="font-bold text-slate-800">Assign Sekolah ke Fasil</h3>
+                <button onclick="closeModalAssign()" class="text-slate-400 hover:text-slate-600 p-1"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg></button>
+            </div>
+            <div class="p-4 flex-1 overflow-y-auto">
+                <input type="hidden" id="assignFasilId">
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-slate-700 mb-1">Cari & Tambah Sekolah Baru</label>
+                    <input type="text" id="searchSekolahAssign" onkeyup="filterSekolahAssign()" placeholder="Ketik nama atau NPSN sekolah..." class="w-full border-slate-300 rounded-lg shadow-sm focus:ring-primary focus:border-primary px-4 py-2 border mb-2">
+                    <div id="listSekolahAssign" class="w-full border border-slate-200 rounded-lg max-h-48 overflow-y-auto bg-slate-50 p-2 space-y-1">
+                        <!-- List sekolah populated by JS -->
+                    </div>
+                </div>
+                <div class="border-t pt-4">
+                    <h4 class="text-sm font-bold text-slate-800 mb-2">Sekolah yang telah di-assign:</h4>
+                    <div id="assignSchoolList" class="space-y-2">
+                        <!-- Assigned schools for this fasil shown here -->
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- MODAL -->
@@ -2277,13 +2284,7 @@
                 const assigned = snapAssign.val() || {};
                 
                 let html = '<div class="space-y-4">';
-                let selectOptions = '<option value="">Pilih Sekolah...</option>';
-                for(const npsn in allSchools) {
-                    const firstTeacher = Object.values(allSchools[npsn])[0];
-                    const namaSekolah = (firstTeacher && firstTeacher.asal_sekolah) ? firstTeacher.asal_sekolah : `Sekolah ${npsn}`;
-                    selectOptions += `<option value="${npsn}">${namaSekolah} (${npsn})</option>`;
-                }
-                document.getElementById('selectAssignSekolah').innerHTML = selectOptions;
+
 
                 for (const key in fasils) {
                     const f = fasils[key];
@@ -2323,21 +2324,72 @@
             }
         }
 
-        function openModalAssign(fasilId) {
+        async function openModalAssign(fasilId) {
             document.getElementById('assignFasilId').value = fasilId;
-            document.getElementById('selectAssignSekolah').value = "";
-            document.getElementById('modalAssignSekolah').classList.remove('hidden');
+            document.getElementById('searchSekolahAssign').value = "";
+            await renderAssignedSchoolList(fasilId);
+            filterSekolahAssign();
+            const modal = document.getElementById('modalAssignSekolah');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
         }
 
         function closeModalAssign() {
-            document.getElementById('modalAssignSekolah').classList.add('hidden');
+            const modal = document.getElementById('modalAssignSekolah');
+            modal.classList.remove('flex');
+            modal.classList.add('hidden');
         }
 
-        async function simpanAssignSekolah() {
+        async function renderAssignedSchoolList(fasilId) {
+            try {
+                const snap = await firebase.database().ref('fasilitator_sekolah/' + fasilId).once('value');
+                const arr = snap.val() || [];
+                let html = '';
+                arr.forEach(npsn => {
+                    const firstTeacher = allSchools[npsn] ? Object.values(allSchools[npsn])[0] : null;
+                    const namaSekolah = (firstTeacher && firstTeacher.asal_sekolah) ? firstTeacher.asal_sekolah : `Sekolah ${npsn}`;
+                    html += `
+                    <div class="flex justify-between items-center bg-slate-50 p-2 border border-slate-100 rounded-lg">
+                        <div>
+                            <div class="font-bold text-sm text-slate-800">${namaSekolah}</div>
+                            <div class="text-xs text-slate-500">NPSN: ${npsn}</div>
+                        </div>
+                        <button onclick="hapusAssign('${fasilId}', '${npsn}'); setTimeout(()=>renderAssignedSchoolList('${fasilId}'), 500);" class="text-red-500 hover:text-red-700 p-1">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                        </button>
+                    </div>`;
+                });
+                if(html === '') html = '<div class="text-xs text-slate-500">Belum ada sekolah yang di-assign.</div>';
+                document.getElementById('assignSchoolList').innerHTML = html;
+            } catch(e) { console.error(e); }
+        }
+
+        function filterSekolahAssign() {
+            const term = document.getElementById('searchSekolahAssign').value.toLowerCase();
+            let html = '';
+            for(const npsn in allSchools) {
+                const firstTeacher = Object.values(allSchools[npsn])[0];
+                const namaSekolah = (firstTeacher && firstTeacher.asal_sekolah) ? firstTeacher.asal_sekolah : `Sekolah ${npsn}`;
+                const textSearch = `${namaSekolah} ${npsn}`.toLowerCase();
+                
+                if(textSearch.includes(term)) {
+                    html += `
+                    <div class="flex justify-between items-center bg-white p-2 border border-slate-100 rounded-lg hover:border-indigo-200 transition-colors">
+                        <div>
+                            <div class="font-bold text-sm text-slate-800">${namaSekolah}</div>
+                            <div class="text-xs text-slate-500">NPSN: ${npsn}</div>
+                        </div>
+                        <button onclick="assignSekolahLangsung('${npsn}')" class="bg-indigo-50 text-indigo-700 hover:bg-indigo-100 px-3 py-1 rounded-lg text-xs font-bold transition-colors border border-indigo-100">+ Tambah</button>
+                    </div>`;
+                }
+            }
+            if(html === '') html = '<div class="text-sm text-slate-500 p-2">Sekolah tidak ditemukan.</div>';
+            document.getElementById('listSekolahAssign').innerHTML = html;
+        }
+
+        async function assignSekolahLangsung(npsn) {
             const fasilId = document.getElementById('assignFasilId').value;
-            const npsn = document.getElementById('selectAssignSekolah').value;
-            if(!npsn) return alert("Pilih sekolah dulu");
-            
+            if(!npsn || !fasilId) return;
             try {
                 const ref = firebase.database().ref('fasilitator_sekolah/' + fasilId);
                 const snap = await ref.once('value');
@@ -2345,12 +2397,10 @@
                 if(!arr.includes(npsn)) {
                     arr.push(npsn);
                     await ref.set(arr);
+                    await renderAssignedSchoolList(fasilId);
+                    loadFasilitatorData();
                 }
-                closeModalAssign();
-                loadFasilitatorData();
-            } catch(e) {
-                alert("Error");
-            }
+            } catch(e) { alert("Error: " + e.message); }
         }
 
         async function hapusAssign(fasilId, npsn) {
