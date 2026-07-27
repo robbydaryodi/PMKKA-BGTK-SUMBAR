@@ -137,7 +137,7 @@
                     </button>
                     <div id="submenuVerifikasi" class="hidden pl-8 pr-2 space-y-1 mt-1">
                         <button onclick="switchAdminView('mode4')" id="btnMode4" class="flex items-center gap-3 px-3 py-2 rounded-lg font-medium text-slate-500 hover:text-slate-800 hover:bg-slate-50 transition-colors w-full text-left text-sm">
-                            Statistik Konfirmasi
+                            Jadwal & Laporan
                         </button>
                         <button onclick="switchAdminView('mode1')" id="btnMode1" class="flex items-center gap-3 px-3 py-2 rounded-lg font-medium text-slate-500 hover:text-slate-800 hover:bg-slate-50 transition-colors w-full text-left text-sm">
                             Progress Sekolah
@@ -158,7 +158,7 @@
                         <button onclick="switchAdminView('mode3')" id="btnMode3" class="flex items-center gap-3 px-3 py-2 rounded-lg font-medium text-slate-500 hover:text-slate-800 hover:bg-slate-50 transition-colors w-full text-left text-sm">
                             Data Fasilitator
                         </button>
-                        <button onclick="switchAdminView('mode4')" id="btnMode4" class="flex items-center gap-3 px-3 py-2 rounded-lg font-medium text-slate-500 hover:text-slate-800 hover:bg-slate-50 transition-colors w-full text-left text-sm">
+                        <button onclick="switchAdminView('mode6')" id="btnMode6" class="flex items-center gap-3 px-3 py-2 rounded-lg font-medium text-slate-500 hover:text-slate-800 hover:bg-slate-50 transition-colors w-full text-left text-sm">
                             Statistik Konfirmasi
                         </button>
                     </div>
@@ -198,7 +198,50 @@
 
 
         <!-- MODE 0: DASHBOARD UTAMA -->
-        <div id="viewMode4" class="fade-in">
+        
+        <!-- MODE 0: DASHBOARD UTAMA (FASILITATOR STATS) -->
+        <div id="viewMode0" class="fade-in">
+            <h2 class="text-xl font-bold text-slate-800 mb-6">Ringkasan Penjadwalan Fasilitator</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                <!-- Total Fasil -->
+                <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm flex items-center">
+                    <div class="p-3 bg-indigo-100 text-indigo-600 rounded-lg">
+                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+                    </div>
+                    <div class="ml-4">
+                        <h3 class="text-sm font-medium text-slate-500">Total Fasilitator</h3>
+                        <p class="text-2xl font-bold text-slate-800" id="dash_fasil_total">0</p>
+                    </div>
+                </div>
+                <!-- Sekolah Ditugaskan -->
+                <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm flex items-center">
+                    <div class="p-3 bg-teal-100 text-teal-600 rounded-lg">
+                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                    </div>
+                    <div class="ml-4">
+                        <h3 class="text-sm font-medium text-slate-500">Sekolah Ditugaskan</h3>
+                        <p class="text-2xl font-bold text-slate-800" id="dash_fasil_assigned">0</p>
+                    </div>
+                </div>
+                <!-- Sekolah Belum Ditugaskan -->
+                <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm flex items-center">
+                    <div class="p-3 bg-amber-100 text-amber-600 rounded-lg">
+                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                    </div>
+                    <div class="ml-4">
+                        <h3 class="text-sm font-medium text-slate-500">Belum Ditugaskan</h3>
+                        <p class="text-2xl font-bold text-slate-800" id="dash_fasil_unassigned">0</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+                <h3 class="text-lg font-bold text-slate-700 mb-4">Aktivitas Terbaru</h3>
+                <p class="text-slate-500 text-sm">Pembaruan jadwal dan laporan fasilitator akan tampil di sini.</p>
+            </div>
+        </div>
+
+        <div id="viewMode6" class="hidden fade-in">
             <!-- Top Metrics Cards -->
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
                 <!-- Total Schools -->
@@ -374,7 +417,7 @@
 
         </div>
         
-        <div id="viewMode0" class="hidden fade-in">
+        <div id="viewMode4" class="hidden fade-in">
              <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
                  <div class="p-4 border-b border-slate-100 bg-slate-50/50">
                      <h2 class="text-md font-bold text-slate-800">Rekap Jadwal & Laporan Fasilitator</h2>
@@ -709,7 +752,7 @@
         }
         
         function viewJadwalModal(npsn) {
-            switchAdminView('mode0');
+            switchAdminView('mode4');
             setTimeout(() => {
                 const searchBox = document.getElementById('searchJadwalFasil');
                 if (searchBox) {
@@ -1277,6 +1320,8 @@
             if (btn3) btn3.className = mode === 'mode3' ? activeBtnClass : inactiveBtnClass;
             if (btn4) btn4.className = mode === 'mode4' ? activeBtnClass : inactiveBtnClass;
             if (btn5) btn5.className = mode === 'mode5' ? activeBtnClass : inactiveBtnClass;
+            const btn6 = document.getElementById('btnMode6');
+            if (btn6) btn6.className = mode === 'mode6' ? activeBtnClass : inactiveBtnClass;
 
             const pageTitle = document.getElementById('adminPageTitle');
             if (view0) view0.classList.add('hidden');
@@ -1285,6 +1330,8 @@
             if (view3) view3.classList.add('hidden');
             if (view4) view4.classList.add('hidden');
             if (view5) view5.classList.add('hidden');
+            const view6 = document.getElementById('viewMode6');
+            if (view6) view6.classList.add('hidden');
 
             if (mode === 'mode0') {
                 pageTitle.innerText = "Dashboard Utama";
@@ -1360,12 +1407,45 @@
         ];
 
         function renderAdminData() {
-            if (currentAdminMode === 'mode4') {
+            if (currentAdminMode === 'mode6') {
                 renderDashboard();
+            } else if (currentAdminMode === 'mode0') {
+                renderNewDashboard();
             } else if (currentAdminMode === 'mode1') {
                 renderMode1();
             } else if (currentAdminMode === 'mode2') {
                 renderMode2();
+            }
+        }
+
+        
+        async function renderNewDashboard() {
+            try {
+                const snapFasil = await firebase.database().ref('fasilitator').once('value');
+                const fasils = snapFasil.val() || {};
+                
+                const snapAssign = await firebase.database().ref('fasilitator_sekolah').once('value');
+                const assigns = snapAssign.val() || {};
+                
+                const snapMaster = await firebase.database().ref('master_guru').once('value');
+                const master = snapMaster.val() || {};
+                
+                const totalFasil = Object.keys(fasils).length;
+                const totalSekolah = TARGET_SCHOOLS.length > 0 ? TARGET_SCHOOLS.length : Object.keys(master).length;
+                
+                let assignedSekolah = new Set();
+                for (const fId in assigns) {
+                    assigns[fId].forEach(npsn => assignedSekolah.add(npsn));
+                }
+                
+                const assignedCount = assignedSekolah.size;
+                const unassignedCount = totalSekolah > assignedCount ? (totalSekolah - assignedCount) : 0;
+                
+                document.getElementById('dash_fasil_total').innerText = totalFasil;
+                document.getElementById('dash_fasil_assigned').innerText = assignedCount;
+                document.getElementById('dash_fasil_unassigned').innerText = unassignedCount;
+            } catch (e) {
+                console.error("Gagal memuat dashboard:", e);
             }
         }
 
