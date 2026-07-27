@@ -439,21 +439,7 @@
                  </div>
              </div>
              
-             <!-- MODAL BACA LAPORAN -->
-             <div id="modalBacaLaporan" class="hidden fixed inset-0 z-[100] bg-slate-900/50 flex justify-center p-4 items-start sm:items-center pt-12 pb-12 sm:pt-4 overflow-y-auto">
-                 <div class="bg-white rounded-2xl shadow-xl w-full max-w-lg overflow-hidden fade-in flex flex-col max-h-[90vh]">
-                     <div class="p-4 border-b border-slate-100 bg-slate-50 flex justify-between items-center shrink-0">
-                         <h3 class="font-bold text-slate-800 text-lg">Laporan Kunjungan</h3>
-                         <button onclick="document.getElementById('modalBacaLaporan').classList.add('hidden')" class="text-slate-400 hover:text-slate-600 p-2"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg></button>
-                     </div>
-                     <div class="p-6 overflow-y-auto flex-1 bg-white space-y-4" id="modalBacaLaporanContent">
-                         <!-- Isi Laporan -->
-                     </div>
-                     <div class="p-4 border-t border-slate-100 bg-slate-50 shrink-0">
-                         <button onclick="document.getElementById('modalBacaLaporan').classList.add('hidden')" class="w-full bg-slate-200 hover:bg-slate-300 text-slate-800 px-6 py-2 rounded-xl font-bold transition-colors">Tutup</button>
-                     </div>
-                 </div>
-             </div>
+
         </div>
 
         
@@ -477,6 +463,30 @@
                  </div>
              </div>
              
+
+        </div>
+        
+    <!-- CLOSE ADMIN VIEW -->
+            </div>
+        </main>
+    </div>
+
+             <!-- MODAL BACA LAPORAN -->
+             <div id="modalBacaLaporan" class="hidden fixed inset-0 z-[100] bg-slate-900/50 flex justify-center p-4 items-start sm:items-center pt-12 pb-12 sm:pt-4 overflow-y-auto">
+                 <div class="bg-white rounded-2xl shadow-xl w-full max-w-lg overflow-hidden fade-in flex flex-col max-h-[90vh]">
+                     <div class="p-4 border-b border-slate-100 bg-slate-50 flex justify-between items-center shrink-0">
+                         <h3 class="font-bold text-slate-800 text-lg">Laporan Kunjungan</h3>
+                         <button onclick="document.getElementById('modalBacaLaporan').classList.add('hidden')" class="text-slate-400 hover:text-slate-600 p-2"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg></button>
+                     </div>
+                     <div class="p-6 overflow-y-auto flex-1 bg-white space-y-4" id="modalBacaLaporanContent">
+                         <!-- Isi Laporan -->
+                     </div>
+                     <div class="p-4 border-t border-slate-100 bg-slate-50 shrink-0">
+                         <button onclick="document.getElementById('modalBacaLaporan').classList.add('hidden')" class="w-full bg-slate-200 hover:bg-slate-300 text-slate-800 px-6 py-2 rounded-xl font-bold transition-colors">Tutup</button>
+                     </div>
+                 </div>
+             </div>
+
              <!-- MODAL ASSIGN FASIL TO SCHOOL -->
              <div id="modalAssignFasilSekolah" class="hidden fixed inset-0 z-50 bg-slate-900/50 flex justify-center p-4 items-start sm:items-center pt-12 pb-12 sm:pt-4 overflow-y-auto">
                  <div class="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden fade-in">
@@ -499,12 +509,6 @@
                      </div>
                  </div>
              </div>
-        </div>
-        
-    <!-- CLOSE ADMIN VIEW -->
-            </div>
-        </main>
-    </div>
 
     <!-- MODAL ASSIGN SEKOLAH -->
     <div id="modalAssignSekolah" class="hidden fixed inset-0 z-[100] bg-slate-900/50 backdrop-blur-sm justify-center p-4 items-start sm:items-center pt-12 pb-12 sm:pt-4 overflow-y-auto">
