@@ -84,39 +84,102 @@
         </div>
     </div>
     
-    <!-- MODAL INPUT KUNJUNGAN -->
-    <div id="modalKunjungan" class="hidden fixed inset-0 z-50 bg-slate-900/50 flex items-center justify-center p-4">
-         <div class="bg-white rounded-2xl shadow-xl w-full max-w-lg overflow-hidden fade-in">
-             <div class="p-6 border-b border-slate-100 bg-slate-50 flex justify-between items-center">
+    <!-- MODAL INPUT KUNJUNGAN (Formulir Instrumen Observasi) -->
+    <div id="modalKunjungan" class="hidden fixed inset-0 z-50 bg-slate-900/50 items-center justify-center p-4">
+         <div class="bg-white rounded-2xl shadow-xl w-full max-w-2xl max-h-[90vh] overflow-hidden flex flex-col fade-in">
+             <div class="p-4 border-b border-slate-100 bg-slate-50 flex justify-between items-center shrink-0">
                  <div>
-                    <h3 class="font-bold text-slate-800 text-lg" id="modalKunjunganTitle">Input Jadwal</h3>
+                    <h3 class="font-bold text-slate-800 text-lg" id="modalKunjunganTitle">Instrumen Observasi</h3>
                     <p class="text-sm text-slate-500" id="modalKunjunganSub"></p>
                  </div>
                  <button onclick="closeModalKunjungan()" class="text-slate-400 hover:text-slate-600 p-2"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg></button>
              </div>
-             <div class="p-6 space-y-4">
+             
+             <!-- Body modal bisa di-scroll -->
+             <div class="p-4 sm:p-6 overflow-y-auto flex-1 space-y-6 bg-slate-50">
                  <input type="hidden" id="inputKunjunganNpsn">
                  <input type="hidden" id="inputKunjunganId">
                  
-                 <div>
-                     <label class="block text-sm font-medium text-slate-700 mb-1">Tanggal Kunjungan</label>
-                     <input type="date" id="inputKunjunganTanggal" class="w-full border-slate-300 rounded-lg shadow-sm focus:ring-primary focus:border-primary px-4 py-2 border">
-                 </div>
-                 <div>
-                     <label class="block text-sm font-medium text-slate-700 mb-1">Status Kunjungan</label>
-                     <select id="inputKunjunganStatus" class="w-full border-slate-300 rounded-lg shadow-sm focus:ring-primary focus:border-primary px-4 py-2 border">
-                         <option value="Direncanakan">Direncanakan</option>
-                         <option value="Selesai">Selesai (Sudah Dikunjungi)</option>
-                         <option value="Batal/Ditunda">Batal / Ditunda</option>
-                     </select>
-                 </div>
-                 <div>
-                     <label class="block text-sm font-medium text-slate-700 mb-1">Catatan (Opsional)</label>
-                     <textarea id="inputKunjunganCatatan" rows="3" class="w-full border-slate-300 rounded-lg shadow-sm focus:ring-primary focus:border-primary px-4 py-2 border" placeholder="Tuliskan hasil atau catatan kunjungan..."></textarea>
-                 </div>
-                 <div class="pt-4 border-t border-slate-100">
-                     <button onclick="simpanKunjungan()" class="w-full bg-primary hover:bg-blue-700 text-white px-6 py-3 rounded-xl font-bold transition-colors shadow-sm">Simpan Jadwal</button>
-                 </div>
+                 <!-- BAGIAN 1: INFORMASI DASAR -->
+                 <section class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+                     <h4 class="font-bold text-slate-700 mb-4 border-b border-slate-100 pb-2">Bagian 1: Informasi Dasar</h4>
+                     <div class="space-y-4">
+                         <div>
+                             <label class="block text-sm font-medium text-slate-700 mb-1">Nama Sekolah</label>
+                             <input type="text" id="infoNamaSekolah" readonly class="w-full bg-slate-100 border-slate-200 rounded-lg px-4 py-2 border text-slate-600 focus:outline-none">
+                         </div>
+                         <div>
+                             <label class="block text-sm font-medium text-slate-700 mb-1">Nama Fasilitator</label>
+                             <input type="text" id="infoNamaFasil" readonly class="w-full bg-slate-100 border-slate-200 rounded-lg px-4 py-2 border text-slate-600 focus:outline-none">
+                         </div>
+                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                             <div>
+                                 <label class="block text-sm font-medium text-slate-700 mb-1">Tanggal Kunjungan <span class="text-red-500">*</span></label>
+                                 <input type="date" id="inputKunjunganTanggal" class="w-full border-slate-300 rounded-lg shadow-sm focus:ring-primary focus:border-primary px-4 py-2 border" required>
+                             </div>
+                             <div>
+                                 <label class="block text-sm font-medium text-slate-700 mb-1">Tahap Siklus TET <span class="text-red-500">*</span></label>
+                                 <select id="inputSiklusTet" class="w-full border-slate-300 rounded-lg shadow-sm focus:ring-primary focus:border-primary px-4 py-2 border" required>
+                                     <option value="">Pilih Tahap...</option>
+                                     <option value="Identifikasi/Assess">Identifikasi / Assess</option>
+                                     <option value="Desain/Design">Desain / Design</option>
+                                     <option value="Implementasi/Implement">Implementasi / Implement</option>
+                                     <option value="Refleksi/Measure & Reflect">Refleksi / Measure & Reflect</option>
+                                 </select>
+                             </div>
+                         </div>
+                     </div>
+                 </section>
+
+                 <!-- BAGIAN 2: RUBRIK PENILAIAN -->
+                 <section class="space-y-6">
+                     <div class="mb-2">
+                        <h4 class="font-bold text-slate-700 border-b border-slate-200 pb-2">Bagian 2: Rubrik Penilaian Utama</h4>
+                        <p class="text-sm text-slate-500 mt-1">Berikan penilaian skala 1-4 (1=Pra Berkembang, 2=Berkembang, 3=Maju, 4=Unggul).</p>
+                     </div>
+
+                     <!-- Kategori A -->
+                     <div class="bg-indigo-50/50 border border-indigo-100 rounded-xl p-4 shadow-sm">
+                         <h5 class="font-bold text-indigo-800 mb-4">Kategori A: Keunggulan Belajar Murid</h5>
+                         <div class="space-y-4" id="kategoriA"></div>
+                     </div>
+
+                     <!-- Kategori B -->
+                     <div class="bg-emerald-50/50 border border-emerald-100 rounded-xl p-4 shadow-sm">
+                         <h5 class="font-bold text-emerald-800 mb-4">Kategori B: Keunggulan Mengajar Pendidik</h5>
+                         <div class="space-y-4" id="kategoriB"></div>
+                     </div>
+
+                     <!-- Kategori C -->
+                     <div class="bg-amber-50/50 border border-amber-100 rounded-xl p-4 shadow-sm">
+                         <h5 class="font-bold text-amber-800 mb-4">Kategori C: Keunggulan Kepemimpinan Kepala Sekolah</h5>
+                         <div class="space-y-4" id="kategoriC"></div>
+                     </div>
+                 </section>
+
+                 <!-- BAGIAN 3: UMPAN BALIK KUALITATIF -->
+                 <section class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+                     <h4 class="font-bold text-slate-700 mb-4 border-b border-slate-100 pb-2">Bagian 3: Umpan Balik Kualitatif</h4>
+                     <div class="space-y-4">
+                         <div>
+                             <label class="block text-sm font-medium text-slate-700 mb-1">Catatan Pelaksanaan TET</label>
+                             <textarea id="catatanPelaksanaan" rows="3" class="w-full border-slate-300 rounded-lg shadow-sm focus:ring-primary focus:border-primary px-4 py-2 border" placeholder="Tuliskan jalannya siklus TET..."></textarea>
+                         </div>
+                         <div>
+                             <label class="block text-sm font-medium text-slate-700 mb-1">Kendala Ditemukan</label>
+                             <textarea id="kendalaDitemukan" rows="2" class="w-full border-slate-300 rounded-lg shadow-sm focus:ring-primary focus:border-primary px-4 py-2 border" placeholder="Deskripsi hambatan..."></textarea>
+                         </div>
+                         <div>
+                             <label class="block text-sm font-medium text-slate-700 mb-1">Rekomendasi Tindak Lanjut</label>
+                             <textarea id="rekomendasiTindakLanjut" rows="2" class="w-full border-slate-300 rounded-lg shadow-sm focus:ring-primary focus:border-primary px-4 py-2 border" placeholder="Saran spesifik..."></textarea>
+                         </div>
+                     </div>
+                 </section>
+             </div>
+             
+             <!-- Footer Modal -->
+             <div class="p-4 border-t border-slate-100 bg-white shrink-0">
+                 <button onclick="simpanKunjungan()" class="w-full bg-primary hover:bg-blue-700 text-white px-6 py-3 rounded-xl font-bold transition-colors shadow-sm text-lg">Simpan Laporan & Jadwal</button>
              </div>
          </div>
     </div>
@@ -139,6 +202,93 @@
         let loggedInFasil = null;
         let allSchools = {};
         
+        const rubrikData = {
+            A: [
+                { id: 'A1_pm_bermakna', label: 'A1_pm_bermakna: Murid mengaitkan pembelajaran dengan kehidupan nyata.' },
+                { id: 'A2_pm_otonomi', label: 'A2_pm_otonomi: Murid mandiri mengatur strategi belajarnya.' },
+                { id: 'A3_pm_refleksi', label: 'A3_pm_refleksi: Murid mampu merefleksikan proses belajarnya.' },
+                { id: 'A4_kka_projek', label: 'A4_kka_projek: Kemampuan murid mengembangkan projek Koding & Kecerdasan Artifisial (KKA).' },
+                { id: 'A5_kka_kompetensi', label: 'A5_kka_kompetensi: Peningkatan literasi digital dan berpikir komputasional.' }
+            ],
+            B: [
+                { id: 'B1_pm_efektif', label: 'B1_pm_efektif: Kemampuan guru menyajikan pembelajaran berdiferensiasi dan inklusif.' },
+                { id: 'B2_pm_asesmen', label: 'B2_pm_asesmen: Penggunaan asesmen formatif dan umpan balik berkelanjutan.' },
+                { id: 'B3_kka_literasi', label: 'B3_kka_literasi: Literasi digital guru sebagai penggerak di kelas.' },
+                { id: 'B4_kka_kontekstual', label: 'B4_kka_kontekstual: Pemanfaatan teknologi secara kontekstual dalam pelaksanaan/evaluasi pembelajaran.' }
+            ],
+            C: [
+                { id: 'C1_pm_memimpin', label: 'C1_pm_memimpin: Integrasi PM dan KKA dalam visi, misi, dan budaya sekolah.' },
+                { id: 'C2_pm_supervisi', label: 'C2_pm_supervisi: Pelaksanaan supervisi instruksional yang berorientasi pada data.' },
+                { id: 'C3_kka_sumberdaya', label: 'C3_kka_sumberdaya: Penyediaan sarana, prasarana digital, dan sumber belajar KKA.' },
+                { id: 'C4_kka_kemitraan', label: 'C4_kka_kemitraan: Kolaborasi dengan orang tua, komunitas, dan mitra dunia kerja.' }
+            ]
+        };
+
+        function renderRubrik() {
+            for (const cat of ['A', 'B', 'C']) {
+                let html = '';
+                rubrikData[cat].forEach(item => {
+                    html += `
+                    <div class="bg-white p-3 rounded-lg border border-slate-200 shadow-sm">
+                        <p class="text-sm font-medium text-slate-700 mb-2">${item.label}</p>
+                        <div class="flex gap-4 sm:gap-6 flex-wrap">
+                            ${[1,2,3,4].map(val => `
+                            <label class="flex items-center gap-1 cursor-pointer">
+                                <input type="radio" name="${item.id}" value="${val}" class="w-4 h-4 text-primary border-slate-300 focus:ring-primary">
+                                <span class="text-sm font-medium text-slate-600">${val}</span>
+                            </label>
+                            `).join('')}
+                        </div>
+                    </div>`;
+                });
+                const container = document.getElementById(`kategori${cat}`);
+                if(container) container.innerHTML = html;
+            }
+        }
+
+        function generateReport(data) {
+            let sumA = 0, sumB = 0, sumC = 0;
+            rubrikData.A.forEach(i => sumA += parseInt(data[i.id] || 0));
+            rubrikData.B.forEach(i => sumB += parseInt(data[i.id] || 0));
+            rubrikData.C.forEach(i => sumC += parseInt(data[i.id] || 0));
+
+            const avgA = rubrikData.A.length > 0 ? (sumA / rubrikData.A.length) : 0;
+            const avgB = rubrikData.B.length > 0 ? (sumB / rubrikData.B.length) : 0;
+            const avgC = rubrikData.C.length > 0 ? (sumC / rubrikData.C.length) : 0;
+
+            const totalAvg = (avgA + avgB + avgC) / 3;
+
+            let status = "";
+            if (totalAvg < 2) status = "Pra Berkembang";
+            else if (totalAvg < 3) status = "Berkembang";
+            else if (totalAvg < 4) status = "Maju";
+            else status = "Unggul";
+
+            const cats = [
+                { name: "Keunggulan Belajar Murid", avg: avgA },
+                { name: "Keunggulan Mengajar Pendidik", avg: avgB },
+                { name: "Keunggulan Kepemimpinan Kepala Sekolah", avg: avgC }
+            ];
+            
+            // Sort descending to find strength and weakness
+            cats.sort((a, b) => b.avg - a.avg);
+            const kekuatan = cats[0].name;
+            const evaluasi = cats[cats.length - 1].name;
+
+            const reportText = `Berdasarkan hasil kunjungan pada ${data.tanggal}, ${data.nama_sekolah} secara umum berada pada tahap ${status}. Keunggulan utama sekolah saat ini terlihat pada aspek ${kekuatan}. Namun, sekolah masih memerlukan pendampingan lebih lanjut pada aspek ${evaluasi}. Rekomendasi tindak lanjut dari fasilitator: ${data.rekomendasi_tindak_lanjut}.`;
+
+            return {
+                totalAvg: parseFloat(totalAvg.toFixed(2)),
+                avgA: parseFloat(avgA.toFixed(2)),
+                avgB: parseFloat(avgB.toFixed(2)),
+                avgC: parseFloat(avgC.toFixed(2)),
+                statusUtama: status,
+                kategoriKekuatan: kekuatan,
+                kategoriEvaluasi: evaluasi,
+                teksLaporan: reportText
+            };
+        }
+
         async function init() {
             try {
                 const snapFasil = await db.ref('fasilitator').once('value');
@@ -162,6 +312,7 @@
                 document.getElementById('loginFasilId').innerHTML = '<option value="">Gagal Memuat Data</option>';
             }
         }
+        renderRubrik();
         init();
 
         function login() {
@@ -265,12 +416,25 @@
             document.getElementById('inputKunjunganNpsn').value = npsn;
             document.getElementById('inputKunjunganId').value = kunjunganId;
             document.getElementById('modalKunjunganTitle').innerText = `Kunjungan Ke-${kunjunganId}`;
-            document.getElementById('modalKunjunganSub').innerText = schoolName;
+            document.getElementById('modalKunjunganSub').innerText = "Formulir Instrumen Observasi";
             
-            // Clear or set loading state
+            // Clear and set basic info
+            document.getElementById('infoNamaSekolah').value = schoolName;
+            document.getElementById('infoNamaFasil').value = loggedInFasil ? loggedInFasil.nama : '';
             document.getElementById('inputKunjunganTanggal').value = '';
-            document.getElementById('inputKunjunganStatus').value = 'Direncanakan';
-            document.getElementById('inputKunjunganCatatan').value = 'Memuat...';
+            document.getElementById('inputSiklusTet').value = '';
+            
+            // Clear rubrik
+            ['A', 'B', 'C'].forEach(cat => {
+                rubrikData[cat].forEach(item => {
+                    const radios = document.getElementsByName(item.id);
+                    radios.forEach(r => r.checked = false);
+                });
+            });
+
+            document.getElementById('catatanPelaksanaan').value = 'Memuat...';
+            document.getElementById('kendalaDitemukan').value = 'Memuat...';
+            document.getElementById('rekomendasiTindakLanjut').value = 'Memuat...';
 
             const modal = document.getElementById('modalKunjungan');
             modal.classList.remove('hidden');
@@ -279,17 +443,33 @@
             db.ref(`jadwal_kunjungan/${npsn}/kunjungan_${kunjunganId}`).once('value').then(snap => {
                 const data = snap.val();
                 if(data) {
-                    document.getElementById('inputKunjunganTanggal').value = data.tanggal !== '-' ? data.tanggal : '';
-                    document.getElementById('inputKunjunganStatus').value = data.status !== 'Belum Diisi' ? data.status : 'Direncanakan';
-                    document.getElementById('inputKunjunganCatatan').value = data.catatan !== '-' ? data.catatan : '';
+                    document.getElementById('inputKunjunganTanggal').value = data.tanggal && data.tanggal !== '-' ? data.tanggal : '';
+                    document.getElementById('inputSiklusTet').value = data.tahap_siklus_tet || '';
+                    document.getElementById('catatanPelaksanaan').value = data.catatan_pelaksanaan_tet || '';
+                    document.getElementById('kendalaDitemukan').value = data.kendala_ditemukan || '';
+                    document.getElementById('rekomendasiTindakLanjut').value = data.rekomendasi_tindak_lanjut || '';
+
+                    // Load rubrik values
+                    ['A', 'B', 'C'].forEach(cat => {
+                        rubrikData[cat].forEach(item => {
+                            if (data[item.id]) {
+                                const radios = document.getElementsByName(item.id);
+                                radios.forEach(r => {
+                                    if (r.value === data[item.id].toString()) r.checked = true;
+                                });
+                            }
+                        });
+                    });
                 } else {
-                    document.getElementById('inputKunjunganTanggal').value = '';
-                    document.getElementById('inputKunjunganStatus').value = 'Direncanakan';
-                    document.getElementById('inputKunjunganCatatan').value = '';
+                    document.getElementById('catatanPelaksanaan').value = '';
+                    document.getElementById('kendalaDitemukan').value = '';
+                    document.getElementById('rekomendasiTindakLanjut').value = '';
                 }
             }).catch(e => {
                 console.error(e);
-                document.getElementById('inputKunjunganCatatan').value = '';
+                document.getElementById('catatanPelaksanaan').value = '';
+                document.getElementById('kendalaDitemukan').value = '';
+                document.getElementById('rekomendasiTindakLanjut').value = '';
             });
         }
 
@@ -302,16 +482,48 @@
         async function simpanKunjungan() {
             const npsn = document.getElementById('inputKunjunganNpsn').value;
             const kId = document.getElementById('inputKunjunganId').value;
-            const tanggal = document.getElementById('inputKunjunganTanggal').value || '-';
-            const status = document.getElementById('inputKunjunganStatus').value;
-            const catatan = document.getElementById('inputKunjunganCatatan').value || '-';
+            
+            // Validate essential
+            const tanggal = document.getElementById('inputKunjunganTanggal').value;
+            if(!tanggal) return alert("Tanggal Kunjungan wajib diisi!");
+            
+            const payload = {
+                nama_sekolah: document.getElementById('infoNamaSekolah').value,
+                nama_fasilitator: document.getElementById('infoNamaFasil').value,
+                tanggal: tanggal,
+                tahap_siklus_tet: document.getElementById('inputSiklusTet').value,
+                catatan_pelaksanaan_tet: document.getElementById('catatanPelaksanaan').value,
+                kendala_ditemukan: document.getElementById('kendalaDitemukan').value,
+                rekomendasi_tindak_lanjut: document.getElementById('rekomendasiTindakLanjut').value,
+                // Status kunjungan kita set selesai otomatis jika formulir disubmit
+                status: 'Selesai'
+            };
 
-            await db.ref(`jadwal_kunjungan/${npsn}/kunjungan_${kId}`).set({
-                tanggal, status, catatan
+            // Ambil rubrik values
+            ['A', 'B', 'C'].forEach(cat => {
+                rubrikData[cat].forEach(item => {
+                    const selected = document.querySelector(`input[name="${item.id}"]:checked`);
+                    if (selected) {
+                        payload[item.id] = parseInt(selected.value);
+                    } else {
+                        payload[item.id] = 0; // Jika tidak diisi, set 0
+                    }
+                });
             });
+
+            // Generate report
+            const report = generateReport(payload);
+            payload.laporan_otomatis = report;
+            
+            // Backward compatibility untuk teks di dashboard
+            const reko = payload.rekomendasi_tindak_lanjut || '';
+            payload.catatan = reko ? (reko.substring(0, 50) + (reko.length > 50 ? '...' : '')) : '-';
+
+            await db.ref(`jadwal_kunjungan/${npsn}/kunjungan_${kId}`).set(payload);
             
             closeModalKunjungan();
             renderDashboard();
+            alert("Laporan instrumen observasi berhasil disimpan!");
         }
     </script>
 </body>
