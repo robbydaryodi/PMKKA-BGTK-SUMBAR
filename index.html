@@ -2686,6 +2686,20 @@
             }
         }
 
+        function toggleJadwalFasil(id) {
+            const content = document.getElementById('content-jadwal-' + id);
+            const icon = document.getElementById('icon-jadwal-' + id);
+            if (content && icon) {
+                if (content.classList.contains('hidden')) {
+                    content.classList.remove('hidden');
+                    icon.classList.add('rotate-180');
+                } else {
+                    content.classList.add('hidden');
+                    icon.classList.remove('rotate-180');
+                }
+            }
+        }
+        
         async function loadJadwalFasilData() {
             try {
                 const dbRef = firebase.database();
@@ -2708,14 +2722,17 @@
                     const mySchools = assigned[fasilId] || [];
 
                     html += `
-                        <div class="border border-slate-200 rounded-xl overflow-hidden bg-white shadow-sm">
-                            <div class="bg-indigo-50/50 p-4 border-b border-slate-200 flex justify-between items-center">
+                        <div class="border border-slate-200 rounded-xl overflow-hidden bg-white shadow-sm mb-4">
+                            <div class="bg-indigo-50/50 p-4 border-b border-slate-200 flex justify-between items-center cursor-pointer hover:bg-indigo-50 transition-colors group" onclick="toggleJadwalFasil('${fasilId}')">
                                 <div>
-                                    <div class="font-bold text-slate-800 text-lg">${fasil.nama}</div>
+                                    <div class="font-bold text-slate-800 text-lg group-hover:text-indigo-700 transition-colors">${fasil.nama}</div>
                                     <div class="text-xs text-slate-500">${fasil.hp} &bull; ${mySchools.length} Sekolah Binaan</div>
                                 </div>
+                                <div class="text-indigo-400">
+                                    <svg id="icon-jadwal-${fasilId}" class="w-6 h-6 transform transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                                </div>
                             </div>
-                            <div class="p-4 space-y-4">
+                            <div id="content-jadwal-${fasilId}" class="hidden p-4 space-y-4 bg-slate-50/30">
                     `;
 
                     if(mySchools.length === 0) {
