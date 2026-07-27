@@ -84,6 +84,36 @@
         </div>
     </div>
     
+
+    <!-- MODAL ATUR JADWAL (Perencanaan) -->
+    <div id="modalAturJadwal" class="hidden fixed inset-0 z-50 bg-slate-900/50 items-center justify-center p-4">
+         <div class="bg-white rounded-2xl shadow-xl w-full max-w-sm overflow-hidden fade-in">
+             <div class="p-4 border-b border-slate-100 bg-slate-50 flex justify-between items-center">
+                 <div>
+                    <h3 class="font-bold text-slate-800 text-lg">Atur Jadwal</h3>
+                    <p class="text-sm text-slate-500" id="modalAturSub"></p>
+                 </div>
+                 <button onclick="closeModalAturJadwal()" class="text-slate-400 hover:text-slate-600 p-2"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg></button>
+             </div>
+             <div class="p-5 space-y-4">
+                 <input type="hidden" id="aturNpsn">
+                 <input type="hidden" id="aturId">
+                 <div>
+                     <label class="block text-sm font-medium text-slate-700 mb-1">Tanggal Rencana Kunjungan</label>
+                     <input type="date" id="aturTanggal" class="w-full border-slate-300 rounded-lg shadow-sm focus:ring-primary focus:border-primary px-4 py-2 border">
+                 </div>
+                 <div>
+                     <label class="block text-sm font-medium text-slate-700 mb-1">Status Rencana</label>
+                     <select id="aturStatus" class="w-full border-slate-300 rounded-lg shadow-sm focus:ring-primary focus:border-primary px-4 py-2 border">
+                         <option value="Direncanakan">Direncanakan</option>
+                         <option value="Batal/Ditunda">Batal / Ditunda</option>
+                     </select>
+                 </div>
+                 <button onclick="simpanJadwal()" class="w-full bg-slate-800 hover:bg-slate-900 text-white px-4 py-2.5 rounded-xl font-bold transition-colors shadow-sm">Simpan Jadwal</button>
+             </div>
+         </div>
+    </div>
+    
     <!-- MODAL INPUT KUNJUNGAN (Formulir Instrumen Observasi) -->
     <div id="modalKunjungan" class="hidden fixed inset-0 z-50 bg-slate-900/50 items-center justify-center p-4">
          <div class="bg-white rounded-2xl shadow-xl w-full max-w-2xl max-h-[90vh] overflow-hidden flex flex-col fade-in">
@@ -385,15 +415,21 @@
                     if(jData.status === 'Direncanakan') statusColor = "bg-blue-100 text-blue-700";
                     if(jData.status === 'Batal/Ditunda') statusColor = "bg-red-100 text-red-700";
 
+                    const safeName = schoolName.replace(/'/g, "\\\'").replace(/"/g, '&quot;');
                     kunjunganHtml += `
-                        <div class="border border-slate-200 rounded-xl p-4 hover:border-indigo-300 transition-colors cursor-pointer group" onclick="bukaModalKunjungan('${npsn}', '${schoolName.replace(/'/g, "\\'").replace(/"/g, '&quot;')}', ${i})">
-                            <div class="flex justify-between items-center mb-2">
-                                <span class="font-bold text-slate-800">Kunjungan ${i}</span>
-                                <span class="px-2 py-1 rounded text-xs font-bold ${statusColor}">${jData.status}</span>
+                        <div class="border border-slate-200 rounded-xl p-4 hover:border-indigo-300 transition-colors group flex flex-col justify-between">
+                            <div>
+                                <div class="flex justify-between items-center mb-2">
+                                    <span class="font-bold text-slate-800">Kunjungan ${i}</span>
+                                    <span class="px-2 py-1 rounded text-xs font-bold ${statusColor}">${jData.status}</span>
+                                </div>
+                                <p class="text-sm text-slate-600 mb-1"><span class="font-medium">Tgl:</span> ${jData.tanggal}</p>
+                                <p class="text-xs text-slate-500 truncate mb-3" title="${jData.catatan}"><span class="font-medium">Catatan:</span> ${jData.catatan}</p>
                             </div>
-                            <p class="text-sm text-slate-600 mb-1"><span class="font-medium">Tgl:</span> ${jData.tanggal}</p>
-                            <p class="text-xs text-slate-500 truncate"><span class="font-medium">Catatan:</span> ${jData.catatan}</p>
-                            <div class="mt-3 text-xs font-medium text-indigo-600 opacity-0 group-hover:opacity-100 transition-opacity">Klik untuk edit &rarr;</div>
+                            <div class="flex gap-2 mt-auto">
+                                <button onclick="bukaModalAturJadwal('${npsn}', '${safeName}', ${i})" class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold py-2 rounded transition-colors border border-slate-200">Atur Jadwal</button>
+                                <button onclick="bukaModalKunjungan('${npsn}', '${safeName}', ${i})" class="flex-1 bg-primary hover:bg-blue-700 text-white text-xs font-bold py-2 rounded transition-colors shadow-sm">Isi Instrumen</button>
+                            </div>
                         </div>
                     `;
                 }
@@ -410,6 +446,51 @@
                 `;
             });
             container.innerHTML = html;
+        }
+
+
+        function bukaModalAturJadwal(npsn, schoolName, kunjunganId) {
+            document.getElementById('aturNpsn').value = npsn;
+            document.getElementById('aturId').value = kunjunganId;
+            document.getElementById('modalAturSub').innerText = `${schoolName} - Kunjungan ${kunjunganId}`;
+            
+            document.getElementById('aturTanggal').value = '';
+            document.getElementById('aturStatus').value = 'Direncanakan';
+            
+            const modal = document.getElementById('modalAturJadwal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+
+            db.ref(`jadwal_kunjungan/${npsn}/kunjungan_${kunjunganId}`).once('value').then(snap => {
+                const data = snap.val();
+                if(data) {
+                    document.getElementById('aturTanggal').value = data.tanggal && data.tanggal !== '-' ? data.tanggal : '';
+                    document.getElementById('aturStatus').value = (data.status === 'Selesai' || data.status === 'Batal/Ditunda') ? data.status : 'Direncanakan';
+                }
+            });
+        }
+
+        function closeModalAturJadwal() {
+            const modal = document.getElementById('modalAturJadwal');
+            modal.classList.remove('flex');
+            modal.classList.add('hidden');
+        }
+
+        async function simpanJadwal() {
+            const npsn = document.getElementById('aturNpsn').value;
+            const kId = document.getElementById('aturId').value;
+            const tanggal = document.getElementById('aturTanggal').value || '-';
+            const status = document.getElementById('aturStatus').value;
+            
+            await db.ref(`jadwal_kunjungan/${npsn}/kunjungan_${kId}`).update({
+                tanggal, 
+                status,
+                catatan: (status === 'Direncanakan' ? 'Menunggu pelaksanaan' : (status === 'Batal/Ditunda' ? 'Dibatalkan/Ditunda' : '-'))
+            });
+            
+            closeModalAturJadwal();
+            renderDashboard();
+            alert("Rencana jadwal berhasil disimpan!");
         }
 
         function bukaModalKunjungan(npsn, schoolName, kunjunganId) {
@@ -519,7 +600,7 @@
             const reko = payload.rekomendasi_tindak_lanjut || '';
             payload.catatan = reko ? (reko.substring(0, 50) + (reko.length > 50 ? '...' : '')) : '-';
 
-            await db.ref(`jadwal_kunjungan/${npsn}/kunjungan_${kId}`).set(payload);
+            await db.ref(`jadwal_kunjungan/${npsn}/kunjungan_${kId}`).update(payload);
             
             closeModalKunjungan();
             renderDashboard();
