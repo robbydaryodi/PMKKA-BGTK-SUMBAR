@@ -344,10 +344,32 @@
             }
             select.innerHTML = options;
 
-            const storedFasilId = localStorage.getItem('loggedFasilId');
-            if(storedFasilId && fasilData[storedFasilId]) {
-                loggedInFasil = fasilData[storedFasilId];
+            const urlParams = new URLSearchParams(window.location.search);
+            const paramFasilId = urlParams.get('fasilId');
+            const paramFocus = urlParams.get('focus');
+            
+            if (paramFasilId && fasilData[paramFasilId]) {
+                // Admin quick login bypass
+                localStorage.setItem('loggedFasilId', paramFasilId);
+                loggedInFasil = fasilData[paramFasilId];
                 showDashboard();
+                if (paramFocus) {
+                    setTimeout(() => {
+                        const searchBox = document.getElementById('searchSekolah');
+                        if (searchBox) {
+                            searchBox.value = paramFocus;
+                            searchBox.dispatchEvent(new Event('input'));
+                        }
+                    }, 500);
+                }
+                // Clear URL to prevent weird reloads
+                window.history.replaceState({}, document.title, window.location.pathname);
+            } else {
+                const storedFasilId = localStorage.getItem('loggedFasilId');
+                if(storedFasilId && fasilData[storedFasilId]) {
+                    loggedInFasil = fasilData[storedFasilId];
+                    showDashboard();
+                }
             }
             } catch(e) {
                 console.error(e);

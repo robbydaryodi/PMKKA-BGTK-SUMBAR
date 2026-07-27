@@ -115,7 +115,7 @@
         <div id="adminSidebarOverlay" class="fixed inset-0 bg-slate-900/50 z-40 hidden md:hidden" onclick="toggleSidebar()"></div>
         <aside id="adminSidebar" class="w-64 bg-white border-r border-slate-200 flex flex-col shadow-sm flex-shrink-0 absolute md:relative z-50 h-full transition-transform transform -translate-x-full md:translate-x-0">
             <div class="h-16 flex items-center justify-between px-6 border-b border-slate-200">
-                <span class="text-xl font-extrabold text-slate-800">Sekolah Model</span>
+                <a href="index.html" class="flex items-center gap-2 hover:opacity-80 transition-opacity"><img src="./logo.png" alt="Logo" class="h-8 sm:h-10 w-auto object-contain"><span class="text-xl font-extrabold text-slate-800">Sekolah Model</span></a>
                 <button onclick="toggleSidebar()" class="md:hidden text-slate-500 hover:text-slate-800 focus:outline-none">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                 </button>
@@ -136,6 +136,9 @@
                         <svg class="w-4 h-4 transition-transform duration-200" id="icon_submenuVerifikasi" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
                     </button>
                     <div id="submenuVerifikasi" class="hidden pl-8 pr-2 space-y-1 mt-1">
+                        <button onclick="switchAdminView('mode4')" id="btnMode4" class="flex items-center gap-3 px-3 py-2 rounded-lg font-medium text-slate-500 hover:text-slate-800 hover:bg-slate-50 transition-colors w-full text-left text-sm">
+                            Statistik Konfirmasi
+                        </button>
                         <button onclick="switchAdminView('mode1')" id="btnMode1" class="flex items-center gap-3 px-3 py-2 rounded-lg font-medium text-slate-500 hover:text-slate-800 hover:bg-slate-50 transition-colors w-full text-left text-sm">
                             Progress Sekolah
                         </button>
@@ -156,7 +159,7 @@
                             Data Fasilitator
                         </button>
                         <button onclick="switchAdminView('mode4')" id="btnMode4" class="flex items-center gap-3 px-3 py-2 rounded-lg font-medium text-slate-500 hover:text-slate-800 hover:bg-slate-50 transition-colors w-full text-left text-sm">
-                            Jadwal & Laporan
+                            Statistik Konfirmasi
                         </button>
                     </div>
 
@@ -195,7 +198,7 @@
 
 
         <!-- MODE 0: DASHBOARD UTAMA -->
-        <div id="viewMode0" class="fade-in">
+        <div id="viewMode4" class="fade-in">
             <!-- Top Metrics Cards -->
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
                 <!-- Total Schools -->
@@ -371,7 +374,7 @@
 
         </div>
         
-        <div id="viewMode4" class="hidden fade-in">
+        <div id="viewMode0" class="hidden fade-in">
              <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
                  <div class="p-4 border-b border-slate-100 bg-slate-50/50">
                      <h2 class="text-md font-bold text-slate-800">Rekap Jadwal & Laporan Fasilitator</h2>
@@ -671,6 +674,51 @@
         }
 
         // ==========================================
+        
+        async function jumpToFasilitator(npsn) {
+            try {
+                // 1. Find which fasil has this school
+                const snapAssign = await firebase.database().ref('fasilitator_sekolah').once('value');
+                const assigns = snapAssign.val() || {};
+                let targetFasilId = null;
+                for (const fId in assigns) {
+                    if (assigns[fId].includes(npsn)) {
+                        targetFasilId = fId;
+                        break;
+                    }
+                }
+                
+                if (!targetFasilId) {
+                    alert("Sekolah ini belum ditugaskan ke Fasilitator manapun.");
+                    return;
+                }
+                
+                // 2. Find Fasil Name
+                const snapFasil = await firebase.database().ref('fasilitator/' + targetFasilId).once('value');
+                const fasilData = snapFasil.val();
+                if (!fasilData) {
+                    alert("Data Fasilitator tidak ditemukan.");
+                    return;
+                }
+                
+                const fasilName = encodeURIComponent(fasilData.nama);
+                window.open('fasilitator.html?fasilId=' + targetFasilId + '&fasilName=' + fasilName + '&focus=' + npsn, '_blank');
+            } catch (e) {
+                alert("Error: " + e.message);
+            }
+        }
+        
+        function viewJadwalModal(npsn) {
+            switchAdminView('mode0');
+            setTimeout(() => {
+                const searchBox = document.getElementById('searchJadwalFasil');
+                if (searchBox) {
+                    searchBox.value = npsn;
+                    searchBox.dispatchEvent(new Event('input'));
+                }
+            }, 500);
+        }
+
         // MODAL LOGIC
         // ==========================================
         function openModal(role) {
@@ -1189,6 +1237,7 @@
                         adminDataKonfirmasi = snapKonf.val() || {};
                         renderAdminData();
                     });
+                    switchAdminView('mode0');
                 });
             } catch (error) {
                 console.error("Admin fetch error:", error);
@@ -1311,11 +1360,11 @@
         ];
 
         function renderAdminData() {
-            if (currentAdminMode === 'mode0') {
+            if (currentAdminMode === 'mode4') {
                 renderDashboard();
             } else if (currentAdminMode === 'mode1') {
                 renderMode1();
-            } else {
+            } else if (currentAdminMode === 'mode2') {
                 renderMode2();
             }
         }
