@@ -37,6 +37,10 @@
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         .fade-in { animation: fadeIn 0.3s ease-in forwards; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .custom-sidebar-scroll::-webkit-scrollbar { width: 4px; }
+        .custom-sidebar-scroll::-webkit-scrollbar-track { background: transparent; }
+        .custom-sidebar-scroll::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 9999px; }
+        .custom-sidebar-scroll::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
     </style>
 
     <!-- Firebase v10+ Compat CDN -->
@@ -182,94 +186,134 @@
         
         <!-- SIDEBAR ADMIN -->
         <div id="adminSidebarOverlay" class="fixed inset-0 bg-slate-900/50 z-40 hidden md:hidden" onclick="toggleSidebar()"></div>
-        <aside id="adminSidebar" class="w-64 bg-white border-r border-slate-200 flex flex-col shadow-sm flex-shrink-0 absolute md:relative z-50 h-full transition-transform transform -translate-x-full md:translate-x-0">
-            <div class="h-16 flex items-center justify-between px-6 border-b border-slate-200">
-                <a href="index.html" class="flex items-center gap-2 hover:opacity-80 transition-opacity min-w-0">
-                    <img src="./logo.png" alt="Logo" class="h-8 sm:h-9 w-auto max-w-[130px] object-contain">
-                    <span class="text-sm font-extrabold text-slate-800 truncate">Admin BGTK</span>
+        <aside id="adminSidebar" class="w-64 bg-white border-r border-slate-200/80 flex flex-col shadow-xs flex-shrink-0 absolute md:relative z-50 h-full transition-transform transform -translate-x-full md:translate-x-0">
+            <!-- Header Sidebar -->
+            <div class="h-20 flex items-center justify-between px-5 border-b border-slate-100 bg-slate-50/50">
+                <a href="index.html" class="flex items-center gap-3 hover:opacity-85 transition-opacity min-w-0">
+                    <img src="./logo.png" alt="Logo" class="h-10 w-auto object-contain">
+                    <div class="truncate">
+                        <span class="text-xs font-black text-slate-800 tracking-tight block leading-tight">PM-KKA BGTK Sumbar</span>
+                        <span class="text-[10px] font-bold text-emerald-700 block mt-0.5">Admin Dashboard</span>
+                    </div>
                 </a>
-                <button onclick="toggleSidebar()" class="md:hidden text-slate-500 hover:text-slate-800 focus:outline-none">
+                <button onclick="toggleSidebar()" class="md:hidden text-slate-400 hover:text-slate-700 p-1 focus:outline-none">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                 </button>
             </div>
             
-            <div class="p-4 flex-1 overflow-y-auto">
-                <div class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-3 px-3">BGTK Sumatera Barat</div>
-                <nav class="space-y-1">
-                    <button onclick="switchAdminView('mode0')" id="btnMode0" class="flex items-center gap-3 px-3 py-2.5 rounded-lg font-medium bg-indigo-50 text-indigo-700 transition-colors w-full text-left">
-                        <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
-                        <span class="text-sm">Dashboard Utama</span>
-                    </button>
-                    
-                    <div class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mt-4 mb-2 px-3">Sekolah Model</div>
-                    <button onclick="toggleSubmenu('submenuFasil')" class="flex items-center justify-between px-3 py-2.5 rounded-lg font-medium text-slate-600 hover:bg-slate-50 transition-colors w-full text-left">
-                        <div class="flex items-center gap-3">
-                            <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
-                            <span class="text-sm">Manajemen Fasilitator</span>
+            <!-- Navigation Items Container -->
+            <div class="p-4 flex-1 overflow-y-auto custom-sidebar-scroll space-y-6">
+                <!-- Group 1: BGTK SUMATERA BARAT -->
+                <div>
+                    <div class="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest px-3 mb-2">BGTK SUMATERA BARAT</div>
+                    <nav class="space-y-1">
+                        <button onclick="switchAdminView('mode0')" id="btnMode0" class="sidebar-btn flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-100/80 hover:text-slate-900 transition-all duration-200 w-full text-left relative group border-l-4 border-transparent">
+                            <svg class="w-5 h-5 flex-shrink-0 text-slate-400 group-hover:text-slate-600 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+                            <span>Dashboard Utama</span>
+                        </button>
+                    </nav>
+                </div>
+                
+                <!-- Group 2: SEKOLAH MODEL -->
+                <div class="pt-4 border-t border-slate-100">
+                    <div class="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest px-3 mb-2">SEKOLAH MODEL</div>
+                    <nav class="space-y-1">
+                        <button onclick="toggleSubmenu('submenuFasil')" class="flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-100/80 hover:text-slate-900 transition-all duration-200 w-full text-left group">
+                            <div class="flex items-center gap-3">
+                                <svg class="w-5 h-5 flex-shrink-0 text-slate-400 group-hover:text-slate-600 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+                                <span>Manajemen Fasilitator</span>
+                            </div>
+                            <svg class="w-4 h-4 text-slate-400 transition-transform duration-200" id="icon_submenuFasil" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                        </button>
+                        <div id="submenuFasil" class="hidden pl-8 pr-2 space-y-1 mt-1">
+                            <button onclick="switchAdminView('mode3')" id="btnMode3" class="sidebar-btn flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium text-slate-500 hover:text-slate-900 hover:bg-slate-100/80 transition-all duration-200 w-full text-left border-l-2 border-transparent">
+                                <span>Data Fasilitator</span>
+                            </button>
+                            <button onclick="switchAdminView('mode4')" id="btnMode4" class="sidebar-btn flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium text-slate-500 hover:text-slate-900 hover:bg-slate-100/80 transition-all duration-200 w-full text-left border-l-2 border-transparent">
+                                <span>Jadwal & Laporan</span>
+                            </button>
                         </div>
-                        <svg class="w-4 h-4 transition-transform duration-200" id="icon_submenuFasil" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
-                    </button>
-                    <div id="submenuFasil" class="hidden pl-8 pr-2 space-y-1 mt-1">
-                        <button onclick="switchAdminView('mode3')" id="btnMode3" class="flex items-center gap-3 px-3 py-2 rounded-lg font-medium text-slate-500 hover:text-slate-800 hover:bg-slate-50 transition-colors w-full text-left text-sm">
-                            Data Fasilitator
-                        </button>
-                        <button onclick="switchAdminView('mode4')" id="btnMode4" class="flex items-center gap-3 px-3 py-2 rounded-lg font-medium text-slate-500 hover:text-slate-800 hover:bg-slate-50 transition-colors w-full text-left text-sm">
-                            Jadwal & Laporan
-                        </button>
-                    </div>
 
-                    <button onclick="toggleSubmenu('submenuSekolah')" class="flex items-center justify-between px-3 py-2.5 rounded-lg font-medium text-slate-600 hover:bg-slate-50 transition-colors w-full text-left">
-                        <div class="flex items-center gap-3">
-                            <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1v1H9V7zm5 0h1v1h-1V7zm-5 4h1v1H9v-1zm5 0h1v1h-1v-1zm-5 4h1v1H9v-1zm5 0h1v1h-1v-1z"/></svg>
-                            <span class="text-sm">Sekolah Model</span>
+                        <button onclick="toggleSubmenu('submenuSekolah')" class="flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-100/80 hover:text-slate-900 transition-all duration-200 w-full text-left group">
+                            <div class="flex items-center gap-3">
+                                <svg class="w-5 h-5 flex-shrink-0 text-slate-400 group-hover:text-slate-600 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1v1H9V7zm5 0h1v1h-1V7zm-5 4h1v1H9v-1zm5 0h1v1h-1v-1zm-5 4h1v1H9v-1zm5 0h1v1h-1v-1z"/></svg>
+                                <span>Sekolah Model</span>
+                            </div>
+                            <svg class="w-4 h-4 text-slate-400 transition-transform duration-200" id="icon_submenuSekolah" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                        </button>
+                        <div id="submenuSekolah" class="hidden pl-8 pr-2 space-y-1 mt-1">
+                            <button onclick="switchAdminView('mode7')" id="btnMode7" class="sidebar-btn flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium text-slate-500 hover:text-slate-900 hover:bg-slate-100/80 transition-all duration-200 w-full text-left border-l-2 border-transparent">
+                                <span>Data Kunjungan</span>
+                            </button>
+                            <button onclick="switchAdminView('mode5')" id="btnMode5" class="sidebar-btn flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium text-slate-500 hover:text-slate-900 hover:bg-slate-100/80 transition-all duration-200 w-full text-left border-l-2 border-transparent">
+                                <span>Pilih Pendamping</span>
+                            </button>
                         </div>
-                        <svg class="w-4 h-4 transition-transform duration-200" id="icon_submenuSekolah" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
-                    </button>
-                    <div id="submenuSekolah" class="hidden pl-8 pr-2 space-y-1 mt-1">
-                        <button onclick="switchAdminView('mode7')" id="btnMode7" class="flex items-center gap-3 px-3 py-2 rounded-lg font-medium text-slate-500 hover:text-slate-800 hover:bg-slate-50 transition-colors w-full text-left text-sm">
-                            Data Kunjungan
-                        </button>
-                        <button onclick="switchAdminView('mode5')" id="btnMode5" class="flex items-center gap-3 px-3 py-2 rounded-lg font-medium text-slate-500 hover:text-slate-800 hover:bg-slate-50 transition-colors w-full text-left text-sm">
-                            Pilih Pendamping
-                        </button>
-                    </div>
+                    </nav>
+                </div>
 
-                    <div class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mt-4 mb-2 px-3">Verifikasi Peserta</div>
-                    <div class="space-y-1">
-                        <button onclick="switchAdminView('mode1')" id="btnMode1" class="flex items-center gap-3 px-3 py-2 rounded-lg font-medium text-slate-500 hover:text-slate-800 hover:bg-slate-50 transition-colors w-full text-left text-sm">
-                            <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                            Progres Verifikasi
+                <!-- Group 3: VERIFIKASI PESERTA -->
+                <div class="pt-4 border-t border-slate-100">
+                    <div class="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest px-3 mb-2">VERIFIKASI PESERTA</div>
+                    <nav class="space-y-1">
+                        <button onclick="switchAdminView('mode1')" id="btnMode1" class="sidebar-btn flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-100/80 hover:text-slate-900 transition-all duration-200 w-full text-left group border-l-4 border-transparent">
+                            <svg class="w-5 h-5 flex-shrink-0 text-slate-400 group-hover:text-slate-600 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                            <span>Progres Verifikasi</span>
                         </button>
-                        <button onclick="switchAdminView('mode2')" id="btnMode2" class="flex items-center gap-3 px-3 py-2 rounded-lg font-medium text-slate-500 hover:text-slate-800 hover:bg-slate-50 transition-colors w-full text-left text-sm">
-                            <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-                            Rencana Pengkelasan
+                        <button onclick="switchAdminView('mode2')" id="btnMode2" class="sidebar-btn flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-100/80 hover:text-slate-900 transition-all duration-200 w-full text-left group border-l-4 border-transparent">
+                            <svg class="w-5 h-5 flex-shrink-0 text-slate-400 group-hover:text-slate-600 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                            <span>Rencana Pengkelasan</span>
                         </button>
-                    </div>
+                    </nav>
+                </div>
 
-                    <div class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mt-4 mb-2 px-3">Komunitas Belajar</div>
-                    <button onclick="switchAdminView('modeKombel')" id="btnModeKombel" class="flex items-center gap-3 px-3 py-2.5 rounded-lg font-medium text-purple-700 bg-purple-50 hover:bg-purple-100 transition-colors w-full text-left border border-purple-200">
-                        <svg class="w-5 h-5 flex-shrink-0 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
-                        <span class="text-sm font-bold">Master Kombel (1.804)</span>
-                    </button>
+                <!-- Group 4: KOMUNITAS BELAJAR -->
+                <div class="pt-4 border-t border-slate-100">
+                    <div class="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest px-3 mb-2">KOMUNITAS BELAJAR</div>
+                    <nav class="space-y-1">
+                        <button onclick="switchAdminView('modeKombel')" id="btnModeKombel" class="sidebar-btn flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-100/80 hover:text-slate-900 transition-all duration-200 w-full text-left group border-l-4 border-transparent">
+                            <div class="flex items-center gap-3">
+                                <svg class="w-5 h-5 flex-shrink-0 text-purple-500 group-hover:text-purple-600 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+                                <span>Master Kombel</span>
+                            </div>
+                            <span class="text-[10px] bg-purple-100 text-purple-800 font-extrabold px-2 py-0.5 rounded-full border border-purple-200">1.804</span>
+                        </button>
+                    </nav>
+                </div>
 
-                    <div class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mt-4 mb-2 px-3">Internal BGTK</div>
-                    <button onclick="switchAdminView('modePegawai')" id="btnModePegawai" class="flex items-center gap-3 px-3 py-2.5 rounded-lg font-medium text-emerald-700 bg-emerald-50 hover:bg-emerald-100 transition-colors w-full text-left border border-emerald-200">
-                        <svg class="w-5 h-5 flex-shrink-0 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1v1H9V7zm5 0h1v1h-1V7zm-5 4h1v1H9v-1zm5 0h1v1h-1v-1zm-5 4h1v1H9v-1zm5 0h1v1h-1v-1z"/></svg>
-                        <span class="text-sm font-bold">Master Pegawai (57)</span>
-                    </button>
-                </nav>
+                <!-- Group 5: INTERNAL BGTK -->
+                <div class="pt-4 border-t border-slate-100">
+                    <div class="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest px-3 mb-2">INTERNAL BGTK</div>
+                    <nav class="space-y-1">
+                        <button onclick="switchAdminView('modePegawai')" id="btnModePegawai" class="sidebar-btn flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-100/80 hover:text-slate-900 transition-all duration-200 w-full text-left group border-l-4 border-transparent">
+                            <div class="flex items-center gap-3">
+                                <svg class="w-5 h-5 flex-shrink-0 text-emerald-500 group-hover:text-emerald-600 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1v1H9V7zm5 0h1v1h-1V7zm-5 4h1v1H9v-1zm5 0h1v1h-1v-1zm-5 4h1v1H9v-1zm5 0h1v1h-1v-1z"/></svg>
+                                <span>Master Pegawai</span>
+                            </div>
+                            <span class="text-[10px] bg-emerald-100 text-emerald-800 font-extrabold px-2 py-0.5 rounded-full border border-emerald-200">57</span>
+                        </button>
+                    </nav>
+                </div>
             </div>
             
-            <!-- USER FOOTER -->
-            <div class="p-4 border-t border-slate-200">
-                <div class="mb-3 px-2">
-                    <div class="text-xs text-slate-400 font-medium">Logged in as:</div>
-                    <div class="text-xs font-bold text-slate-800 truncate" id="adminActiveUserEmail">Pegawai BGTK</div>
+            <!-- USER FOOTER CARD -->
+            <div class="p-3.5 border-t border-slate-100 bg-slate-50/50">
+                <div class="bg-white border border-slate-200/80 rounded-2xl p-3 shadow-2xs">
+                    <div class="flex items-center gap-3">
+                        <div class="w-9 h-9 rounded-full bg-emerald-100 text-emerald-800 font-extrabold flex items-center justify-center text-xs shadow-inner flex-shrink-0 border border-emerald-200" id="adminUserAvatar">
+                            <span id="adminUserInitial">P</span>
+                        </div>
+                        <div class="min-w-0 flex-1">
+                            <div class="text-[10px] uppercase font-bold text-slate-400 tracking-wider">Logged in as</div>
+                            <div class="text-xs font-bold text-slate-800 truncate" id="adminActiveUserEmail">Pegawai BGTK</div>
+                        </div>
+                    </div>
+
+                    <button onclick="logoutAdmin()" class="mt-2.5 w-full flex items-center justify-center gap-2 px-3 py-2 rounded-xl text-xs font-bold text-rose-600 bg-rose-50/60 hover:bg-rose-100/80 hover:text-rose-700 transition-all duration-200 border border-rose-200/70 group">
+                        <svg class="w-4 h-4 text-rose-500 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+                        <span>Log out Admin</span>
+                    </button>
                 </div>
-                <button onclick="logoutAdmin()" class="flex items-center gap-3 px-3 py-2 rounded-lg font-bold text-rose-600 hover:bg-rose-50 transition-colors w-full text-left text-xs border border-rose-200">
-                    <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
-                    <span>Log out Admin</span>
-                </button>
             </div>
         </aside>
 
@@ -780,6 +824,11 @@
             const emailLabel = document.getElementById('adminActiveUserEmail');
             if (emailLabel) emailLabel.textContent = email;
 
+            const initialLabel = document.getElementById('adminUserInitial');
+            if (initialLabel && email) {
+                initialLabel.textContent = email.charAt(0).toUpperCase();
+            }
+
             switchAdminView('mode0');
         }
 
@@ -821,14 +870,34 @@
                 const viewEl = document.getElementById('view' + m.charAt(0).toUpperCase() + m.slice(1));
                 const btnEl = document.getElementById('btn' + m.charAt(0).toUpperCase() + m.slice(1));
                 if (viewEl) viewEl.classList.add('hidden');
-                if (btnEl) btnEl.className = "flex items-center gap-3 px-3 py-2.5 rounded-lg font-medium text-slate-600 hover:bg-slate-50 transition-colors w-full text-left";
+                if (btnEl) {
+                    if (m === 'mode3' || m === 'mode4' || m === 'mode7' || m === 'mode5') {
+                        btnEl.className = "sidebar-btn flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium text-slate-500 hover:text-slate-900 hover:bg-slate-100/80 transition-all duration-200 w-full text-left border-l-2 border-transparent";
+                    } else {
+                        btnEl.className = "sidebar-btn flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-100/80 hover:text-slate-900 transition-all duration-200 w-full text-left relative group border-l-4 border-transparent";
+                    }
+                    const svgIcon = btnEl.querySelector('svg');
+                    if (svgIcon && !m.includes('Kombel') && !m.includes('Pegawai')) {
+                        svgIcon.className = "w-5 h-5 flex-shrink-0 text-slate-400 group-hover:text-slate-600 transition-colors";
+                    }
+                }
             });
 
             const targetView = document.getElementById('view' + mode.charAt(0).toUpperCase() + mode.slice(1));
             const targetBtn = document.getElementById('btn' + mode.charAt(0).toUpperCase() + mode.slice(1));
             
             if (targetView) targetView.classList.remove('hidden');
-            if (targetBtn) targetBtn.className = "flex items-center gap-3 px-3 py-2.5 rounded-lg font-bold bg-indigo-50 text-indigo-700 w-full text-left shadow-2xs";
+            if (targetBtn) {
+                if (mode === 'mode3' || mode === 'mode4' || mode === 'mode7' || mode === 'mode5') {
+                    targetBtn.className = "sidebar-btn flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-bold bg-emerald-50 text-emerald-900 border-l-2 border-emerald-600 transition-all duration-200 w-full text-left";
+                } else {
+                    targetBtn.className = "sidebar-btn flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-bold bg-emerald-50 text-emerald-900 border-l-4 border-emerald-600 transition-all duration-200 w-full text-left relative group shadow-2xs";
+                }
+                const svgIcon = targetBtn.querySelector('svg');
+                if (svgIcon) {
+                    svgIcon.className = "w-5 h-5 flex-shrink-0 text-emerald-600 transition-colors";
+                }
+            }
 
             const pageTitle = document.getElementById('adminPageTitle');
             if (mode === 'mode0' && pageTitle) pageTitle.textContent = "Dashboard Utama Admin";
