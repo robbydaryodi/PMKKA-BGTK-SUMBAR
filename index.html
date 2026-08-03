@@ -214,7 +214,28 @@
                     </nav>
                 </div>
                 
-                <!-- Group 2: SEKOLAH MODEL -->
+                <!-- Group 2: DATA MASTER INTERNAL & KOMBEL (MOVED TO TOP) -->
+                <div class="pt-4 border-t border-slate-100">
+                    <div class="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest px-3 mb-2">DATA MASTER UTAMA</div>
+                    <nav class="space-y-1">
+                        <button onclick="switchAdminView('modeKombel')" id="btnModeKombel" class="sidebar-btn flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-100/80 hover:text-slate-900 transition-all duration-200 w-full text-left group border-l-4 border-transparent">
+                            <div class="flex items-center gap-3">
+                                <svg class="w-5 h-5 flex-shrink-0 text-purple-500 group-hover:text-purple-600 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+                                <span>Master Kombel</span>
+                            </div>
+                            <span class="text-[10px] bg-purple-100 text-purple-800 font-extrabold px-2 py-0.5 rounded-full border border-purple-200">1.804</span>
+                        </button>
+                        <button onclick="switchAdminView('modePegawai')" id="btnModePegawai" class="sidebar-btn flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-100/80 hover:text-slate-900 transition-all duration-200 w-full text-left group border-l-4 border-transparent">
+                            <div class="flex items-center gap-3">
+                                <svg class="w-5 h-5 flex-shrink-0 text-emerald-500 group-hover:text-emerald-600 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1v1H9V7zm5 0h1v1h-1V7zm-5 4h1v1H9v-1zm5 0h1v1h-1v-1zm-5 4h1v1H9v-1zm5 0h1v1h-1v-1z"/></svg>
+                                <span>Master Pegawai</span>
+                            </div>
+                            <span class="text-[10px] bg-emerald-100 text-emerald-800 font-extrabold px-2 py-0.5 rounded-full border border-emerald-200">57</span>
+                        </button>
+                    </nav>
+                </div>
+
+                <!-- Group 3: PROGRAM SEKOLAH MODEL -->
                 <div class="pt-4 border-t border-slate-100">
                     <div class="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest px-3 mb-2">SEKOLAH MODEL</div>
                     <nav class="space-y-1">
@@ -252,7 +273,7 @@
                     </nav>
                 </div>
 
-                <!-- Group 3: VERIFIKASI PESERTA -->
+                <!-- Group 4: VERIFIKASI PESERTA -->
                 <div class="pt-4 border-t border-slate-100">
                     <div class="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest px-3 mb-2">VERIFIKASI PESERTA</div>
                     <nav class="space-y-1">
@@ -263,34 +284,6 @@
                         <button onclick="switchAdminView('mode2')" id="btnMode2" class="sidebar-btn flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-100/80 hover:text-slate-900 transition-all duration-200 w-full text-left group border-l-4 border-transparent">
                             <svg class="w-5 h-5 flex-shrink-0 text-slate-400 group-hover:text-slate-600 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
                             <span>Rencana Pengkelasan</span>
-                        </button>
-                    </nav>
-                </div>
-
-                <!-- Group 4: KOMUNITAS BELAJAR -->
-                <div class="pt-4 border-t border-slate-100">
-                    <div class="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest px-3 mb-2">KOMUNITAS BELAJAR</div>
-                    <nav class="space-y-1">
-                        <button onclick="switchAdminView('modeKombel')" id="btnModeKombel" class="sidebar-btn flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-100/80 hover:text-slate-900 transition-all duration-200 w-full text-left group border-l-4 border-transparent">
-                            <div class="flex items-center gap-3">
-                                <svg class="w-5 h-5 flex-shrink-0 text-purple-500 group-hover:text-purple-600 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
-                                <span>Master Kombel</span>
-                            </div>
-                            <span class="text-[10px] bg-purple-100 text-purple-800 font-extrabold px-2 py-0.5 rounded-full border border-purple-200">1.804</span>
-                        </button>
-                    </nav>
-                </div>
-
-                <!-- Group 5: INTERNAL BGTK -->
-                <div class="pt-4 border-t border-slate-100">
-                    <div class="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest px-3 mb-2">INTERNAL BGTK</div>
-                    <nav class="space-y-1">
-                        <button onclick="switchAdminView('modePegawai')" id="btnModePegawai" class="sidebar-btn flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-100/80 hover:text-slate-900 transition-all duration-200 w-full text-left group border-l-4 border-transparent">
-                            <div class="flex items-center gap-3">
-                                <svg class="w-5 h-5 flex-shrink-0 text-emerald-500 group-hover:text-emerald-600 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1v1H9V7zm5 0h1v1h-1V7zm-5 4h1v1H9v-1zm5 0h1v1h-1v-1zm-5 4h1v1H9v-1zm5 0h1v1h-1v-1z"/></svg>
-                                <span>Master Pegawai</span>
-                            </div>
-                            <span class="text-[10px] bg-emerald-100 text-emerald-800 font-extrabold px-2 py-0.5 rounded-full border border-emerald-200">57</span>
                         </button>
                     </nav>
                 </div>
@@ -331,35 +324,148 @@
             
             <div class="flex-1 overflow-auto p-6 md:p-8">
 
-                <!-- MODE 0: DASHBOARD UTAMA -->
-                <div id="viewMode0" class="fade-in">
-                    <h2 class="text-xl font-bold text-slate-800 mb-6">Ringkasan Penjadwalan Fasilitator</h2>
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                        <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm flex items-center">
-                            <div class="p-3 bg-indigo-100 text-indigo-600 rounded-lg">
-                                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+                <!-- MODE 0: DASHBOARD UTAMA (REKAP PENJADWALAN KUNJUNGAN & PLOTING FASIL) -->
+                <div id="viewMode0" class="fade-in space-y-8">
+                    <!-- Title Header -->
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white p-6 rounded-2xl border border-slate-200/80 shadow-2xs">
+                        <div>
+                            <span class="inline-block px-3 py-1 bg-emerald-100 text-emerald-800 rounded-full text-xs font-extrabold uppercase tracking-wider mb-2">Monitoring Realtime PM-KKA</span>
+                            <h2 class="text-2xl font-black text-slate-900">Rekap Penjadwalan & Ploting Fasilitator</h2>
+                            <p class="text-sm text-slate-500 mt-1">Ringkasan status penugasan pendamping terhadap Komunitas Belajar & Sekolah Model.</p>
+                        </div>
+                        <button onclick="loadDashboardUtamaData()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-4 py-2 rounded-xl text-xs font-bold transition-colors flex items-center gap-2">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+                            <span>Refresh Data</span>
+                        </button>
+                    </div>
+
+                    <!-- Stat Cards (4 Cards Grid) -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+                        <!-- Card 1: Kombel Sasaran Ploting -->
+                        <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-2xs relative overflow-hidden flex flex-col justify-between">
+                            <div class="flex items-center justify-between mb-3">
+                                <span class="text-xs font-extrabold text-purple-700 uppercase tracking-wider">Kombel Sasaran (54)</span>
+                                <div class="p-2 bg-purple-100 text-purple-700 rounded-xl">
+                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+                                </div>
                             </div>
-                            <div class="ml-4">
-                                <h3 class="text-sm font-medium text-slate-500">Total Fasilitator</h3>
-                                <p class="text-2xl font-bold text-slate-800" id="dash_fasil_total">0</p>
+                            <div>
+                                <div class="text-2xl font-black text-slate-800" id="dash_kombel_plotted_val">0 / 54</div>
+                                <div class="text-xs text-slate-500 font-medium mt-1" id="dash_kombel_plotted_sub">Komunitas Belajar Terplotting</div>
+                            </div>
+                            <div class="mt-4 pt-3 border-t border-slate-100">
+                                <div class="w-full bg-slate-100 rounded-full h-2 overflow-hidden">
+                                    <div class="bg-purple-600 h-2 rounded-full transition-all duration-500" id="dash_kombel_bar" style="width: 0%"></div>
+                                </div>
                             </div>
                         </div>
-                        <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm flex items-center">
-                            <div class="p-3 bg-teal-100 text-teal-600 rounded-lg">
-                                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+
+                        <!-- Card 2: Sekolah Model Ploting -->
+                        <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-2xs relative overflow-hidden flex flex-col justify-between">
+                            <div class="flex items-center justify-between mb-3">
+                                <span class="text-xs font-extrabold text-indigo-700 uppercase tracking-wider">Sekolah Model (25)</span>
+                                <div class="p-2 bg-indigo-100 text-indigo-700 rounded-xl">
+                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1v1H9V7zm5 0h1v1h-1V7zm-5 4h1v1H9v-1zm5 0h1v1h-1v-1zm-5 4h1v1H9v-1zm5 0h1v1h-1v-1z"/></svg>
+                                </div>
                             </div>
-                            <div class="ml-4">
-                                <h3 class="text-sm font-medium text-slate-500">Sudah Memiliki Pendamping</h3>
-                                <p class="text-2xl font-bold text-slate-800" id="dash_fasil_assigned">0</p>
+                            <div>
+                                <div class="text-2xl font-black text-slate-800" id="dash_sekolah_plotted_val">0 / 25</div>
+                                <div class="text-xs text-slate-500 font-medium mt-1" id="dash_sekolah_plotted_sub">Sekolah Diberi Pendamping</div>
+                            </div>
+                            <div class="mt-4 pt-3 border-t border-slate-100">
+                                <div class="w-full bg-slate-100 rounded-full h-2 overflow-hidden">
+                                    <div class="bg-indigo-600 h-2 rounded-full transition-all duration-500" id="dash_sekolah_bar" style="width: 0%"></div>
+                                </div>
                             </div>
                         </div>
-                        <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm flex items-center">
-                            <div class="p-3 bg-amber-100 text-amber-600 rounded-lg">
-                                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+
+                        <!-- Card 3: Total Fasilitator -->
+                        <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-2xs relative overflow-hidden flex flex-col justify-between">
+                            <div class="flex items-center justify-between mb-3">
+                                <span class="text-xs font-extrabold text-emerald-700 uppercase tracking-wider">Total Fasilitator</span>
+                                <div class="p-2 bg-emerald-100 text-emerald-700 rounded-xl">
+                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+                                </div>
                             </div>
-                            <div class="ml-4">
-                                <h3 class="text-sm font-medium text-slate-500">Belum Memiliki Pendamping</h3>
-                                <p class="text-2xl font-bold text-slate-800" id="dash_fasil_unassigned">0</p>
+                            <div>
+                                <div class="text-2xl font-black text-slate-800" id="dash_total_fasil_val">0</div>
+                                <div class="text-xs text-slate-500 font-medium mt-1">Fasilitator Terdaftar</div>
+                            </div>
+                            <div class="mt-4 pt-3 border-t border-slate-100 text-[11px] text-slate-500 font-semibold flex justify-between">
+                                <span id="dash_dual_fasil_count">Dual: 0</span>
+                                <span id="dash_single_fasil_count">Single: 0</span>
+                            </div>
+                        </div>
+
+                        <!-- Card 4: Kunjungan Terjadwal -->
+                        <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-2xs relative overflow-hidden flex flex-col justify-between">
+                            <div class="flex items-center justify-between mb-3">
+                                <span class="text-xs font-extrabold text-amber-700 uppercase tracking-wider">Jadwal Kunjungan</span>
+                                <div class="p-2 bg-amber-100 text-amber-700 rounded-xl">
+                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="text-2xl font-black text-slate-800" id="dash_kunjungan_count">0</div>
+                                <div class="text-xs text-slate-500 font-medium mt-1">Kunjungan Terkonfirmasi</div>
+                            </div>
+                            <div class="mt-4 pt-3 border-t border-slate-100 text-[11px] text-amber-700 font-bold">
+                                <span>Kunjungan Tahap 1, 2, 3</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Live Tables Grid (2 Tables Side by Side) -->
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <!-- Table 1: Progress Ploting Fasilitator terhadap Kombel Sasaran -->
+                        <div class="bg-white rounded-2xl border border-slate-200/80 shadow-2xs overflow-hidden flex flex-col">
+                            <div class="p-5 border-b border-slate-100 bg-purple-50/50 flex justify-between items-center">
+                                <div>
+                                    <h3 class="font-bold text-slate-900 text-base">Ploting Fasilitator vs Kombel Sasaran</h3>
+                                    <p class="text-xs text-slate-500 mt-0.5">Daftar Kombel Sasaran PMKKA & Penugasan Fasilitator</p>
+                                </div>
+                                <span class="px-2.5 py-1 rounded-full text-xs font-extrabold bg-purple-100 text-purple-800">54 Sasaran</span>
+                            </div>
+                            <div class="overflow-x-auto flex-1 max-h-96">
+                                <table class="w-full text-left text-xs whitespace-nowrap">
+                                    <thead class="bg-slate-50 text-slate-500 border-b border-slate-100 sticky top-0">
+                                        <tr>
+                                            <th class="px-4 py-3">Nama Kombel</th>
+                                            <th class="px-4 py-3">Kab / Kota</th>
+                                            <th class="px-4 py-3">Fasilitator Pendamping</th>
+                                            <th class="px-4 py-3 text-center">Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tableDashKombelBody" class="divide-y divide-slate-100">
+                                        <tr><td colspan="4" class="px-4 py-8 text-center text-slate-400"><div class="spinner mx-auto mb-2"></div>Memuat progres Kombel...</td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- Table 2: Progress Ploting Fasilitator terhadap Sekolah Model -->
+                        <div class="bg-white rounded-2xl border border-slate-200/80 shadow-2xs overflow-hidden flex flex-col">
+                            <div class="p-5 border-b border-slate-100 bg-indigo-50/50 flex justify-between items-center">
+                                <div>
+                                    <h3 class="font-bold text-slate-900 text-base">Ploting Fasilitator vs Sekolah Model</h3>
+                                    <p class="text-xs text-slate-500 mt-0.5">Daftar 25 Sekolah Model & Fasilitator Dampingan</p>
+                                </div>
+                                <span class="px-2.5 py-1 rounded-full text-xs font-extrabold bg-indigo-100 text-indigo-800">25 Sekolah</span>
+                            </div>
+                            <div class="overflow-x-auto flex-1 max-h-96">
+                                <table class="w-full text-left text-xs whitespace-nowrap">
+                                    <thead class="bg-slate-50 text-slate-500 border-b border-slate-100 sticky top-0">
+                                        <tr>
+                                            <th class="px-4 py-3">Sekolah Model</th>
+                                            <th class="px-4 py-3">Kab / Kota</th>
+                                            <th class="px-4 py-3">Fasilitator Dampingan</th>
+                                            <th class="px-4 py-3 text-center">Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tableDashSekolahBody" class="divide-y divide-slate-100">
+                                        <tr><td colspan="4" class="px-4 py-8 text-center text-slate-400"><div class="spinner mx-auto mb-2"></div>Memuat progres Sekolah Model...</td></tr>
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
                     </div>
@@ -900,7 +1006,10 @@
             }
 
             const pageTitle = document.getElementById('adminPageTitle');
-            if (mode === 'mode0' && pageTitle) pageTitle.textContent = "Dashboard Utama Admin";
+            if (mode === 'mode0') {
+                if (pageTitle) pageTitle.textContent = "Dashboard Utama Admin";
+                loadDashboardUtamaData();
+            }
             else if (mode === 'mode1' && pageTitle) pageTitle.textContent = "Progres Verifikasi Sekolah Model";
             else if (mode === 'mode2' && pageTitle) pageTitle.textContent = "Rencana Pengkelasan";
             else if (mode === 'mode3') { if (pageTitle) pageTitle.textContent = "Data Fasilitator"; loadFasilitatorData(); }
@@ -910,6 +1019,152 @@
             else if (mode === 'mode8') { if (pageTitle) pageTitle.textContent = "Pengaturan Rentang Waktu"; }
             else if (mode === 'modeKombel') { if (pageTitle) pageTitle.textContent = "Master Komunitas Belajar (1.804)"; loadKombelData(); }
             else if (mode === 'modePegawai') { if (pageTitle) pageTitle.textContent = "Master Pegawai BGTK (57)"; loadPegawaiData(); }
+        }
+
+        // ==========================================
+        // DASHBOARD UTAMA (REKAP REALTIME) LOGIC
+        // ==========================================
+        async function loadDashboardUtamaData() {
+            try {
+                const [fasilSnap, assignSnap, kombelSnap, guruSnap, jadwalSnap] = await Promise.all([
+                    db.ref('fasilitator').once('value'),
+                    db.ref('fasilitator_sekolah').once('value'),
+                    db.ref('master_kombel').once('value'),
+                    db.ref('master_guru').once('value'),
+                    db.ref('jadwal_kunjungan').once('value')
+                ]);
+
+                const fasils = fasilSnap.val() || {};
+                const assigns = assignSnap.val() || {};
+                const kombels = kombelSnap.val() || {};
+                const gurus = guruSnap.val() || {};
+                const jadwals = jadwalSnap.val() || {};
+
+                const fasilList = Object.values(fasils);
+                const kombelList = Object.values(kombels);
+                const guruList = Object.values(gurus);
+
+                // 1. Total Fasilitator Stats
+                let totalFasilCount = fasilList.length;
+                let dualFasilCount = 0;
+                let singleFasilCount = 0;
+                fasilList.forEach(f => {
+                    const progs = f.programs || (f.program_kombel ? ['kombel'] : ['sekolah_model']);
+                    if (progs.includes('sekolah_model') && progs.includes('kombel')) dualFasilCount++;
+                    else singleFasilCount++;
+                });
+
+                const totalFasilEl = document.getElementById('dash_total_fasil_val');
+                const dualFasilEl = document.getElementById('dash_dual_fasil_count');
+                const singleFasilEl = document.getElementById('dash_single_fasil_count');
+                if (totalFasilEl) totalFasilEl.textContent = totalFasilCount;
+                if (dualFasilEl) dualFasilEl.textContent = `Dual: ${dualFasilCount}`;
+                if (singleFasilEl) singleFasilEl.textContent = `Single: ${singleFasilCount}`;
+
+                // 2. Kombel Sasaran Ploting Stats (54 Target Kombel)
+                const targetKombels = kombelList.filter(k => k.is_sasaran);
+                const totalTargetKombels = targetKombels.length || 54;
+                let plottedKombelCount = 0;
+
+                targetKombels.forEach(tk => {
+                    const matchedFasil = fasilList.find(f => f.fkk_1 && (f.fkk_1.toLowerCase().includes(tk.nama_kombel.toLowerCase()) || tk.nama_kombel.toLowerCase().includes(f.fkk_1.toLowerCase())));
+                    if (matchedFasil) tk.assignedFasil = matchedFasil.nama;
+                    else tk.assignedFasil = null;
+
+                    if (tk.assignedFasil) plottedKombelCount++;
+                });
+
+                const kombelPct = Math.round((plottedKombelCount / totalTargetKombels) * 100);
+                const kombelValEl = document.getElementById('dash_kombel_plotted_val');
+                const kombelSubEl = document.getElementById('dash_kombel_plotted_sub');
+                const kombelBarEl = document.getElementById('dash_kombel_bar');
+                if (kombelValEl) kombelValEl.textContent = `${plottedKombelCount} / ${totalTargetKombels}`;
+                if (kombelSubEl) kombelSubEl.textContent = `${kombelPct}% Sasaran Ter-plotting`;
+                if (kombelBarEl) kombelBarEl.style.width = `${kombelPct}%`;
+
+                // Render Table Kombel Dashboard
+                const tbodyKombel = document.getElementById('tableDashKombelBody');
+                if (tbodyKombel) {
+                    if (targetKombels.length === 0) {
+                        tbodyKombel.innerHTML = `<tr><td colspan="4" class="px-4 py-6 text-center text-slate-400">Belum ada Kombel yang ditandai Sasaran PMKKA.</td></tr>`;
+                    } else {
+                        tbodyKombel.innerHTML = targetKombels.map(k => {
+                            const isPlotted = !!k.assignedFasil;
+                            const badge = isPlotted
+                                ? `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800">✅ Ter-plotting</span>`
+                                : `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-800">⚠️ Belum</span>`;
+                            return `
+                                <tr class="hover:bg-slate-50 transition-colors">
+                                    <td class="px-4 py-2.5 font-bold text-slate-800 text-xs">${k.nama_kombel}</td>
+                                    <td class="px-4 py-2.5 text-slate-600 text-[11px]">${k.kab_kota || '-'}</td>
+                                    <td class="px-4 py-2.5 font-semibold text-purple-700 text-xs">${k.assignedFasil || '-'}</td>
+                                    <td class="px-4 py-2.5 text-center">${badge}</td>
+                                </tr>
+                            `;
+                        }).join('');
+                    }
+                }
+
+                // 3. Sekolah Model Ploting Stats (25 Schools)
+                const assignedSchoolNpsns = new Set();
+                Object.values(assigns).forEach(npsnArr => {
+                    if (Array.isArray(npsnArr)) {
+                        npsnArr.forEach(npsn => assignedSchoolNpsns.add(npsn));
+                    }
+                });
+
+                const totalSekolahModel = guruList.length || 25;
+                const plottedSekolahCount = assignedSchoolNpsns.size;
+                const sekolahPct = Math.round((plottedSekolahCount / totalSekolahModel) * 100);
+
+                const sekolahValEl = document.getElementById('dash_sekolah_plotted_val');
+                const sekolahSubEl = document.getElementById('dash_sekolah_plotted_sub');
+                const sekolahBarEl = document.getElementById('dash_sekolah_bar');
+                if (sekolahValEl) sekolahValEl.textContent = `${plottedSekolahCount} / ${totalSekolahModel}`;
+                if (sekolahSubEl) sekolahSubEl.textContent = `${sekolahPct}% Sekolah Diberi Pendamping`;
+                if (sekolahBarEl) sekolahBarEl.style.width = `${sekolahPct}%`;
+
+                // Render Table Sekolah Model Dashboard
+                const tbodySekolah = document.getElementById('tableDashSekolahBody');
+                if (tbodySekolah) {
+                    tbodySekolah.innerHTML = guruList.map(g => {
+                        const isPlotted = assignedSchoolNpsns.has(g.npsn);
+                        let fasilName = '-';
+                        for (const fId in assigns) {
+                            if (Array.isArray(assigns[fId]) && assigns[fId].includes(g.npsn) && fasils[fId]) {
+                                fasilName = fasils[fId].nama;
+                                break;
+                            }
+                        }
+                        const badge = isPlotted
+                            ? `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800">✅ Ter-plotting</span>`
+                            : `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-800">⚠️ Belum</span>`;
+                        return `
+                            <tr class="hover:bg-slate-50 transition-colors">
+                                <td class="px-4 py-2.5 font-bold text-slate-800 text-xs">${g.nama_sekolah}</td>
+                                <td class="px-4 py-2.5 text-slate-600 text-[11px]">${g.kab_kota || '-'}</td>
+                                <td class="px-4 py-2.5 font-semibold text-indigo-700 text-xs">${fasilName}</td>
+                                <td class="px-4 py-2.5 text-center">${badge}</td>
+                            </tr>
+                        `;
+                    }).join('');
+                }
+
+                // 4. Total Kunjungan Count
+                let totalKunjunganCount = 0;
+                for (const npsn in jadwals) {
+                    for (const kunKey in jadwals[npsn]) {
+                        if (jadwals[npsn][kunKey] && (jadwals[npsn][kunKey].tanggal || jadwals[npsn][kunKey].status)) {
+                            totalKunjunganCount++;
+                        }
+                    }
+                }
+                const kunjunganEl = document.getElementById('dash_kunjungan_count');
+                if (kunjunganEl) kunjunganEl.textContent = totalKunjunganCount;
+
+            } catch(e) {
+                console.error("Gagal loadDashboardUtamaData", e);
+            }
         }
 
         // ==========================================
