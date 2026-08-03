@@ -150,7 +150,7 @@
                 </div>
 
                 <!-- Legend & Quick Info -->
-                <div class="flex flex-wrap items-center gap-3 text-xs font-semibold">
+                <div class="flex flex-wrap items-center gap-2.5 text-xs font-semibold">
                     <div class="flex items-center gap-1.5 bg-blue-50 text-blue-700 px-2.5 py-1 rounded-lg border border-blue-200">
                         <span class="w-2.5 h-2.5 rounded-full bg-blue-500"></span> Direncanakan
                     </div>
@@ -162,6 +162,9 @@
                     </div>
                     <div class="flex items-center gap-1.5 bg-indigo-50 text-indigo-700 px-2.5 py-1 rounded-lg border border-indigo-200">
                         <span class="text-[10px]">🎯</span> Periode Resmi
+                    </div>
+                    <div class="hidden lg:flex items-center gap-1 text-slate-500 text-[11px] font-normal bg-slate-100/80 px-2.5 py-1 rounded-lg border border-slate-200">
+                        <span>✨ Tarik & lepas (drag-and-drop) event untuk pindah tanggal</span>
                     </div>
                 </div>
             </div>
@@ -530,6 +533,14 @@
         </div>
     </div>
 
+    <!-- ================= FLOATING TOAST NOTIFICATION ================= -->
+    <div id="toastNotification" class="fixed bottom-6 right-6 z-50 transform translate-y-20 opacity-0 transition-all duration-300 pointer-events-none">
+        <div class="bg-slate-900 text-white px-5 py-3.5 rounded-2xl shadow-2xl flex items-center gap-3 border border-slate-700/80 text-sm font-semibold">
+            <span id="toastIcon" class="text-emerald-400 text-lg">✅</span>
+            <span id="toastMessage">Pesan Notifikasi</span>
+        </div>
+    </div>
+
     <!-- Application Logic -->
     <script>
         const firebaseConfig = {
@@ -883,6 +894,112 @@
             grid.innerHTML = cellsHtml;
         }
 
+        // ================= DRAG AND DROP ENGINE =================
+        let draggedEventData = null;
+
+        function onDragEventStart(e, npsn, kId, oldDate, schoolName) {
+            draggedEventData = { npsn, kId, oldDate, schoolName };
+            e.dataTransfer.setData('text/plain', JSON.stringify(draggedEventData));
+            e.dataTransfer.effectAllowed = 'move';
+            setTimeout(() => {
+                if (e.target) e.target.classList.add('opacity-40', 'scale-95');
+            }, 0);
+        }
+
+        function onDragEventEnd(e) {
+            if (e.target) e.target.classList.remove('opacity-40', 'scale-95');
+            document.querySelectorAll('.cal-day-cell').forEach(el => {
+                el.classList.remove('ring-2', 'ring-indigo-500', 'bg-indigo-100/70', 'ring-inset');
+            });
+        }
+
+        function onDayDragOver(e) {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'move';
+        }
+
+        function onDayDragEnter(e, targetDateStr) {
+            e.preventDefault();
+            const cell = e.currentTarget;
+            cell.classList.add('ring-2', 'ring-indigo-500', 'bg-indigo-100/70', 'ring-inset');
+        }
+
+        function onDayDragLeave(e) {
+            const cell = e.currentTarget;
+            cell.classList.remove('ring-2', 'ring-indigo-500', 'bg-indigo-100/70', 'ring-inset');
+        }
+
+        async function onDayDrop(e, targetDateStr) {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            const cell = e.currentTarget;
+            cell.classList.remove('ring-2', 'ring-indigo-500', 'bg-indigo-100/70', 'ring-inset');
+
+            if (!draggedEventData) {
+                try {
+                    const raw = e.dataTransfer.getData('text/plain');
+                    if (raw) draggedEventData = JSON.parse(raw);
+                } catch(err) {}
+            }
+
+            if (!draggedEventData) return;
+
+            const { npsn, kId, oldDate, schoolName } = draggedEventData;
+            draggedEventData = null;
+
+            if (oldDate === targetDateStr) return; // Tanggal sama
+
+            // Validasi Periode Resmi Admin
+            const rule = globalSettingJadwal[`kunjungan_${kId}`] || {};
+            let periodWarning = '';
+            if (rule.start_date && rule.end_date) {
+                if (targetDateStr < rule.start_date || targetDateStr > rule.end_date) {
+                    periodWarning = `\n\n⚠️ Catatan: Tanggal ini berada di luar rentang resmi Admin (${formatIndoDate(rule.start_date)} s.d. ${formatIndoDate(rule.end_date)}).`;
+                }
+            }
+
+            const confirmMsg = `Pindahkan jadwal Kunjungan ${kId} (${schoolName}) ke tanggal ${formatIndoDate(targetDateStr)}?${periodWarning}`;
+            if (!confirm(confirmMsg)) return;
+
+            try {
+                // Update Firebase
+                await db.ref(`jadwal_kunjungan/${npsn}/kunjungan_${kId}`).update({
+                    tanggal: targetDateStr
+                });
+
+                // Update cache lokal
+                if (!allJadwalData[npsn]) allJadwalData[npsn] = {};
+                if (!allJadwalData[npsn][`kunjungan_${kId}`]) allJadwalData[npsn][`kunjungan_${kId}`] = {};
+                allJadwalData[npsn][`kunjungan_${kId}`].tanggal = targetDateStr;
+
+                renderCalendar();
+                showToastNotification(`Kunjungan ${kId} (${schoolName}) dipindahkan ke ${formatIndoDate(targetDateStr)}`, '✅');
+            } catch(err) {
+                console.error(err);
+                alert("Gagal memindahkan jadwal: " + err.message);
+            }
+        }
+
+        let toastTimeout = null;
+        function showToastNotification(message, icon = '✅') {
+            const toast = document.getElementById('toastNotification');
+            const msgEl = document.getElementById('toastMessage');
+            const iconEl = document.getElementById('toastIcon');
+            
+            msgEl.innerText = message;
+            iconEl.innerText = icon;
+
+            toast.classList.remove('translate-y-20', 'opacity-0', 'pointer-events-none');
+            toast.classList.add('translate-y-0', 'opacity-100');
+
+            if (toastTimeout) clearTimeout(toastTimeout);
+            toastTimeout = setTimeout(() => {
+                toast.classList.remove('translate-y-0', 'opacity-100');
+                toast.classList.add('translate-y-20', 'opacity-0', 'pointer-events-none');
+            }, 3500);
+        }
+
         function renderDayCell(dayNumber, dateStr, isCurrentMonth, isToday) {
             // Find active period badge from globalSettingJadwal
             let activePeriodBadge = '';
@@ -920,12 +1037,18 @@
                         }
 
                         eventsHtml += `
-                            <div onclick="event.stopPropagation(); bukaDetailAcaraKalender('${npsn}', '${safeName}', ${k})" class="p-1 sm:p-1.5 mb-1 rounded-lg border text-[10px] sm:text-xs font-semibold cursor-pointer transition-all shadow-2xs hover:scale-[1.02] flex items-center justify-between gap-1 ${badgeColor}" title="Kunjungan ${k} - ${schoolName} (${visit.status})">
+                            <div draggable="true" 
+                                 ondragstart="onDragEventStart(event, '${npsn}', ${k}, '${dateStr}', '${safeName}')" 
+                                 ondragend="onDragEventEnd(event)" 
+                                 onclick="event.stopPropagation(); bukaDetailAcaraKalender('${npsn}', '${safeName}', ${k})" 
+                                 class="p-1 sm:p-1.5 mb-1 rounded-lg border text-[10px] sm:text-xs font-semibold cursor-grab active:cursor-grabbing hover:shadow-md transition-all shadow-2xs hover:scale-[1.02] flex items-center justify-between gap-1 select-none ${badgeColor}" 
+                                 title="Tahan & geser (drag) ke tanggal lain, atau klik untuk detail">
                                 <div class="flex items-center gap-1 min-w-0 truncate">
                                     <span class="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full ${dotColor} shrink-0"></span>
                                     <span class="font-extrabold shrink-0">K-${k}</span>
                                     <span class="truncate">${schoolName}</span>
                                 </div>
+                                <svg class="w-3 h-3 opacity-30 hover:opacity-100 shrink-0 text-slate-500 hidden sm:block" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8h16M4 16h16"/></svg>
                             </div>
                         `;
                     }
@@ -938,7 +1061,12 @@
                 : `font-bold text-xs sm:text-sm ${isCurrentMonth ? 'text-slate-800' : 'text-slate-400'}`;
 
             return `
-                <div onclick="bukaModalJadwalkanKalender('${dateStr}')" class="cal-day-cell p-1 sm:p-2.5 transition-colors cursor-pointer flex flex-col justify-between group ${bgClass}">
+                <div onclick="bukaModalJadwalkanKalender('${dateStr}')" 
+                     ondragover="onDayDragOver(event)" 
+                     ondragenter="onDayDragEnter(event, '${dateStr}')" 
+                     ondragleave="onDayDragLeave(event)" 
+                     ondrop="onDayDrop(event, '${dateStr}')" 
+                     class="cal-day-cell p-1 sm:p-2.5 transition-all cursor-pointer flex flex-col justify-between group ${bgClass}">
                     <div>
                         <div class="flex items-center justify-between mb-1">
                             <span class="${numClass}">${dayNumber}</span>
