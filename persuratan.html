@@ -348,6 +348,49 @@
     </div>
 </div>
 
+<!-- ====================== MODAL EDIT TANGGAL JADWAL ====================== -->
+<div id="modalEditTanggalJadwal" class="hidden fixed inset-0 z-[120] bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden fade-in">
+        <div class="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-gradient-to-r from-primary to-blue-800">
+            <div class="flex items-center gap-2">
+                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                <h3 class="font-bold text-white text-base">Edit Tanggal Kunjungan</h3>
+            </div>
+            <button onclick="closeEditTanggalModal()" class="p-1.5 text-white/70 hover:text-white hover:bg-white/10 rounded-lg transition-colors">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+            </button>
+        </div>
+        <div class="p-6 space-y-4">
+            <input type="hidden" id="editNpsn">
+            <input type="hidden" id="editKunjungan">
+            
+            <div class="bg-slate-50 border border-slate-200 rounded-xl p-3.5 text-xs text-slate-600 space-y-1">
+                <div><span class="text-slate-400">Fasilitator:</span> <strong id="editInfoFasil" class="text-slate-800"></strong></div>
+                <div><span class="text-slate-400">Sekolah:</span> <strong id="editInfoSekolah" class="text-slate-800"></strong></div>
+                <div><span class="text-slate-400">Kunjungan:</span> <strong class="text-primary font-bold">Kunjungan <span id="editInfoKunjungan"></span></strong></div>
+            </div>
+
+            <div>
+                <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1.5">Tanggal Kunjungan Baru <span class="text-red-400">*</span></label>
+                <input type="date" id="editInputTanggal" class="w-full border border-slate-300 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all">
+            </div>
+
+            <div>
+                <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1.5">Status Kunjungan</label>
+                <select id="editSelectStatus" class="w-full border border-slate-300 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all">
+                    <option value="Direncanakan">Direncanakan (Terjadwal)</option>
+                    <option value="Selesai">Selesai</option>
+                    <option value="Batal/Ditunda">Batal / Ditunda</option>
+                </select>
+            </div>
+        </div>
+        <div class="px-6 py-4 bg-slate-50 border-t border-slate-100 flex gap-3 justify-end">
+            <button onclick="closeEditTanggalModal()" class="px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold rounded-xl text-sm transition-colors">Batal</button>
+            <button onclick="simpanEditTanggalJadwal()" class="px-5 py-2.5 bg-primary hover:bg-blue-900 text-white font-bold rounded-xl text-sm transition-colors shadow-md shadow-primary/30">Simpan Tanggal</button>
+        </div>
+    </div>
+</div>
+
 <!-- ====================== MODAL SURAT TUGAS PREVIEW ====================== -->
 <div id="modalSuratPreview" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
     <div class="bg-white rounded-2xl shadow-2xl w-full max-w-3xl overflow-hidden fade-in">
@@ -671,11 +714,19 @@ function renderTable() {
                 <span class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-primary/10 text-primary text-xs font-bold">${r.kunjungan}</span>
             </td>
             <td class="px-4 py-3 text-center">
-                <div class="font-medium text-slate-700 text-xs">${r.tanggal !== '-' ? r.tanggal : '<span class="text-slate-400 italic">TBA</span>'}</div>
+                <div class="font-medium text-slate-700 text-xs">${r.tanggal !== '-' ? r.tanggal : '<span class="text-slate-400 italic">Belum</span>'}</div>
+                <button onclick="openEditTanggalModal('${r.npsn}', ${r.kunjungan}, '${r.fasilNama.replace(/'/g,"\\'").replace(/"/g,'&quot;')}', '${r.schoolName.replace(/'/g,"\\'").replace(/"/g,'&quot;')}', '${r.tanggal}', '${r.status}')" title="Edit Tanggal Kunjungan" class="mt-1 text-[11px] text-primary hover:underline font-semibold inline-flex items-center gap-1">
+                    ✏️ Edit Tanggal
+                </button>
             </td>
             <td class="px-4 py-3 text-center">${statusBadge(r.status)}</td>
             <td class="px-4 py-3 text-center no-print">
-                ${r.tanggal !== '-' ? `<button onclick='downloadWordSuratTugas([${JSON.stringify(r).replace(/'/g, "\\'")}])' title="Download Surat Tugas Word (.docx)" class="text-xs bg-primary/10 text-primary hover:bg-primary/20 px-3 py-1.5 rounded-lg font-bold transition-colors flex items-center gap-1.5 mx-auto"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 01-2-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>Surat Tugas (.docx)</button>` : '<span class="text-xs text-slate-300">—</span>'}
+                <div class="flex flex-col sm:flex-row items-center justify-center gap-1.5">
+                    ${r.tanggal !== '-' ? `<button onclick='downloadWordSuratTugas([${JSON.stringify(r).replace(/'/g, "\\'")}])' title="Download Surat Tugas Word (.docx)" class="text-xs bg-primary/10 text-primary hover:bg-primary/20 px-2.5 py-1.5 rounded-lg font-bold transition-colors flex items-center gap-1.5"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 01-2-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>Surat Tugas</button>` : '<span class="text-xs text-slate-300">—</span>'}
+                    <button onclick="openEditTanggalModal('${r.npsn}', ${r.kunjungan}, '${r.fasilNama.replace(/'/g,"\\'").replace(/"/g,'&quot;')}', '${r.schoolName.replace(/'/g,"\\'").replace(/"/g,'&quot;')}', '${r.tanggal}', '${r.status}')" title="Edit Tanggal & Status" class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 px-2.5 py-1.5 rounded-lg font-semibold transition-colors flex items-center gap-1">
+                        ✏️ Edit
+                    </button>
+                </div>
             </td>
         </tr>
     `).join('');
@@ -824,9 +875,14 @@ function openKalModal(dateKey, events) {
                 <div class="flex-1 min-w-0">
                     <div class="font-bold text-slate-800">${ev.fasilNama}</div>
                     <div class="text-sm text-slate-600 mt-0.5 truncate">${ev.schoolName}</div>
-                    <div class="text-xs text-slate-400">NPSN: ${ev.npsn}</div>
+                    <div class="text-xs text-slate-400">NPSN: ${ev.npsn} | Tgl: ${ev.tanggal}</div>
                 </div>
-                <span class="px-2 py-1 rounded-lg text-xs font-bold ${color}">${ev.status}</span>
+                <div class="flex flex-col items-end gap-1.5">
+                    <span class="px-2 py-1 rounded-lg text-xs font-bold ${color}">${ev.status}</span>
+                    <button onclick="openEditTanggalModal('${ev.npsn}', ${ev.kunjungan}, '${ev.fasilNama.replace(/'/g,"\\'").replace(/"/g,'&quot;')}', '${ev.schoolName.replace(/'/g,"\\'").replace(/"/g,'&quot;')}', '${ev.tanggal}', '${ev.status}')" class="text-[11px] text-primary hover:underline font-semibold flex items-center gap-1">
+                        ✏️ Edit Tanggal
+                    </button>
+                </div>
             </div>`;
         }).join('')}</div>`;
     }
@@ -1071,6 +1127,64 @@ function salinTeksPersuratan() {
         document.getElementById('salinConfirm').classList.remove('hidden');
         setTimeout(() => document.getElementById('salinConfirm').classList.add('hidden'), 2500);
     });
+}
+
+// ==========================================
+// EDIT TANGGAL JADWAL (ADMIN / PERSURATAN)
+// ==========================================
+function openEditTanggalModal(npsn, kunjungan, fasilNama, schoolName, currentTanggal, currentStatus) {
+    document.getElementById('editNpsn').value = npsn;
+    document.getElementById('editKunjungan').value = kunjungan;
+    document.getElementById('editInfoFasil').textContent = fasilNama || '-';
+    document.getElementById('editInfoSekolah').textContent = schoolName || npsn || '-';
+    document.getElementById('editInfoKunjungan').textContent = kunjungan || '-';
+
+    const dateKey = normalizeDateKey(currentTanggal);
+    if (dateKey && dateKey.match(/^\d{4}-\d{2}-\d{2}$/)) {
+        document.getElementById('editInputTanggal').value = dateKey;
+    } else {
+        document.getElementById('editInputTanggal').value = '';
+    }
+
+    document.getElementById('editSelectStatus').value = (currentStatus && currentStatus !== 'Belum Diisi') ? currentStatus : 'Direncanakan';
+    document.getElementById('modalEditTanggalJadwal').classList.remove('hidden');
+}
+
+function closeEditTanggalModal() {
+    document.getElementById('modalEditTanggalJadwal').classList.add('hidden');
+}
+
+async function simpanEditTanggalJadwal() {
+    const npsn = document.getElementById('editNpsn').value;
+    const kunjungan = document.getElementById('editKunjungan').value;
+    const rawTanggal = document.getElementById('editInputTanggal').value;
+    const status = document.getElementById('editSelectStatus').value;
+
+    if (!npsn || !kunjungan) return;
+    if (!rawTanggal) return alert("Silakan pilih tanggal kunjungan baru.");
+
+    const tanggalFormatted = formatDateDisplay(rawTanggal);
+
+    try {
+        const refPath = `jadwal_kunjungan/${npsn}/kunjungan_${kunjungan}`;
+        await db.ref(refPath).update({
+            tanggal: tanggalFormatted,
+            status: status
+        });
+
+        closeEditTanggalModal();
+        closeKalModal();
+
+        await loadAllData();
+
+        const toast = document.createElement('div');
+        toast.className = 'fixed bottom-6 right-6 z-[300] bg-emerald-600 text-white px-5 py-3 rounded-2xl shadow-xl text-sm font-bold flex items-center gap-2 fade-in';
+        toast.innerHTML = '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg> Tanggal kunjungan berhasil diperbarui!';
+        document.body.appendChild(toast);
+        setTimeout(() => toast.remove(), 3000);
+    } catch(e) {
+        alert("Gagal memperbarui tanggal: " + e.message);
+    }
 }
 
 // ==========================================
