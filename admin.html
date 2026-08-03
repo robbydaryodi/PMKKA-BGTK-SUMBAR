@@ -762,7 +762,9 @@
                 const jadwals = jadwalSnap.val() || {};
                 const fasilList = Object.values(fasils);
                 const kombelList = Object.values(kombels);
-                const guruList = Object.values(gurus);
+                // NPSN is the Firebase key, not a property inside the object – use Object.entries
+                const guruEntries = Object.entries(gurus); // [[npsn, guruObj], ...]
+                const guruList = guruEntries.map(([npsn, g]) => ({ ...g, npsn }));
 
                 let totalFasilCount = fasilList.length, dualFasilCount = 0, singleFasilCount = 0;
                 fasilList.forEach(f => {
@@ -826,7 +828,7 @@
                         const badge = isPlotted
                             ? `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800">✅ Ter-plotting</span>`
                             : `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-800">⚠️ Belum</span>`;
-                        return `<tr class="hover:bg-slate-50 transition-colors"><td class="px-4 py-2.5 font-bold text-slate-800 text-xs">${g.nama_sekolah}</td><td class="px-4 py-2.5 text-slate-600 text-[11px]">${g.kab_kota || '-'}</td><td class="px-4 py-2.5 font-semibold text-indigo-700 text-xs">${fasilName}</td><td class="px-4 py-2.5 text-center">${badge}</td></tr>`;
+                        return `<tr class="hover:bg-slate-50 transition-colors"><td class="px-4 py-2.5 font-bold text-slate-800 text-xs">${g.nama_sekolah || g.npsn}</td><td class="px-4 py-2.5 text-slate-600 text-[11px]">${g.kab_kota || '-'}</td><td class="px-4 py-2.5 font-semibold text-indigo-700 text-xs">${fasilName}</td><td class="px-4 py-2.5 text-center">${badge}</td></tr>`;
                     }).join('');
                 }
 
@@ -1069,11 +1071,12 @@
         async function openModalDashSekolahModel() {
             try {
                 const [guruSnap, fasilSnap, assignSnap] = await Promise.all([db.ref('master_guru').once('value'), db.ref('fasilitator').once('value'), db.ref('fasilitator_sekolah').once('value')]);
-                const gurus = Object.values(guruSnap.val() || {}); const fasils = fasilSnap.val() || {}; const assigns = assignSnap.val() || {};
-                gDashDetailData = gurus.map(g => {
+                // NPSN is the Firebase key – use Object.entries
+                const gurusRaw = guruSnap.val() || {}; const fasils = fasilSnap.val() || {}; const assigns = assignSnap.val() || {};
+                gDashDetailData = Object.entries(gurusRaw).map(([npsn, g]) => {
                     let fasilName = 'Belum Ditugaskan', fasilInfo = '-', isPlotted = false;
-                    for (const fId in assigns) { if (Array.isArray(assigns[fId]) && assigns[fId].includes(g.npsn) && fasils[fId]) { fasilName = fasils[fId].nama; fasilInfo = fasils[fId].instansi || fasils[fId].jabatan || '-'; isPlotted = true; break; } }
-                    return { col1: g.nama_sekolah, col2: `${g.kab_kota || '-'} (NPSN: ${g.npsn})`, col3: fasilName, col4: fasilInfo, colBadge: isPlotted ? `<span class="px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800">✅ Ter-plotting</span>` : `<span class="px-2.5 py-1 rounded-full text-xs font-bold bg-amber-100 text-amber-800">⚠️ Belum</span>` };
+                    for (const fId in assigns) { if (Array.isArray(assigns[fId]) && assigns[fId].includes(npsn) && fasils[fId]) { fasilName = fasils[fId].nama; fasilInfo = fasils[fId].instansi || fasils[fId].jabatan || '-'; isPlotted = true; break; } }
+                    return { col1: g.nama_sekolah || npsn, col2: `${g.kab_kota || '-'} (NPSN: ${npsn})`, col3: fasilName, col4: fasilInfo, colBadge: isPlotted ? `<span class="px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800">✅ Ter-plotting</span>` : `<span class="px-2.5 py-1 rounded-full text-xs font-bold bg-amber-100 text-amber-800">⚠️ Belum</span>` };
                 });
                 document.getElementById('dashDetailTitle').textContent = "Detail 25 Sekolah Model PMKKA";
                 document.getElementById('dashDetailSub').textContent = "Daftar Sekolah Model terdaftar dan Fasilitator Dampingannya.";
@@ -1252,9 +1255,10 @@
                 gFasilListMode5 = fasilSnap.val() || {}; const gurus = guruSnap.val() || {}; const assigns = assignSnap.val() || {};
                 const schoolToFasil = {};
                 for (const fId in assigns) { if (Array.isArray(assigns[fId])) assigns[fId].forEach(n => schoolToFasil[n] = fId); }
-                gManajemenSekolahRaw = Object.values(gurus).map(g => {
-                    const fasilId = schoolToFasil[g.npsn]; const fasilName = fasilId && gFasilListMode5[fasilId] ? gFasilListMode5[fasilId].nama : 'Belum Ditugaskan';
-                    return { npsn: g.npsn, namaSekolah: g.nama_sekolah, kabKota: g.kab_kota || '-', fasilId: fasilId || '', fasilName };
+                // NPSN is the Firebase key – use Object.entries to get [npsn, guruObj]
+                gManajemenSekolahRaw = Object.entries(gurus).map(([npsn, g]) => {
+                    const fasilId = schoolToFasil[npsn]; const fasilName = fasilId && gFasilListMode5[fasilId] ? gFasilListMode5[fasilId].nama : 'Belum Ditugaskan';
+                    return { npsn, namaSekolah: g.nama_sekolah || npsn, kabKota: g.kab_kota || '-', fasilId: fasilId || '', fasilName };
                 });
                 renderAssignSekolahTable(gManajemenSekolahRaw);
             } catch(e) { console.error("Gagal loadManajemenSekolahData", e); }
@@ -1329,9 +1333,10 @@
                 const gurus = guruSnap.val() || {}; const fasils = fasilSnap.val() || {}; const assigns = assignSnap.val() || {}; const jadwals = jadwalSnap.val() || {};
                 const schoolToFasil = {};
                 for (const fId in assigns) { if (Array.isArray(assigns[fId])) assigns[fId].forEach(n => schoolToFasil[n] = fId); }
-                gDataKunjunganRaw = Object.values(gurus).map(g => {
-                    const fId = schoolToFasil[g.npsn]; const fasilName = fId && fasils[fId] ? fasils[fId].nama : 'Belum Ditugaskan'; const sj = jadwals[g.npsn] || {};
-                    return { npsn: g.npsn, namaSekolah: g.nama_sekolah, kabKota: g.kab_kota || '-', fasilName, k1: sj['kunjungan_1']?.tanggal || '-', k2: sj['kunjungan_2']?.tanggal || '-', k3: sj['kunjungan_3']?.tanggal || '-' };
+                // NPSN is the Firebase key – use Object.entries to get [npsn, guruObj]
+                gDataKunjunganRaw = Object.entries(gurus).map(([npsn, g]) => {
+                    const fId = schoolToFasil[npsn]; const fasilName = fId && fasils[fId] ? fasils[fId].nama : 'Belum Ditugaskan'; const sj = jadwals[npsn] || {};
+                    return { npsn, namaSekolah: g.nama_sekolah || npsn, kabKota: g.kab_kota || '-', fasilName, k1: sj['kunjungan_1']?.tanggal || '-', k2: sj['kunjungan_2']?.tanggal || '-', k3: sj['kunjungan_3']?.tanggal || '-' };
                 });
                 renderDataKunjunganTable(gDataKunjunganRaw);
             } catch(e) { console.error("Gagal loadDataKunjunganData", e); }
