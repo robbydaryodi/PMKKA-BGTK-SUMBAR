@@ -2802,6 +2802,84 @@
         }
 
 
+        async function loadFasilitatorData() {
+            const container = document.getElementById('listFasilContainer');
+            if (!container) return;
+            container.innerHTML = '<div class="text-center text-slate-500 py-4"><div class="spinner mx-auto mb-2"></div>Memuat data fasilitator...</div>';
+
+            try {
+                const [fasilSnap, assignSnap] = await Promise.all([
+                    firebase.database().ref('fasilitator').once('value'),
+                    firebase.database().ref('fasilitator_sekolah').once('value')
+                ]);
+
+                const fasils = fasilSnap.val() || {};
+                const assigned = assignSnap.val() || {};
+
+                const fasilList = Object.values(fasils);
+                if (fasilList.length === 0) {
+                    container.innerHTML = '<div class="text-center text-slate-400 py-8">Belum ada fasilitator terdaftar.</div>';
+                    return;
+                }
+
+                let html = `
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                `;
+
+                fasilList.forEach(f => {
+                    const numSekolah = (assigned[f.id] || []).length;
+                    const progs = f.programs || (f.program_kombel ? ['kombel'] : ['sekolah_model']);
+
+                    let badgePrograms = '';
+                    if (progs.includes('sekolah_model') && progs.includes('kombel')) {
+                        badgePrograms = `<span class="px-2.5 py-1 rounded-md text-[10px] font-extrabold bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-xs">DUAL PROGRAM (Model & Kombel)</span>`;
+                    } else if (progs.includes('kombel')) {
+                        badgePrograms = `<span class="px-2 py-0.5 rounded-md text-[10px] font-bold bg-purple-100 text-purple-800 border border-purple-200">Program: Kombel</span>`;
+                    } else {
+                        badgePrograms = `<span class="px-2 py-0.5 rounded-md text-[10px] font-bold bg-indigo-100 text-indigo-800 border border-indigo-200">Program: Sekolah Model</span>`;
+                    }
+
+                    html += `
+                        <div class="bg-white rounded-xl border border-slate-200 p-5 shadow-xs hover:shadow-md transition-shadow relative">
+                            <div class="flex items-start justify-between gap-2 mb-2">
+                                <div>
+                                    <h3 class="font-bold text-slate-900 text-base leading-snug">${f.nama}</h3>
+                                    <div class="text-xs text-slate-500 mt-0.5">${f.jabatan || 'Fasilitator'} ${f.instansi ? '• ' + f.instansi : ''}</div>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                ${badgePrograms}
+                            </div>
+
+                            <div class="space-y-1.5 my-3 text-xs text-slate-600 border-t border-b border-slate-100 py-3">
+                                ${f.nip && f.nip !== '-' ? `<div><span class="text-slate-400">NIP:</span> ${f.nip}</div>` : ''}
+                                ${f.pangkat_gol && f.pangkat_gol !== '-' ? `<div><span class="text-slate-400">Pangkat/Gol:</span> ${f.pangkat_gol}</div>` : ''}
+                                <div><span class="text-slate-400">No HP:</span> ${f.hp || '-'}</div>
+                                ${f.mapel_kombel ? `<div><span class="text-slate-400">Mapel Kombel:</span> <strong class="text-purple-700">${f.mapel_kombel}</strong></div>` : ''}
+                                ${f.fkk_1 ? `<div><span class="text-slate-400">Kombel Sasaran:</span> <strong class="text-amber-700">${f.fkk_1}</strong></div>` : ''}
+                                ${progs.includes('sekolah_model') ? `<div><span class="text-slate-400">Sekolah Model Dampingan:</span> <strong class="text-indigo-600">${numSekolah} Sekolah</strong></div>` : ''}
+                            </div>
+
+                            <div class="flex items-center justify-between pt-1">
+                                <button onclick="openEditProfilAdmin('${f.id}', '${f.nama.replace(/'/g,"\\'").replace(/"/g,'&quot;')}', '${f.nip || ''}', '${f.pangkat_gol || ''}', '${f.jabatan || ''}')" class="text-xs font-semibold text-sky-600 hover:text-sky-800 flex items-center gap-1">
+                                    ✏️ Edit Profil
+                                </button>
+                                <button onclick="hapusFasil('${f.id}')" class="text-xs font-semibold text-rose-500 hover:text-rose-700">
+                                    Hapus
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                });
+
+                html += `</div>`;
+                container.innerHTML = html;
+            } catch(e) {
+                console.error("Gagal loadFasilitatorData", e);
+                container.innerHTML = '<div class="text-center text-rose-500 py-4">Gagal memuat data fasilitator.</div>';
+            }
+        }
+
         function bukaLaporan(npsn, kId, btn) {
             try {
                 const dataRaw = btn.getAttribute('data-laporan');
