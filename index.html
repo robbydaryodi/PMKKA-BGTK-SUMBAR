@@ -1864,6 +1864,8 @@
             </div>
         </div>
     </div>
+
+    <script>
         // ==========================================
         // MODE 4: JADWAL & LAPORAN + MATRIKS
         // ==========================================
@@ -2338,57 +2340,7 @@
         }
     </script>
 
-    <!-- MODAL DASHBOARD DETAIL VIEW -->
-    <div id="modalDashDetail" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 z-50 hidden fade-in">
-        <div class="bg-white rounded-3xl max-w-4xl w-full max-h-[90vh] flex flex-col shadow-2xl border border-slate-100 overflow-hidden">
-            <!-- Modal Header -->
-            <div class="p-6 border-b border-slate-100 bg-slate-50/50 flex items-start justify-between">
-                <div>
-                    <div class="flex items-center gap-3">
-                        <h3 class="text-xl font-black text-slate-900" id="dashDetailTitle">Detail Data</h3>
-                        <span id="dashDetailBadge" class="px-3 py-1 rounded-full text-xs font-extrabold bg-slate-200 text-slate-700">0 Data</span>
-                    </div>
-                    <p class="text-xs text-slate-500 mt-1" id="dashDetailSub">Informasi rincian data dasbor admin.</p>
-                </div>
-                <button onclick="closeDashDetailModal()" class="text-slate-400 hover:text-slate-700 p-2 rounded-xl hover:bg-slate-200/60 transition-colors">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
-                </button>
-            </div>
-
-            <!-- Modal Search Bar -->
-            <div class="px-6 py-4 border-b border-slate-100 bg-white">
-                <div class="relative">
-                    <svg class="w-5 h-5 text-slate-400 absolute left-3.5 top-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
-                    <input type="text" id="dashDetailSearch" onkeyup="filterDashDetailTable()" placeholder="Cari nama, wilayah, fasilitator, atau status..." class="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all">
-                </div>
-            </div>
-
-            <!-- Modal Body Table -->
-            <div class="p-6 overflow-y-auto flex-1 custom-sidebar-scroll">
-                <table class="w-full text-left text-xs whitespace-nowrap">
-                    <thead class="bg-slate-100/80 text-slate-600 border-b border-slate-200 font-bold sticky top-0">
-                        <tr>
-                            <th class="px-4 py-3 rounded-l-xl">#</th>
-                            <th class="px-4 py-3" id="dashTh1">Kolom 1</th>
-                            <th class="px-4 py-3" id="dashTh2">Kolom 2</th>
-                            <th class="px-4 py-3" id="dashTh3">Kolom 3</th>
-                            <th class="px-4 py-3" id="dashTh4">Kolom 4</th>
-                            <th class="px-4 py-3 text-center rounded-r-xl" id="dashTh5">Status</th>
-                        </tr>
-                    </thead>
-                    <tbody id="dashDetailTableBody" class="divide-y divide-slate-100">
-                        <!-- Dynamic rows -->
-                    </tbody>
-                </table>
-            </div>
-
-            <!-- Modal Footer -->
-            <div class="p-4 border-t border-slate-100 bg-slate-50 flex justify-end">
-                <button onclick="closeDashDetailModal()" class="px-5 py-2.5 bg-slate-800 hover:bg-slate-900 text-white font-bold rounded-xl text-xs transition-colors">Tutup</button>
-            </div>
-        </div>
-    </div>
-
+    <!-- REMOVED DUPLICATE: modalDashDetail already exists above -->
     <!-- MODAL ASSIGN FASILITATOR SEKOLAH -->
     <div id="modalAssignFasilSekolah" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 z-50 hidden fade-in">
         <div class="bg-white rounded-3xl max-w-lg w-full p-6 shadow-2xl border border-slate-100">
