@@ -599,37 +599,102 @@
                     </div>
                 </div>
 
-                <!-- MODE 4: JADWAL FASILITATOR -->
-                <div id="viewMode4" class="hidden fade-in">
-                    <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
-                        <div class="p-4 border-b border-slate-100 bg-slate-50/50">
-                            <h2 class="text-md font-bold text-slate-800">Rekap Jadwal & Laporan Fasilitator</h2>
+                <!-- MODE 4: JADWAL FASILITATOR & MATRIKS PENDAMPINGAN -->
+                <div id="viewMode4" class="hidden fade-in space-y-6">
+                    <!-- Tab Switcher (Tabel Rekap vs Matriks Pendampingan) -->
+                    <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-2xs flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                        <div>
+                            <h2 class="text-xl font-bold text-slate-900">Rekap Jadwal & Laporan Fasilitator</h2>
+                            <p class="text-xs text-slate-500 mt-0.5">Pemantauan progres pelaksanaan kunjungan dan laporan fasilitator.</p>
+                        </div>
+                        <div class="flex bg-slate-100 p-1 rounded-xl text-xs font-bold w-full sm:w-auto">
+                            <button onclick="switchMode4SubTab('tabel')" id="subtabMode4Tabel" class="px-4 py-2 rounded-lg transition-all bg-white text-slate-900 shadow-2xs">📋 Tabel Rekap</button>
+                            <button onclick="switchMode4SubTab('matriks')" id="subtabMode4Matriks" class="px-4 py-2 rounded-lg transition-all text-slate-600 hover:text-slate-900">📊 Matriks Pendampingan</button>
+                        </div>
+                    </div>
+
+                    <!-- Subtab 1: Tabel Rekap -->
+                    <div id="mode4ViewTabel" class="bg-white rounded-2xl shadow-2xs border border-slate-200/80 overflow-hidden">
+                        <div class="p-4 border-b border-slate-100 bg-slate-50/50 flex flex-col sm:flex-row justify-between items-center gap-3">
+                            <input type="text" id="searchJadwalFasil" onkeyup="filterJadwalFasilData()" placeholder="Cari fasilitator atau sekolah..." class="w-full sm:w-72 px-3 py-2 bg-white border border-slate-200 rounded-xl text-xs focus:outline-none focus:border-emerald-500">
+                            <span class="text-xs text-slate-500 font-semibold" id="jadwalFasilCountBadge">0 Data</span>
                         </div>
                         <div class="p-4" id="listJadwalFasilContainer">
                             <div class="text-center text-slate-500 py-4"><div class="spinner mx-auto mb-2"></div>Memuat jadwal...</div>
                         </div>
                     </div>
+
+                    <!-- Subtab 2: Matriks Pendampingan -->
+                    <div id="mode4ViewMatriks" class="hidden bg-white rounded-2xl shadow-2xs border border-slate-200/80 overflow-hidden">
+                        <div class="p-5 border-b border-slate-100 bg-slate-50/50 flex justify-between items-center">
+                            <div>
+                                <h3 class="font-bold text-slate-900 text-sm">Matriks Visual Pendampingan Fasilitator (Tahap 1 - 6)</h3>
+                                <p class="text-xs text-slate-500 mt-0.5">Status realtime seluruh tahap pendampingan per fasilitator & sekolah binaan.</p>
+                            </div>
+                            <div class="flex gap-2">
+                                <span class="px-2 py-1 bg-emerald-100 text-emerald-800 text-[10px] font-bold rounded">✓ Selesai</span>
+                                <span class="px-2 py-1 bg-blue-100 text-blue-800 text-[10px] font-bold rounded">📅 Terjadwal</span>
+                                <span class="px-2 py-1 bg-slate-100 text-slate-600 text-[10px] font-bold rounded">— Belum</span>
+                            </div>
+                        </div>
+                        <div class="overflow-x-auto p-4">
+                            <table class="w-full text-left text-xs whitespace-nowrap">
+                                <thead class="bg-slate-100 text-slate-700 font-bold border-b border-slate-200">
+                                    <tr>
+                                        <th class="px-4 py-3">Nama Fasilitator</th>
+                                        <th class="px-4 py-3">Sekolah Model Binaan</th>
+                                        <th class="px-2 py-3 text-center">Tahap 1</th>
+                                        <th class="px-2 py-3 text-center">Tahap 2</th>
+                                        <th class="px-2 py-3 text-center">Tahap 3</th>
+                                        <th class="px-2 py-3 text-center">Tahap 4</th>
+                                        <th class="px-2 py-3 text-center">Tahap 5</th>
+                                        <th class="px-2 py-3 text-center">Tahap 6</th>
+                                        <th class="px-4 py-3 text-center">Progres %</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="mode4MatriksBody" class="divide-y divide-slate-100">
+                                    <tr><td colspan="9" class="px-4 py-8 text-center text-slate-400"><div class="spinner mx-auto mb-2"></div>Memuat matriks...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- MODE 5: ASSIGN SEKOLAH -->
-                <div id="viewMode5" class="hidden fade-in">
-                    <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
-                        <div class="p-4 border-b border-slate-100 bg-slate-50/50">
-                            <h2 class="text-md font-bold text-slate-800">Assign Pendamping ke Sekolah Model</h2>
+                <div id="viewMode5" class="hidden fade-in space-y-6">
+                    <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-2xs flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                        <div>
+                            <h2 class="text-xl font-bold text-slate-900">Assign Pendamping Sekolah Model</h2>
+                            <p class="text-xs text-slate-500 mt-1">Penugasan Fasilitator BGTK Sumbar untuk mendampingi 25 Sekolah Model.</p>
                         </div>
-                        <div class="p-4" id="listManajemenSekolahContainer">
+                        <button onclick="loadManajemenSekolahData()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-4 py-2 rounded-xl text-xs font-bold transition-colors">Refresh Data</button>
+                    </div>
+
+                    <div class="bg-white rounded-2xl shadow-2xs border border-slate-200/80 overflow-hidden">
+                        <div class="p-4 border-b border-slate-100 bg-slate-50/50 flex justify-between items-center">
+                            <input type="text" id="searchAssignSekolah" onkeyup="filterAssignSekolahTable()" placeholder="Cari nama sekolah atau NPSN..." class="w-full sm:w-72 px-3 py-2 bg-white border border-slate-200 rounded-xl text-xs focus:outline-none focus:border-emerald-500">
+                        </div>
+                        <div class="p-4 overflow-x-auto" id="listManajemenSekolahContainer">
                             <div class="text-center text-slate-500 py-4"><div class="spinner mx-auto mb-2"></div>Memuat data...</div>
                         </div>
                     </div>
                 </div>
 
                 <!-- MODE 7: DATA KUNJUNGAN -->
-                <div id="viewMode7" class="hidden fade-in">
-                    <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
-                        <div class="p-4 border-b border-slate-100 bg-slate-50/50">
-                            <h2 class="text-md font-bold text-slate-800">Jadwal Kunjungan Semua Sekolah</h2>
+                <div id="viewMode7" class="hidden fade-in space-y-6">
+                    <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-2xs flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                        <div>
+                            <h2 class="text-xl font-bold text-slate-900">Jadwal Kunjungan Semua Sekolah</h2>
+                            <p class="text-xs text-slate-500 mt-1">Rekap data kunjungan pendampingan fasilitator ke seluruh Sekolah Model.</p>
                         </div>
-                        <div class="p-4" id="listDataKunjunganContainer">
+                        <button onclick="loadDataKunjunganData()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-4 py-2 rounded-xl text-xs font-bold transition-colors">Refresh Data</button>
+                    </div>
+
+                    <div class="bg-white rounded-2xl shadow-2xs border border-slate-200/80 overflow-hidden">
+                        <div class="p-4 border-b border-slate-100 bg-slate-50/50 flex justify-between items-center">
+                            <input type="text" id="searchDataKunjungan" onkeyup="filterDataKunjunganTable()" placeholder="Cari sekolah, wilayah, atau fasilitator..." class="w-full sm:w-72 px-3 py-2 bg-white border border-slate-200 rounded-xl text-xs focus:outline-none focus:border-emerald-500">
+                        </div>
+                        <div class="p-4 overflow-x-auto" id="listDataKunjunganContainer">
                             <div class="text-center text-slate-500 py-4"><div class="spinner mx-auto mb-2"></div>Memuat data...</div>
                         </div>
                     </div>
@@ -1796,6 +1861,553 @@
             <!-- Modal Footer -->
             <div class="p-4 border-t border-slate-100 bg-slate-50 flex justify-end">
                 <button onclick="closeDashDetailModal()" class="px-5 py-2.5 bg-slate-800 hover:bg-slate-900 text-white font-bold rounded-xl text-xs transition-colors">Tutup</button>
+            </div>
+        </div>
+    </div>
+        // ==========================================
+        // MODE 4: JADWAL & LAPORAN + MATRIKS
+        // ==========================================
+        let gJadwalFasilRaw = [];
+
+        function switchMode4SubTab(tab) {
+            const tabTabel = document.getElementById('subtabMode4Tabel');
+            const tabMatriks = document.getElementById('subtabMode4Matriks');
+            const viewTabel = document.getElementById('mode4ViewTabel');
+            const viewMatriks = document.getElementById('mode4ViewMatriks');
+
+            if (tab === 'tabel') {
+                if (tabTabel) tabTabel.className = "px-4 py-2 rounded-lg transition-all bg-white text-slate-900 shadow-2xs font-bold";
+                if (tabMatriks) tabMatriks.className = "px-4 py-2 rounded-lg transition-all text-slate-600 hover:text-slate-900 font-bold";
+                if (viewTabel) viewTabel.classList.remove('hidden');
+                if (viewMatriks) viewMatriks.classList.add('hidden');
+            } else {
+                if (tabTabel) tabTabel.className = "px-4 py-2 rounded-lg transition-all text-slate-600 hover:text-slate-900 font-bold";
+                if (tabMatriks) tabMatriks.className = "px-4 py-2 rounded-lg transition-all bg-white text-slate-900 shadow-2xs font-bold";
+                if (viewTabel) viewTabel.classList.add('hidden');
+                if (viewMatriks) viewMatriks.classList.remove('hidden');
+                renderMode4Matriks();
+            }
+        }
+
+        async function loadJadwalFasilData() {
+            try {
+                const container = document.getElementById('listJadwalFasilContainer');
+                if (container) container.innerHTML = '<div class="text-center text-slate-500 py-4"><div class="spinner mx-auto mb-2"></div>Memuat jadwal...</div>';
+
+                const [fasilSnap, guruSnap, assignSnap, jadwalSnap] = await Promise.all([
+                    db.ref('fasilitator').once('value'),
+                    db.ref('master_guru').once('value'),
+                    db.ref('fasilitator_sekolah').once('value'),
+                    db.ref('jadwal_kunjungan').once('value')
+                ]);
+
+                const fasils = fasilSnap.val() || {};
+                const gurus = guruSnap.val() || {};
+                const assigns = assignSnap.val() || {};
+                const jadwals = jadwalSnap.val() || {};
+
+                gJadwalFasilRaw = [];
+                for (const fId in fasils) {
+                    const fasil = fasils[fId];
+                    const myNpsns = assigns[fId] || [];
+                    myNpsns.forEach(npsn => {
+                        const school = gurus[npsn] || {};
+                        const schoolJadwal = jadwals[npsn] || {};
+                        for (let k = 1; k <= 6; k++) {
+                            const jObj = schoolJadwal[`kunjungan_${k}`] || {};
+                            gJadwalFasilRaw.push({
+                                fasilId: fId,
+                                fasilNama: fasil.nama,
+                                fasilHp: fasil.hp || '-',
+                                npsn,
+                                namaSekolah: school.nama_sekolah || `NPSN ${npsn}`,
+                                kabKota: school.kab_kota || '-',
+                                kunjungan: k,
+                                tanggal: jObj.tanggal || '-',
+                                status: jObj.status || 'Belum Diisi',
+                                catatan: jObj.catatan_pelaksanaan_tet || '-'
+                            });
+                        }
+                    });
+                }
+
+                renderJadwalFasilTable(gJadwalFasilRaw);
+
+            } catch(e) {
+                console.error("Gagal loadJadwalFasilData", e);
+                const container = document.getElementById('listJadwalFasilContainer');
+                if (container) container.innerHTML = '<div class="text-center text-red-500 py-4">Gagal memuat jadwal fasilitator.</div>';
+            }
+        }
+
+        function filterJadwalFasilData() {
+            const q = (document.getElementById('searchJadwalFasil')?.value || '').toLowerCase();
+            const filtered = gJadwalFasilRaw.filter(r => {
+                return r.fasilNama.toLowerCase().includes(q) || r.namaSekolah.toLowerCase().includes(q) || r.kabKota.toLowerCase().includes(q) || r.status.toLowerCase().includes(q);
+            });
+            renderJadwalFasilTable(filtered);
+        }
+
+        function renderJadwalFasilTable(rows) {
+            const container = document.getElementById('listJadwalFasilContainer');
+            const badge = document.getElementById('jadwalFasilCountBadge');
+            if (badge) badge.textContent = `${rows.length} Baris Jadwal`;
+
+            if (!container) return;
+            if (rows.length === 0) {
+                container.innerHTML = '<div class="text-center text-slate-400 py-6">Tidak ada jadwal ditemukan.</div>';
+                return;
+            }
+
+            let html = `
+                <div class="overflow-x-auto rounded-xl border border-slate-200/80">
+                    <table class="w-full text-left text-xs whitespace-nowrap">
+                        <thead class="bg-slate-50 text-slate-600 font-bold border-b border-slate-200">
+                            <tr>
+                                <th class="px-4 py-3">Fasilitator</th>
+                                <th class="px-4 py-3">Sekolah Model</th>
+                                <th class="px-4 py-3 text-center">Tahap</th>
+                                <th class="px-4 py-3">Tanggal Pelaksanaan</th>
+                                <th class="px-4 py-3 text-center">Status</th>
+                                <th class="px-4 py-3">Catatan / Laporan</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-100">
+            `;
+
+            rows.forEach(r => {
+                let badgeClass = "bg-slate-100 text-slate-600";
+                if (r.status === 'Selesai') badgeClass = "bg-emerald-100 text-emerald-800 font-bold";
+                else if (r.status === 'Direncanakan') badgeClass = "bg-blue-100 text-blue-800 font-bold";
+                else if (r.status === 'Batal/Ditunda') badgeClass = "bg-rose-100 text-rose-800 font-bold";
+
+                html += `
+                    <tr class="hover:bg-slate-50 transition-colors">
+                        <td class="px-4 py-3 font-bold text-slate-800">${r.fasilNama}</td>
+                        <td class="px-4 py-3 font-semibold text-slate-700">${r.namaSekolah} <span class="text-[10px] text-slate-400 block">${r.kabKota}</span></td>
+                        <td class="px-4 py-3 text-center"><span class="px-2 py-0.5 rounded-full bg-slate-100 font-bold text-slate-700">Tahap ${r.kunjungan}</span></td>
+                        <td class="px-4 py-3 text-slate-700">${r.tanggal}</td>
+                        <td class="px-4 py-3 text-center"><span class="px-2.5 py-1 rounded-full text-xs ${badgeClass}">${r.status}</span></td>
+                        <td class="px-4 py-3 text-slate-500 max-w-xs truncate">${r.catatan}</td>
+                    </tr>
+                `;
+            });
+
+            html += `
+                        </tbody>
+                    </table>
+                </div>
+            `;
+
+            container.innerHTML = html;
+        }
+
+        async function renderMode4Matriks() {
+            try {
+                const tbody = document.getElementById('mode4MatriksBody');
+                if (!tbody) return;
+
+                const [fasilSnap, guruSnap, assignSnap, jadwalSnap] = await Promise.all([
+                    db.ref('fasilitator').once('value'),
+                    db.ref('master_guru').once('value'),
+                    db.ref('fasilitator_sekolah').once('value'),
+                    db.ref('jadwal_kunjungan').once('value')
+                ]);
+
+                const fasils = fasilSnap.val() || {};
+                const gurus = guruSnap.val() || {};
+                const assigns = assignSnap.val() || {};
+                const jadwals = jadwalSnap.val() || {};
+
+                let html = '';
+                for (const fId in fasils) {
+                    const fasil = fasils[fId];
+                    const myNpsns = assigns[fId] || [];
+                    const rowCount = myNpsns.length;
+
+                    if (rowCount === 0) {
+                        html += `
+                            <tr class="border-b border-slate-100">
+                                <td class="px-4 py-3 font-bold text-emerald-800">${fasil.nama}</td>
+                                <td colspan="8" class="px-4 py-3 text-slate-400 italic">Belum ada sekolah binaan yang ditugaskan.</td>
+                            </tr>
+                        `;
+                    } else {
+                        myNpsns.forEach((npsn, idx) => {
+                            const school = gurus[npsn] || {};
+                            const sj = jadwals[npsn] || {};
+                            let selesaiCount = 0;
+                            let cells = '';
+
+                            for (let k = 1; k <= 6; k++) {
+                                const j = sj[`kunjungan_${k}`] || { status: 'Belum Diisi', tanggal: '-' };
+                                let bg = 'bg-slate-100 text-slate-500';
+                                let icon = '—';
+                                if (j.status === 'Selesai') { bg = 'bg-emerald-100 text-emerald-800 font-bold'; icon = '✓'; selesaiCount++; }
+                                else if (j.status === 'Direncanakan') { bg = 'bg-blue-100 text-blue-800 font-bold'; icon = '📅'; }
+                                else if (j.status === 'Batal/Ditunda') { bg = 'bg-rose-100 text-rose-800 font-bold'; icon = '✗'; }
+
+                                cells += `<td class="px-2 py-2 text-center"><div class="${bg} p-1.5 rounded-lg text-[10px]">${icon}<br><span class="opacity-75">${j.tanggal && j.tanggal !== '-' ? j.tanggal.split(' ')[0] : 'Belum'}</span></div></td>`;
+                            }
+
+                            const pct = Math.round((selesaiCount / 6) * 100);
+                            const pColor = pct === 100 ? 'bg-emerald-500' : (pct >= 50 ? 'bg-blue-500' : 'bg-amber-500');
+
+                            html += `
+                                <tr class="hover:bg-slate-50 transition-colors border-b border-slate-100">
+                                    ${idx === 0 ? `<td class="px-4 py-3 font-bold text-slate-900 align-top" rowspan="${rowCount}">${fasil.nama}<br><span class="text-[10px] font-normal text-slate-400">${fasil.jabatan || fasil.instansi || ''}</span></td>` : ''}
+                                    <td class="px-4 py-3 font-semibold text-slate-800 text-xs">${school.nama_sekolah || npsn}</td>
+                                    ${cells}
+                                    <td class="px-4 py-3 text-center">
+                                        <div class="font-bold text-xs ${pct===100?'text-emerald-700':'text-slate-700'} mb-1">${pct}%</div>
+                                        <div class="w-full bg-slate-200 rounded-full h-1.5"><div class="${pColor} h-1.5 rounded-full" style="width:${pct}%"></div></div>
+                                    </td>
+                                </tr>
+                            `;
+                        });
+                    }
+                }
+
+                tbody.innerHTML = html || '<tr><td colspan="9" class="text-center py-6 text-slate-400">Belum ada fasilitator terdaftar.</td></tr>';
+
+            } catch(e) {
+                console.error("Gagal renderMode4Matriks", e);
+            }
+        }
+
+        // ==========================================
+        // MODE 5: ASSIGN PENDAMPING SEKOLAH
+        // ==========================================
+        let gManajemenSekolahRaw = [];
+        let gFasilListMode5 = {};
+
+        async function loadManajemenSekolahData() {
+            try {
+                const container = document.getElementById('listManajemenSekolahContainer');
+                if (container) container.innerHTML = '<div class="text-center text-slate-500 py-4"><div class="spinner mx-auto mb-2"></div>Memuat data...</div>';
+
+                const [fasilSnap, guruSnap, assignSnap] = await Promise.all([
+                    db.ref('fasilitator').once('value'),
+                    db.ref('master_guru').once('value'),
+                    db.ref('fasilitator_sekolah').once('value')
+                ]);
+
+                gFasilListMode5 = fasilSnap.val() || {};
+                const gurus = guruSnap.val() || {};
+                const assigns = assignSnap.val() || {};
+
+                const schoolToFasil = {};
+                for (const fId in assigns) {
+                    if (Array.isArray(assigns[fId])) {
+                        assigns[fId].forEach(n => schoolToFasil[n] = fId);
+                    }
+                }
+
+                gManajemenSekolahRaw = Object.values(gurus).map(g => {
+                    const fasilId = schoolToFasil[g.npsn];
+                    const fasilName = fasilId && gFasilListMode5[fasilId] ? gFasilListMode5[fasilId].nama : 'Belum Ditugaskan';
+                    return {
+                        npsn: g.npsn,
+                        namaSekolah: g.nama_sekolah,
+                        kabKota: g.kab_kota || '-',
+                        fasilId: fasilId || '',
+                        fasilName
+                    };
+                });
+
+                renderAssignSekolahTable(gManajemenSekolahRaw);
+
+            } catch(e) {
+                console.error("Gagal loadManajemenSekolahData", e);
+            }
+        }
+
+        function filterAssignSekolahTable() {
+            const q = (document.getElementById('searchAssignSekolah')?.value || '').toLowerCase();
+            const filtered = gManajemenSekolahRaw.filter(s => {
+                return s.namaSekolah.toLowerCase().includes(q) || s.npsn.includes(q) || s.fasilName.toLowerCase().includes(q);
+            });
+            renderAssignSekolahTable(filtered);
+        }
+
+        function renderAssignSekolahTable(rows) {
+            const container = document.getElementById('listManajemenSekolahContainer');
+            if (!container) return;
+
+            let html = `
+                <div class="overflow-x-auto rounded-xl border border-slate-200/80">
+                    <table class="w-full text-left text-xs whitespace-nowrap">
+                        <thead class="bg-slate-50 text-slate-600 font-bold border-b border-slate-200">
+                            <tr>
+                                <th class="px-4 py-3 text-center">#</th>
+                                <th class="px-4 py-3">NPSN</th>
+                                <th class="px-4 py-3">Nama Sekolah Model</th>
+                                <th class="px-4 py-3">Kabupaten / Kota</th>
+                                <th class="px-4 py-3">Fasilitator Pendamping saat ini</th>
+                                <th class="px-4 py-3 text-center">Aksi Penugasan</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-100">
+            `;
+
+            rows.forEach((r, idx) => {
+                const isAssigned = r.fasilId !== '';
+                const fasilBadge = isAssigned
+                    ? `<span class="font-bold text-emerald-800">${r.fasilName}</span>`
+                    : `<span class="italic text-slate-400 bg-slate-100 px-2 py-0.5 rounded">Belum ditugaskan</span>`;
+
+                html += `
+                    <tr class="hover:bg-slate-50 transition-colors">
+                        <td class="px-4 py-3 text-center text-slate-400 font-mono">${idx + 1}</td>
+                        <td class="px-4 py-3 font-bold text-slate-700">${r.npsn}</td>
+                        <td class="px-4 py-3 font-bold text-slate-900">${r.namaSekolah}</td>
+                        <td class="px-4 py-3 text-slate-600">${r.kabKota}</td>
+                        <td class="px-4 py-3">${fasilBadge}</td>
+                        <td class="px-4 py-3 text-center">
+                            <button onclick="bukaModalSetFasil('${r.npsn}', '${r.namaSekolah.replace(/'/g, "\\'").replace(/"/g, '&quot;')}', '${r.fasilId}')" class="bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border border-emerald-200 px-3 py-1.5 rounded-xl font-bold transition-colors">
+                                ✏️ Assign / Ubah
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            });
+
+            html += `
+                        </tbody>
+                    </table>
+                </div>
+            `;
+
+            container.innerHTML = html;
+        }
+
+        function bukaModalSetFasil(npsn, schoolName, currentFasilId) {
+            document.getElementById('assignNpsn').value = npsn;
+            document.getElementById('modalSekolahName').textContent = `${schoolName} (NPSN: ${npsn})`;
+
+            const select = document.getElementById('selectAssignFasil');
+            select.innerHTML = '<option value="">-- Pilih Fasilitator Pendamping --</option>';
+
+            for (const fId in gFasilListMode5) {
+                const opt = document.createElement('option');
+                opt.value = fId;
+                opt.textContent = gFasilListMode5[fId].nama + (gFasilListMode5[fId].instansi ? ` (${gFasilListMode5[fId].instansi})` : '');
+                if (fId === currentFasilId) opt.selected = true;
+                select.appendChild(opt);
+            }
+
+            document.getElementById('modalAssignFasilSekolah').classList.remove('hidden');
+        }
+
+        async function simpanFasilUntukSekolah() {
+            const npsn = document.getElementById('assignNpsn').value;
+            const newFasilId = document.getElementById('selectAssignFasil').value;
+            if (!npsn) return;
+
+            try {
+                const snap = await db.ref('fasilitator_sekolah').once('value');
+                const assigned = snap.val() || {};
+                const updates = {};
+
+                for (const fId in assigned) {
+                    let npsns = assigned[fId] || [];
+                    if (npsns.includes(npsn)) {
+                        npsns = npsns.filter(n => n !== npsn);
+                        updates[fId] = npsns;
+                    }
+                }
+
+                if (newFasilId) {
+                    let newNpsns = updates[newFasilId] || assigned[newFasilId] || [];
+                    if (!newNpsns.includes(npsn)) newNpsns.push(npsn);
+                    updates[newFasilId] = newNpsns;
+                }
+
+                await db.ref('fasilitator_sekolah').update(updates);
+                document.getElementById('modalAssignFasilSekolah').classList.add('hidden');
+                alert("Penugasan fasilitator berhasil disimpan!");
+                loadManajemenSekolahData();
+                loadDashboardUtamaData();
+            } catch(e) {
+                alert("Gagal menyimpan penugasan: " + e.message);
+            }
+        }
+
+        // ==========================================
+        // MODE 7: DATA KUNJUNGAN SEMUA SEKOLAH
+        // ==========================================
+        let gDataKunjunganRaw = [];
+
+        async function loadDataKunjunganData() {
+            try {
+                const container = document.getElementById('listDataKunjunganContainer');
+                if (container) container.innerHTML = '<div class="text-center text-slate-500 py-4"><div class="spinner mx-auto mb-2"></div>Memuat data...</div>';
+
+                const [guruSnap, fasilSnap, assignSnap, jadwalSnap] = await Promise.all([
+                    db.ref('master_guru').once('value'),
+                    db.ref('fasilitator').once('value'),
+                    db.ref('fasilitator_sekolah').once('value'),
+                    db.ref('jadwal_kunjungan').once('value')
+                ]);
+
+                const gurus = guruSnap.val() || {};
+                const fasils = fasilSnap.val() || {};
+                const assigns = assignSnap.val() || {};
+                const jadwals = jadwalSnap.val() || {};
+
+                const schoolToFasil = {};
+                for (const fId in assigns) {
+                    if (Array.isArray(assigns[fId])) {
+                        assigns[fId].forEach(n => schoolToFasil[n] = fId);
+                    }
+                }
+
+                gDataKunjunganRaw = Object.values(gurus).map(g => {
+                    const fId = schoolToFasil[g.npsn];
+                    const fasilName = fId && fasils[fId] ? fasils[fId].nama : 'Belum Ditugaskan';
+                    const sj = jadwals[g.npsn] || {};
+
+                    return {
+                        npsn: g.npsn,
+                        namaSekolah: g.nama_sekolah,
+                        kabKota: g.kab_kota || '-',
+                        fasilName,
+                        k1: sj['kunjungan_1']?.tanggal || '-',
+                        k2: sj['kunjungan_2']?.tanggal || '-',
+                        k3: sj['kunjungan_3']?.tanggal || '-'
+                    };
+                });
+
+                renderDataKunjunganTable(gDataKunjunganRaw);
+
+            } catch(e) {
+                console.error("Gagal loadDataKunjunganData", e);
+            }
+        }
+
+        function filterDataKunjunganTable() {
+            const q = (document.getElementById('searchDataKunjungan')?.value || '').toLowerCase();
+            const filtered = gDataKunjunganRaw.filter(k => {
+                return k.namaSekolah.toLowerCase().includes(q) || k.npsn.includes(q) || k.fasilName.toLowerCase().includes(q) || k.kabKota.toLowerCase().includes(q);
+            });
+            renderDataKunjunganTable(filtered);
+        }
+
+        function renderDataKunjunganTable(rows) {
+            const container = document.getElementById('listDataKunjunganContainer');
+            if (!container) return;
+
+            let html = `
+                <div class="overflow-x-auto rounded-xl border border-slate-200/80">
+                    <table class="w-full text-left text-xs whitespace-nowrap">
+                        <thead class="bg-slate-50 text-slate-600 font-bold border-b border-slate-200">
+                            <tr>
+                                <th class="px-4 py-3 text-center">#</th>
+                                <th class="px-4 py-3">Nama Sekolah Model</th>
+                                <th class="px-4 py-3">Kab / Kota</th>
+                                <th class="px-4 py-3">Fasilitator Pendamping</th>
+                                <th class="px-4 py-3 text-center">Jadwal Tahap 1</th>
+                                <th class="px-4 py-3 text-center">Jadwal Tahap 2</th>
+                                <th class="px-4 py-3 text-center">Jadwal Tahap 3</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-100">
+            `;
+
+            rows.forEach((r, idx) => {
+                html += `
+                    <tr class="hover:bg-slate-50 transition-colors">
+                        <td class="px-4 py-3 text-center text-slate-400 font-mono">${idx + 1}</td>
+                        <td class="px-4 py-3 font-bold text-slate-900">${r.namaSekolah} <span class="text-[10px] text-slate-400 block">NPSN: ${r.npsn}</span></td>
+                        <td class="px-4 py-3 text-slate-600">${r.kabKota}</td>
+                        <td class="px-4 py-3 font-semibold text-emerald-800">${r.fasilName}</td>
+                        <td class="px-4 py-3 text-center"><span class="px-2 py-1 rounded bg-slate-100 text-slate-700 font-medium">${r.k1}</span></td>
+                        <td class="px-4 py-3 text-center"><span class="px-2 py-1 rounded bg-slate-100 text-slate-700 font-medium">${r.k2}</span></td>
+                        <td class="px-4 py-3 text-center"><span class="px-2 py-1 rounded bg-slate-100 text-slate-700 font-medium">${r.k3}</span></td>
+                    </tr>
+                `;
+            });
+
+            html += `
+                        </tbody>
+                    </table>
+                </div>
+            `;
+
+            container.innerHTML = html;
+        }
+    </script>
+
+    <!-- MODAL DASHBOARD DETAIL VIEW -->
+    <div id="modalDashDetail" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 z-50 hidden fade-in">
+        <div class="bg-white rounded-3xl max-w-4xl w-full max-h-[90vh] flex flex-col shadow-2xl border border-slate-100 overflow-hidden">
+            <!-- Modal Header -->
+            <div class="p-6 border-b border-slate-100 bg-slate-50/50 flex items-start justify-between">
+                <div>
+                    <div class="flex items-center gap-3">
+                        <h3 class="text-xl font-black text-slate-900" id="dashDetailTitle">Detail Data</h3>
+                        <span id="dashDetailBadge" class="px-3 py-1 rounded-full text-xs font-extrabold bg-slate-200 text-slate-700">0 Data</span>
+                    </div>
+                    <p class="text-xs text-slate-500 mt-1" id="dashDetailSub">Informasi rincian data dasbor admin.</p>
+                </div>
+                <button onclick="closeDashDetailModal()" class="text-slate-400 hover:text-slate-700 p-2 rounded-xl hover:bg-slate-200/60 transition-colors">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                </button>
+            </div>
+
+            <!-- Modal Search Bar -->
+            <div class="px-6 py-4 border-b border-slate-100 bg-white">
+                <div class="relative">
+                    <svg class="w-5 h-5 text-slate-400 absolute left-3.5 top-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                    <input type="text" id="dashDetailSearch" onkeyup="filterDashDetailTable()" placeholder="Cari nama, wilayah, fasilitator, atau status..." class="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all">
+                </div>
+            </div>
+
+            <!-- Modal Body Table -->
+            <div class="p-6 overflow-y-auto flex-1 custom-sidebar-scroll">
+                <table class="w-full text-left text-xs whitespace-nowrap">
+                    <thead class="bg-slate-100/80 text-slate-600 border-b border-slate-200 font-bold sticky top-0">
+                        <tr>
+                            <th class="px-4 py-3 rounded-l-xl">#</th>
+                            <th class="px-4 py-3" id="dashTh1">Kolom 1</th>
+                            <th class="px-4 py-3" id="dashTh2">Kolom 2</th>
+                            <th class="px-4 py-3" id="dashTh3">Kolom 3</th>
+                            <th class="px-4 py-3" id="dashTh4">Kolom 4</th>
+                            <th class="px-4 py-3 text-center rounded-r-xl" id="dashTh5">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="dashDetailTableBody" class="divide-y divide-slate-100">
+                        <!-- Dynamic rows -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Modal Footer -->
+            <div class="p-4 border-t border-slate-100 bg-slate-50 flex justify-end">
+                <button onclick="closeDashDetailModal()" class="px-5 py-2.5 bg-slate-800 hover:bg-slate-900 text-white font-bold rounded-xl text-xs transition-colors">Tutup</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL ASSIGN FASILITATOR SEKOLAH -->
+    <div id="modalAssignFasilSekolah" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 z-50 hidden fade-in">
+        <div class="bg-white rounded-3xl max-w-lg w-full p-6 shadow-2xl border border-slate-100">
+            <div class="flex items-center justify-between mb-4 border-b border-slate-100 pb-3">
+                <h3 class="text-lg font-bold text-slate-900">Assign Pendamping Sekolah</h3>
+                <button onclick="document.getElementById('modalAssignFasilSekolah').classList.add('hidden')" class="text-slate-400 hover:text-slate-700">✕</button>
+            </div>
+            <input type="hidden" id="assignNpsn">
+            <p class="text-xs text-slate-500 mb-2">Sekolah Model Target:</p>
+            <div class="font-bold text-slate-800 text-sm mb-4 p-3 bg-slate-50 rounded-xl border border-slate-200" id="modalSekolahName">-</div>
+            
+            <label class="block text-xs font-bold text-slate-700 mb-1">Pilih Fasilitator Pendamping:</label>
+            <select id="selectAssignFasil" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:outline-none focus:border-emerald-500 mb-6">
+                <!-- Dynamic options -->
+            </select>
+
+            <div class="flex justify-end gap-2">
+                <button onclick="document.getElementById('modalAssignFasilSekolah').classList.add('hidden')" class="px-4 py-2 bg-slate-100 text-slate-700 text-xs font-bold rounded-xl hover:bg-slate-200">Batal</button>
+                <button onclick="simpanFasilUntukSekolah()" class="px-4 py-2 bg-emerald-600 text-white text-xs font-bold rounded-xl hover:bg-emerald-700 shadow-sm">Simpan Penugasan</button>
             </div>
         </div>
     </div>
