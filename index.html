@@ -4,32 +4,28 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Portal PM-KKA BGTK Sumatera Barat 2026</title>
+    <meta name="description" content="Portal Sistem Informasi PM-KKA – Pendampingan Pengawasan & Konsultatif Komunitas Belajar Sekolah Model Sumatera Barat.">
     <link rel="icon" type="image/jpeg" href="./favicon.jpg" />
-    
+
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-    
+
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Chart.js -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <script>
         tailwind.config = {
             theme: {
                 extend: {
                     fontFamily: { sans: ['Inter', 'sans-serif'] },
-                    colors: {
-                        primary: '#4f46e5',
-                        secondary: '#0f172a',
-                    }
+                    colors: { primary: '#4f46e5', secondary: '#0f172a' }
                 }
             }
         }
     </script>
-    
+
     <style>
         body { background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%); min-height: 100vh; }
         .glass-card { background: rgba(255, 255, 255, 0.92); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.5); }
@@ -37,18 +33,11 @@
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         .fade-in { animation: fadeIn 0.3s ease-in forwards; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        .custom-sidebar-scroll::-webkit-scrollbar { width: 4px; }
-        .custom-sidebar-scroll::-webkit-scrollbar-track { background: transparent; }
-        .custom-sidebar-scroll::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 9999px; }
-        .custom-sidebar-scroll::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
     </style>
 
     <!-- Firebase v10+ Compat CDN -->
     <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
-    
-    <!-- SheetJS for Excel Export -->
-    <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
 </head>
 <body class="text-slate-800 antialiased font-sans">
 
@@ -64,8 +53,8 @@
                     </div>
                 </a>
                 <div class="flex items-center gap-3">
-                    <button onclick="checkAndOpenAdminModal()" id="navAdminBtn" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold px-4 py-2 rounded-xl transition-all shadow-sm flex items-center gap-1.5">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 11c0 3.517-1.009 6.799-2.753 9.571m-3.44-2.04l.054-.09A13.916 13.916 0 008 11a4 4 0 118 0c0 1.017-.07 2.019-.203 3m-2.118 6.844A21.88 21.88 0 0015.171 17m3.839 1.132c.645-2.266.99-4.659.99-7.132A8 8 0 008 4.07M3 15.364c.64-1.319 1-2.8 1-4.364 0-1.457.39-2.823 1.07-4"/></svg>
+                    <button onclick="openAdminLoginModal()" id="navAdminBtn" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold px-4 py-2 rounded-xl transition-all shadow-sm flex items-center gap-1.5">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
                         <span>Login Admin / Pegawai BGTK</span>
                     </button>
                 </div>
@@ -73,23 +62,23 @@
         </div>
     </nav>
 
-    <!-- LANDING PAGE VIEW (GATEWAY UTAMA) -->
-    <div id="view-main" class="max-w-6xl mx-auto px-4 py-12">
+    <!-- LANDING PAGE -->
+    <div class="max-w-6xl mx-auto px-4 py-12">
         <div class="text-center mb-12">
             <span class="inline-block px-4 py-1.5 bg-indigo-100 text-indigo-800 rounded-full text-xs font-bold uppercase tracking-wider mb-3">Portal Resmi BGTK Sumatera Barat</span>
             <h1 class="text-3xl font-black text-slate-900 tracking-tight sm:text-5xl mb-3">Sistem Informasi PM-KKA</h1>
-            <p class="text-base sm:text-lg text-slate-600 max-w-2xl mx-auto">Pendampingan Pengawasan & Konsultatif Komunitas Belajar (PM-KKA) Sekolah Model & Komunitas Belajar Sumatera Barat.</p>
+            <p class="text-base sm:text-lg text-slate-600 max-w-2xl mx-auto">Pendampingan Pengawasan &amp; Konsultatif Komunitas Belajar (PM-KKA) Sekolah Model &amp; Komunitas Belajar Sumatera Barat.</p>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             <!-- Card Admin BGTK -->
-            <div onclick="checkAndOpenAdminModal()" class="glass-card rounded-2xl p-6 cursor-pointer transform hover:-translate-y-1.5 hover:shadow-xl transition-all duration-300 group border border-slate-200/80 relative overflow-hidden flex flex-col justify-between">
+            <div onclick="openAdminLoginModal()" class="glass-card rounded-2xl p-6 cursor-pointer transform hover:-translate-y-1.5 hover:shadow-xl transition-all duration-300 group border border-slate-200/80 relative overflow-hidden flex flex-col justify-between">
                 <div class="w-14 h-14 bg-indigo-50 text-indigo-600 rounded-2xl flex items-center justify-center mb-5 group-hover:bg-indigo-600 group-hover:text-white transition-colors">
-                    <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 11c0 3.517-1.009 6.799-2.753 9.571m-3.44-2.04l.054-.09A13.916 13.916 0 008 11a4 4 0 118 0c0 1.017-.07 2.019-.203 3m-2.118 6.844A21.88 21.88 0 0015.171 17m3.839 1.132c.645-2.266.99-4.659.99-7.132A8 8 0 008 4.07M3 15.364c.64-1.319 1-2.8 1-4.364 0-1.457.39-2.823 1.07-4"/></svg>
+                    <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
                 </div>
                 <div>
-                    <h3 class="text-lg font-bold text-slate-900 mb-1">Admin & Pegawai BGTK</h3>
-                    <p class="text-slate-500 text-xs leading-relaxed">Login dengan Email Pegawai BGTK & password Admin untuk dasbor manajemen terpusat.</p>
+                    <h3 class="text-lg font-bold text-slate-900 mb-1">Admin &amp; Pegawai BGTK</h3>
+                    <p class="text-slate-500 text-xs leading-relaxed">Login dengan Email Pegawai BGTK &amp; password Admin untuk dasbor manajemen terpusat.</p>
                 </div>
                 <div class="mt-4 pt-4 border-t border-slate-100 flex items-center text-xs font-bold text-indigo-600 group-hover:translate-x-1 transition-transform">
                     <span>Masuk ke Dasbor</span>
@@ -104,7 +93,7 @@
                 </div>
                 <div>
                     <h3 class="text-lg font-bold text-slate-900 mb-1">Admin Persuratan</h3>
-                    <p class="text-slate-500 text-xs leading-relaxed">Rekap jadwal & cetak Surat Tugas pendampingan otomatis (.docx Word).</p>
+                    <p class="text-slate-500 text-xs leading-relaxed">Rekap jadwal &amp; cetak Surat Tugas pendampingan otomatis (.docx Word).</p>
                 </div>
                 <div class="mt-4 pt-4 border-t border-slate-100 flex items-center text-xs font-bold text-sky-600 group-hover:translate-x-1 transition-transform">
                     <span>Buka Portal Persuratan</span>
@@ -119,7 +108,7 @@
                 </div>
                 <div>
                     <h3 class="text-lg font-bold text-slate-900 mb-1">Fasilitator</h3>
-                    <p class="text-slate-500 text-xs leading-relaxed">Portal khusus Widyaiswara, PTP, & Pengawas Pembina untuk instrumen kunjungan.</p>
+                    <p class="text-slate-500 text-xs leading-relaxed">Portal khusus Widyaiswara, PTP, &amp; Pengawas Pembina untuk instrumen kunjungan.</p>
                 </div>
                 <div class="mt-4 pt-4 border-t border-slate-100 flex items-center text-xs font-bold text-teal-600 group-hover:translate-x-1 transition-transform">
                     <span>Buka Portal Fasilitator</span>
@@ -133,8 +122,8 @@
                     <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
                 </div>
                 <div>
-                    <h3 class="text-lg font-bold text-slate-900 mb-1">Sekolah & Publik</h3>
-                    <p class="text-slate-500 text-xs leading-relaxed">Konfirmasi kehadiran guru & kepala sekolah pada program pendampingan PMKKA.</p>
+                    <h3 class="text-lg font-bold text-slate-900 mb-1">Sekolah &amp; Publik</h3>
+                    <p class="text-slate-500 text-xs leading-relaxed">Konfirmasi kehadiran guru &amp; kepala sekolah pada program pendampingan PMKKA.</p>
                 </div>
                 <div class="mt-4 pt-4 border-t border-slate-100 flex items-center text-xs font-bold text-amber-600 group-hover:translate-x-1 transition-transform">
                     <span>Buka Portal Publik</span>
@@ -148,14 +137,14 @@
     <div id="modalAdminAuth" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
         <div class="bg-white rounded-3xl shadow-2xl w-full max-w-md overflow-hidden fade-in border border-slate-100">
             <div class="bg-gradient-to-r from-indigo-700 to-purple-800 p-6 text-white text-center relative">
-                <button onclick="closeAdminAuthModal()" class="absolute top-4 right-4 p-1.5 text-white/70 hover:text-white hover:bg-white/10 rounded-full transition-colors">
+                <button onclick="closeAdminLoginModal()" class="absolute top-4 right-4 p-1.5 text-white/70 hover:text-white hover:bg-white/10 rounded-full transition-colors">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
                 </button>
                 <div class="w-12 h-12 bg-white/10 rounded-2xl mx-auto flex items-center justify-center mb-3 backdrop-blur-md">
                     <svg class="w-6 h-6 text-indigo-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
                 </div>
                 <h3 class="text-xl font-extrabold">Login Admin BGTK</h3>
-                <p class="text-xs text-indigo-200 mt-1">Masukkan Email Pegawai BGTK Sumbar & Password Admin</p>
+                <p class="text-xs text-indigo-200 mt-1">Masukkan Email Pegawai BGTK Sumbar &amp; Password Admin</p>
             </div>
 
             <form onsubmit="handleAdminLogin(event)" class="p-6 space-y-4">
@@ -167,715 +156,23 @@
 
                 <div>
                     <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1">Password Admin <span class="text-rose-500">*</span></label>
-                    <input type="password" id="loginAdminPassword" required placeholder="Masukkan password admin (adminbgtk)" class="w-full border border-slate-300 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all">
+                    <input type="password" id="loginAdminPassword" required placeholder="Masukkan password admin" class="w-full border border-slate-300 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all">
                 </div>
 
                 <div id="loginAuthError" class="hidden p-3 rounded-xl bg-rose-50 text-rose-700 text-xs font-semibold"></div>
 
+                <div id="loginLoading" class="hidden flex items-center gap-2 text-xs text-slate-500 font-medium">
+                    <div class="spinner"></div><span>Memverifikasi email...</span>
+                </div>
+
                 <div class="pt-2 flex gap-3">
-                    <button type="button" onclick="closeAdminAuthModal()" class="w-1/3 py-2.5 rounded-xl border border-slate-300 text-slate-700 text-xs font-bold hover:bg-slate-50 transition-colors">Batal</button>
-                    <button type="submit" id="btnLoginSubmit" class="w-2/3 py-2.5 rounded-xl bg-indigo-600 text-white text-xs font-bold hover:bg-indigo-700 transition-colors shadow-md shadow-indigo-600/20">Masuk ke Dasbor</button>
+                    <button type="button" onclick="closeAdminLoginModal()" class="w-1/3 py-2.5 rounded-xl border border-slate-300 text-slate-700 text-xs font-bold hover:bg-slate-50 transition-colors">Batal</button>
+                    <button type="submit" id="btnLoginSubmit" class="w-2/3 py-2.5 rounded-xl bg-indigo-600 text-white text-xs font-bold hover:bg-indigo-700 transition-colors shadow-md shadow-indigo-600/20">Masuk ke Dasbor →</button>
                 </div>
             </form>
         </div>
     </div>
 
-
-    <!-- ADMIN DASHBOARD VIEW (VIEW-ADMIN) -->
-    <div id="view-admin" class="hidden fixed inset-0 z-50 bg-slate-50 flex overflow-hidden fade-in">
-        
-        <!-- SIDEBAR ADMIN -->
-        <div id="adminSidebarOverlay" class="fixed inset-0 bg-slate-900/50 z-40 hidden md:hidden" onclick="toggleSidebar()"></div>
-        <aside id="adminSidebar" class="w-64 bg-white border-r border-slate-200/80 flex flex-col shadow-xs flex-shrink-0 absolute md:relative z-50 h-full transition-transform transform -translate-x-full md:translate-x-0">
-            <!-- Header Sidebar -->
-            <div class="h-20 flex items-center justify-between px-5 border-b border-slate-100 bg-slate-50/50">
-                <a href="index.html" class="flex items-center gap-3 hover:opacity-85 transition-opacity min-w-0">
-                    <img src="./logo.png" alt="Logo" class="h-10 w-auto object-contain">
-                    <div class="truncate">
-                        <span class="text-xs font-black text-slate-800 tracking-tight block leading-tight">PM-KKA BGTK Sumbar</span>
-                        <span class="text-[10px] font-bold text-emerald-700 block mt-0.5">Admin Dashboard</span>
-                    </div>
-                </a>
-                <button onclick="toggleSidebar()" class="md:hidden text-slate-400 hover:text-slate-700 p-1 focus:outline-none">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                </button>
-            </div>
-            
-            <!-- Navigation Items Container -->
-            <div class="p-4 flex-1 overflow-y-auto custom-sidebar-scroll space-y-6">
-                <!-- Group 1: BGTK SUMATERA BARAT -->
-                <div>
-                    <div class="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest px-3 mb-2">BGTK SUMATERA BARAT</div>
-                    <nav class="space-y-1">
-                        <button onclick="switchAdminView('mode0')" id="btnMode0" class="sidebar-btn flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-100/80 hover:text-slate-900 transition-all duration-200 w-full text-left relative group border-l-4 border-transparent">
-                            <svg class="w-5 h-5 flex-shrink-0 text-slate-400 group-hover:text-slate-600 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
-                            <span>Dashboard Utama</span>
-                        </button>
-                    </nav>
-                </div>
-                
-                <!-- Group 2: DATA MASTER INTERNAL & KOMBEL (MOVED TO TOP) -->
-                <div class="pt-4 border-t border-slate-100">
-                    <div class="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest px-3 mb-2">DATA MASTER UTAMA</div>
-                    <nav class="space-y-1">
-                        <button onclick="switchAdminView('modeKombel')" id="btnModeKombel" class="sidebar-btn flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-100/80 hover:text-slate-900 transition-all duration-200 w-full text-left group border-l-4 border-transparent">
-                            <div class="flex items-center gap-3">
-                                <svg class="w-5 h-5 flex-shrink-0 text-purple-500 group-hover:text-purple-600 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
-                                <span>Master Kombel</span>
-                            </div>
-                            <span class="text-[10px] bg-purple-100 text-purple-800 font-extrabold px-2 py-0.5 rounded-full border border-purple-200">1.804</span>
-                        </button>
-                        <button onclick="switchAdminView('modePegawai')" id="btnModePegawai" class="sidebar-btn flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-100/80 hover:text-slate-900 transition-all duration-200 w-full text-left group border-l-4 border-transparent">
-                            <div class="flex items-center gap-3">
-                                <svg class="w-5 h-5 flex-shrink-0 text-emerald-500 group-hover:text-emerald-600 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1v1H9V7zm5 0h1v1h-1V7zm-5 4h1v1H9v-1zm5 0h1v1h-1v-1zm-5 4h1v1H9v-1zm5 0h1v1h-1v-1z"/></svg>
-                                <span>Master Pegawai</span>
-                            </div>
-                            <span class="text-[10px] bg-emerald-100 text-emerald-800 font-extrabold px-2 py-0.5 rounded-full border border-emerald-200">57</span>
-                        </button>
-                    </nav>
-                </div>
-
-                <!-- Group 3: PROGRAM SEKOLAH MODEL -->
-                <div class="pt-4 border-t border-slate-100">
-                    <div class="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest px-3 mb-2">SEKOLAH MODEL</div>
-                    <nav class="space-y-1">
-                        <button onclick="toggleSubmenu('submenuFasil')" class="flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-100/80 hover:text-slate-900 transition-all duration-200 w-full text-left group">
-                            <div class="flex items-center gap-3">
-                                <svg class="w-5 h-5 flex-shrink-0 text-slate-400 group-hover:text-slate-600 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
-                                <span>Manajemen Fasilitator</span>
-                            </div>
-                            <svg class="w-4 h-4 text-slate-400 transition-transform duration-200" id="icon_submenuFasil" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
-                        </button>
-                        <div id="submenuFasil" class="hidden pl-8 pr-2 space-y-1 mt-1">
-                            <button onclick="switchAdminView('mode3')" id="btnMode3" class="sidebar-btn flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium text-slate-500 hover:text-slate-900 hover:bg-slate-100/80 transition-all duration-200 w-full text-left border-l-2 border-transparent">
-                                <span>Data Fasilitator</span>
-                            </button>
-                            <button onclick="switchAdminView('mode4')" id="btnMode4" class="sidebar-btn flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium text-slate-500 hover:text-slate-900 hover:bg-slate-100/80 transition-all duration-200 w-full text-left border-l-2 border-transparent">
-                                <span>Jadwal & Laporan</span>
-                            </button>
-                        </div>
-
-                        <button onclick="toggleSubmenu('submenuSekolah')" class="flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-100/80 hover:text-slate-900 transition-all duration-200 w-full text-left group">
-                            <div class="flex items-center gap-3">
-                                <svg class="w-5 h-5 flex-shrink-0 text-slate-400 group-hover:text-slate-600 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1v1H9V7zm5 0h1v1h-1V7zm-5 4h1v1H9v-1zm5 0h1v1h-1v-1zm-5 4h1v1H9v-1zm5 0h1v1h-1v-1z"/></svg>
-                                <span>Sekolah Model</span>
-                            </div>
-                            <svg class="w-4 h-4 text-slate-400 transition-transform duration-200" id="icon_submenuSekolah" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
-                        </button>
-                        <div id="submenuSekolah" class="hidden pl-8 pr-2 space-y-1 mt-1">
-                            <button onclick="switchAdminView('mode7')" id="btnMode7" class="sidebar-btn flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium text-slate-500 hover:text-slate-900 hover:bg-slate-100/80 transition-all duration-200 w-full text-left border-l-2 border-transparent">
-                                <span>Data Kunjungan</span>
-                            </button>
-                            <button onclick="switchAdminView('mode5')" id="btnMode5" class="sidebar-btn flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium text-slate-500 hover:text-slate-900 hover:bg-slate-100/80 transition-all duration-200 w-full text-left border-l-2 border-transparent">
-                                <span>Pilih Pendamping</span>
-                            </button>
-                        </div>
-                    </nav>
-                </div>
-
-                <!-- Group 4: VERIFIKASI PESERTA -->
-                <div class="pt-4 border-t border-slate-100">
-                    <div class="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest px-3 mb-2">VERIFIKASI PESERTA</div>
-                    <nav class="space-y-1">
-                        <button onclick="switchAdminView('mode1')" id="btnMode1" class="sidebar-btn flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-100/80 hover:text-slate-900 transition-all duration-200 w-full text-left group border-l-4 border-transparent">
-                            <svg class="w-5 h-5 flex-shrink-0 text-slate-400 group-hover:text-slate-600 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                            <span>Progres Verifikasi</span>
-                        </button>
-                        <button onclick="switchAdminView('mode2')" id="btnMode2" class="sidebar-btn flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-100/80 hover:text-slate-900 transition-all duration-200 w-full text-left group border-l-4 border-transparent">
-                            <svg class="w-5 h-5 flex-shrink-0 text-slate-400 group-hover:text-slate-600 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-                            <span>Rencana Pengkelasan</span>
-                        </button>
-                    </nav>
-                </div>
-            </div>
-            
-            <!-- USER FOOTER CARD -->
-            <div class="p-3.5 border-t border-slate-100 bg-slate-50/50">
-                <div class="bg-white border border-slate-200/80 rounded-2xl p-3 shadow-2xs">
-                    <div class="flex items-center gap-3">
-                        <div class="w-9 h-9 rounded-full bg-emerald-100 text-emerald-800 font-extrabold flex items-center justify-center text-xs shadow-inner flex-shrink-0 border border-emerald-200" id="adminUserAvatar">
-                            <span id="adminUserInitial">P</span>
-                        </div>
-                        <div class="min-w-0 flex-1">
-                            <div class="text-[10px] uppercase font-bold text-slate-400 tracking-wider">Logged in as</div>
-                            <div class="text-xs font-bold text-slate-800 truncate" id="adminActiveUserEmail">Pegawai BGTK</div>
-                        </div>
-                    </div>
-
-                    <button onclick="logoutAdmin()" class="mt-2.5 w-full flex items-center justify-center gap-2 px-3 py-2 rounded-xl text-xs font-bold text-rose-600 bg-rose-50/60 hover:bg-rose-100/80 hover:text-rose-700 transition-all duration-200 border border-rose-200/70 group">
-                        <svg class="w-4 h-4 text-rose-500 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
-                        <span>Log out Admin</span>
-                    </button>
-                </div>
-            </div>
-        </aside>
-
-        <!-- MAIN ADMIN CONTENT AREA -->
-        <main class="flex-1 flex flex-col min-w-0">
-            <header class="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-4 md:px-8 flex-shrink-0">
-                <div class="flex items-center">
-                    <button onclick="toggleSidebar()" class="md:hidden mr-4 text-slate-600 hover:text-slate-900 focus:outline-none">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
-                    </button>
-                    <h2 class="text-lg font-bold text-slate-800" id="adminPageTitle">Dashboard Admin</h2>
-                </div>
-                <img src="./logo.png" alt="Tut Wuri Handayani" class="h-8 md:h-10 object-contain">
-            </header>
-            
-            <div class="flex-1 overflow-auto p-6 md:p-8">
-
-                <!-- MODE 0: DASHBOARD UTAMA (REKAP PENJADWALAN KUNJUNGAN & PLOTING FASIL) -->
-                <div id="viewMode0" class="fade-in space-y-8">
-                    <!-- Title Header -->
-                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white p-6 rounded-2xl border border-slate-200/80 shadow-2xs">
-                        <div>
-                            <span class="inline-block px-3 py-1 bg-emerald-100 text-emerald-800 rounded-full text-xs font-extrabold uppercase tracking-wider mb-2">Monitoring Realtime PM-KKA</span>
-                            <h2 class="text-2xl font-black text-slate-900">Rekap Penjadwalan & Ploting Fasilitator</h2>
-                            <p class="text-sm text-slate-500 mt-1">Ringkasan status penugasan pendamping terhadap Komunitas Belajar & Sekolah Model.</p>
-                        </div>
-                        <button onclick="loadDashboardUtamaData()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-4 py-2 rounded-xl text-xs font-bold transition-colors flex items-center gap-2">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
-                            <span>Refresh Data</span>
-                        </button>
-                    </div>
-
-                    <!-- Stat Cards (4 Cards Grid - Clickable for Detail Modals) -->
-                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-                        <!-- Card 1: Kombel Sasaran Ploting -->
-                        <div onclick="openModalDashKombelSasaran()" class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-2xs relative overflow-hidden flex flex-col justify-between cursor-pointer hover:shadow-md hover:-translate-y-1 transition-all duration-200 group">
-                            <div class="flex items-center justify-between mb-3">
-                                <span class="text-xs font-extrabold text-purple-700 uppercase tracking-wider">Kombel Sasaran (54)</span>
-                                <div class="p-2 bg-purple-100 text-purple-700 rounded-xl group-hover:bg-purple-600 group-hover:text-white transition-colors">
-                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
-                                </div>
-                            </div>
-                            <div>
-                                <div class="text-2xl font-black text-slate-800" id="dash_kombel_plotted_val">0 / 54</div>
-                                <div class="text-xs text-slate-500 font-medium mt-1" id="dash_kombel_plotted_sub">Komunitas Belajar Terplotting</div>
-                            </div>
-                            <div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between">
-                                <div class="w-2/3 bg-slate-100 rounded-full h-2 overflow-hidden">
-                                    <div class="bg-purple-600 h-2 rounded-full transition-all duration-500" id="dash_kombel_bar" style="width: 0%"></div>
-                                </div>
-                                <span class="text-[10px] font-bold text-purple-700 flex items-center gap-0.5 group-hover:underline">Detail ↗</span>
-                            </div>
-                        </div>
-
-                        <!-- Card 2: Sekolah Model Ploting -->
-                        <div onclick="openModalDashSekolahModel()" class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-2xs relative overflow-hidden flex flex-col justify-between cursor-pointer hover:shadow-md hover:-translate-y-1 transition-all duration-200 group">
-                            <div class="flex items-center justify-between mb-3">
-                                <span class="text-xs font-extrabold text-indigo-700 uppercase tracking-wider">Sekolah Model (25)</span>
-                                <div class="p-2 bg-indigo-100 text-indigo-700 rounded-xl group-hover:bg-indigo-600 group-hover:text-white transition-colors">
-                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1v1H9V7zm5 0h1v1h-1V7zm-5 4h1v1H9v-1zm5 0h1v1h-1v-1zm-5 4h1v1H9v-1zm5 0h1v1h-1v-1z"/></svg>
-                                </div>
-                            </div>
-                            <div>
-                                <div class="text-2xl font-black text-slate-800" id="dash_sekolah_plotted_val">0 / 25</div>
-                                <div class="text-xs text-slate-500 font-medium mt-1" id="dash_sekolah_plotted_sub">Sekolah Diberi Pendamping</div>
-                            </div>
-                            <div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between">
-                                <div class="w-2/3 bg-slate-100 rounded-full h-2 overflow-hidden">
-                                    <div class="bg-indigo-600 h-2 rounded-full transition-all duration-500" id="dash_sekolah_bar" style="width: 0%"></div>
-                                </div>
-                                <span class="text-[10px] font-bold text-indigo-700 flex items-center gap-0.5 group-hover:underline">Detail ↗</span>
-                            </div>
-                        </div>
-
-                        <!-- Card 3: Total Fasilitator -->
-                        <div onclick="openModalDashFasilitator()" class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-2xs relative overflow-hidden flex flex-col justify-between cursor-pointer hover:shadow-md hover:-translate-y-1 transition-all duration-200 group">
-                            <div class="flex items-center justify-between mb-3">
-                                <span class="text-xs font-extrabold text-emerald-700 uppercase tracking-wider">Total Fasilitator</span>
-                                <div class="p-2 bg-emerald-100 text-emerald-700 rounded-xl group-hover:bg-emerald-600 group-hover:text-white transition-colors">
-                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
-                                </div>
-                            </div>
-                            <div>
-                                <div class="text-2xl font-black text-slate-800" id="dash_total_fasil_val">0</div>
-                                <div class="text-xs text-slate-500 font-medium mt-1">Fasilitator Terdaftar</div>
-                            </div>
-                            <div class="mt-4 pt-3 border-t border-slate-100 text-[11px] text-slate-500 font-semibold flex justify-between items-center">
-                                <div class="flex gap-2">
-                                    <span id="dash_dual_fasil_count">Dual: 0</span>
-                                    <span id="dash_single_fasil_count">Single: 0</span>
-                                </div>
-                                <span class="text-[10px] font-bold text-emerald-700 group-hover:underline">Detail ↗</span>
-                            </div>
-                        </div>
-
-                        <!-- Card 4: Kunjungan Terjadwal -->
-                        <div onclick="openModalDashKunjungan()" class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-2xs relative overflow-hidden flex flex-col justify-between cursor-pointer hover:shadow-md hover:-translate-y-1 transition-all duration-200 group">
-                            <div class="flex items-center justify-between mb-3">
-                                <span class="text-xs font-extrabold text-amber-700 uppercase tracking-wider">Jadwal Kunjungan</span>
-                                <div class="p-2 bg-amber-100 text-amber-700 rounded-xl group-hover:bg-amber-600 group-hover:text-white transition-colors">
-                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-                                </div>
-                            </div>
-                            <div>
-                                <div class="text-2xl font-black text-slate-800" id="dash_kunjungan_count">0</div>
-                                <div class="text-xs text-slate-500 font-medium mt-1">Kunjungan Terkonfirmasi</div>
-                            </div>
-                            <div class="mt-4 pt-3 border-t border-slate-100 text-[11px] text-amber-700 font-bold flex justify-between items-center">
-                                <span>Kunjungan Tahap 1, 2, 3</span>
-                                <span class="text-[10px] font-bold text-amber-700 group-hover:underline">Detail ↗</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Live Tables Grid (2 Tables Side by Side) -->
-                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                        <!-- Table 1: Progress Ploting Fasilitator terhadap Kombel Sasaran -->
-                        <div class="bg-white rounded-2xl border border-slate-200/80 shadow-2xs overflow-hidden flex flex-col">
-                            <div class="p-5 border-b border-slate-100 bg-purple-50/50 flex justify-between items-center">
-                                <div>
-                                    <h3 class="font-bold text-slate-900 text-base">Ploting Fasilitator vs Kombel Sasaran</h3>
-                                    <p class="text-xs text-slate-500 mt-0.5">Daftar Kombel Sasaran PMKKA & Penugasan Fasilitator</p>
-                                </div>
-                                <span class="px-2.5 py-1 rounded-full text-xs font-extrabold bg-purple-100 text-purple-800">54 Sasaran</span>
-                            </div>
-                            <div class="overflow-x-auto flex-1 max-h-96">
-                                <table class="w-full text-left text-xs whitespace-nowrap">
-                                    <thead class="bg-slate-50 text-slate-500 border-b border-slate-100 sticky top-0">
-                                        <tr>
-                                            <th class="px-4 py-3">Nama Kombel</th>
-                                            <th class="px-4 py-3">Kab / Kota</th>
-                                            <th class="px-4 py-3">Fasilitator Pendamping</th>
-                                            <th class="px-4 py-3 text-center">Status</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="tableDashKombelBody" class="divide-y divide-slate-100">
-                                        <tr><td colspan="4" class="px-4 py-8 text-center text-slate-400"><div class="spinner mx-auto mb-2"></div>Memuat progres Kombel...</td></tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-
-                        <!-- Table 2: Progress Ploting Fasilitator terhadap Sekolah Model -->
-                        <div class="bg-white rounded-2xl border border-slate-200/80 shadow-2xs overflow-hidden flex flex-col">
-                            <div class="p-5 border-b border-slate-100 bg-indigo-50/50 flex justify-between items-center">
-                                <div>
-                                    <h3 class="font-bold text-slate-900 text-base">Ploting Fasilitator vs Sekolah Model</h3>
-                                    <p class="text-xs text-slate-500 mt-0.5">Daftar 25 Sekolah Model & Fasilitator Dampingan</p>
-                                </div>
-                                <span class="px-2.5 py-1 rounded-full text-xs font-extrabold bg-indigo-100 text-indigo-800">25 Sekolah</span>
-                            </div>
-                            <div class="overflow-x-auto flex-1 max-h-96">
-                                <table class="w-full text-left text-xs whitespace-nowrap">
-                                    <thead class="bg-slate-50 text-slate-500 border-b border-slate-100 sticky top-0">
-                                        <tr>
-                                            <th class="px-4 py-3">Sekolah Model</th>
-                                            <th class="px-4 py-3">Kab / Kota</th>
-                                            <th class="px-4 py-3">Fasilitator Dampingan</th>
-                                            <th class="px-4 py-3 text-center">Status</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="tableDashSekolahBody" class="divide-y divide-slate-100">
-                                        <tr><td colspan="4" class="px-4 py-8 text-center text-slate-400"><div class="spinner mx-auto mb-2"></div>Memuat progres Sekolah Model...</td></tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- MODE 1: PROGRESS SEKOLAH -->
-                <div id="viewMode1" class="hidden fade-in">
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-                        <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm flex items-center">
-                            <div class="p-3 bg-blue-100 text-blue-600 rounded-lg">
-                                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1v1H9V7zm5 0h1v1h-1V7zm-5 4h1v1H9v-1zm5 0h1v1h-1v-1zm-5 4h1v1H9v-1zm5 0h1v1h-1v-1z"/></svg>
-                            </div>
-                            <div class="ml-4">
-                                <h3 class="text-sm font-medium text-slate-500">Total Sekolah</h3>
-                                <p class="text-2xl font-bold text-slate-800" id="dash_total_schools">0</p>
-                            </div>
-                        </div>
-                        <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm flex items-center">
-                            <div class="p-3 bg-green-100 text-green-600 rounded-lg">
-                                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                            </div>
-                            <div class="ml-4">
-                                <h3 class="text-sm font-medium text-slate-500">Selesai (100%)</h3>
-                                <p class="text-2xl font-bold text-slate-800" id="dash_selesai">0</p>
-                            </div>
-                        </div>
-                        <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm flex items-center">
-                            <div class="p-3 bg-amber-100 text-amber-600 rounded-lg">
-                                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                            </div>
-                            <div class="ml-4">
-                                <h3 class="text-sm font-medium text-slate-500">Sedang Proses</h3>
-                                <p class="text-2xl font-bold text-slate-800" id="dash_proses">0</p>
-                            </div>
-                        </div>
-                        <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm flex items-center">
-                            <div class="p-3 bg-red-100 text-red-600 rounded-lg">
-                                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                            </div>
-                            <div class="ml-4">
-                                <h3 class="text-sm font-medium text-slate-500">Belum Mulai</h3>
-                                <p class="text-2xl font-bold text-slate-800" id="dash_belum">0</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
-                        <div class="p-6 border-b border-slate-100 bg-slate-50/50 flex flex-col sm:flex-row gap-3 justify-between items-start sm:items-center">
-                            <h2 class="text-lg font-bold text-slate-800">Monitoring Progress Sekolah</h2>
-                            <select id="filterJenjang" onchange="renderMode1()" class="border-slate-300 rounded-lg text-sm px-3 py-2 shadow-sm">
-                                <option value="ALL">Semua Jenjang</option>
-                                <option value="PAUD">PAUD</option>
-                                <option value="SD">SD</option>
-                                <option value="SMP">SMP</option>
-                                <option value="SMA">SMA</option>
-                                <option value="SMK">SMK</option>
-                            </select>
-                        </div>
-                        <div class="flex space-x-2 border-b border-slate-200 px-6 pt-4 pb-0 overflow-x-auto">
-                            <button onclick="switchTabMode1('ps')" id="tab_mode1_ps" class="tab-btn-mode1 active px-4 py-2 border-b-2 font-medium text-sm border-indigo-600 text-indigo-600">Progress Pengawas</button>
-                            <button onclick="switchTabMode1('ks')" id="tab_mode1_ks" class="tab-btn-mode1 px-4 py-2 border-b-2 font-medium text-sm border-transparent text-slate-500">Progress Kepala Sekolah</button>
-                            <button onclick="switchTabMode1('guru')" id="tab_mode1_guru" class="tab-btn-mode1 px-4 py-2 border-b-2 font-medium text-sm border-transparent text-slate-500">Progress Guru</button>
-                        </div>
-                        <div class="overflow-x-auto">
-                            <table class="w-full text-left text-sm whitespace-nowrap">
-                                <thead id="theadMode1" class="bg-slate-50 text-slate-500"></thead>
-                                <tbody id="tableMode1" class="divide-y divide-slate-100">
-                                    <tr><td colspan="4" class="px-6 py-8 text-center"><div class="spinner mx-auto mb-2"></div>Memuat data...</td></tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- MODE 2: RENCANA PENGKELASAN -->
-                <div id="viewMode2" class="hidden fade-in">
-                    <div class="flex space-x-2 border-b border-slate-200 mb-6 overflow-x-auto pb-2">
-                        <button onclick="switchTabMode2('ps')" id="tab_ps" class="tab-btn active px-4 py-2 border-b-2 font-medium text-sm border-indigo-600 text-indigo-600">Kelas Pengawas</button>
-                        <button onclick="switchTabMode2('ks')" id="tab_ks" class="tab-btn px-4 py-2 border-b-2 font-medium text-sm border-transparent text-slate-500">Kelas Kepala Sekolah</button>
-                        <button onclick="switchTabMode2('guru_paud')" id="tab_guru_paud" class="tab-btn px-4 py-2 border-b-2 font-medium text-sm border-transparent text-slate-500">Guru PAUD</button>
-                        <button onclick="switchTabMode2('guru_sd')" id="tab_guru_sd" class="tab-btn px-4 py-2 border-b-2 font-medium text-sm border-transparent text-slate-500">Guru SD</button>
-                        <button onclick="switchTabMode2('guru_smp')" id="tab_guru_smp" class="tab-btn px-4 py-2 border-b-2 font-medium text-sm border-transparent text-slate-500">Guru SMP</button>
-                        <button onclick="switchTabMode2('guru_sma')" id="tab_guru_sma" class="tab-btn px-4 py-2 border-b-2 font-medium text-sm border-transparent text-slate-500">Guru SMA</button>
-                        <button onclick="switchTabMode2('guru_smk')" id="tab_guru_smk" class="tab-btn px-4 py-2 border-b-2 font-medium text-sm border-transparent text-slate-500">Guru SMK</button>
-                    </div>
-
-                    <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
-                        <div class="p-4 border-b border-slate-100 bg-slate-50/50 flex justify-between items-center">
-                            <h2 id="mode2TableTitle" class="text-md font-bold text-slate-800">Data Kelas Pengawas</h2>
-                        </div>
-                        <div class="overflow-x-auto w-full">
-                            <table class="w-max min-w-full text-left text-sm whitespace-nowrap">
-                                <thead class="bg-slate-50 text-slate-500">
-                                    <tr id="tableMode2Head"></tr>
-                                </thead>
-                                <tbody id="tableMode2Body" class="divide-y divide-slate-100">
-                                    <tr><td class="px-6 py-8 text-center"><div class="spinner mx-auto mb-2"></div>Memuat data...</td></tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- MODE 3: MANAJEMEN FASILITATOR -->
-                <div id="viewMode3" class="hidden fade-in">
-                    <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-6 mb-6">
-                        <h2 class="text-lg font-bold text-slate-800 mb-4">Tambah Fasilitator Baru</h2>
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            <input type="text" id="inputFasilNama" placeholder="Nama Lengkap & Gelar" class="border-slate-300 rounded-lg px-4 py-2 border w-full text-sm">
-                            <input type="number" id="inputFasilHp" placeholder="No HP" class="border-slate-300 rounded-lg px-4 py-2 border w-full text-sm">
-                            <input type="text" id="inputFasilNip" placeholder="NIP (Opsional)" class="border-slate-300 rounded-lg px-4 py-2 border w-full text-sm">
-                            <input type="text" id="inputFasilPangkat" placeholder="Pangkat/Golongan (cth: Pembina IV/a)" class="border-slate-300 rounded-lg px-4 py-2 border w-full text-sm">
-                            <input type="text" id="inputFasilJabatan" placeholder="Jabatan (cth: Widyaprada Ahli Madya)" class="sm:col-span-2 border-slate-300 rounded-lg px-4 py-2 border w-full text-sm">
-                        </div>
-                        <button onclick="tambahFasil()" class="mt-4 bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2 rounded-lg font-bold text-sm transition-colors">Simpan Fasilitator</button>
-                    </div>
-
-                    <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
-                        <div class="p-4 border-b border-slate-100 bg-slate-50/50 flex justify-between items-center">
-                            <h2 class="text-md font-bold text-slate-800">Daftar Fasilitator Terdaftar</h2>
-                        </div>
-                        <div class="p-4" id="listFasilContainer">
-                            <div class="text-center text-slate-500 py-4"><div class="spinner mx-auto mb-2"></div>Memuat data fasilitator...</div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- MODE 4: JADWAL FASILITATOR & MATRIKS PENDAMPINGAN -->
-                <div id="viewMode4" class="hidden fade-in space-y-6">
-                    <!-- Tab Switcher (Tabel Rekap vs Matriks Pendampingan) -->
-                    <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-2xs flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-                        <div>
-                            <h2 class="text-xl font-bold text-slate-900">Rekap Jadwal & Laporan Fasilitator</h2>
-                            <p class="text-xs text-slate-500 mt-0.5">Pemantauan progres pelaksanaan kunjungan dan laporan fasilitator.</p>
-                        </div>
-                        <div class="flex bg-slate-100 p-1 rounded-xl text-xs font-bold w-full sm:w-auto">
-                            <button onclick="switchMode4SubTab('tabel')" id="subtabMode4Tabel" class="px-4 py-2 rounded-lg transition-all bg-white text-slate-900 shadow-2xs">📋 Tabel Rekap</button>
-                            <button onclick="switchMode4SubTab('matriks')" id="subtabMode4Matriks" class="px-4 py-2 rounded-lg transition-all text-slate-600 hover:text-slate-900">📊 Matriks Pendampingan</button>
-                        </div>
-                    </div>
-
-                    <!-- Subtab 1: Tabel Rekap -->
-                    <div id="mode4ViewTabel" class="bg-white rounded-2xl shadow-2xs border border-slate-200/80 overflow-hidden">
-                        <div class="p-4 border-b border-slate-100 bg-slate-50/50 flex flex-col sm:flex-row justify-between items-center gap-3">
-                            <input type="text" id="searchJadwalFasil" onkeyup="filterJadwalFasilData()" placeholder="Cari fasilitator atau sekolah..." class="w-full sm:w-72 px-3 py-2 bg-white border border-slate-200 rounded-xl text-xs focus:outline-none focus:border-emerald-500">
-                            <span class="text-xs text-slate-500 font-semibold" id="jadwalFasilCountBadge">0 Data</span>
-                        </div>
-                        <div class="p-4" id="listJadwalFasilContainer">
-                            <div class="text-center text-slate-500 py-4"><div class="spinner mx-auto mb-2"></div>Memuat jadwal...</div>
-                        </div>
-                    </div>
-
-                    <!-- Subtab 2: Matriks Pendampingan -->
-                    <div id="mode4ViewMatriks" class="hidden bg-white rounded-2xl shadow-2xs border border-slate-200/80 overflow-hidden">
-                        <div class="p-5 border-b border-slate-100 bg-slate-50/50 flex justify-between items-center">
-                            <div>
-                                <h3 class="font-bold text-slate-900 text-sm">Matriks Visual Pendampingan Fasilitator (Tahap 1 - 6)</h3>
-                                <p class="text-xs text-slate-500 mt-0.5">Status realtime seluruh tahap pendampingan per fasilitator & sekolah binaan.</p>
-                            </div>
-                            <div class="flex gap-2">
-                                <span class="px-2 py-1 bg-emerald-100 text-emerald-800 text-[10px] font-bold rounded">✓ Selesai</span>
-                                <span class="px-2 py-1 bg-blue-100 text-blue-800 text-[10px] font-bold rounded">📅 Terjadwal</span>
-                                <span class="px-2 py-1 bg-slate-100 text-slate-600 text-[10px] font-bold rounded">— Belum</span>
-                            </div>
-                        </div>
-                        <div class="overflow-x-auto p-4">
-                            <table class="w-full text-left text-xs whitespace-nowrap">
-                                <thead class="bg-slate-100 text-slate-700 font-bold border-b border-slate-200">
-                                    <tr>
-                                        <th class="px-4 py-3">Nama Fasilitator</th>
-                                        <th class="px-4 py-3">Sekolah Model Binaan</th>
-                                        <th class="px-2 py-3 text-center">Tahap 1</th>
-                                        <th class="px-2 py-3 text-center">Tahap 2</th>
-                                        <th class="px-2 py-3 text-center">Tahap 3</th>
-                                        <th class="px-2 py-3 text-center">Tahap 4</th>
-                                        <th class="px-2 py-3 text-center">Tahap 5</th>
-                                        <th class="px-2 py-3 text-center">Tahap 6</th>
-                                        <th class="px-4 py-3 text-center">Progres %</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="mode4MatriksBody" class="divide-y divide-slate-100">
-                                    <tr><td colspan="9" class="px-4 py-8 text-center text-slate-400"><div class="spinner mx-auto mb-2"></div>Memuat matriks...</td></tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- MODE 5: ASSIGN SEKOLAH -->
-                <div id="viewMode5" class="hidden fade-in space-y-6">
-                    <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-2xs flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-                        <div>
-                            <h2 class="text-xl font-bold text-slate-900">Assign Pendamping Sekolah Model</h2>
-                            <p class="text-xs text-slate-500 mt-1">Penugasan Fasilitator BGTK Sumbar untuk mendampingi 25 Sekolah Model.</p>
-                        </div>
-                        <button onclick="loadManajemenSekolahData()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-4 py-2 rounded-xl text-xs font-bold transition-colors">Refresh Data</button>
-                    </div>
-
-                    <div class="bg-white rounded-2xl shadow-2xs border border-slate-200/80 overflow-hidden">
-                        <div class="p-4 border-b border-slate-100 bg-slate-50/50 flex justify-between items-center">
-                            <input type="text" id="searchAssignSekolah" onkeyup="filterAssignSekolahTable()" placeholder="Cari nama sekolah atau NPSN..." class="w-full sm:w-72 px-3 py-2 bg-white border border-slate-200 rounded-xl text-xs focus:outline-none focus:border-emerald-500">
-                        </div>
-                        <div class="p-4 overflow-x-auto" id="listManajemenSekolahContainer">
-                            <div class="text-center text-slate-500 py-4"><div class="spinner mx-auto mb-2"></div>Memuat data...</div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- MODE 7: DATA KUNJUNGAN -->
-                <div id="viewMode7" class="hidden fade-in space-y-6">
-                    <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-2xs flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-                        <div>
-                            <h2 class="text-xl font-bold text-slate-900">Jadwal Kunjungan Semua Sekolah</h2>
-                            <p class="text-xs text-slate-500 mt-1">Rekap data kunjungan pendampingan fasilitator ke seluruh Sekolah Model.</p>
-                        </div>
-                        <button onclick="loadDataKunjunganData()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-4 py-2 rounded-xl text-xs font-bold transition-colors">Refresh Data</button>
-                    </div>
-
-                    <div class="bg-white rounded-2xl shadow-2xs border border-slate-200/80 overflow-hidden">
-                        <div class="p-4 border-b border-slate-100 bg-slate-50/50 flex justify-between items-center">
-                            <input type="text" id="searchDataKunjungan" onkeyup="filterDataKunjunganTable()" placeholder="Cari sekolah, wilayah, atau fasilitator..." class="w-full sm:w-72 px-3 py-2 bg-white border border-slate-200 rounded-xl text-xs focus:outline-none focus:border-emerald-500">
-                        </div>
-                        <div class="p-4 overflow-x-auto" id="listDataKunjunganContainer">
-                            <div class="text-center text-slate-500 py-4"><div class="spinner mx-auto mb-2"></div>Memuat data...</div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- MODE 8: RENTANG WAKTU -->
-                <div id="viewMode8" class="hidden fade-in">
-                    <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
-                        <div class="p-4 border-b border-slate-100 bg-slate-50/50 flex justify-between items-center">
-                            <h2 class="text-md font-bold text-slate-800">Pengaturan Rentang Waktu Kunjungan</h2>
-                            <button onclick="simpanSettingJadwal()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg font-bold text-sm shadow-sm transition-colors">Simpan Pengaturan</button>
-                        </div>
-                        <div class="p-6">
-                            <div class="bg-indigo-50 text-indigo-800 text-sm p-4 rounded-lg mb-6">
-                                Tetapkan rentang tanggal (Mulai s.d Selesai) untuk masing-masing tahap kunjungan.
-                            </div>
-                            <div class="space-y-4 max-w-3xl" id="settingJadwalContainer"></div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- MODE KOMBEL (1.804) -->
-                <div id="viewModeKombel" class="hidden fade-in">
-                    <div class="bg-gradient-to-r from-purple-800 to-indigo-900 rounded-2xl shadow-md p-6 text-white mb-6">
-                        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-                            <div>
-                                <span class="inline-block px-3 py-1 bg-white/20 backdrop-blur-md rounded-full text-xs font-bold text-purple-100 uppercase tracking-wider mb-2">BGTK Sumatera Barat</span>
-                                <h1 class="text-2xl font-black">Data Master Komunitas Belajar (Kombel)</h1>
-                                <p class="text-sm text-purple-200 mt-1">Kelola 1.804 Komunitas Belajar & pilih 54 Kombel Sasaran Pendampingan PMKKA.</p>
-                            </div>
-                        </div>
-
-                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-6 pt-6 border-t border-white/10">
-                            <div class="bg-white/10 backdrop-blur-sm rounded-xl p-4">
-                                <div class="text-xs text-purple-200 uppercase font-semibold">Total Komunitas Belajar</div>
-                                <div class="text-2xl font-black mt-1" id="statKombelTotal">1.804</div>
-                            </div>
-                            <div class="bg-amber-400/20 backdrop-blur-sm border border-amber-300/30 rounded-xl p-4">
-                                <div class="text-xs text-amber-200 uppercase font-semibold">Kombel Sasaran PMKKA</div>
-                                <div class="text-2xl font-black text-amber-300 mt-1" id="statKombelSasaran">0 / 54</div>
-                            </div>
-                            <div class="bg-white/10 backdrop-blur-sm rounded-xl p-4">
-                                <div class="text-xs text-purple-200 uppercase font-semibold">Kabupaten / Kota</div>
-                                <div class="text-2xl font-black mt-1">19 Wilayah</div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-4 mb-6 flex flex-col md:flex-row gap-4 justify-between items-center">
-                        <div class="relative w-full md:w-80">
-                            <input type="text" id="searchKombel" onkeyup="filterKombelData()" placeholder="Cari Nama Kombel, Ketua, Instansi..." class="w-full pl-10 pr-4 py-2 border border-slate-300 rounded-xl text-sm focus:ring-purple-500 focus:border-purple-500">
-                            <svg class="w-4 h-4 text-slate-400 absolute left-3.5 top-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
-                        </div>
-                        <div class="flex flex-wrap items-center gap-3 w-full md:w-auto">
-                            <select id="filterKabKombel" onchange="filterKombelData()" class="border-slate-300 rounded-xl text-sm px-3 py-2 bg-slate-50">
-                                <option value="ALL">Semua Kab / Kota (19)</option>
-                            </select>
-                            <select id="filterStatusSasaran" onchange="filterKombelData()" class="border-slate-300 rounded-xl text-sm px-3 py-2 bg-slate-50 font-semibold text-slate-700">
-                                <option value="ALL">Semua Data (1.804)</option>
-                                <option value="SASARAN">⭐ Hanya 54 Sasaran PMKKA</option>
-                                <option value="NON_SASARAN">Belum Terpilih</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
-                        <div class="overflow-x-auto">
-                            <table class="w-full text-left text-sm whitespace-nowrap">
-                                <thead class="bg-slate-50 text-slate-500 border-b border-slate-200">
-                                    <tr>
-                                        <th class="px-4 py-3 text-center w-12">No</th>
-                                        <th class="px-4 py-3">Nama Komunitas Belajar</th>
-                                        <th class="px-4 py-3">Kabupaten / Kota & Kec</th>
-                                        <th class="px-4 py-3">Ketua & Kontak</th>
-                                        <th class="px-4 py-3 text-center">Anggota</th>
-                                        <th class="px-4 py-3 text-center">Status Sasaran</th>
-                                        <th class="px-4 py-3 text-center">Aksi Sasaran</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="tableKombelBody" class="divide-y divide-slate-100">
-                                    <tr><td colspan="7" class="px-6 py-12 text-center text-slate-400"><div class="spinner mx-auto mb-2"></div>Memuat data Komunitas Belajar...</td></tr>
-                                </tbody>
-                            </table>
-                        </div>
-                        <div class="p-4 bg-slate-50 border-t border-slate-200 flex flex-col sm:flex-row justify-between items-center gap-3 text-xs text-slate-500" id="kombelPagination"></div>
-                    </div>
-                </div>
-
-                <!-- MODE PEGAWAI (57) -->
-                <div id="viewModePegawai" class="hidden fade-in">
-                    <div class="bg-gradient-to-r from-emerald-800 to-teal-900 rounded-2xl shadow-md p-6 text-white mb-6">
-                        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-                            <div>
-                                <span class="inline-block px-3 py-1 bg-white/20 backdrop-blur-md rounded-full text-xs font-bold text-emerald-100 uppercase tracking-wider mb-2">Balai GTK Provinsi Sumatera Barat</span>
-                                <h1 class="text-2xl font-black">Data Master Pegawai Internal</h1>
-                                <p class="text-sm text-emerald-200 mt-1">Kelola 57 data resmi Aparatur Sipil Negara & P3K Balai GTK Sumatera Barat.</p>
-                            </div>
-                        </div>
-
-                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-6 pt-6 border-t border-white/10">
-                            <div class="bg-white/10 backdrop-blur-sm rounded-xl p-4">
-                                <div class="text-xs text-emerald-200 uppercase font-semibold">Total Pegawai</div>
-                                <div class="text-2xl font-black mt-1" id="statPegawaiTotal">57</div>
-                            </div>
-                            <div class="bg-white/10 backdrop-blur-sm rounded-xl p-4">
-                                <div class="text-xs text-emerald-200 uppercase font-semibold">Widyaiswara / PTP / Fungsional</div>
-                                <div class="text-2xl font-black mt-1" id="statPegawaiFungsional">28</div>
-                            </div>
-                            <div class="bg-white/10 backdrop-blur-sm rounded-xl p-4">
-                                <div class="text-xs text-emerald-200 uppercase font-semibold">Satuan Kerja</div>
-                                <div class="text-2xl font-black mt-1">Balai GTK Sumbar</div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-4 mb-6 flex flex-col md:flex-row gap-4 justify-between items-center">
-                        <div class="relative w-full md:w-80">
-                            <input type="text" id="searchPegawai" onkeyup="filterPegawaiData()" placeholder="Cari Nama, NIP, Jabatan..." class="w-full pl-10 pr-4 py-2 border border-slate-300 rounded-xl text-sm focus:ring-emerald-500 focus:border-emerald-500">
-                            <svg class="w-4 h-4 text-slate-400 absolute left-3.5 top-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
-                        </div>
-                    </div>
-
-                    <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
-                        <div class="overflow-x-auto">
-                            <table class="w-full text-left text-sm whitespace-nowrap">
-                                <thead class="bg-slate-50 text-slate-500 border-b border-slate-200">
-                                    <tr>
-                                        <th class="px-4 py-3 text-center w-12">No</th>
-                                        <th class="px-4 py-3">Nama Pegawai & NIP</th>
-                                        <th class="px-4 py-3">Jabatan</th>
-                                        <th class="px-4 py-3">Pangkat / Golongan</th>
-                                        <th class="px-4 py-3">Kontak & Email</th>
-                                        <th class="px-4 py-3 text-center">Status Pegawai</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="tablePegawaiBody" class="divide-y divide-slate-100">
-                                    <tr><td colspan="6" class="px-6 py-12 text-center text-slate-400"><div class="spinner mx-auto mb-2"></div>Memuat data Pegawai...</td></tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-        </main>
-    </div>
-
-    <!-- MODAL EDIT PROFIL ADMIN -->
-    <div id="modalEditProfilAdmin" class="hidden fixed inset-0 z-[120] bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
-        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden fade-in border border-slate-100">
-            <div class="px-6 py-4 border-b border-slate-100 bg-sky-50 flex justify-between items-center">
-                <h3 class="font-bold text-sky-900 text-base">Edit Profil Fasilitator</h3>
-                <button onclick="document.getElementById('modalEditProfilAdmin').classList.add('hidden')" class="text-slate-400 hover:text-slate-600 p-1.5"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg></button>
-            </div>
-            <div class="p-6 space-y-3">
-                <input type="hidden" id="editProfilAdminId">
-                <div>
-                    <label class="block text-xs font-bold uppercase text-slate-600 mb-1">Nama Fasilitator</label>
-                    <input type="text" id="editProfilAdminNama" readonly class="w-full border border-slate-200 rounded-xl px-4 py-2 text-sm bg-slate-50 text-slate-500 font-semibold">
-                </div>
-                <div>
-                    <label class="block text-xs font-bold uppercase text-slate-600 mb-1">NIP</label>
-                    <input type="text" id="editProfilAdminNip" placeholder="Masukkan NIP" class="w-full border border-slate-300 rounded-xl px-4 py-2 text-sm focus:ring-2 focus:ring-sky-500">
-                </div>
-                <div>
-                    <label class="block text-xs font-bold uppercase text-slate-600 mb-1">Pangkat / Golongan</label>
-                    <input type="text" id="editProfilAdminPangkat" placeholder="Contoh: Pembina / IV-a" class="w-full border border-slate-300 rounded-xl px-4 py-2 text-sm focus:ring-2 focus:ring-sky-500">
-                </div>
-                <div>
-                    <label class="block text-xs font-bold uppercase text-slate-600 mb-1">Jabatan</label>
-                    <input type="text" id="editProfilAdminJabatan" placeholder="Contoh: Widyaprada Ahli Madya" class="w-full border border-slate-300 rounded-xl px-4 py-2 text-sm focus:ring-2 focus:ring-sky-500">
-                </div>
-            </div>
-            <div class="px-6 py-4 bg-slate-50 border-t border-slate-100 flex gap-3 justify-end">
-                <button onclick="document.getElementById('modalEditProfilAdmin').classList.add('hidden')" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-bold">Batal</button>
-                <button onclick="simpanProfilAdmin()" class="px-6 py-2 bg-sky-600 hover:bg-sky-700 text-white rounded-xl text-xs font-bold shadow-sm">Simpan</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- MAIN JAVASCRIPT APP ENGINE -->
     <script>
         // ==========================================
         // FIREBASE CONFIG & INITIALIZATION
@@ -896,39 +193,35 @@
         const db = firebase.database();
 
         // ==========================================
-        // AUTHENTICATION & ROUTER ENGINE
+        // AUTH FUNCTIONS
         // ==========================================
         let gMasterPegawaiCache = {};
 
         window.addEventListener('DOMContentLoaded', async () => {
-            await loadMasterPegawaiCache();
-            checkAutoLoginSession();
-        });
-
-        async function loadMasterPegawaiCache() {
+            // If already logged in as admin, redirect straight to admin.html
+            const savedEmail = sessionStorage.getItem('admin_bgtk_email');
+            if (savedEmail) {
+                window.location.replace('admin.html');
+                return;
+            }
+            // Pre-load pegawai cache in background
             try {
                 const snap = await db.ref('master_pegawai').once('value');
                 gMasterPegawaiCache = snap.val() || {};
-            } catch(e) {
-                console.error("Gagal load master_pegawai cache:", e);
-            }
+            } catch(e) { console.warn("Tidak bisa preload master_pegawai:", e); }
+        });
+
+        function openAdminLoginModal() {
+            document.getElementById('modalAdminAuth').classList.remove('hidden');
+            setTimeout(() => document.getElementById('loginAdminEmail')?.focus(), 100);
         }
 
-        function checkAndOpenAdminModal() {
-            const savedEmail = sessionStorage.getItem('admin_bgtk_email');
-            if (savedEmail) {
-                showAdminDashboard(savedEmail);
-            } else {
-                const modal = document.getElementById('modalAdminAuth');
-                if (modal) modal.classList.remove('hidden');
-            }
-        }
-
-        function closeAdminAuthModal() {
-            const modal = document.getElementById('modalAdminAuth');
-            if (modal) modal.classList.add('hidden');
-            const err = document.getElementById('loginAuthError');
-            if (err) err.classList.add('hidden');
+        function closeAdminLoginModal() {
+            document.getElementById('modalAdminAuth').classList.add('hidden');
+            document.getElementById('loginAuthError').classList.add('hidden');
+            document.getElementById('loginLoading').classList.add('hidden');
+            document.getElementById('loginAdminEmail').value = '';
+            document.getElementById('loginAdminPassword').value = '';
         }
 
         async function handleAdminLogin(e) {
@@ -936,1432 +229,71 @@
             const emailInput = document.getElementById('loginAdminEmail').value.trim().toLowerCase();
             const passwordInput = document.getElementById('loginAdminPassword').value.trim();
             const errorEl = document.getElementById('loginAuthError');
+            const loadingEl = document.getElementById('loginLoading');
+            const submitBtn = document.getElementById('btnLoginSubmit');
 
-            if (errorEl) errorEl.classList.add('hidden');
+            errorEl.classList.add('hidden');
 
-            // 1. Password check (accepts adminbgtk or bgtksumbar2026)
+            // 1. Password check
             if (passwordInput !== 'adminbgtk' && passwordInput !== 'bgtksumbar2026') {
-                if (errorEl) {
-                    errorEl.textContent = '❌ Password Admin salah! Masukkan "adminbgtk".';
-                    errorEl.classList.remove('hidden');
-                }
+                errorEl.textContent = '❌ Password Admin salah! Masukkan "adminbgtk".';
+                errorEl.classList.remove('hidden');
                 return;
             }
 
             // 2. Email verification in master_pegawai
-            const pegawaiList = Object.values(gMasterPegawaiCache);
-            let matchedPegawai = pegawaiList.find(p => {
-                const pEmail1 = (p.email_dikbud || '').toLowerCase();
-                const pEmail2 = (p.email_pribadi || '').toLowerCase();
-                return emailInput === pEmail1 || emailInput === pEmail2 || (emailInput.includes('@') && (pEmail1.includes(emailInput) || pEmail2.includes(emailInput)));
-            });
+            loadingEl.classList.remove('hidden');
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Memverifikasi...';
 
-            // Fallback for primary admin emails
-            if (!matchedPegawai) {
-                if (emailInput.includes('bgtk') || emailInput.includes('admin') || pegawaiList.length === 0) {
-                    matchedPegawai = { nama_lengkap: 'Admin BGTK Sumbar', email_dikbud: emailInput };
+            try {
+                // If cache is empty (failed to preload), load now
+                if (Object.keys(gMasterPegawaiCache).length === 0) {
+                    const snap = await db.ref('master_pegawai').once('value');
+                    gMasterPegawaiCache = snap.val() || {};
                 }
-            }
 
-            if (!matchedPegawai) {
-                if (errorEl) {
+                const pegawaiList = Object.values(gMasterPegawaiCache);
+                let matchedPegawai = pegawaiList.find(p => {
+                    const pEmail1 = (p.email_dikbud || '').toLowerCase();
+                    const pEmail2 = (p.email_pribadi || '').toLowerCase();
+                    return emailInput === pEmail1 || emailInput === pEmail2 ||
+                        (emailInput.includes('@') && (pEmail1.includes(emailInput) || pEmail2.includes(emailInput)));
+                });
+
+                // Fallback for primary admin emails
+                if (!matchedPegawai) {
+                    if (emailInput.includes('bgtk') || emailInput.includes('admin') || pegawaiList.length === 0) {
+                        matchedPegawai = { nama_lengkap: 'Admin BGTK Sumbar', email_dikbud: emailInput };
+                    }
+                }
+
+                if (!matchedPegawai) {
                     errorEl.textContent = '❌ Email tidak terdaftar dalam Master Data Pegawai Balai GTK Sumbar.';
                     errorEl.classList.remove('hidden');
-                }
-                return;
-            }
-
-            // Success: save session & view admin
-            sessionStorage.setItem('admin_bgtk_email', emailInput);
-            sessionStorage.setItem('admin_bgtk_nama', matchedPegawai.nama_lengkap || 'Pegawai BGTK');
-            closeAdminAuthModal();
-            showAdminDashboard(emailInput);
-        }
-
-        function checkAutoLoginSession() {
-            const urlParams = new URLSearchParams(window.location.search);
-            const viewParam = urlParams.get('view');
-            const savedEmail = sessionStorage.getItem('admin_bgtk_email');
-
-            if (viewParam === 'admin') {
-                if (savedEmail) {
-                    showAdminDashboard(savedEmail);
-                } else {
-                    checkAndOpenAdminModal();
-                }
-            }
-        }
-
-        function showAdminDashboard(email) {
-            const mainView = document.getElementById('view-main');
-            const adminView = document.getElementById('view-admin');
-            if (mainView) mainView.classList.add('hidden');
-            if (adminView) adminView.classList.remove('hidden');
-
-            const emailLabel = document.getElementById('adminActiveUserEmail');
-            if (emailLabel) emailLabel.textContent = email;
-
-            const initialLabel = document.getElementById('adminUserInitial');
-            if (initialLabel && email) {
-                initialLabel.textContent = email.charAt(0).toUpperCase();
-            }
-
-            switchAdminView('mode0');
-        }
-
-        function logoutAdmin() {
-            sessionStorage.removeItem('admin_bgtk_email');
-            sessionStorage.removeItem('admin_bgtk_nama');
-            window.location.href = 'index.html';
-        }
-
-        function toggleSidebar() {
-            const sidebar = document.getElementById('adminSidebar');
-            const overlay = document.getElementById('adminSidebarOverlay');
-            if (sidebar.classList.contains('-translate-x-full')) {
-                sidebar.classList.remove('-translate-x-full');
-                overlay.classList.remove('hidden');
-            } else {
-                sidebar.classList.add('-translate-x-full');
-                overlay.classList.add('hidden');
-            }
-        }
-
-        function toggleSubmenu(menuId) {
-            const el = document.getElementById(menuId);
-            const icon = document.getElementById('icon_' + menuId);
-            if (el) {
-                if (el.classList.contains('hidden')) {
-                    el.classList.remove('hidden');
-                    if (icon) icon.classList.add('rotate-180');
-                } else {
-                    el.classList.add('hidden');
-                    if (icon) icon.classList.remove('rotate-180');
-                }
-            }
-        }
-
-        function switchAdminView(mode) {
-            const modes = ['mode0', 'mode1', 'mode2', 'mode3', 'mode4', 'mode5', 'mode7', 'mode8', 'modeKombel', 'modePegawai'];
-            modes.forEach(m => {
-                const viewEl = document.getElementById('view' + m.charAt(0).toUpperCase() + m.slice(1));
-                const btnEl = document.getElementById('btn' + m.charAt(0).toUpperCase() + m.slice(1));
-                if (viewEl) viewEl.classList.add('hidden');
-                if (btnEl) {
-                    if (m === 'mode3' || m === 'mode4' || m === 'mode7' || m === 'mode5') {
-                        btnEl.className = "sidebar-btn flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium text-slate-500 hover:text-slate-900 hover:bg-slate-100/80 transition-all duration-200 w-full text-left border-l-2 border-transparent";
-                    } else {
-                        btnEl.className = "sidebar-btn flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-100/80 hover:text-slate-900 transition-all duration-200 w-full text-left relative group border-l-4 border-transparent";
-                    }
-                    const svgIcon = btnEl.querySelector('svg');
-                    if (svgIcon && !m.includes('Kombel') && !m.includes('Pegawai')) {
-                        svgIcon.className = "w-5 h-5 flex-shrink-0 text-slate-400 group-hover:text-slate-600 transition-colors";
-                    }
-                }
-            });
-
-            const targetView = document.getElementById('view' + mode.charAt(0).toUpperCase() + mode.slice(1));
-            const targetBtn = document.getElementById('btn' + mode.charAt(0).toUpperCase() + mode.slice(1));
-            
-            if (targetView) targetView.classList.remove('hidden');
-            if (targetBtn) {
-                if (mode === 'mode3' || mode === 'mode4' || mode === 'mode7' || mode === 'mode5') {
-                    targetBtn.className = "sidebar-btn flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-bold bg-emerald-50 text-emerald-900 border-l-2 border-emerald-600 transition-all duration-200 w-full text-left";
-                } else {
-                    targetBtn.className = "sidebar-btn flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-bold bg-emerald-50 text-emerald-900 border-l-4 border-emerald-600 transition-all duration-200 w-full text-left relative group shadow-2xs";
-                }
-                const svgIcon = targetBtn.querySelector('svg');
-                if (svgIcon) {
-                    svgIcon.className = "w-5 h-5 flex-shrink-0 text-emerald-600 transition-colors";
-                }
-            }
-
-            const pageTitle = document.getElementById('adminPageTitle');
-            if (mode === 'mode0') {
-                if (pageTitle) pageTitle.textContent = "Dashboard Utama Admin";
-                loadDashboardUtamaData();
-            }
-            else if (mode === 'mode1' && pageTitle) pageTitle.textContent = "Progres Verifikasi Sekolah Model";
-            else if (mode === 'mode2' && pageTitle) pageTitle.textContent = "Rencana Pengkelasan";
-            else if (mode === 'mode3') { if (pageTitle) pageTitle.textContent = "Data Fasilitator"; loadFasilitatorData(); }
-            else if (mode === 'mode4') { if (pageTitle) pageTitle.textContent = "Jadwal & Laporan Fasilitator"; }
-            else if (mode === 'mode5') { if (pageTitle) pageTitle.textContent = "Assign Pendamping Sekolah"; }
-            else if (mode === 'mode7') { if (pageTitle) pageTitle.textContent = "Jadwal Kunjungan Semua Sekolah"; }
-            else if (mode === 'mode8') { if (pageTitle) pageTitle.textContent = "Pengaturan Rentang Waktu"; }
-            else if (mode === 'modeKombel') { if (pageTitle) pageTitle.textContent = "Master Komunitas Belajar (1.804)"; loadKombelData(); }
-            else if (mode === 'modePegawai') { if (pageTitle) pageTitle.textContent = "Master Pegawai BGTK (57)"; loadPegawaiData(); }
-        }
-
-        // ==========================================
-        // DASHBOARD UTAMA (REKAP REALTIME) LOGIC
-        // ==========================================
-        async function loadDashboardUtamaData() {
-            try {
-                const [fasilSnap, assignSnap, kombelSnap, guruSnap, jadwalSnap] = await Promise.all([
-                    db.ref('fasilitator').once('value'),
-                    db.ref('fasilitator_sekolah').once('value'),
-                    db.ref('master_kombel').once('value'),
-                    db.ref('master_guru').once('value'),
-                    db.ref('jadwal_kunjungan').once('value')
-                ]);
-
-                const fasils = fasilSnap.val() || {};
-                const assigns = assignSnap.val() || {};
-                const kombels = kombelSnap.val() || {};
-                const gurus = guruSnap.val() || {};
-                const jadwals = jadwalSnap.val() || {};
-
-                const fasilList = Object.values(fasils);
-                const kombelList = Object.values(kombels);
-                const guruList = Object.values(gurus);
-
-                // 1. Total Fasilitator Stats
-                let totalFasilCount = fasilList.length;
-                let dualFasilCount = 0;
-                let singleFasilCount = 0;
-                fasilList.forEach(f => {
-                    const progs = f.programs || (f.program_kombel ? ['kombel'] : ['sekolah_model']);
-                    if (progs.includes('sekolah_model') && progs.includes('kombel')) dualFasilCount++;
-                    else singleFasilCount++;
-                });
-
-                const totalFasilEl = document.getElementById('dash_total_fasil_val');
-                const dualFasilEl = document.getElementById('dash_dual_fasil_count');
-                const singleFasilEl = document.getElementById('dash_single_fasil_count');
-                if (totalFasilEl) totalFasilEl.textContent = totalFasilCount;
-                if (dualFasilEl) dualFasilEl.textContent = `Dual: ${dualFasilCount}`;
-                if (singleFasilEl) singleFasilEl.textContent = `Single: ${singleFasilCount}`;
-
-                // 2. Kombel Sasaran Ploting Stats (54 Target Kombel)
-                const targetKombels = kombelList.filter(k => k.is_sasaran);
-                const totalTargetKombels = targetKombels.length || 54;
-                let plottedKombelCount = 0;
-
-                targetKombels.forEach(tk => {
-                    const matchedFasil = fasilList.find(f => f.fkk_1 && (f.fkk_1.toLowerCase().includes(tk.nama_kombel.toLowerCase()) || tk.nama_kombel.toLowerCase().includes(f.fkk_1.toLowerCase())));
-                    if (matchedFasil) tk.assignedFasil = matchedFasil.nama;
-                    else tk.assignedFasil = null;
-
-                    if (tk.assignedFasil) plottedKombelCount++;
-                });
-
-                const kombelPct = Math.round((plottedKombelCount / totalTargetKombels) * 100);
-                const kombelValEl = document.getElementById('dash_kombel_plotted_val');
-                const kombelSubEl = document.getElementById('dash_kombel_plotted_sub');
-                const kombelBarEl = document.getElementById('dash_kombel_bar');
-                if (kombelValEl) kombelValEl.textContent = `${plottedKombelCount} / ${totalTargetKombels}`;
-                if (kombelSubEl) kombelSubEl.textContent = `${kombelPct}% Sasaran Ter-plotting`;
-                if (kombelBarEl) kombelBarEl.style.width = `${kombelPct}%`;
-
-                // Render Table Kombel Dashboard
-                const tbodyKombel = document.getElementById('tableDashKombelBody');
-                if (tbodyKombel) {
-                    if (targetKombels.length === 0) {
-                        tbodyKombel.innerHTML = `<tr><td colspan="4" class="px-4 py-6 text-center text-slate-400">Belum ada Kombel yang ditandai Sasaran PMKKA.</td></tr>`;
-                    } else {
-                        tbodyKombel.innerHTML = targetKombels.map(k => {
-                            const isPlotted = !!k.assignedFasil;
-                            const badge = isPlotted
-                                ? `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800">✅ Ter-plotting</span>`
-                                : `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-800">⚠️ Belum</span>`;
-                            return `
-                                <tr class="hover:bg-slate-50 transition-colors">
-                                    <td class="px-4 py-2.5 font-bold text-slate-800 text-xs">${k.nama_kombel}</td>
-                                    <td class="px-4 py-2.5 text-slate-600 text-[11px]">${k.kab_kota || '-'}</td>
-                                    <td class="px-4 py-2.5 font-semibold text-purple-700 text-xs">${k.assignedFasil || '-'}</td>
-                                    <td class="px-4 py-2.5 text-center">${badge}</td>
-                                </tr>
-                            `;
-                        }).join('');
-                    }
-                }
-
-                // 3. Sekolah Model Ploting Stats (25 Schools)
-                const assignedSchoolNpsns = new Set();
-                Object.values(assigns).forEach(npsnArr => {
-                    if (Array.isArray(npsnArr)) {
-                        npsnArr.forEach(npsn => assignedSchoolNpsns.add(npsn));
-                    }
-                });
-
-                const totalSekolahModel = guruList.length || 25;
-                const plottedSekolahCount = assignedSchoolNpsns.size;
-                const sekolahPct = Math.round((plottedSekolahCount / totalSekolahModel) * 100);
-
-                const sekolahValEl = document.getElementById('dash_sekolah_plotted_val');
-                const sekolahSubEl = document.getElementById('dash_sekolah_plotted_sub');
-                const sekolahBarEl = document.getElementById('dash_sekolah_bar');
-                if (sekolahValEl) sekolahValEl.textContent = `${plottedSekolahCount} / ${totalSekolahModel}`;
-                if (sekolahSubEl) sekolahSubEl.textContent = `${sekolahPct}% Sekolah Diberi Pendamping`;
-                if (sekolahBarEl) sekolahBarEl.style.width = `${sekolahPct}%`;
-
-                // Render Table Sekolah Model Dashboard
-                const tbodySekolah = document.getElementById('tableDashSekolahBody');
-                if (tbodySekolah) {
-                    tbodySekolah.innerHTML = guruList.map(g => {
-                        const isPlotted = assignedSchoolNpsns.has(g.npsn);
-                        let fasilName = '-';
-                        for (const fId in assigns) {
-                            if (Array.isArray(assigns[fId]) && assigns[fId].includes(g.npsn) && fasils[fId]) {
-                                fasilName = fasils[fId].nama;
-                                break;
-                            }
-                        }
-                        const badge = isPlotted
-                            ? `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800">✅ Ter-plotting</span>`
-                            : `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-800">⚠️ Belum</span>`;
-                        return `
-                            <tr class="hover:bg-slate-50 transition-colors">
-                                <td class="px-4 py-2.5 font-bold text-slate-800 text-xs">${g.nama_sekolah}</td>
-                                <td class="px-4 py-2.5 text-slate-600 text-[11px]">${g.kab_kota || '-'}</td>
-                                <td class="px-4 py-2.5 font-semibold text-indigo-700 text-xs">${fasilName}</td>
-                                <td class="px-4 py-2.5 text-center">${badge}</td>
-                            </tr>
-                        `;
-                    }).join('');
-                }
-
-                // 4. Total Kunjungan Count
-                let totalKunjunganCount = 0;
-                for (const npsn in jadwals) {
-                    for (const kunKey in jadwals[npsn]) {
-                        if (jadwals[npsn][kunKey] && (jadwals[npsn][kunKey].tanggal || jadwals[npsn][kunKey].status)) {
-                            totalKunjunganCount++;
-                        }
-                    }
-                }
-                const kunjunganEl = document.getElementById('dash_kunjungan_count');
-                if (kunjunganEl) kunjunganEl.textContent = totalKunjunganCount;
-
-            } catch(e) {
-                console.error("Gagal loadDashboardUtamaData", e);
-            }
-        }
-
-        // ==========================================
-        // KOMBEL (1.804) LOGIC
-        // ==========================================
-        let gAllKombels = {};
-        let gFilteredKombels = [];
-        let gKombelPage = 1;
-        const gKombelPerPage = 50;
-
-        async function loadKombelData() {
-            try {
-                const snap = await db.ref('master_kombel').once('value');
-                gAllKombels = snap.val() || {};
-                populateKabKombelDropdown();
-                filterKombelData();
-            } catch(e) {
-                console.error("Gagal load master_kombel", e);
-            }
-        }
-
-        function populateKabKombelDropdown() {
-            const sel = document.getElementById('filterKabKombel');
-            if (!sel) return;
-            const kabSet = new Set();
-            Object.values(gAllKombels).forEach(k => { if (k.kab_kota) kabSet.add(k.kab_kota); });
-            const sortedKab = Array.from(kabSet).sort();
-            let options = '<option value="ALL">Semua Kab / Kota (19)</option>';
-            sortedKab.forEach(kab => { options += `<option value="${kab}">${kab}</option>`; });
-            sel.innerHTML = options;
-        }
-
-        function filterKombelData() {
-            const search = (document.getElementById('searchKombel')?.value || '').toLowerCase().trim();
-            const kabFilter = document.getElementById('filterKabKombel')?.value || 'ALL';
-            const statusFilter = document.getElementById('filterStatusSasaran')?.value || 'ALL';
-
-            const list = Object.values(gAllKombels);
-            gFilteredKombels = list.filter(k => {
-                const matchSearch = !search || 
-                    (k.nama_kombel && k.nama_kombel.toLowerCase().includes(search)) ||
-                    (k.nama_ketua && k.nama_ketua.toLowerCase().includes(search)) ||
-                    (k.instansi && k.instansi.toLowerCase().includes(search)) ||
-                    (k.kecamatan && k.kecamatan.toLowerCase().includes(search));
-                const matchKab = kabFilter === 'ALL' || k.kab_kota === kabFilter;
-                const matchStatus = statusFilter === 'ALL' || 
-                    (statusFilter === 'SASARAN' && k.is_sasaran) ||
-                    (statusFilter === 'NON_SASARAN' && !k.is_sasaran);
-                return matchSearch && matchKab && matchStatus;
-            });
-
-            const sasaranCount = list.filter(k => k.is_sasaran).length;
-            const totalEl = document.getElementById('statKombelTotal');
-            const sasaranEl = document.getElementById('statKombelSasaran');
-            if (totalEl) totalEl.textContent = list.length.toLocaleString('id-ID');
-            if (sasaranEl) sasaranEl.textContent = `${sasaranCount} / 54`;
-
-            gKombelPage = 1;
-            renderKombelTable();
-        }
-
-        function renderKombelTable() {
-            const body = document.getElementById('tableKombelBody');
-            const pagination = document.getElementById('kombelPagination');
-            if (!body) return;
-
-            if (gFilteredKombels.length === 0) {
-                body.innerHTML = `<tr><td colspan="7" class="px-6 py-12 text-center text-slate-400">Tidak ada Komunitas Belajar yang sesuai filter.</td></tr>`;
-                if (pagination) pagination.innerHTML = '';
-                return;
-            }
-
-            const start = (gKombelPage - 1) * gKombelPerPage;
-            const end = start + gKombelPerPage;
-            const pageItems = gFilteredKombels.slice(start, end);
-
-            body.innerHTML = pageItems.map((k, i) => {
-                const isSasaran = !!k.is_sasaran;
-                const badgeSasaran = isSasaran 
-                    ? `<span class="px-2.5 py-1 rounded-full text-xs font-extrabold bg-amber-100 text-amber-800 border border-amber-300">⭐ Sasaran PMKKA</span>`
-                    : `<span class="px-2.5 py-1 rounded-full text-xs font-medium bg-slate-100 text-slate-500">Biasa</span>`;
-
-                const btnToggle = isSasaran
-                    ? `<button onclick="toggleSasaranKombel('${k.id}', false)" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-rose-50 text-rose-700 hover:bg-rose-100 transition-colors border border-rose-200">❌ Batal Sasaran</button>`
-                    : `<button onclick="toggleSasaranKombel('${k.id}', true)" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-amber-50 text-amber-800 hover:bg-amber-100 transition-colors border border-amber-300 flex items-center gap-1">⭐ Tandai Sasaran</button>`;
-
-                return `
-                    <tr class="hover:bg-slate-50 transition-colors ${isSasaran ? 'bg-amber-50/40 font-medium' : ''}">
-                        <td class="px-4 py-3 text-center text-slate-400 text-xs font-bold">${start + i + 1}</td>
-                        <td class="px-4 py-3">
-                            <div class="font-bold text-slate-800 text-sm whitespace-normal max-w-md">${k.nama_kombel}</div>
-                            <div class="text-xs text-slate-500 mt-0.5">${k.jenjang || ''} ${k.instansi ? '• ' + k.instansi : ''}</div>
-                        </td>
-                        <td class="px-4 py-3">
-                            <div class="font-semibold text-slate-700 text-xs">${k.kab_kota || '-'}</div>
-                            <div class="text-[11px] text-slate-500">${k.kecamatan || ''}</div>
-                        </td>
-                        <td class="px-4 py-3">
-                            <div class="font-semibold text-slate-800 text-xs">${k.nama_ketua || '-'}</div>
-                            <div class="text-[11px] text-slate-500">${k.email || k.no_hp || '-'}</div>
-                        </td>
-                        <td class="px-4 py-3 text-center text-xs font-bold text-slate-600">${k.jumlah_anggota || 0}</td>
-                        <td class="px-4 py-3 text-center">${badgeSasaran}</td>
-                        <td class="px-4 py-3 text-center">${btnToggle}</td>
-                    </tr>
-                `;
-            }).join('');
-
-            const totalPages = Math.ceil(gFilteredKombels.length / gKombelPerPage);
-            if (pagination) {
-                pagination.innerHTML = `
-                    <div>Menampilkan <strong>${start + 1}</strong> - <strong>${Math.min(end, gFilteredKombels.length)}</strong> dari <strong>${gFilteredKombels.length.toLocaleString('id-ID')}</strong> Komunitas Belajar</div>
-                    <div class="flex items-center gap-2">
-                        <button onclick="changeKombelPage(-1)" ${gKombelPage === 1 ? 'disabled class="opacity-40 px-3 py-1 bg-slate-200 rounded-lg text-xs font-bold"' : 'class="px-3 py-1 bg-white border border-slate-300 hover:bg-slate-50 rounded-lg text-xs font-bold text-slate-700"'}>Sebelumnya</button>
-                        <span class="font-bold text-slate-700 px-2">Halaman ${gKombelPage} / ${totalPages}</span>
-                        <button onclick="changeKombelPage(1)" ${gKombelPage >= totalPages ? 'disabled class="opacity-40 px-3 py-1 bg-slate-200 rounded-lg text-xs font-bold"' : 'class="px-3 py-1 bg-white border border-slate-300 hover:bg-slate-50 rounded-lg text-xs font-bold text-slate-700"'}>Selanjutnya</button>
-                    </div>
-                `;
-            }
-        }
-
-        function changeKombelPage(dir) {
-            gKombelPage += dir;
-            renderKombelTable();
-        }
-
-        async function toggleSasaranKombel(id, isSasaran) {
-            try {
-                await db.ref(`master_kombel/${id}/is_sasaran`).set(isSasaran);
-                if (gAllKombels[id]) gAllKombels[id].is_sasaran = isSasaran;
-                filterKombelData();
-            } catch(e) {
-                alert("Gagal mengupdate status: " + e.message);
-            }
-        }
-
-        // ==========================================
-        // MASTER PEGAWAI (57) LOGIC
-        // ==========================================
-        let gAllPegawai = {};
-        let gFilteredPegawai = [];
-
-        async function loadPegawaiData() {
-            try {
-                const snap = await db.ref('master_pegawai').once('value');
-                gAllPegawai = snap.val() || {};
-                filterPegawaiData();
-            } catch(e) {
-                console.error("Gagal load master_pegawai", e);
-            }
-        }
-
-        function filterPegawaiData() {
-            const search = (document.getElementById('searchPegawai')?.value || '').toLowerCase().trim();
-            const list = Object.values(gAllPegawai);
-
-            gFilteredPegawai = list.filter(p => {
-                return !search ||
-                    (p.nama_lengkap && p.nama_lengkap.toLowerCase().includes(search)) ||
-                    (p.nip && p.nip.includes(search)) ||
-                    (p.jabatan && p.jabatan.toLowerCase().includes(search)) ||
-                    (p.email_dikbud && p.email_dikbud.toLowerCase().includes(search)) ||
-                    (p.email_pribadi && p.email_pribadi.toLowerCase().includes(search));
-            });
-
-            const totalEl = document.getElementById('statPegawaiTotal');
-            const fungEl = document.getElementById('statPegawaiFungsional');
-            const fungsionalCount = list.filter(p => p.jenis_jabatan && p.jenis_jabatan.toLowerCase().includes('tertentu')).length;
-
-            if (totalEl) totalEl.textContent = list.length;
-            if (fungEl) fungEl.textContent = fungsionalCount;
-
-            renderPegawaiTable();
-        }
-
-        function renderPegawaiTable() {
-            const body = document.getElementById('tablePegawaiBody');
-            if (!body) return;
-
-            if (gFilteredPegawai.length === 0) {
-                body.innerHTML = `<tr><td colspan="6" class="px-6 py-12 text-center text-slate-400">Tidak ada pegawai yang sesuai kata kunci.</td></tr>`;
-                return;
-            }
-
-            body.innerHTML = gFilteredPegawai.map((p, i) => {
-                const badgeStatus = (p.status_pegawai || '').includes('P3K')
-                    ? `<span class="px-2.5 py-1 rounded-full text-xs font-bold bg-teal-100 text-teal-800 border border-teal-200">P3K Aktif</span>`
-                    : `<span class="px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800 border border-emerald-200">PNS Aktif</span>`;
-
-                return `
-                    <tr class="hover:bg-slate-50 transition-colors">
-                        <td class="px-4 py-3 text-center text-slate-400 text-xs font-bold">${i + 1}</td>
-                        <td class="px-4 py-3">
-                            <div class="font-bold text-slate-900 text-sm">${p.nama_lengkap}</div>
-                            <div class="text-xs text-slate-500 mt-0.5">NIP: ${p.nip || '-'}</div>
-                        </td>
-                        <td class="px-4 py-3">
-                            <div class="font-semibold text-slate-800 text-xs">${p.jabatan || '-'}</div>
-                            <div class="text-[11px] text-slate-500">${p.jenis_jabatan || ''}</div>
-                        </td>
-                        <td class="px-4 py-3 text-xs font-medium text-slate-700">
-                            ${p.pangkat_golongan || '-'}
-                        </td>
-                        <td class="px-4 py-3">
-                            <div class="text-xs font-semibold text-slate-800">${p.email_dikbud || p.email_pribadi || '-'}</div>
-                            <div class="text-[11px] text-slate-500">HP: ${p.no_hp || '-'}</div>
-                        </td>
-                        <td class="px-4 py-3 text-center">${badgeStatus}</td>
-                    </tr>
-                `;
-            }).join('');
-        }
-
-        // ==========================================
-        // FASILITATOR DATA & MANAGEMENT LOGIC
-        // ==========================================
-        async function loadFasilitatorData() {
-            const container = document.getElementById('listFasilContainer');
-            if (!container) return;
-            container.innerHTML = '<div class="text-center text-slate-500 py-4"><div class="spinner mx-auto mb-2"></div>Memuat data fasilitator...</div>';
-
-            try {
-                const [fasilSnap, assignSnap] = await Promise.all([
-                    db.ref('fasilitator').once('value'),
-                    db.ref('fasilitator_sekolah').once('value')
-                ]);
-
-                const fasils = fasilSnap.val() || {};
-                const assigned = assignSnap.val() || {};
-
-                const fasilList = Object.values(fasils);
-                if (fasilList.length === 0) {
-                    container.innerHTML = '<div class="text-center text-slate-400 py-8">Belum ada fasilitator terdaftar.</div>';
+                    loadingEl.classList.add('hidden');
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'Masuk ke Dasbor →';
                     return;
                 }
 
-                let html = `<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">`;
+                // SUCCESS: save session → redirect to admin.html
+                sessionStorage.setItem('admin_bgtk_email', emailInput);
+                sessionStorage.setItem('admin_bgtk_nama', matchedPegawai.nama_lengkap || 'Pegawai BGTK');
 
-                fasilList.forEach(f => {
-                    const numSekolah = (assigned[f.id] || []).length;
-                    const progs = f.programs || (f.program_kombel ? ['kombel'] : ['sekolah_model']);
+                submitBtn.textContent = '✅ Berhasil, mengalihkan...';
+                setTimeout(() => {
+                    window.location.href = 'admin.html';
+                }, 500);
 
-                    let badgePrograms = '';
-                    if (progs.includes('sekolah_model') && progs.includes('kombel')) {
-                        badgePrograms = `<span class="px-2.5 py-1 rounded-md text-[10px] font-extrabold bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-xs">DUAL PROGRAM (Model & Kombel)</span>`;
-                    } else if (progs.includes('kombel')) {
-                        badgePrograms = `<span class="px-2 py-0.5 rounded-md text-[10px] font-bold bg-purple-100 text-purple-800 border border-purple-200">Program: Kombel</span>`;
-                    } else {
-                        badgePrograms = `<span class="px-2 py-0.5 rounded-md text-[10px] font-bold bg-indigo-100 text-indigo-800 border border-indigo-200">Program: Sekolah Model</span>`;
-                    }
-
-                    html += `
-                        <div class="bg-white rounded-xl border border-slate-200 p-5 shadow-xs hover:shadow-md transition-shadow relative">
-                            <div class="flex items-start justify-between gap-2 mb-2">
-                                <div>
-                                    <h3 class="font-bold text-slate-900 text-base leading-snug">${f.nama}</h3>
-                                    <div class="text-xs text-slate-500 mt-0.5">${f.jabatan || 'Fasilitator'} ${f.instansi ? '• ' + f.instansi : ''}</div>
-                                </div>
-                            </div>
-                            <div class="mb-3">${badgePrograms}</div>
-
-                            <div class="space-y-1.5 my-3 text-xs text-slate-600 border-t border-b border-slate-100 py-3">
-                                ${f.nip && f.nip !== '-' ? `<div><span class="text-slate-400">NIP:</span> ${f.nip}</div>` : ''}
-                                ${f.pangkat_gol && f.pangkat_gol !== '-' ? `<div><span class="text-slate-400">Pangkat/Gol:</span> ${f.pangkat_gol}</div>` : ''}
-                                <div><span class="text-slate-400">No HP:</span> ${f.hp || '-'}</div>
-                                ${f.mapel_kombel ? `<div><span class="text-slate-400">Mapel Kombel:</span> <strong class="text-purple-700">${f.mapel_kombel}</strong></div>` : ''}
-                                ${f.fkk_1 ? `<div><span class="text-slate-400">Kombel Sasaran:</span> <strong class="text-amber-700">${f.fkk_1}</strong></div>` : ''}
-                                ${progs.includes('sekolah_model') ? `<div><span class="text-slate-400">Sekolah Model Dampingan:</span> <strong class="text-indigo-600">${numSekolah} Sekolah</strong></div>` : ''}
-                            </div>
-
-                            <div class="flex items-center justify-between pt-1">
-                                <button onclick="openEditProfilAdmin('${f.id}', '${f.nama.replace(/'/g,"\\'").replace(/"/g,'&quot;')}', '${f.nip || ''}', '${f.pangkat_gol || ''}', '${f.jabatan || ''}')" class="text-xs font-semibold text-sky-600 hover:text-sky-800">✏️ Edit Profil</button>
-                                <button onclick="hapusFasil('${f.id}')" class="text-xs font-semibold text-rose-500 hover:text-rose-700">Hapus</button>
-                            </div>
-                        </div>
-                    `;
-                });
-
-                html += `</div>`;
-                container.innerHTML = html;
-            } catch(e) {
-                console.error("Gagal loadFasilitatorData", e);
-                container.innerHTML = '<div class="text-center text-rose-500 py-4">Gagal memuat data fasilitator.</div>';
-            }
-        }
-
-        async function tambahFasil() {
-            const nama = document.getElementById('inputFasilNama').value.trim();
-            const hp = document.getElementById('inputFasilHp').value.trim();
-            const nip = document.getElementById('inputFasilNip').value.trim();
-            const pangkat_gol = document.getElementById('inputFasilPangkat').value.trim();
-            const jabatan = document.getElementById('inputFasilJabatan').value.trim();
-            if (!nama || !hp) return alert("Nama dan No HP wajib diisi");
-
-            const fasilId = "fasil_" + Date.now();
-            await db.ref('fasilitator/' + fasilId).set({
-                id: fasilId, nama, hp, nip, pangkat_gol, jabatan, programs: ['sekolah_model']
-            });
-
-            document.getElementById('inputFasilNama').value = "";
-            document.getElementById('inputFasilHp').value = "";
-            document.getElementById('inputFasilNip').value = "";
-            document.getElementById('inputFasilPangkat').value = "";
-            document.getElementById('inputFasilJabatan').value = "";
-            loadFasilitatorData();
-        }
-
-        function openEditProfilAdmin(id, nama, nip, pangkat, jabatan) {
-            document.getElementById('editProfilAdminId').value = id;
-            document.getElementById('editProfilAdminNama').value = nama;
-            document.getElementById('editProfilAdminNip').value = nip;
-            document.getElementById('editProfilAdminPangkat').value = pangkat;
-            document.getElementById('editProfilAdminJabatan').value = jabatan;
-            document.getElementById('modalEditProfilAdmin').classList.remove('hidden');
-        }
-
-        async function simpanProfilAdmin() {
-            const id = document.getElementById('editProfilAdminId').value;
-            const nip = document.getElementById('editProfilAdminNip').value.trim();
-            const pangkat_gol = document.getElementById('editProfilAdminPangkat').value.trim();
-            const jabatan = document.getElementById('editProfilAdminJabatan').value.trim();
-            if (!id) return;
-            try {
-                await db.ref('fasilitator/' + id).update({ nip, pangkat_gol, jabatan });
-                document.getElementById('modalEditProfilAdmin').classList.add('hidden');
-                loadFasilitatorData();
-            } catch(e) { alert("Gagal update profil: " + e.message); }
-        }
-
-        async function hapusFasil(id) {
-            if (!confirm("Yakin hapus fasilitator ini?")) return;
-            await db.ref('fasilitator/' + id).remove();
-            await db.ref('fasilitator_sekolah/' + id).remove();
-            loadFasilitatorData();
-        }
-
-        // ==========================================
-        // DASHBOARD UTAMA DETAIL MODALS LOGIC
-        // ==========================================
-        let gDashDetailData = [];
-
-        function closeDashDetailModal() {
-            const modal = document.getElementById('modalDashDetail');
-            if (modal) modal.classList.add('hidden');
-        }
-
-        function filterDashDetailTable() {
-            const query = (document.getElementById('dashDetailSearch')?.value || '').toLowerCase();
-            const filtered = gDashDetailData.filter(item => {
-                return Object.values(item).some(val => String(val || '').toLowerCase().includes(query));
-            });
-            renderDashDetailTableBody(filtered);
-        }
-
-        function renderDashDetailTableBody(items) {
-            const tbody = document.getElementById('dashDetailTableBody');
-            if (!tbody) return;
-            if (items.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="6" class="px-4 py-8 text-center text-slate-400">Tidak ada data ditemukan.</td></tr>`;
-                return;
-            }
-
-            tbody.innerHTML = items.map((item, idx) => {
-                return `
-                    <tr class="hover:bg-slate-50 transition-colors">
-                        <td class="px-4 py-3 text-slate-400 font-mono text-[11px]">${idx + 1}</td>
-                        <td class="px-4 py-3 font-bold text-slate-800">${item.col1 || '-'}</td>
-                        <td class="px-4 py-3 text-slate-600">${item.col2 || '-'}</td>
-                        <td class="px-4 py-3 font-semibold text-slate-700">${item.col3 || '-'}</td>
-                        <td class="px-4 py-3 text-slate-600">${item.col4 || '-'}</td>
-                        <td class="px-4 py-3 text-center">${item.colBadge || '-'}</td>
-                    </tr>
-                `;
-            }).join('');
-        }
-
-        // 1. Modal Detail Kombel Sasaran
-        async function openModalDashKombelSasaran() {
-            try {
-                const [kombelSnap, fasilSnap] = await Promise.all([
-                    db.ref('master_kombel').once('value'),
-                    db.ref('fasilitator').once('value')
-                ]);
-                const kombels = Object.values(kombelSnap.val() || {});
-                const fasils = Object.values(fasilSnap.val() || {});
-
-                const targetKombels = kombels.filter(k => k.is_sasaran);
-                gDashDetailData = targetKombels.map(k => {
-                    const matchedFasil = fasils.find(f => f.fkk_1 && (f.fkk_1.toLowerCase().includes(k.nama_kombel.toLowerCase()) || k.nama_kombel.toLowerCase().includes(f.fkk_1.toLowerCase())));
-                    const isPlotted = !!matchedFasil;
-                    return {
-                        col1: k.nama_kombel,
-                        col2: `${k.kab_kota || '-'} (${k.kecamatan || '-'})`,
-                        col3: matchedFasil ? matchedFasil.nama : 'Belum Ditugaskan',
-                        col4: matchedFasil ? matchedFasil.jabatan || matchedFasil.instansi || '-' : '-',
-                        colBadge: isPlotted 
-                            ? `<span class="px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800">✅ Ter-plotting</span>`
-                            : `<span class="px-2.5 py-1 rounded-full text-xs font-bold bg-amber-100 text-amber-800">⚠️ Belum</span>`
-                    };
-                });
-
-                document.getElementById('dashDetailTitle').textContent = "Detail 54 Komunitas Belajar Sasaran PMKKA";
-                document.getElementById('dashDetailSub').textContent = "Daftar lengkap Komunitas Belajar sasaran utama penugasan fasilitator BGTK Sumbar.";
-                document.getElementById('dashDetailBadge').textContent = `${gDashDetailData.length} Kombel Sasaran`;
-                document.getElementById('dashDetailBadge').className = "px-3 py-1 rounded-full text-xs font-black bg-purple-100 text-purple-800 border border-purple-200";
-
-                document.getElementById('dashTh1').textContent = "Nama Kombel";
-                document.getElementById('dashTh2').textContent = "Kabupaten / Kota";
-                document.getElementById('dashTh3').textContent = "Fasilitator Pendamping";
-                document.getElementById('dashTh4').textContent = "Jabatan / Instansi";
-                document.getElementById('dashTh5').textContent = "Status Ploting";
-
-                const searchInput = document.getElementById('dashDetailSearch');
-                if (searchInput) searchInput.value = '';
-
-                renderDashDetailTableBody(gDashDetailData);
-                document.getElementById('modalDashDetail').classList.remove('hidden');
-            } catch(e) {
-                console.error("Gagal openModalDashKombelSasaran", e);
-            }
-        }
-
-        // 2. Modal Detail Sekolah Model
-        async function openModalDashSekolahModel() {
-            try {
-                const [guruSnap, fasilSnap, assignSnap] = await Promise.all([
-                    db.ref('master_guru').once('value'),
-                    db.ref('fasilitator').once('value'),
-                    db.ref('fasilitator_sekolah').once('value')
-                ]);
-                const gurus = Object.values(guruSnap.val() || {});
-                const fasils = fasilSnap.val() || {};
-                const assigns = assignSnap.val() || {};
-
-                gDashDetailData = gurus.map(g => {
-                    let fasilName = 'Belum Ditugaskan';
-                    let fasilInfo = '-';
-                    let isPlotted = false;
-
-                    for (const fId in assigns) {
-                        if (Array.isArray(assigns[fId]) && assigns[fId].includes(g.npsn) && fasils[fId]) {
-                            fasilName = fasils[fId].nama;
-                            fasilInfo = fasils[fId].instansi || fasils[fId].jabatan || '-';
-                            isPlotted = true;
-                            break;
-                        }
-                    }
-
-                    return {
-                        col1: g.nama_sekolah,
-                        col2: `${g.kab_kota || '-'} (NPSN: ${g.npsn})`,
-                        col3: fasilName,
-                        col4: fasilInfo,
-                        colBadge: isPlotted
-                            ? `<span class="px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800">✅ Ter-plotting</span>`
-                            : `<span class="px-2.5 py-1 rounded-full text-xs font-bold bg-amber-100 text-amber-800">⚠️ Belum</span>`
-                    };
-                });
-
-                document.getElementById('dashDetailTitle').textContent = "Detail 25 Sekolah Model PMKKA";
-                document.getElementById('dashDetailSub').textContent = "Daftar Sekolah Model terdaftar dan Fasilitator Dampingannya.";
-                document.getElementById('dashDetailBadge').textContent = `${gDashDetailData.length} Sekolah Model`;
-                document.getElementById('dashDetailBadge').className = "px-3 py-1 rounded-full text-xs font-black bg-indigo-100 text-indigo-800 border border-indigo-200";
-
-                document.getElementById('dashTh1').textContent = "Nama Sekolah Model";
-                document.getElementById('dashTh2').textContent = "Wilayah / NPSN";
-                document.getElementById('dashTh3').textContent = "Fasilitator Dampingan";
-                document.getElementById('dashTh4').textContent = "Instansi / Jabatan";
-                document.getElementById('dashTh5').textContent = "Status Ploting";
-
-                const searchInput = document.getElementById('dashDetailSearch');
-                if (searchInput) searchInput.value = '';
-
-                renderDashDetailTableBody(gDashDetailData);
-                document.getElementById('modalDashDetail').classList.remove('hidden');
-            } catch(e) {
-                console.error("Gagal openModalDashSekolahModel", e);
-            }
-        }
-
-        // 3. Modal Detail Fasilitator
-        async function openModalDashFasilitator() {
-            try {
-                const fasilSnap = await db.ref('fasilitator').once('value');
-                const fasils = Object.values(fasilSnap.val() || {});
-
-                gDashDetailData = fasils.map(f => {
-                    const progs = f.programs || (f.program_kombel ? ['kombel'] : ['sekolah_model']);
-                    const isDual = progs.includes('sekolah_model') && progs.includes('kombel');
-                    const progBadge = isDual
-                        ? `<span class="px-2.5 py-1 rounded-full text-xs font-black bg-emerald-100 text-emerald-900 border border-emerald-300">🌟 Dual Program</span>`
-                        : (progs.includes('kombel') 
-                            ? `<span class="px-2.5 py-1 rounded-full text-xs font-bold bg-purple-100 text-purple-800">🟣 Kombel</span>`
-                            : `<span class="px-2.5 py-1 rounded-full text-xs font-bold bg-blue-100 text-blue-800">🏫 Sekolah Model</span>`);
-
-                    return {
-                        col1: f.nama,
-                        col2: `${f.jabatan || '-'} (${f.instansi || '-'})`,
-                        col3: f.mapel_kombel || f.mapel || '-',
-                        col4: f.fkk_1 || 'Sekolah Dampingan',
-                        colBadge: progBadge
-                    };
-                });
-
-                document.getElementById('dashDetailTitle').textContent = "Detail 43 Fasilitator PM-KKA";
-                document.getElementById('dashDetailSub').textContent = "Daftar seluruh fasilitator BGTK Sumbar dan penugasan per program.";
-                document.getElementById('dashDetailBadge').textContent = `${gDashDetailData.length} Fasilitator`;
-                document.getElementById('dashDetailBadge').className = "px-3 py-1 rounded-full text-xs font-black bg-emerald-100 text-emerald-800 border border-emerald-200";
-
-                document.getElementById('dashTh1').textContent = "Nama Fasilitator";
-                document.getElementById('dashTh2').textContent = "Jabatan & Instansi";
-                document.getElementById('dashTh3').textContent = "Mapel Diampu";
-                document.getElementById('dashTh4').textContent = "Penugasan Dampingan";
-                document.getElementById('dashTh5').textContent = "Kategori Program";
-
-                const searchInput = document.getElementById('dashDetailSearch');
-                if (searchInput) searchInput.value = '';
-
-                renderDashDetailTableBody(gDashDetailData);
-                document.getElementById('modalDashDetail').classList.remove('hidden');
-            } catch(e) {
-                console.error("Gagal openModalDashFasilitator", e);
-            }
-        }
-
-        // 4. Modal Detail Kunjungan
-        async function openModalDashKunjungan() {
-            try {
-                const [jadwalSnap, guruSnap, fasilSnap] = await Promise.all([
-                    db.ref('jadwal_kunjungan').once('value'),
-                    db.ref('master_guru').once('value'),
-                    db.ref('fasilitator').once('value')
-                ]);
-                const jadwals = jadwalSnap.val() || {};
-                const gurus = guruSnap.val() || {};
-                const fasils = fasilSnap.val() || {};
-
-                gDashDetailData = [];
-                for (const npsn in jadwals) {
-                    const namaSekolah = gurus[npsn]?.nama_sekolah || `NPSN ${npsn}`;
-                    const kabKota = gurus[npsn]?.kab_kota || '-';
-                    for (const kunKey in jadwals[npsn]) {
-                        const kObj = jadwals[npsn][kunKey];
-                        if (kObj && (kObj.tanggal || kObj.status || kObj.fasilNama)) {
-                            const kunNo = kunKey.replace('kunjungan_', 'Tahap ');
-                            gDashDetailData.push({
-                                col1: namaSekolah,
-                                col2: `${kabKota} (${kunNo})`,
-                                col3: kObj.fasilNama || 'Fasilitator',
-                                col4: kObj.tanggal || 'Tanggal Belum Set',
-                                colBadge: `<span class="px-2.5 py-1 rounded-full text-xs font-bold bg-amber-100 text-amber-800">📅 Terjadwal</span>`
-                            });
-                        }
-                    }
-                }
-
-                document.getElementById('dashDetailTitle').textContent = "Detail Jadwal Kunjungan Pendampingan";
-                document.getElementById('dashDetailSub').textContent = "Rincian seluruh jadwal kunjungan pendampingan fasilitator ke sekolah model.";
-                document.getElementById('dashDetailBadge').textContent = `${gDashDetailData.length} Kunjungan`;
-                document.getElementById('dashDetailBadge').className = "px-3 py-1 rounded-full text-xs font-black bg-amber-100 text-amber-800 border border-amber-200";
-
-                document.getElementById('dashTh1').textContent = "Nama Sekolah Model";
-                document.getElementById('dashTh2').textContent = "Wilayah & Tahap";
-                document.getElementById('dashTh3').textContent = "Fasilitator";
-                document.getElementById('dashTh4').textContent = "Tanggal Pelaksanaan";
-                document.getElementById('dashTh5').textContent = "Status Jadwal";
-
-                const searchInput = document.getElementById('dashDetailSearch');
-                if (searchInput) searchInput.value = '';
-
-                renderDashDetailTableBody(gDashDetailData);
-                document.getElementById('modalDashDetail').classList.remove('hidden');
-            } catch(e) {
-                console.error("Gagal openModalDashKunjungan", e);
+            } catch(err) {
+                errorEl.textContent = '❌ Gagal verifikasi: ' + err.message;
+                errorEl.classList.remove('hidden');
+                loadingEl.classList.add('hidden');
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Masuk ke Dasbor →';
             }
         }
     </script>
-
-    <!-- MODAL DASHBOARD DETAIL VIEW -->
-    <div id="modalDashDetail" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 z-50 hidden fade-in">
-        <div class="bg-white rounded-3xl max-w-4xl w-full max-h-[90vh] flex flex-col shadow-2xl border border-slate-100 overflow-hidden">
-            <!-- Modal Header -->
-            <div class="p-6 border-b border-slate-100 bg-slate-50/50 flex items-start justify-between">
-                <div>
-                    <div class="flex items-center gap-3">
-                        <h3 class="text-xl font-black text-slate-900" id="dashDetailTitle">Detail Data</h3>
-                        <span id="dashDetailBadge" class="px-3 py-1 rounded-full text-xs font-extrabold bg-slate-200 text-slate-700">0 Data</span>
-                    </div>
-                    <p class="text-xs text-slate-500 mt-1" id="dashDetailSub">Informasi rincian data dasbor admin.</p>
-                </div>
-                <button onclick="closeDashDetailModal()" class="text-slate-400 hover:text-slate-700 p-2 rounded-xl hover:bg-slate-200/60 transition-colors">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
-                </button>
-            </div>
-
-            <!-- Modal Search Bar -->
-            <div class="px-6 py-4 border-b border-slate-100 bg-white">
-                <div class="relative">
-                    <svg class="w-5 h-5 text-slate-400 absolute left-3.5 top-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
-                    <input type="text" id="dashDetailSearch" onkeyup="filterDashDetailTable()" placeholder="Cari nama, wilayah, fasilitator, atau status..." class="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all">
-                </div>
-            </div>
-
-            <!-- Modal Body Table -->
-            <div class="p-6 overflow-y-auto flex-1 custom-sidebar-scroll">
-                <table class="w-full text-left text-xs whitespace-nowrap">
-                    <thead class="bg-slate-100/80 text-slate-600 border-b border-slate-200 font-bold sticky top-0">
-                        <tr>
-                            <th class="px-4 py-3 rounded-l-xl">#</th>
-                            <th class="px-4 py-3" id="dashTh1">Kolom 1</th>
-                            <th class="px-4 py-3" id="dashTh2">Kolom 2</th>
-                            <th class="px-4 py-3" id="dashTh3">Kolom 3</th>
-                            <th class="px-4 py-3" id="dashTh4">Kolom 4</th>
-                            <th class="px-4 py-3 text-center rounded-r-xl" id="dashTh5">Status</th>
-                        </tr>
-                    </thead>
-                    <tbody id="dashDetailTableBody" class="divide-y divide-slate-100">
-                        <!-- Dynamic rows -->
-                    </tbody>
-                </table>
-            </div>
-
-            <!-- Modal Footer -->
-            <div class="p-4 border-t border-slate-100 bg-slate-50 flex justify-end">
-                <button onclick="closeDashDetailModal()" class="px-5 py-2.5 bg-slate-800 hover:bg-slate-900 text-white font-bold rounded-xl text-xs transition-colors">Tutup</button>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        // ==========================================
-        // MODE 4: JADWAL & LAPORAN + MATRIKS
-        // ==========================================
-        let gJadwalFasilRaw = [];
-
-        function switchMode4SubTab(tab) {
-            const tabTabel = document.getElementById('subtabMode4Tabel');
-            const tabMatriks = document.getElementById('subtabMode4Matriks');
-            const viewTabel = document.getElementById('mode4ViewTabel');
-            const viewMatriks = document.getElementById('mode4ViewMatriks');
-
-            if (tab === 'tabel') {
-                if (tabTabel) tabTabel.className = "px-4 py-2 rounded-lg transition-all bg-white text-slate-900 shadow-2xs font-bold";
-                if (tabMatriks) tabMatriks.className = "px-4 py-2 rounded-lg transition-all text-slate-600 hover:text-slate-900 font-bold";
-                if (viewTabel) viewTabel.classList.remove('hidden');
-                if (viewMatriks) viewMatriks.classList.add('hidden');
-            } else {
-                if (tabTabel) tabTabel.className = "px-4 py-2 rounded-lg transition-all text-slate-600 hover:text-slate-900 font-bold";
-                if (tabMatriks) tabMatriks.className = "px-4 py-2 rounded-lg transition-all bg-white text-slate-900 shadow-2xs font-bold";
-                if (viewTabel) viewTabel.classList.add('hidden');
-                if (viewMatriks) viewMatriks.classList.remove('hidden');
-                renderMode4Matriks();
-            }
-        }
-
-        async function loadJadwalFasilData() {
-            try {
-                const container = document.getElementById('listJadwalFasilContainer');
-                if (container) container.innerHTML = '<div class="text-center text-slate-500 py-4"><div class="spinner mx-auto mb-2"></div>Memuat jadwal...</div>';
-
-                const [fasilSnap, guruSnap, assignSnap, jadwalSnap] = await Promise.all([
-                    db.ref('fasilitator').once('value'),
-                    db.ref('master_guru').once('value'),
-                    db.ref('fasilitator_sekolah').once('value'),
-                    db.ref('jadwal_kunjungan').once('value')
-                ]);
-
-                const fasils = fasilSnap.val() || {};
-                const gurus = guruSnap.val() || {};
-                const assigns = assignSnap.val() || {};
-                const jadwals = jadwalSnap.val() || {};
-
-                gJadwalFasilRaw = [];
-                for (const fId in fasils) {
-                    const fasil = fasils[fId];
-                    const myNpsns = assigns[fId] || [];
-                    myNpsns.forEach(npsn => {
-                        const school = gurus[npsn] || {};
-                        const schoolJadwal = jadwals[npsn] || {};
-                        for (let k = 1; k <= 6; k++) {
-                            const jObj = schoolJadwal[`kunjungan_${k}`] || {};
-                            gJadwalFasilRaw.push({
-                                fasilId: fId,
-                                fasilNama: fasil.nama,
-                                fasilHp: fasil.hp || '-',
-                                npsn,
-                                namaSekolah: school.nama_sekolah || `NPSN ${npsn}`,
-                                kabKota: school.kab_kota || '-',
-                                kunjungan: k,
-                                tanggal: jObj.tanggal || '-',
-                                status: jObj.status || 'Belum Diisi',
-                                catatan: jObj.catatan_pelaksanaan_tet || '-'
-                            });
-                        }
-                    });
-                }
-
-                renderJadwalFasilTable(gJadwalFasilRaw);
-
-            } catch(e) {
-                console.error("Gagal loadJadwalFasilData", e);
-                const container = document.getElementById('listJadwalFasilContainer');
-                if (container) container.innerHTML = '<div class="text-center text-red-500 py-4">Gagal memuat jadwal fasilitator.</div>';
-            }
-        }
-
-        function filterJadwalFasilData() {
-            const q = (document.getElementById('searchJadwalFasil')?.value || '').toLowerCase();
-            const filtered = gJadwalFasilRaw.filter(r => {
-                return r.fasilNama.toLowerCase().includes(q) || r.namaSekolah.toLowerCase().includes(q) || r.kabKota.toLowerCase().includes(q) || r.status.toLowerCase().includes(q);
-            });
-            renderJadwalFasilTable(filtered);
-        }
-
-        function renderJadwalFasilTable(rows) {
-            const container = document.getElementById('listJadwalFasilContainer');
-            const badge = document.getElementById('jadwalFasilCountBadge');
-            if (badge) badge.textContent = `${rows.length} Baris Jadwal`;
-
-            if (!container) return;
-            if (rows.length === 0) {
-                container.innerHTML = '<div class="text-center text-slate-400 py-6">Tidak ada jadwal ditemukan.</div>';
-                return;
-            }
-
-            let html = `
-                <div class="overflow-x-auto rounded-xl border border-slate-200/80">
-                    <table class="w-full text-left text-xs whitespace-nowrap">
-                        <thead class="bg-slate-50 text-slate-600 font-bold border-b border-slate-200">
-                            <tr>
-                                <th class="px-4 py-3">Fasilitator</th>
-                                <th class="px-4 py-3">Sekolah Model</th>
-                                <th class="px-4 py-3 text-center">Tahap</th>
-                                <th class="px-4 py-3">Tanggal Pelaksanaan</th>
-                                <th class="px-4 py-3 text-center">Status</th>
-                                <th class="px-4 py-3">Catatan / Laporan</th>
-                            </tr>
-                        </thead>
-                        <tbody class="divide-y divide-slate-100">
-            `;
-
-            rows.forEach(r => {
-                let badgeClass = "bg-slate-100 text-slate-600";
-                if (r.status === 'Selesai') badgeClass = "bg-emerald-100 text-emerald-800 font-bold";
-                else if (r.status === 'Direncanakan') badgeClass = "bg-blue-100 text-blue-800 font-bold";
-                else if (r.status === 'Batal/Ditunda') badgeClass = "bg-rose-100 text-rose-800 font-bold";
-
-                html += `
-                    <tr class="hover:bg-slate-50 transition-colors">
-                        <td class="px-4 py-3 font-bold text-slate-800">${r.fasilNama}</td>
-                        <td class="px-4 py-3 font-semibold text-slate-700">${r.namaSekolah} <span class="text-[10px] text-slate-400 block">${r.kabKota}</span></td>
-                        <td class="px-4 py-3 text-center"><span class="px-2 py-0.5 rounded-full bg-slate-100 font-bold text-slate-700">Tahap ${r.kunjungan}</span></td>
-                        <td class="px-4 py-3 text-slate-700">${r.tanggal}</td>
-                        <td class="px-4 py-3 text-center"><span class="px-2.5 py-1 rounded-full text-xs ${badgeClass}">${r.status}</span></td>
-                        <td class="px-4 py-3 text-slate-500 max-w-xs truncate">${r.catatan}</td>
-                    </tr>
-                `;
-            });
-
-            html += `
-                        </tbody>
-                    </table>
-                </div>
-            `;
-
-            container.innerHTML = html;
-        }
-
-        async function renderMode4Matriks() {
-            try {
-                const tbody = document.getElementById('mode4MatriksBody');
-                if (!tbody) return;
-
-                const [fasilSnap, guruSnap, assignSnap, jadwalSnap] = await Promise.all([
-                    db.ref('fasilitator').once('value'),
-                    db.ref('master_guru').once('value'),
-                    db.ref('fasilitator_sekolah').once('value'),
-                    db.ref('jadwal_kunjungan').once('value')
-                ]);
-
-                const fasils = fasilSnap.val() || {};
-                const gurus = guruSnap.val() || {};
-                const assigns = assignSnap.val() || {};
-                const jadwals = jadwalSnap.val() || {};
-
-                let html = '';
-                for (const fId in fasils) {
-                    const fasil = fasils[fId];
-                    const myNpsns = assigns[fId] || [];
-                    const rowCount = myNpsns.length;
-
-                    if (rowCount === 0) {
-                        html += `
-                            <tr class="border-b border-slate-100">
-                                <td class="px-4 py-3 font-bold text-emerald-800">${fasil.nama}</td>
-                                <td colspan="8" class="px-4 py-3 text-slate-400 italic">Belum ada sekolah binaan yang ditugaskan.</td>
-                            </tr>
-                        `;
-                    } else {
-                        myNpsns.forEach((npsn, idx) => {
-                            const school = gurus[npsn] || {};
-                            const sj = jadwals[npsn] || {};
-                            let selesaiCount = 0;
-                            let cells = '';
-
-                            for (let k = 1; k <= 6; k++) {
-                                const j = sj[`kunjungan_${k}`] || { status: 'Belum Diisi', tanggal: '-' };
-                                let bg = 'bg-slate-100 text-slate-500';
-                                let icon = '—';
-                                if (j.status === 'Selesai') { bg = 'bg-emerald-100 text-emerald-800 font-bold'; icon = '✓'; selesaiCount++; }
-                                else if (j.status === 'Direncanakan') { bg = 'bg-blue-100 text-blue-800 font-bold'; icon = '📅'; }
-                                else if (j.status === 'Batal/Ditunda') { bg = 'bg-rose-100 text-rose-800 font-bold'; icon = '✗'; }
-
-                                cells += `<td class="px-2 py-2 text-center"><div class="${bg} p-1.5 rounded-lg text-[10px]">${icon}<br><span class="opacity-75">${j.tanggal && j.tanggal !== '-' ? j.tanggal.split(' ')[0] : 'Belum'}</span></div></td>`;
-                            }
-
-                            const pct = Math.round((selesaiCount / 6) * 100);
-                            const pColor = pct === 100 ? 'bg-emerald-500' : (pct >= 50 ? 'bg-blue-500' : 'bg-amber-500');
-
-                            html += `
-                                <tr class="hover:bg-slate-50 transition-colors border-b border-slate-100">
-                                    ${idx === 0 ? `<td class="px-4 py-3 font-bold text-slate-900 align-top" rowspan="${rowCount}">${fasil.nama}<br><span class="text-[10px] font-normal text-slate-400">${fasil.jabatan || fasil.instansi || ''}</span></td>` : ''}
-                                    <td class="px-4 py-3 font-semibold text-slate-800 text-xs">${school.nama_sekolah || npsn}</td>
-                                    ${cells}
-                                    <td class="px-4 py-3 text-center">
-                                        <div class="font-bold text-xs ${pct===100?'text-emerald-700':'text-slate-700'} mb-1">${pct}%</div>
-                                        <div class="w-full bg-slate-200 rounded-full h-1.5"><div class="${pColor} h-1.5 rounded-full" style="width:${pct}%"></div></div>
-                                    </td>
-                                </tr>
-                            `;
-                        });
-                    }
-                }
-
-                tbody.innerHTML = html || '<tr><td colspan="9" class="text-center py-6 text-slate-400">Belum ada fasilitator terdaftar.</td></tr>';
-
-            } catch(e) {
-                console.error("Gagal renderMode4Matriks", e);
-            }
-        }
-
-        // ==========================================
-        // MODE 5: ASSIGN PENDAMPING SEKOLAH
-        // ==========================================
-        let gManajemenSekolahRaw = [];
-        let gFasilListMode5 = {};
-
-        async function loadManajemenSekolahData() {
-            try {
-                const container = document.getElementById('listManajemenSekolahContainer');
-                if (container) container.innerHTML = '<div class="text-center text-slate-500 py-4"><div class="spinner mx-auto mb-2"></div>Memuat data...</div>';
-
-                const [fasilSnap, guruSnap, assignSnap] = await Promise.all([
-                    db.ref('fasilitator').once('value'),
-                    db.ref('master_guru').once('value'),
-                    db.ref('fasilitator_sekolah').once('value')
-                ]);
-
-                gFasilListMode5 = fasilSnap.val() || {};
-                const gurus = guruSnap.val() || {};
-                const assigns = assignSnap.val() || {};
-
-                const schoolToFasil = {};
-                for (const fId in assigns) {
-                    if (Array.isArray(assigns[fId])) {
-                        assigns[fId].forEach(n => schoolToFasil[n] = fId);
-                    }
-                }
-
-                gManajemenSekolahRaw = Object.values(gurus).map(g => {
-                    const fasilId = schoolToFasil[g.npsn];
-                    const fasilName = fasilId && gFasilListMode5[fasilId] ? gFasilListMode5[fasilId].nama : 'Belum Ditugaskan';
-                    return {
-                        npsn: g.npsn,
-                        namaSekolah: g.nama_sekolah,
-                        kabKota: g.kab_kota || '-',
-                        fasilId: fasilId || '',
-                        fasilName
-                    };
-                });
-
-                renderAssignSekolahTable(gManajemenSekolahRaw);
-
-            } catch(e) {
-                console.error("Gagal loadManajemenSekolahData", e);
-            }
-        }
-
-        function filterAssignSekolahTable() {
-            const q = (document.getElementById('searchAssignSekolah')?.value || '').toLowerCase();
-            const filtered = gManajemenSekolahRaw.filter(s => {
-                return s.namaSekolah.toLowerCase().includes(q) || s.npsn.includes(q) || s.fasilName.toLowerCase().includes(q);
-            });
-            renderAssignSekolahTable(filtered);
-        }
-
-        function renderAssignSekolahTable(rows) {
-            const container = document.getElementById('listManajemenSekolahContainer');
-            if (!container) return;
-
-            let html = `
-                <div class="overflow-x-auto rounded-xl border border-slate-200/80">
-                    <table class="w-full text-left text-xs whitespace-nowrap">
-                        <thead class="bg-slate-50 text-slate-600 font-bold border-b border-slate-200">
-                            <tr>
-                                <th class="px-4 py-3 text-center">#</th>
-                                <th class="px-4 py-3">NPSN</th>
-                                <th class="px-4 py-3">Nama Sekolah Model</th>
-                                <th class="px-4 py-3">Kabupaten / Kota</th>
-                                <th class="px-4 py-3">Fasilitator Pendamping saat ini</th>
-                                <th class="px-4 py-3 text-center">Aksi Penugasan</th>
-                            </tr>
-                        </thead>
-                        <tbody class="divide-y divide-slate-100">
-            `;
-
-            rows.forEach((r, idx) => {
-                const isAssigned = r.fasilId !== '';
-                const fasilBadge = isAssigned
-                    ? `<span class="font-bold text-emerald-800">${r.fasilName}</span>`
-                    : `<span class="italic text-slate-400 bg-slate-100 px-2 py-0.5 rounded">Belum ditugaskan</span>`;
-
-                html += `
-                    <tr class="hover:bg-slate-50 transition-colors">
-                        <td class="px-4 py-3 text-center text-slate-400 font-mono">${idx + 1}</td>
-                        <td class="px-4 py-3 font-bold text-slate-700">${r.npsn}</td>
-                        <td class="px-4 py-3 font-bold text-slate-900">${r.namaSekolah}</td>
-                        <td class="px-4 py-3 text-slate-600">${r.kabKota}</td>
-                        <td class="px-4 py-3">${fasilBadge}</td>
-                        <td class="px-4 py-3 text-center">
-                            <button onclick="bukaModalSetFasil('${r.npsn}', '${r.namaSekolah.replace(/'/g, "\\'").replace(/"/g, '&quot;')}', '${r.fasilId}')" class="bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border border-emerald-200 px-3 py-1.5 rounded-xl font-bold transition-colors">
-                                ✏️ Assign / Ubah
-                            </button>
-                        </td>
-                    </tr>
-                `;
-            });
-
-            html += `
-                        </tbody>
-                    </table>
-                </div>
-            `;
-
-            container.innerHTML = html;
-        }
-
-        function bukaModalSetFasil(npsn, schoolName, currentFasilId) {
-            document.getElementById('assignNpsn').value = npsn;
-            document.getElementById('modalSekolahName').textContent = `${schoolName} (NPSN: ${npsn})`;
-
-            const select = document.getElementById('selectAssignFasil');
-            select.innerHTML = '<option value="">-- Pilih Fasilitator Pendamping --</option>';
-
-            for (const fId in gFasilListMode5) {
-                const opt = document.createElement('option');
-                opt.value = fId;
-                opt.textContent = gFasilListMode5[fId].nama + (gFasilListMode5[fId].instansi ? ` (${gFasilListMode5[fId].instansi})` : '');
-                if (fId === currentFasilId) opt.selected = true;
-                select.appendChild(opt);
-            }
-
-            document.getElementById('modalAssignFasilSekolah').classList.remove('hidden');
-        }
-
-        async function simpanFasilUntukSekolah() {
-            const npsn = document.getElementById('assignNpsn').value;
-            const newFasilId = document.getElementById('selectAssignFasil').value;
-            if (!npsn) return;
-
-            try {
-                const snap = await db.ref('fasilitator_sekolah').once('value');
-                const assigned = snap.val() || {};
-                const updates = {};
-
-                for (const fId in assigned) {
-                    let npsns = assigned[fId] || [];
-                    if (npsns.includes(npsn)) {
-                        npsns = npsns.filter(n => n !== npsn);
-                        updates[fId] = npsns;
-                    }
-                }
-
-                if (newFasilId) {
-                    let newNpsns = updates[newFasilId] || assigned[newFasilId] || [];
-                    if (!newNpsns.includes(npsn)) newNpsns.push(npsn);
-                    updates[newFasilId] = newNpsns;
-                }
-
-                await db.ref('fasilitator_sekolah').update(updates);
-                document.getElementById('modalAssignFasilSekolah').classList.add('hidden');
-                alert("Penugasan fasilitator berhasil disimpan!");
-                loadManajemenSekolahData();
-                loadDashboardUtamaData();
-            } catch(e) {
-                alert("Gagal menyimpan penugasan: " + e.message);
-            }
-        }
-
-        // ==========================================
-        // MODE 7: DATA KUNJUNGAN SEMUA SEKOLAH
-        // ==========================================
-        let gDataKunjunganRaw = [];
-
-        async function loadDataKunjunganData() {
-            try {
-                const container = document.getElementById('listDataKunjunganContainer');
-                if (container) container.innerHTML = '<div class="text-center text-slate-500 py-4"><div class="spinner mx-auto mb-2"></div>Memuat data...</div>';
-
-                const [guruSnap, fasilSnap, assignSnap, jadwalSnap] = await Promise.all([
-                    db.ref('master_guru').once('value'),
-                    db.ref('fasilitator').once('value'),
-                    db.ref('fasilitator_sekolah').once('value'),
-                    db.ref('jadwal_kunjungan').once('value')
-                ]);
-
-                const gurus = guruSnap.val() || {};
-                const fasils = fasilSnap.val() || {};
-                const assigns = assignSnap.val() || {};
-                const jadwals = jadwalSnap.val() || {};
-
-                const schoolToFasil = {};
-                for (const fId in assigns) {
-                    if (Array.isArray(assigns[fId])) {
-                        assigns[fId].forEach(n => schoolToFasil[n] = fId);
-                    }
-                }
-
-                gDataKunjunganRaw = Object.values(gurus).map(g => {
-                    const fId = schoolToFasil[g.npsn];
-                    const fasilName = fId && fasils[fId] ? fasils[fId].nama : 'Belum Ditugaskan';
-                    const sj = jadwals[g.npsn] || {};
-
-                    return {
-                        npsn: g.npsn,
-                        namaSekolah: g.nama_sekolah,
-                        kabKota: g.kab_kota || '-',
-                        fasilName,
-                        k1: sj['kunjungan_1']?.tanggal || '-',
-                        k2: sj['kunjungan_2']?.tanggal || '-',
-                        k3: sj['kunjungan_3']?.tanggal || '-'
-                    };
-                });
-
-                renderDataKunjunganTable(gDataKunjunganRaw);
-
-            } catch(e) {
-                console.error("Gagal loadDataKunjunganData", e);
-            }
-        }
-
-        function filterDataKunjunganTable() {
-            const q = (document.getElementById('searchDataKunjungan')?.value || '').toLowerCase();
-            const filtered = gDataKunjunganRaw.filter(k => {
-                return k.namaSekolah.toLowerCase().includes(q) || k.npsn.includes(q) || k.fasilName.toLowerCase().includes(q) || k.kabKota.toLowerCase().includes(q);
-            });
-            renderDataKunjunganTable(filtered);
-        }
-
-        function renderDataKunjunganTable(rows) {
-            const container = document.getElementById('listDataKunjunganContainer');
-            if (!container) return;
-
-            let html = `
-                <div class="overflow-x-auto rounded-xl border border-slate-200/80">
-                    <table class="w-full text-left text-xs whitespace-nowrap">
-                        <thead class="bg-slate-50 text-slate-600 font-bold border-b border-slate-200">
-                            <tr>
-                                <th class="px-4 py-3 text-center">#</th>
-                                <th class="px-4 py-3">Nama Sekolah Model</th>
-                                <th class="px-4 py-3">Kab / Kota</th>
-                                <th class="px-4 py-3">Fasilitator Pendamping</th>
-                                <th class="px-4 py-3 text-center">Jadwal Tahap 1</th>
-                                <th class="px-4 py-3 text-center">Jadwal Tahap 2</th>
-                                <th class="px-4 py-3 text-center">Jadwal Tahap 3</th>
-                            </tr>
-                        </thead>
-                        <tbody class="divide-y divide-slate-100">
-            `;
-
-            rows.forEach((r, idx) => {
-                html += `
-                    <tr class="hover:bg-slate-50 transition-colors">
-                        <td class="px-4 py-3 text-center text-slate-400 font-mono">${idx + 1}</td>
-                        <td class="px-4 py-3 font-bold text-slate-900">${r.namaSekolah} <span class="text-[10px] text-slate-400 block">NPSN: ${r.npsn}</span></td>
-                        <td class="px-4 py-3 text-slate-600">${r.kabKota}</td>
-                        <td class="px-4 py-3 font-semibold text-emerald-800">${r.fasilName}</td>
-                        <td class="px-4 py-3 text-center"><span class="px-2 py-1 rounded bg-slate-100 text-slate-700 font-medium">${r.k1}</span></td>
-                        <td class="px-4 py-3 text-center"><span class="px-2 py-1 rounded bg-slate-100 text-slate-700 font-medium">${r.k2}</span></td>
-                        <td class="px-4 py-3 text-center"><span class="px-2 py-1 rounded bg-slate-100 text-slate-700 font-medium">${r.k3}</span></td>
-                    </tr>
-                `;
-            });
-
-            html += `
-                        </tbody>
-                    </table>
-                </div>
-            `;
-
-            container.innerHTML = html;
-        }
-    </script>
-
-    <!-- REMOVED DUPLICATE: modalDashDetail already exists above -->
-    <!-- MODAL ASSIGN FASILITATOR SEKOLAH -->
-    <div id="modalAssignFasilSekolah" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 z-50 hidden fade-in">
-        <div class="bg-white rounded-3xl max-w-lg w-full p-6 shadow-2xl border border-slate-100">
-            <div class="flex items-center justify-between mb-4 border-b border-slate-100 pb-3">
-                <h3 class="text-lg font-bold text-slate-900">Assign Pendamping Sekolah</h3>
-                <button onclick="document.getElementById('modalAssignFasilSekolah').classList.add('hidden')" class="text-slate-400 hover:text-slate-700">✕</button>
-            </div>
-            <input type="hidden" id="assignNpsn">
-            <p class="text-xs text-slate-500 mb-2">Sekolah Model Target:</p>
-            <div class="font-bold text-slate-800 text-sm mb-4 p-3 bg-slate-50 rounded-xl border border-slate-200" id="modalSekolahName">-</div>
-            
-            <label class="block text-xs font-bold text-slate-700 mb-1">Pilih Fasilitator Pendamping:</label>
-            <select id="selectAssignFasil" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:outline-none focus:border-emerald-500 mb-6">
-                <!-- Dynamic options -->
-            </select>
-
-            <div class="flex justify-end gap-2">
-                <button onclick="document.getElementById('modalAssignFasilSekolah').classList.add('hidden')" class="px-4 py-2 bg-slate-100 text-slate-700 text-xs font-bold rounded-xl hover:bg-slate-200">Batal</button>
-                <button onclick="simpanFasilUntukSekolah()" class="px-4 py-2 bg-emerald-600 text-white text-xs font-bold rounded-xl hover:bg-emerald-700 shadow-sm">Simpan Penugasan</button>
-            </div>
-        </div>
-    </div>
 </body>
 </html>
