@@ -3245,20 +3245,6 @@
             }
         }
 
-            const el = document.getElementById(menuId);
-            const icon = document.getElementById('icon_' + menuId);
-            if (el.classList.contains('hidden')) {
-                el.classList.remove('hidden');
-                if(icon) icon.classList.add('rotate-180');
-            } else {
-                el.classList.add('hidden');
-                if(icon) icon.classList.remove('rotate-180');
-            }
-        }
-    </script>
-    <!-- ADMIN DETAIL MODAL -->
-    <div id="adminDetailModal" class="hidden fixed inset-0 z-[60] bg-slate-900/40 backdrop-blur-sm justify-center p-4 items-start sm:items-center pt-12 pb-12 sm:pt-4 overflow-y-auto">
-        <div class="bg-white rounded-2xl shadow-xl w-full max-w-lg overflow-hidden fade-in relative flex flex-col max-h-[90vh]">
             <div class="px-6 py-5 border-b border-slate-100 flex justify-between items-center bg-white sticky top-0 z-10">
                 <h3 class="text-xl font-bold text-slate-800" id="adminDetailTitle">Detail Sekolah</h3>
                 <button onclick="document.getElementById('adminDetailModal').classList.add('hidden')" class="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-50 rounded-full transition-colors">
