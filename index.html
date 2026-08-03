@@ -339,13 +339,13 @@
                         </button>
                     </div>
 
-                    <!-- Stat Cards (4 Cards Grid) -->
+                    <!-- Stat Cards (4 Cards Grid - Clickable for Detail Modals) -->
                     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
                         <!-- Card 1: Kombel Sasaran Ploting -->
-                        <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-2xs relative overflow-hidden flex flex-col justify-between">
+                        <div onclick="openModalDashKombelSasaran()" class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-2xs relative overflow-hidden flex flex-col justify-between cursor-pointer hover:shadow-md hover:-translate-y-1 transition-all duration-200 group">
                             <div class="flex items-center justify-between mb-3">
                                 <span class="text-xs font-extrabold text-purple-700 uppercase tracking-wider">Kombel Sasaran (54)</span>
-                                <div class="p-2 bg-purple-100 text-purple-700 rounded-xl">
+                                <div class="p-2 bg-purple-100 text-purple-700 rounded-xl group-hover:bg-purple-600 group-hover:text-white transition-colors">
                                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
                                 </div>
                             </div>
@@ -353,18 +353,19 @@
                                 <div class="text-2xl font-black text-slate-800" id="dash_kombel_plotted_val">0 / 54</div>
                                 <div class="text-xs text-slate-500 font-medium mt-1" id="dash_kombel_plotted_sub">Komunitas Belajar Terplotting</div>
                             </div>
-                            <div class="mt-4 pt-3 border-t border-slate-100">
-                                <div class="w-full bg-slate-100 rounded-full h-2 overflow-hidden">
+                            <div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between">
+                                <div class="w-2/3 bg-slate-100 rounded-full h-2 overflow-hidden">
                                     <div class="bg-purple-600 h-2 rounded-full transition-all duration-500" id="dash_kombel_bar" style="width: 0%"></div>
                                 </div>
+                                <span class="text-[10px] font-bold text-purple-700 flex items-center gap-0.5 group-hover:underline">Detail ↗</span>
                             </div>
                         </div>
 
                         <!-- Card 2: Sekolah Model Ploting -->
-                        <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-2xs relative overflow-hidden flex flex-col justify-between">
+                        <div onclick="openModalDashSekolahModel()" class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-2xs relative overflow-hidden flex flex-col justify-between cursor-pointer hover:shadow-md hover:-translate-y-1 transition-all duration-200 group">
                             <div class="flex items-center justify-between mb-3">
                                 <span class="text-xs font-extrabold text-indigo-700 uppercase tracking-wider">Sekolah Model (25)</span>
-                                <div class="p-2 bg-indigo-100 text-indigo-700 rounded-xl">
+                                <div class="p-2 bg-indigo-100 text-indigo-700 rounded-xl group-hover:bg-indigo-600 group-hover:text-white transition-colors">
                                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1v1H9V7zm5 0h1v1h-1V7zm-5 4h1v1H9v-1zm5 0h1v1h-1v-1zm-5 4h1v1H9v-1zm5 0h1v1h-1v-1z"/></svg>
                                 </div>
                             </div>
@@ -372,18 +373,19 @@
                                 <div class="text-2xl font-black text-slate-800" id="dash_sekolah_plotted_val">0 / 25</div>
                                 <div class="text-xs text-slate-500 font-medium mt-1" id="dash_sekolah_plotted_sub">Sekolah Diberi Pendamping</div>
                             </div>
-                            <div class="mt-4 pt-3 border-t border-slate-100">
-                                <div class="w-full bg-slate-100 rounded-full h-2 overflow-hidden">
+                            <div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between">
+                                <div class="w-2/3 bg-slate-100 rounded-full h-2 overflow-hidden">
                                     <div class="bg-indigo-600 h-2 rounded-full transition-all duration-500" id="dash_sekolah_bar" style="width: 0%"></div>
                                 </div>
+                                <span class="text-[10px] font-bold text-indigo-700 flex items-center gap-0.5 group-hover:underline">Detail ↗</span>
                             </div>
                         </div>
 
                         <!-- Card 3: Total Fasilitator -->
-                        <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-2xs relative overflow-hidden flex flex-col justify-between">
+                        <div onclick="openModalDashFasilitator()" class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-2xs relative overflow-hidden flex flex-col justify-between cursor-pointer hover:shadow-md hover:-translate-y-1 transition-all duration-200 group">
                             <div class="flex items-center justify-between mb-3">
                                 <span class="text-xs font-extrabold text-emerald-700 uppercase tracking-wider">Total Fasilitator</span>
-                                <div class="p-2 bg-emerald-100 text-emerald-700 rounded-xl">
+                                <div class="p-2 bg-emerald-100 text-emerald-700 rounded-xl group-hover:bg-emerald-600 group-hover:text-white transition-colors">
                                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
                                 </div>
                             </div>
@@ -391,17 +393,20 @@
                                 <div class="text-2xl font-black text-slate-800" id="dash_total_fasil_val">0</div>
                                 <div class="text-xs text-slate-500 font-medium mt-1">Fasilitator Terdaftar</div>
                             </div>
-                            <div class="mt-4 pt-3 border-t border-slate-100 text-[11px] text-slate-500 font-semibold flex justify-between">
-                                <span id="dash_dual_fasil_count">Dual: 0</span>
-                                <span id="dash_single_fasil_count">Single: 0</span>
+                            <div class="mt-4 pt-3 border-t border-slate-100 text-[11px] text-slate-500 font-semibold flex justify-between items-center">
+                                <div class="flex gap-2">
+                                    <span id="dash_dual_fasil_count">Dual: 0</span>
+                                    <span id="dash_single_fasil_count">Single: 0</span>
+                                </div>
+                                <span class="text-[10px] font-bold text-emerald-700 group-hover:underline">Detail ↗</span>
                             </div>
                         </div>
 
                         <!-- Card 4: Kunjungan Terjadwal -->
-                        <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-2xs relative overflow-hidden flex flex-col justify-between">
+                        <div onclick="openModalDashKunjungan()" class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-2xs relative overflow-hidden flex flex-col justify-between cursor-pointer hover:shadow-md hover:-translate-y-1 transition-all duration-200 group">
                             <div class="flex items-center justify-between mb-3">
                                 <span class="text-xs font-extrabold text-amber-700 uppercase tracking-wider">Jadwal Kunjungan</span>
-                                <div class="p-2 bg-amber-100 text-amber-700 rounded-xl">
+                                <div class="p-2 bg-amber-100 text-amber-700 rounded-xl group-hover:bg-amber-600 group-hover:text-white transition-colors">
                                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
                                 </div>
                             </div>
@@ -409,8 +414,9 @@
                                 <div class="text-2xl font-black text-slate-800" id="dash_kunjungan_count">0</div>
                                 <div class="text-xs text-slate-500 font-medium mt-1">Kunjungan Terkonfirmasi</div>
                             </div>
-                            <div class="mt-4 pt-3 border-t border-slate-100 text-[11px] text-amber-700 font-bold">
+                            <div class="mt-4 pt-3 border-t border-slate-100 text-[11px] text-amber-700 font-bold flex justify-between items-center">
                                 <span>Kunjungan Tahap 1, 2, 3</span>
+                                <span class="text-[10px] font-bold text-amber-700 group-hover:underline">Detail ↗</span>
                             </div>
                         </div>
                     </div>
@@ -1500,6 +1506,298 @@
             await db.ref('fasilitator_sekolah/' + id).remove();
             loadFasilitatorData();
         }
+
+        // ==========================================
+        // DASHBOARD UTAMA DETAIL MODALS LOGIC
+        // ==========================================
+        let gDashDetailData = [];
+
+        function closeDashDetailModal() {
+            const modal = document.getElementById('modalDashDetail');
+            if (modal) modal.classList.add('hidden');
+        }
+
+        function filterDashDetailTable() {
+            const query = (document.getElementById('dashDetailSearch')?.value || '').toLowerCase();
+            const filtered = gDashDetailData.filter(item => {
+                return Object.values(item).some(val => String(val || '').toLowerCase().includes(query));
+            });
+            renderDashDetailTableBody(filtered);
+        }
+
+        function renderDashDetailTableBody(items) {
+            const tbody = document.getElementById('dashDetailTableBody');
+            if (!tbody) return;
+            if (items.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" class="px-4 py-8 text-center text-slate-400">Tidak ada data ditemukan.</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = items.map((item, idx) => {
+                return `
+                    <tr class="hover:bg-slate-50 transition-colors">
+                        <td class="px-4 py-3 text-slate-400 font-mono text-[11px]">${idx + 1}</td>
+                        <td class="px-4 py-3 font-bold text-slate-800">${item.col1 || '-'}</td>
+                        <td class="px-4 py-3 text-slate-600">${item.col2 || '-'}</td>
+                        <td class="px-4 py-3 font-semibold text-slate-700">${item.col3 || '-'}</td>
+                        <td class="px-4 py-3 text-slate-600">${item.col4 || '-'}</td>
+                        <td class="px-4 py-3 text-center">${item.colBadge || '-'}</td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        // 1. Modal Detail Kombel Sasaran
+        async function openModalDashKombelSasaran() {
+            try {
+                const [kombelSnap, fasilSnap] = await Promise.all([
+                    db.ref('master_kombel').once('value'),
+                    db.ref('fasilitator').once('value')
+                ]);
+                const kombels = Object.values(kombelSnap.val() || {});
+                const fasils = Object.values(fasilSnap.val() || {});
+
+                const targetKombels = kombels.filter(k => k.is_sasaran);
+                gDashDetailData = targetKombels.map(k => {
+                    const matchedFasil = fasils.find(f => f.fkk_1 && (f.fkk_1.toLowerCase().includes(k.nama_kombel.toLowerCase()) || k.nama_kombel.toLowerCase().includes(f.fkk_1.toLowerCase())));
+                    const isPlotted = !!matchedFasil;
+                    return {
+                        col1: k.nama_kombel,
+                        col2: `${k.kab_kota || '-'} (${k.kecamatan || '-'})`,
+                        col3: matchedFasil ? matchedFasil.nama : 'Belum Ditugaskan',
+                        col4: matchedFasil ? matchedFasil.jabatan || matchedFasil.instansi || '-' : '-',
+                        colBadge: isPlotted 
+                            ? `<span class="px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800">✅ Ter-plotting</span>`
+                            : `<span class="px-2.5 py-1 rounded-full text-xs font-bold bg-amber-100 text-amber-800">⚠️ Belum</span>`
+                    };
+                });
+
+                document.getElementById('dashDetailTitle').textContent = "Detail 54 Komunitas Belajar Sasaran PMKKA";
+                document.getElementById('dashDetailSub').textContent = "Daftar lengkap Komunitas Belajar sasaran utama penugasan fasilitator BGTK Sumbar.";
+                document.getElementById('dashDetailBadge').textContent = `${gDashDetailData.length} Kombel Sasaran`;
+                document.getElementById('dashDetailBadge').className = "px-3 py-1 rounded-full text-xs font-black bg-purple-100 text-purple-800 border border-purple-200";
+
+                document.getElementById('dashTh1').textContent = "Nama Kombel";
+                document.getElementById('dashTh2').textContent = "Kabupaten / Kota";
+                document.getElementById('dashTh3').textContent = "Fasilitator Pendamping";
+                document.getElementById('dashTh4').textContent = "Jabatan / Instansi";
+                document.getElementById('dashTh5').textContent = "Status Ploting";
+
+                const searchInput = document.getElementById('dashDetailSearch');
+                if (searchInput) searchInput.value = '';
+
+                renderDashDetailTableBody(gDashDetailData);
+                document.getElementById('modalDashDetail').classList.remove('hidden');
+            } catch(e) {
+                console.error("Gagal openModalDashKombelSasaran", e);
+            }
+        }
+
+        // 2. Modal Detail Sekolah Model
+        async function openModalDashSekolahModel() {
+            try {
+                const [guruSnap, fasilSnap, assignSnap] = await Promise.all([
+                    db.ref('master_guru').once('value'),
+                    db.ref('fasilitator').once('value'),
+                    db.ref('fasilitator_sekolah').once('value')
+                ]);
+                const gurus = Object.values(guruSnap.val() || {});
+                const fasils = fasilSnap.val() || {};
+                const assigns = assignSnap.val() || {};
+
+                gDashDetailData = gurus.map(g => {
+                    let fasilName = 'Belum Ditugaskan';
+                    let fasilInfo = '-';
+                    let isPlotted = false;
+
+                    for (const fId in assigns) {
+                        if (Array.isArray(assigns[fId]) && assigns[fId].includes(g.npsn) && fasils[fId]) {
+                            fasilName = fasils[fId].nama;
+                            fasilInfo = fasils[fId].instansi || fasils[fId].jabatan || '-';
+                            isPlotted = true;
+                            break;
+                        }
+                    }
+
+                    return {
+                        col1: g.nama_sekolah,
+                        col2: `${g.kab_kota || '-'} (NPSN: ${g.npsn})`,
+                        col3: fasilName,
+                        col4: fasilInfo,
+                        colBadge: isPlotted
+                            ? `<span class="px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800">✅ Ter-plotting</span>`
+                            : `<span class="px-2.5 py-1 rounded-full text-xs font-bold bg-amber-100 text-amber-800">⚠️ Belum</span>`
+                    };
+                });
+
+                document.getElementById('dashDetailTitle').textContent = "Detail 25 Sekolah Model PMKKA";
+                document.getElementById('dashDetailSub').textContent = "Daftar Sekolah Model terdaftar dan Fasilitator Dampingannya.";
+                document.getElementById('dashDetailBadge').textContent = `${gDashDetailData.length} Sekolah Model`;
+                document.getElementById('dashDetailBadge').className = "px-3 py-1 rounded-full text-xs font-black bg-indigo-100 text-indigo-800 border border-indigo-200";
+
+                document.getElementById('dashTh1').textContent = "Nama Sekolah Model";
+                document.getElementById('dashTh2').textContent = "Wilayah / NPSN";
+                document.getElementById('dashTh3').textContent = "Fasilitator Dampingan";
+                document.getElementById('dashTh4').textContent = "Instansi / Jabatan";
+                document.getElementById('dashTh5').textContent = "Status Ploting";
+
+                const searchInput = document.getElementById('dashDetailSearch');
+                if (searchInput) searchInput.value = '';
+
+                renderDashDetailTableBody(gDashDetailData);
+                document.getElementById('modalDashDetail').classList.remove('hidden');
+            } catch(e) {
+                console.error("Gagal openModalDashSekolahModel", e);
+            }
+        }
+
+        // 3. Modal Detail Fasilitator
+        async function openModalDashFasilitator() {
+            try {
+                const fasilSnap = await db.ref('fasilitator').once('value');
+                const fasils = Object.values(fasilSnap.val() || {});
+
+                gDashDetailData = fasils.map(f => {
+                    const progs = f.programs || (f.program_kombel ? ['kombel'] : ['sekolah_model']);
+                    const isDual = progs.includes('sekolah_model') && progs.includes('kombel');
+                    const progBadge = isDual
+                        ? `<span class="px-2.5 py-1 rounded-full text-xs font-black bg-emerald-100 text-emerald-900 border border-emerald-300">🌟 Dual Program</span>`
+                        : (progs.includes('kombel') 
+                            ? `<span class="px-2.5 py-1 rounded-full text-xs font-bold bg-purple-100 text-purple-800">🟣 Kombel</span>`
+                            : `<span class="px-2.5 py-1 rounded-full text-xs font-bold bg-blue-100 text-blue-800">🏫 Sekolah Model</span>`);
+
+                    return {
+                        col1: f.nama,
+                        col2: `${f.jabatan || '-'} (${f.instansi || '-'})`,
+                        col3: f.mapel_kombel || f.mapel || '-',
+                        col4: f.fkk_1 || 'Sekolah Dampingan',
+                        colBadge: progBadge
+                    };
+                });
+
+                document.getElementById('dashDetailTitle').textContent = "Detail 43 Fasilitator PM-KKA";
+                document.getElementById('dashDetailSub').textContent = "Daftar seluruh fasilitator BGTK Sumbar dan penugasan per program.";
+                document.getElementById('dashDetailBadge').textContent = `${gDashDetailData.length} Fasilitator`;
+                document.getElementById('dashDetailBadge').className = "px-3 py-1 rounded-full text-xs font-black bg-emerald-100 text-emerald-800 border border-emerald-200";
+
+                document.getElementById('dashTh1').textContent = "Nama Fasilitator";
+                document.getElementById('dashTh2').textContent = "Jabatan & Instansi";
+                document.getElementById('dashTh3').textContent = "Mapel Diampu";
+                document.getElementById('dashTh4').textContent = "Penugasan Dampingan";
+                document.getElementById('dashTh5').textContent = "Kategori Program";
+
+                const searchInput = document.getElementById('dashDetailSearch');
+                if (searchInput) searchInput.value = '';
+
+                renderDashDetailTableBody(gDashDetailData);
+                document.getElementById('modalDashDetail').classList.remove('hidden');
+            } catch(e) {
+                console.error("Gagal openModalDashFasilitator", e);
+            }
+        }
+
+        // 4. Modal Detail Kunjungan
+        async function openModalDashKunjungan() {
+            try {
+                const [jadwalSnap, guruSnap, fasilSnap] = await Promise.all([
+                    db.ref('jadwal_kunjungan').once('value'),
+                    db.ref('master_guru').once('value'),
+                    db.ref('fasilitator').once('value')
+                ]);
+                const jadwals = jadwalSnap.val() || {};
+                const gurus = guruSnap.val() || {};
+                const fasils = fasilSnap.val() || {};
+
+                gDashDetailData = [];
+                for (const npsn in jadwals) {
+                    const namaSekolah = gurus[npsn]?.nama_sekolah || `NPSN ${npsn}`;
+                    const kabKota = gurus[npsn]?.kab_kota || '-';
+                    for (const kunKey in jadwals[npsn]) {
+                        const kObj = jadwals[npsn][kunKey];
+                        if (kObj && (kObj.tanggal || kObj.status || kObj.fasilNama)) {
+                            const kunNo = kunKey.replace('kunjungan_', 'Tahap ');
+                            gDashDetailData.push({
+                                col1: namaSekolah,
+                                col2: `${kabKota} (${kunNo})`,
+                                col3: kObj.fasilNama || 'Fasilitator',
+                                col4: kObj.tanggal || 'Tanggal Belum Set',
+                                colBadge: `<span class="px-2.5 py-1 rounded-full text-xs font-bold bg-amber-100 text-amber-800">📅 Terjadwal</span>`
+                            });
+                        }
+                    }
+                }
+
+                document.getElementById('dashDetailTitle').textContent = "Detail Jadwal Kunjungan Pendampingan";
+                document.getElementById('dashDetailSub').textContent = "Rincian seluruh jadwal kunjungan pendampingan fasilitator ke sekolah model.";
+                document.getElementById('dashDetailBadge').textContent = `${gDashDetailData.length} Kunjungan`;
+                document.getElementById('dashDetailBadge').className = "px-3 py-1 rounded-full text-xs font-black bg-amber-100 text-amber-800 border border-amber-200";
+
+                document.getElementById('dashTh1').textContent = "Nama Sekolah Model";
+                document.getElementById('dashTh2').textContent = "Wilayah & Tahap";
+                document.getElementById('dashTh3').textContent = "Fasilitator";
+                document.getElementById('dashTh4').textContent = "Tanggal Pelaksanaan";
+                document.getElementById('dashTh5').textContent = "Status Jadwal";
+
+                const searchInput = document.getElementById('dashDetailSearch');
+                if (searchInput) searchInput.value = '';
+
+                renderDashDetailTableBody(gDashDetailData);
+                document.getElementById('modalDashDetail').classList.remove('hidden');
+            } catch(e) {
+                console.error("Gagal openModalDashKunjungan", e);
+            }
+        }
     </script>
+
+    <!-- MODAL DASHBOARD DETAIL VIEW -->
+    <div id="modalDashDetail" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 z-50 hidden fade-in">
+        <div class="bg-white rounded-3xl max-w-4xl w-full max-h-[90vh] flex flex-col shadow-2xl border border-slate-100 overflow-hidden">
+            <!-- Modal Header -->
+            <div class="p-6 border-b border-slate-100 bg-slate-50/50 flex items-start justify-between">
+                <div>
+                    <div class="flex items-center gap-3">
+                        <h3 class="text-xl font-black text-slate-900" id="dashDetailTitle">Detail Data</h3>
+                        <span id="dashDetailBadge" class="px-3 py-1 rounded-full text-xs font-extrabold bg-slate-200 text-slate-700">0 Data</span>
+                    </div>
+                    <p class="text-xs text-slate-500 mt-1" id="dashDetailSub">Informasi rincian data dasbor admin.</p>
+                </div>
+                <button onclick="closeDashDetailModal()" class="text-slate-400 hover:text-slate-700 p-2 rounded-xl hover:bg-slate-200/60 transition-colors">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                </button>
+            </div>
+
+            <!-- Modal Search Bar -->
+            <div class="px-6 py-4 border-b border-slate-100 bg-white">
+                <div class="relative">
+                    <svg class="w-5 h-5 text-slate-400 absolute left-3.5 top-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                    <input type="text" id="dashDetailSearch" onkeyup="filterDashDetailTable()" placeholder="Cari nama, wilayah, fasilitator, atau status..." class="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all">
+                </div>
+            </div>
+
+            <!-- Modal Body Table -->
+            <div class="p-6 overflow-y-auto flex-1 custom-sidebar-scroll">
+                <table class="w-full text-left text-xs whitespace-nowrap">
+                    <thead class="bg-slate-100/80 text-slate-600 border-b border-slate-200 font-bold sticky top-0">
+                        <tr>
+                            <th class="px-4 py-3 rounded-l-xl">#</th>
+                            <th class="px-4 py-3" id="dashTh1">Kolom 1</th>
+                            <th class="px-4 py-3" id="dashTh2">Kolom 2</th>
+                            <th class="px-4 py-3" id="dashTh3">Kolom 3</th>
+                            <th class="px-4 py-3" id="dashTh4">Kolom 4</th>
+                            <th class="px-4 py-3 text-center rounded-r-xl" id="dashTh5">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="dashDetailTableBody" class="divide-y divide-slate-100">
+                        <!-- Dynamic rows -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Modal Footer -->
+            <div class="p-4 border-t border-slate-100 bg-slate-50 flex justify-end">
+                <button onclick="closeDashDetailModal()" class="px-5 py-2.5 bg-slate-800 hover:bg-slate-900 text-white font-bold rounded-xl text-xs transition-colors">Tutup</button>
+            </div>
+        </div>
+    </div>
 </body>
 </html>
