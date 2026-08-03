@@ -426,8 +426,11 @@
              <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-6 mb-6">
                  <h2 class="text-lg font-bold text-slate-800 mb-4">Tambah Fasilitator</h2>
                  <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                     <input type="text" id="inputFasilNama" placeholder="Nama Fasilitator" class="border-slate-300 rounded-lg shadow-sm focus:ring-indigo-500 px-4 py-2 border w-full">
+                     <input type="text" id="inputFasilNama" placeholder="Nama Lengkap" class="border-slate-300 rounded-lg shadow-sm focus:ring-indigo-500 px-4 py-2 border w-full">
                      <input type="number" id="inputFasilHp" placeholder="No HP" class="border-slate-300 rounded-lg shadow-sm focus:ring-indigo-500 px-4 py-2 border w-full">
+                     <input type="text" id="inputFasilNip" placeholder="NIP (Opsional)" class="border-slate-300 rounded-lg shadow-sm focus:ring-indigo-500 px-4 py-2 border w-full">
+                     <input type="text" id="inputFasilPangkat" placeholder="Pangkat/Golongan (Opsional, cth: Pembina/IV-a)" class="border-slate-300 rounded-lg shadow-sm focus:ring-indigo-500 px-4 py-2 border w-full">
+                     <input type="text" id="inputFasilJabatan" placeholder="Jabatan (Opsional, cth: Widyaprada Ahli Madya)" class="sm:col-span-2 border-slate-300 rounded-lg shadow-sm focus:ring-indigo-500 px-4 py-2 border w-full">
                  </div>
                  <button onclick="tambahFasil()" class="mt-4 bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2 rounded-lg font-medium shadow-sm transition-colors">Tambah Fasilitator</button>
              </div>
@@ -2496,16 +2499,20 @@
         async function tambahFasil() {
             const nama = document.getElementById('inputFasilNama').value.trim();
             const hp = document.getElementById('inputFasilHp').value.trim();
+            const nip = document.getElementById('inputFasilNip').value.trim();
+            const pangkat_gol = document.getElementById('inputFasilPangkat').value.trim();
+            const jabatan = document.getElementById('inputFasilJabatan').value.trim();
             if(!nama || !hp) return alert("Nama dan No HP wajib diisi");
             
             const fasilId = "fasil_" + Date.now();
             await firebase.database().ref('fasilitator/' + fasilId).set({
-                id: fasilId,
-                nama: nama,
-                hp: hp
+                id: fasilId, nama, hp, nip, pangkat_gol, jabatan
             });
             document.getElementById('inputFasilNama').value = "";
             document.getElementById('inputFasilHp').value = "";
+            document.getElementById('inputFasilNip').value = "";
+            document.getElementById('inputFasilPangkat').value = "";
+            document.getElementById('inputFasilJabatan').value = "";
             loadFasilitatorData();
         }
 
@@ -2931,12 +2938,19 @@
                     
                     html += `
                     <div class="border border-slate-200 p-4 rounded-xl shadow-sm flex flex-col md:flex-row justify-between items-start md:items-center">
-                        <div class="mb-3 md:mb-0">
+                        <div class="mb-3 md:mb-0 flex-1 min-w-0">
                             <h4 class="font-bold text-slate-800 text-lg">${f.nama}</h4>
-                            <p class="text-sm text-slate-500 mb-2">No HP: ${f.hp} | Sandi Default: ${f.hp.slice(-6)}</p>
+                            <div class="flex flex-wrap gap-x-4 gap-y-0.5 text-xs text-slate-500 mt-1 mb-2">
+                                <span>HP: ${f.hp}</span>
+                                <span>Sandi: ${f.hp.slice(-6)}</span>
+                                ${f.nip ? `<span class="text-indigo-600 font-medium">NIP: ${f.nip}</span>` : '<span class="text-amber-500 italic">NIP belum diisi</span>'}
+                                ${f.pangkat_gol ? `<span>${f.pangkat_gol}</span>` : ''}
+                                ${f.jabatan ? `<span>${f.jabatan}</span>` : ''}
+                            </div>
                             <div>${badges || '<span class="text-xs text-slate-400 italic">Belum ada sekolah</span>'}</div>
                         </div>
-                        <div class="flex gap-2">
+                        <div class="flex flex-wrap gap-2">
+                            <button onclick="openEditProfilAdmin('${f.id}','${f.nama.replace(/'/g,"\\'").replace(/"/g,'&quot;')}','${(f.nip||'').replace(/'/g,"\\'").replace(/"/g,'&quot;')}','${(f.pangkat_gol||'').replace(/'/g,"\\'").replace(/"/g,'&quot;')}','${(f.jabatan||'').replace(/'/g,"\\'").replace(/"/g,'&quot;')}')" class="bg-sky-50 text-sky-700 hover:bg-sky-100 px-4 py-2 rounded-lg text-sm font-medium transition-colors">Edit Profil</button>
                             <button onclick="openModalAssign('${f.id}')" class="bg-indigo-50 text-indigo-700 hover:bg-indigo-100 px-4 py-2 rounded-lg text-sm font-medium transition-colors">Assign Sekolah</button>
                             <button onclick="hapusFasil('${f.id}')" class="bg-red-50 text-red-600 hover:bg-red-100 px-4 py-2 rounded-lg text-sm font-medium transition-colors">Hapus</button>
                         </div>
@@ -3049,6 +3063,36 @@
             loadFasilitatorData();
         }
 
+        function openEditProfilAdmin(id, nama, nip, pangkat, jabatan) {
+            document.getElementById('editProfilAdminId').value = id;
+            document.getElementById('editProfilAdminNama').value = nama;
+            document.getElementById('editProfilAdminNip').value = nip;
+            document.getElementById('editProfilAdminPangkat').value = pangkat;
+            document.getElementById('editProfilAdminJabatan').value = jabatan;
+            document.getElementById('modalEditProfilAdmin').classList.remove('hidden');
+        }
+
+        async function simpanProfilAdmin() {
+            const id = document.getElementById('editProfilAdminId').value;
+            const nip = document.getElementById('editProfilAdminNip').value.trim();
+            const pangkat_gol = document.getElementById('editProfilAdminPangkat').value.trim();
+            const jabatan = document.getElementById('editProfilAdminJabatan').value.trim();
+            if (!id) return;
+            try {
+                await firebase.database().ref('fasilitator/' + id).update({ nip, pangkat_gol, jabatan });
+                document.getElementById('modalEditProfilAdmin').classList.add('hidden');
+                loadFasilitatorData();
+                // Toast
+                const t = document.createElement('div');
+                t.className = 'fixed bottom-6 right-6 z-[200] bg-emerald-600 text-white px-5 py-3 rounded-2xl shadow-xl text-sm font-bold flex items-center gap-2';
+                t.innerHTML = '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg> Profil fasilitator diperbarui!';
+                document.body.appendChild(t);
+                setTimeout(() => t.remove(), 3000);
+            } catch(e) {
+                alert('Gagal menyimpan: ' + e.message);
+            }
+        }
+
         function toggleSubmenu(menuId) {
             const el = document.getElementById(menuId);
             const icon = document.getElementById('icon_' + menuId);
@@ -3080,5 +3124,48 @@
     </div>
 
     <script src="nav-crumbs.js"></script>
+
+    <!-- MODAL EDIT PROFIL FASILITATOR (ADMIN) -->
+    <div id="modalEditProfilAdmin" class="hidden fixed inset-0 z-[200] bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden fade-in">
+            <div class="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-gradient-to-r from-sky-600 to-indigo-700">
+                <div class="flex items-center gap-2.5">
+                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+                    <h3 class="font-bold text-white text-base">Edit Profil Fasilitator</h3>
+                </div>
+                <button onclick="document.getElementById('modalEditProfilAdmin').classList.add('hidden')" class="p-1.5 text-white/70 hover:text-white hover:bg-white/10 rounded-lg transition-colors">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                </button>
+            </div>
+            <div class="p-6 space-y-4">
+                <input type="hidden" id="editProfilAdminId">
+                <div class="bg-sky-50 border border-sky-100 rounded-xl px-4 py-3 flex items-center gap-2 text-sm">
+                    <svg class="w-4 h-4 text-sky-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                    <span class="text-sky-700">Data ini tampil otomatis di Teks Persuratan.</span>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1.5">Nama Lengkap</label>
+                    <input type="text" id="editProfilAdminNama" class="w-full border border-slate-300 rounded-xl px-4 py-2.5 text-sm bg-slate-50 text-slate-500" disabled>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1.5">NIP</label>
+                    <input type="text" id="editProfilAdminNip" placeholder="Contoh: 197808012006041001" class="w-full border border-slate-300 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-sky-300 focus:border-sky-500 transition-all">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1.5">Pangkat / Golongan</label>
+                    <input type="text" id="editProfilAdminPangkat" placeholder="Contoh: Pembina / IV-a" class="w-full border border-slate-300 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-sky-300 focus:border-sky-500 transition-all">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1.5">Jabatan</label>
+                    <input type="text" id="editProfilAdminJabatan" placeholder="Contoh: Widyaprada Ahli Madya" class="w-full border border-slate-300 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-sky-300 focus:border-sky-500 transition-all">
+                </div>
+            </div>
+            <div class="px-6 py-4 bg-slate-50 border-t border-slate-100 flex gap-3 justify-end">
+                <button onclick="document.getElementById('modalEditProfilAdmin').classList.add('hidden')" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-sm font-semibold transition-colors">Batal</button>
+                <button onclick="simpanProfilAdmin()" class="px-6 py-2 bg-sky-600 hover:bg-sky-700 text-white rounded-xl text-sm font-bold transition-colors shadow-sm">Simpan</button>
+            </div>
+        </div>
+    </div>
+
 </body>
 </html>
