@@ -7,7 +7,7 @@
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -23,76 +23,344 @@
     
     <style>
         body { background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%); min-height: 100vh; }
-        .glass-card { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.3); }
+        .glass-card { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.4); }
         .fade-in { animation: fadeIn 0.3s ease-in forwards; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+        .cal-day-cell { min-height: 110px; }
+        @media (max-width: 640px) {
+            .cal-day-cell { min-height: 75px; }
+        }
     </style>
 
     <!-- Firebase -->
     <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
 </head>
-<body class="text-slate-800 antialiased">
+<body class="text-slate-800 antialiased selection:bg-indigo-500 selection:text-white">
 
     <!-- Navbar -->
-    <nav class="bg-white/80 backdrop-blur-md border-b border-slate-200 sticky top-0 z-50">
-        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+    <nav class="bg-white/90 backdrop-blur-md border-b border-slate-200 sticky top-0 z-50 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-16 items-center">
-                <a href="index.html" class="flex items-center gap-3 hover:opacity-80 transition-opacity">
+                <a href="index.html" class="flex items-center gap-3 hover:opacity-90 transition-opacity">
                     <img src="./logo.png" alt="Logo BGTK" class="h-10 sm:h-12 w-auto object-contain">
                     <span class="font-bold text-lg tracking-tight text-primary border-l-2 border-slate-200 pl-3 ml-1 hidden sm:inline-block">Portal Fasilitator</span>
                 </a>
                 <div id="navUser" class="hidden flex items-center gap-4">
-                    <span id="navUserName" class="text-sm font-medium text-slate-600"></span>
-                    <button onclick="logout()" class="text-sm font-medium text-red-500 hover:text-red-700 transition-colors">Logout</button>
+                    <div class="text-right hidden sm:block">
+                        <div id="navUserName" class="text-sm font-bold text-slate-800"></div>
+                        <div id="navUserRole" class="text-xs text-indigo-600 font-medium">Fasilitator Pendamping</div>
+                    </div>
+                    <button onclick="logout()" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-semibold text-red-600 hover:text-red-700 hover:bg-red-50 transition-colors border border-red-200">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+                        Keluar
+                    </button>
                 </div>
             </div>
         </div>
     </nav>
 
     <!-- VIEW LOGIN -->
-    <div id="viewLogin" class="max-w-md mx-auto mt-20 px-4 fade-in">
-        <div class="glass-card rounded-3xl p-8 shadow-xl border border-slate-100 text-center">
-            <h2 class="text-3xl font-extrabold text-slate-900 mb-2">Selamat Datang</h2>
-            <p class="text-slate-500 mb-8">Silakan masuk menggunakan akun Fasilitator Anda.</p>
+    <div id="viewLogin" class="max-w-md mx-auto mt-16 sm:mt-24 px-4 fade-in">
+        <div class="glass-card rounded-3xl p-8 sm:p-10 shadow-2xl border border-slate-100 text-center">
+            <div class="w-16 h-16 bg-indigo-50 text-indigo-600 rounded-2xl flex items-center justify-center mx-auto mb-5 shadow-inner">
+                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+            </div>
+            <h2 class="text-3xl font-black text-slate-900 mb-2 tracking-tight">Selamat Datang</h2>
+            <p class="text-slate-500 mb-8 text-sm">Silakan pilih nama Anda untuk masuk ke sistem manajemen jadwal pendampingan.</p>
             
-            <div class="space-y-5">
-                <div class="text-left">
-                    <label class="block text-sm font-medium text-slate-700 mb-1">Nama Fasilitator</label>
-                    <select id="loginFasilId" class="w-full border-slate-300 rounded-xl shadow-sm focus:ring-primary focus:border-primary px-4 py-3 border bg-slate-50">
+            <div class="space-y-4 text-left">
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1.5">Nama Fasilitator</label>
+                    <select id="loginFasilId" class="w-full border-slate-300 rounded-xl shadow-sm focus:ring-primary focus:border-primary px-4 py-3 border bg-slate-50 text-sm font-medium">
                         <option value="">Memuat nama fasilitator...</option>
                     </select>
                 </div>
-                <div class="text-left">
-                    <label class="block text-sm font-medium text-slate-700 mb-1">Password</label>
-                    <input type="password" id="loginPassword" placeholder="6 Digit Terakhir No HP" class="w-full border-slate-300 rounded-xl shadow-sm focus:ring-primary focus:border-primary px-4 py-3 border bg-slate-50">
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1.5">Password</label>
+                    <input type="password" id="loginPassword" placeholder="6 Digit Terakhir No. HP Anda" class="w-full border-slate-300 rounded-xl shadow-sm focus:ring-primary focus:border-primary px-4 py-3 border bg-slate-50 text-sm font-medium">
                 </div>
-                <button onclick="login()" class="w-full bg-primary hover:bg-blue-700 text-white px-6 py-3 rounded-xl font-bold transition-colors shadow-md mt-4">Masuk</button>
+                <button onclick="login()" class="w-full bg-primary hover:bg-indigo-700 text-white px-6 py-3.5 rounded-xl font-bold transition-all shadow-md hover:shadow-lg mt-6 flex items-center justify-center gap-2">
+                    <span>Masuk ke Portal</span>
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                </button>
             </div>
         </div>
     </div>
 
     <!-- VIEW DASHBOARD -->
-    <div id="viewDashboard" class="hidden max-w-5xl mx-auto px-4 py-12 fade-in">
-        <div class="mb-8">
-            <h1 class="text-3xl font-bold text-slate-900" id="dashGreeting">Halo, Fasilitator</h1>
-            <p class="text-slate-500">Berikut adalah daftar sekolah binaan Anda. Silakan isi jadwal kunjungan untuk setiap sekolah.</p>
+    <div id="viewDashboard" class="hidden max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 fade-in">
+        
+        <!-- Header & Control Bar -->
+        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6 mb-8 bg-white/80 backdrop-blur-md p-6 rounded-2xl border border-slate-200 shadow-sm">
+            <div>
+                <div class="flex items-center gap-3">
+                    <span class="p-2.5 bg-indigo-100 text-indigo-700 rounded-xl">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                    </span>
+                    <div>
+                        <h1 class="text-2xl font-bold text-slate-900" id="dashGreeting">Halo, Fasilitator</h1>
+                        <p class="text-xs sm:text-sm text-slate-500" id="dashSubGreeting">Kelola jadwal kunjungan dan instrumen observasi sekolah binaan Anda.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- View Switcher & Filters -->
+            <div class="flex flex-wrap items-center gap-3">
+                <!-- Filter Sekolah -->
+                <div class="flex items-center gap-2 bg-slate-100/80 p-1.5 rounded-xl border border-slate-200 text-xs">
+                    <span class="font-bold text-slate-500 pl-2">Filter:</span>
+                    <select id="filterSekolahSelect" onchange="changeSchoolFilter(this.value)" class="bg-white border-slate-200 rounded-lg px-3 py-1.5 text-xs font-semibold text-slate-700 focus:ring-primary focus:border-primary shadow-xs outline-none">
+                        <option value="ALL">Semua Sekolah Binaan</option>
+                    </select>
+                </div>
+
+                <!-- Tab Toggle Buttons -->
+                <div class="inline-flex p-1 bg-slate-100 rounded-xl border border-slate-200 text-xs font-bold">
+                    <button id="btnViewCalendar" onclick="switchMainView('calendar')" class="px-4 py-2 rounded-lg transition-all flex items-center gap-1.5 bg-white text-indigo-700 shadow-sm">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                        <span>Kalender</span>
+                    </button>
+                    <button id="btnViewList" onclick="switchMainView('list')" class="px-4 py-2 rounded-lg transition-all flex items-center gap-1.5 text-slate-600 hover:text-slate-900">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"/></svg>
+                        <span>Daftar Sekolah</span>
+                    </button>
+                </div>
+            </div>
         </div>
 
-        <div id="sekolahContainer" class="space-y-8">
-            <!-- Rendered via JS -->
-            <div class="text-center text-slate-500 py-12">Memuat data sekolah...</div>
+        <!-- ================= CONTAINER TAMPILAN 1: KALENDER INTERAKTIF ================= -->
+        <div id="containerCalendarView" class="space-y-6">
+            
+            <!-- Calendar Navigation Header -->
+            <div class="glass-card rounded-2xl p-5 shadow-sm flex flex-col md:flex-row items-center justify-between gap-4">
+                <div class="flex items-center gap-3">
+                    <h2 id="calendarMonthTitle" class="text-2xl font-black text-slate-800 tracking-tight min-w-[200px]">Agustus 2026</h2>
+                    <div class="flex items-center bg-slate-100 rounded-xl p-1 border border-slate-200">
+                        <button onclick="prevMonth()" title="Bulan Sebelumnya" class="p-2 hover:bg-white text-slate-600 hover:text-slate-900 rounded-lg transition-colors">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+                        </button>
+                        <button onclick="goToToday()" class="px-3 py-1.5 text-xs font-bold text-slate-700 hover:bg-white rounded-lg transition-colors">
+                            Hari Ini
+                        </button>
+                        <button onclick="nextMonth()" title="Bulan Selanjutnya" class="p-2 hover:bg-white text-slate-600 hover:text-slate-900 rounded-lg transition-colors">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Legend & Quick Info -->
+                <div class="flex flex-wrap items-center gap-3 text-xs font-semibold">
+                    <div class="flex items-center gap-1.5 bg-blue-50 text-blue-700 px-2.5 py-1 rounded-lg border border-blue-200">
+                        <span class="w-2.5 h-2.5 rounded-full bg-blue-500"></span> Direncanakan
+                    </div>
+                    <div class="flex items-center gap-1.5 bg-emerald-50 text-emerald-700 px-2.5 py-1 rounded-lg border border-emerald-200">
+                        <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span> Selesai
+                    </div>
+                    <div class="flex items-center gap-1.5 bg-rose-50 text-rose-700 px-2.5 py-1 rounded-lg border border-rose-200">
+                        <span class="w-2.5 h-2.5 rounded-full bg-rose-500"></span> Batal / Ditunda
+                    </div>
+                    <div class="flex items-center gap-1.5 bg-indigo-50 text-indigo-700 px-2.5 py-1 rounded-lg border border-indigo-200">
+                        <span class="text-[10px]">🎯</span> Periode Resmi
+                    </div>
+                </div>
+            </div>
+
+            <!-- Calendar Main Grid Card -->
+            <div class="glass-card rounded-2xl shadow-sm overflow-hidden border border-slate-200">
+                <!-- Day Names Header (Senin - Minggu) -->
+                <div class="grid grid-cols-7 bg-slate-100/90 border-b border-slate-200 text-center text-xs font-bold text-slate-600 uppercase tracking-wider py-3">
+                    <div>Sen</div>
+                    <div>Sel</div>
+                    <div>Rab</div>
+                    <div>Kam</div>
+                    <div>Jum</div>
+                    <div class="text-rose-600">Sab</div>
+                    <div class="text-rose-600">Min</div>
+                </div>
+
+                <!-- Day Cells Matrix Grid -->
+                <div id="calendarGrid" class="grid grid-cols-7 bg-slate-200 gap-px">
+                    <!-- Populated dynamically via renderCalendarGrid() -->
+                </div>
+            </div>
+
+            <!-- Hint text -->
+            <div class="flex items-center justify-between text-xs text-slate-500 px-2">
+                <div class="flex items-center gap-1">
+                    <svg class="w-4 h-4 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                    <span><strong>Tips:</strong> Klik pada kotak tanggal mana saja untuk membuat jadwal baru. Klik pada kartu jadwal untuk melihat detail / cetak laporan.</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= CONTAINER TAMPILAN 2: DAFTAR SEKOLAH (ACCORDION) ================= -->
+        <div id="containerListView" class="hidden space-y-6">
+            <div id="sekolahContainer" class="space-y-6">
+                <!-- Rendered via JS -->
+                <div class="text-center text-slate-500 py-12">Memuat data sekolah...</div>
+            </div>
         </div>
     </div>
     
 
-    <!-- MODAL ATUR JADWAL (Perencanaan) -->
+    <!-- ================= MODAL JADWALKAN KUNJUNGAN DARI KALENDER ================= -->
+    <div id="modalJadwalkanKalender" class="hidden fixed inset-0 z-50 bg-slate-900/50 justify-center p-4 items-start sm:items-center pt-12 pb-12 sm:pt-4 overflow-y-auto backdrop-blur-xs">
+        <div class="bg-white rounded-3xl shadow-2xl w-full max-w-lg overflow-hidden fade-in border border-slate-100">
+            <!-- Modal Header -->
+            <div class="p-6 bg-gradient-to-r from-indigo-600 to-indigo-700 text-white flex justify-between items-center">
+                <div class="flex items-center gap-3">
+                    <div class="p-2.5 bg-white/20 rounded-xl backdrop-blur-md">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                    </div>
+                    <div>
+                        <h3 class="font-black text-xl">Jadwalkan Kunjungan</h3>
+                        <p class="text-xs text-indigo-100" id="modalJadwalSelectedDateText">Tanggal: -</p>
+                    </div>
+                </div>
+                <button onclick="closeModalJadwalkanKalender()" class="text-indigo-200 hover:text-white p-2 rounded-lg hover:bg-white/10 transition-colors">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                </button>
+            </div>
+
+            <!-- Modal Form -->
+            <div class="p-6 space-y-5 bg-slate-50/50">
+                <!-- Tanggal Input -->
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5">Tanggal Kunjungan <span class="text-red-500">*</span></label>
+                    <input type="date" id="calInputTanggal" onchange="onModalTanggalChange()" class="w-full border-slate-300 rounded-xl shadow-sm focus:ring-primary focus:border-primary px-4 py-2.5 border bg-white text-sm font-medium">
+                </div>
+
+                <!-- Sekolah Dropdown -->
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5">Pilih Sekolah Binaan <span class="text-red-500">*</span></label>
+                    <select id="calInputSekolah" onchange="onModalSekolahOrKunjunganChange()" class="w-full border-slate-300 rounded-xl shadow-sm focus:ring-primary focus:border-primary px-4 py-2.5 border bg-white text-sm font-medium">
+                        <option value="">-- Pilih Sekolah Binaan --</option>
+                    </select>
+                </div>
+
+                <!-- Kunjungan Dropdown -->
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5">Pilih Aktivitas Kunjungan <span class="text-red-500">*</span></label>
+                    <select id="calInputKunjungan" onchange="onModalSekolahOrKunjunganChange()" class="w-full border-slate-300 rounded-xl shadow-sm focus:ring-primary focus:border-primary px-4 py-2.5 border bg-white text-sm font-medium">
+                        <option value="1">Kunjungan 1</option>
+                        <option value="2">Kunjungan 2</option>
+                        <option value="3">Kunjungan 3</option>
+                        <option value="4">Kunjungan 4</option>
+                        <option value="5">Kunjungan 5</option>
+                        <option value="6">Kunjungan 6</option>
+                    </select>
+                </div>
+
+                <!-- Dynamic Status / Helper Box -->
+                <div id="calPeriodRuleBox" class="p-3.5 bg-indigo-50/80 border border-indigo-100 rounded-xl text-xs space-y-1 text-indigo-900">
+                    <div class="font-bold flex items-center gap-1.5">
+                        <span>🎯 Rentang Periode Resmi:</span>
+                        <span id="calPeriodRuleText">-</span>
+                    </div>
+                    <div id="calPeriodWarning" class="text-amber-700 font-medium hidden">⚠️ Perhatian: Tanggal yang dipilih berada di luar rentang resmi dari Admin.</div>
+                    <div id="calExistingScheduleNotice" class="text-slate-600 italic pt-1 hidden">Status saat ini: <span id="calExistingStatusBadge" class="font-bold"></span></div>
+                </div>
+
+                <!-- Status Dropdown -->
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5">Status Pelaksanaan</label>
+                    <select id="calInputStatus" class="w-full border-slate-300 rounded-xl shadow-sm focus:ring-primary focus:border-primary px-4 py-2.5 border bg-white text-sm font-medium">
+                        <option value="Direncanakan">Direncanakan (Menunggu Pelaksanaan)</option>
+                        <option value="Selesai">Selesai (Sudah Terlaksana)</option>
+                        <option value="Batal/Ditunda">Batal / Ditunda</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Modal Action Buttons -->
+            <div class="p-5 bg-white border-t border-slate-100 flex flex-col sm:flex-row gap-3">
+                <button onclick="simpanJadwalDariKalender(false)" class="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-3 rounded-xl font-bold transition-colors shadow-md text-sm flex items-center justify-center gap-2">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                    <span>Simpan Jadwal</span>
+                </button>
+                <button onclick="simpanJadwalDariKalender(true)" class="flex-1 bg-slate-800 hover:bg-slate-900 text-white px-4 py-3 rounded-xl font-bold transition-colors shadow-md text-sm flex items-center justify-center gap-2">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+                    <span>Simpan & Isi Instrumen</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- ================= MODAL DETAIL ACARA KUNJUNGAN ================= -->
+    <div id="modalDetailAcaraKalender" class="hidden fixed inset-0 z-50 bg-slate-900/50 justify-center p-4 items-start sm:items-center pt-12 pb-12 sm:pt-4 overflow-y-auto backdrop-blur-xs">
+        <div class="bg-white rounded-3xl shadow-2xl w-full max-w-lg overflow-hidden fade-in border border-slate-100">
+            <div class="p-6 bg-slate-900 text-white flex justify-between items-start">
+                <div>
+                    <div class="flex items-center gap-2 mb-2">
+                        <span id="detailEventBadge" class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-indigo-500 text-white">Kunjungan 1</span>
+                        <span id="detailStatusBadge" class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-500 text-white">Selesai</span>
+                    </div>
+                    <h3 class="font-black text-xl text-white tracking-tight" id="detailSekolahTitle">Nama Sekolah</h3>
+                    <p class="text-xs text-slate-400 mt-0.5" id="detailNpsnSubtitle">NPSN: -</p>
+                </div>
+                <button onclick="closeModalDetailAcara()" class="text-slate-400 hover:text-white p-2 rounded-lg hover:bg-slate-800 transition-colors">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                </button>
+            </div>
+
+            <div class="p-6 space-y-4 bg-slate-50 text-sm">
+                <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-xs space-y-2.5">
+                    <div class="flex justify-between items-center text-xs">
+                        <span class="text-slate-500 font-medium">Tanggal Pelaksanaan:</span>
+                        <span class="font-bold text-slate-800" id="detailTanggalText">-</span>
+                    </div>
+                    <div class="flex justify-between items-center text-xs">
+                        <span class="text-slate-500 font-medium">Tahap Siklus TET:</span>
+                        <span class="font-bold text-slate-800" id="detailTahapTetText">-</span>
+                    </div>
+                    <div class="flex justify-between items-center text-xs">
+                        <span class="text-slate-500 font-medium">Status Laporan Rubrik:</span>
+                        <span class="font-bold" id="detailRubrikStatusText">-</span>
+                    </div>
+                </div>
+
+                <div id="detailReportPreviewBox" class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-xs hidden">
+                    <h5 class="text-xs font-bold uppercase tracking-wider text-slate-500 mb-1.5">Ringkasan Evaluasi</h5>
+                    <p class="text-xs text-slate-700 leading-relaxed italic" id="detailReportTeks">-</p>
+                </div>
+            </div>
+
+            <!-- Modal Action Buttons -->
+            <div class="p-5 bg-white border-t border-slate-100 flex flex-col gap-2.5">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                    <button id="btnDetailIsiInstrumen" class="bg-primary hover:bg-indigo-700 text-white px-4 py-2.5 rounded-xl font-bold transition-colors shadow-sm text-xs flex items-center justify-center gap-1.5">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+                        <span>Isi / Edit Instrumen</span>
+                    </button>
+                    <button id="btnDetailDaftarHadir" class="bg-indigo-100 hover:bg-indigo-200 text-indigo-800 px-4 py-2.5 rounded-xl font-bold transition-colors border border-indigo-200 text-xs flex items-center justify-center gap-1.5">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+                        <span>Daftar Hadir & Presensi</span>
+                    </button>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                    <button id="btnDetailCetakDocx" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2.5 rounded-xl font-bold transition-colors shadow-sm text-xs flex items-center justify-center gap-1.5">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                        <span>Cetak Dokumen Word</span>
+                    </button>
+                    <button id="btnDetailHapusJadwal" class="bg-rose-50 hover:bg-rose-100 text-rose-700 px-4 py-2.5 rounded-xl font-bold transition-colors border border-rose-200 text-xs flex items-center justify-center gap-1.5">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                        <span>Hapus Jadwal Ini</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- ================= MODAL ATUR JADWAL (Perencanaan Legacy) ================= -->
     <div id="modalAturJadwal" class="hidden fixed inset-0 z-50 bg-slate-900/50 justify-center p-4 items-start sm:items-center pt-12 pb-12 sm:pt-4 overflow-y-auto">
-         <div class="bg-white rounded-2xl shadow-xl w-full max-w-sm overflow-hidden fade-in">
+         <div class="bg-white rounded-3xl shadow-xl w-full max-w-sm overflow-hidden fade-in border border-slate-100">
              <div class="p-4 border-b border-slate-100 bg-slate-50 flex justify-between items-center">
                  <div>
                     <h3 class="font-bold text-slate-800 text-lg">Atur Jadwal</h3>
-                    <p class="text-sm text-slate-500" id="modalAturSub"></p>
+                    <p class="text-xs text-slate-500" id="modalAturSub"></p>
                  </div>
                  <button onclick="closeModalAturJadwal()" class="text-slate-400 hover:text-slate-600 p-2"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg></button>
              </div>
@@ -100,28 +368,28 @@
                  <input type="hidden" id="aturNpsn">
                  <input type="hidden" id="aturId">
                  <div>
-                     <label class="block text-sm font-medium text-slate-700 mb-1">Tanggal Rencana Kunjungan</label>
-                     <input type="date" id="aturTanggal" class="w-full border-slate-300 rounded-lg shadow-sm focus:ring-primary focus:border-primary px-4 py-2 border">
+                     <label class="block text-xs font-bold uppercase text-slate-600 mb-1">Tanggal Rencana Kunjungan</label>
+                     <input type="date" id="aturTanggal" class="w-full border-slate-300 rounded-xl shadow-sm focus:ring-primary focus:border-primary px-4 py-2 border text-sm">
                  </div>
                  <div>
-                     <label class="block text-sm font-medium text-slate-700 mb-1">Status Rencana</label>
-                     <select id="aturStatus" class="w-full border-slate-300 rounded-lg shadow-sm focus:ring-primary focus:border-primary px-4 py-2 border">
+                     <label class="block text-xs font-bold uppercase text-slate-600 mb-1">Status Rencana</label>
+                     <select id="aturStatus" class="w-full border-slate-300 rounded-xl shadow-sm focus:ring-primary focus:border-primary px-4 py-2 border text-sm">
                          <option value="Direncanakan">Direncanakan</option>
                          <option value="Batal/Ditunda">Batal / Ditunda</option>
                      </select>
                  </div>
-                 <button onclick="simpanJadwal()" class="w-full bg-slate-800 hover:bg-slate-900 text-white px-4 py-2.5 rounded-xl font-bold transition-colors shadow-sm">Simpan Jadwal</button>
+                 <button onclick="simpanJadwal()" class="w-full bg-slate-800 hover:bg-slate-900 text-white px-4 py-3 rounded-xl font-bold transition-colors shadow-sm text-sm">Simpan Jadwal</button>
              </div>
          </div>
     </div>
     
-    <!-- MODAL INPUT KUNJUNGAN (Formulir Instrumen Observasi) -->
+    <!-- ================= MODAL INPUT KUNJUNGAN (Formulir Instrumen Observasi) ================= -->
     <div id="modalKunjungan" class="hidden fixed inset-0 z-50 bg-slate-900/50 justify-center p-4 items-start sm:items-center pt-12 pb-12 sm:pt-4 overflow-y-auto">
-         <div class="bg-white rounded-2xl shadow-xl w-full max-w-2xl max-h-[90vh] overflow-hidden flex flex-col fade-in">
-             <div class="p-4 border-b border-slate-100 bg-slate-50 flex justify-between items-center shrink-0">
+         <div class="bg-white rounded-3xl shadow-xl w-full max-w-2xl max-h-[90vh] overflow-hidden flex flex-col fade-in border border-slate-100">
+             <div class="p-5 border-b border-slate-100 bg-slate-50 flex justify-between items-center shrink-0">
                  <div>
                     <h3 class="font-bold text-slate-800 text-lg" id="modalKunjunganTitle">Instrumen Observasi</h3>
-                    <p class="text-sm text-slate-500" id="modalKunjunganSub"></p>
+                    <p class="text-xs text-slate-500" id="modalKunjunganSub"></p>
                  </div>
                  <button onclick="closeModalKunjungan()" class="text-slate-400 hover:text-slate-600 p-2"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg></button>
              </div>
@@ -132,25 +400,25 @@
                  <input type="hidden" id="inputKunjunganId">
                  
                  <!-- BAGIAN 1: INFORMASI DASAR -->
-                 <section class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
-                     <h4 class="font-bold text-slate-700 mb-4 border-b border-slate-100 pb-2">Bagian 1: Informasi Dasar</h4>
-                     <div class="space-y-4">
+                 <section class="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200 shadow-xs">
+                     <h4 class="font-bold text-slate-800 mb-4 border-b border-slate-100 pb-2 text-sm">Bagian 1: Informasi Dasar</h4>
+                     <div class="space-y-4 text-sm">
                          <div>
-                             <label class="block text-sm font-medium text-slate-700 mb-1">Nama Sekolah</label>
-                             <input type="text" id="infoNamaSekolah" readonly class="w-full bg-slate-100 border-slate-200 rounded-lg px-4 py-2 border text-slate-600 focus:outline-none">
+                             <label class="block text-xs font-bold uppercase text-slate-600 mb-1">Nama Sekolah</label>
+                             <input type="text" id="infoNamaSekolah" readonly class="w-full bg-slate-100 border-slate-200 rounded-xl px-4 py-2 border text-slate-700 font-semibold focus:outline-none text-sm">
                          </div>
                          <div>
-                             <label class="block text-sm font-medium text-slate-700 mb-1">Nama Fasilitator</label>
-                             <input type="text" id="infoNamaFasil" readonly class="w-full bg-slate-100 border-slate-200 rounded-lg px-4 py-2 border text-slate-600 focus:outline-none">
+                             <label class="block text-xs font-bold uppercase text-slate-600 mb-1">Nama Fasilitator</label>
+                             <input type="text" id="infoNamaFasil" readonly class="w-full bg-slate-100 border-slate-200 rounded-xl px-4 py-2 border text-slate-700 font-semibold focus:outline-none text-sm">
                          </div>
                          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                              <div>
-                                 <label class="block text-sm font-medium text-slate-700 mb-1">Tanggal Kunjungan <span class="text-red-500">*</span></label>
-                                 <input type="date" id="inputKunjunganTanggal" class="w-full border-slate-300 rounded-lg shadow-sm focus:ring-primary focus:border-primary px-4 py-2 border" required>
+                                 <label class="block text-xs font-bold uppercase text-slate-600 mb-1">Tanggal Kunjungan <span class="text-red-500">*</span></label>
+                                 <input type="date" id="inputKunjunganTanggal" class="w-full border-slate-300 rounded-xl shadow-sm focus:ring-primary focus:border-primary px-4 py-2 border text-sm" required>
                              </div>
                              <div>
-                                 <label class="block text-sm font-medium text-slate-700 mb-1">Tahap Siklus TET <span class="text-red-500">*</span></label>
-                                 <select id="inputSiklusTet" class="w-full border-slate-300 rounded-lg shadow-sm focus:ring-primary focus:border-primary px-4 py-2 border" required>
+                                 <label class="block text-xs font-bold uppercase text-slate-600 mb-1">Tahap Siklus TET <span class="text-red-500">*</span></label>
+                                 <select id="inputSiklusTet" class="w-full border-slate-300 rounded-xl shadow-sm focus:ring-primary focus:border-primary px-4 py-2 border text-sm" required>
                                      <option value="">Pilih Tahap...</option>
                                      <option value="Identifikasi/Assess">Identifikasi / Assess</option>
                                      <option value="Desain/Design">Desain / Design</option>
@@ -159,15 +427,14 @@
                                  </select>
                              </div>
                              
-                             <div class="mt-4 sm:col-span-2">
-                                <label class="block text-sm font-bold text-slate-800 mb-2">Partisipasi Guru</label>
-                                <div class="flex gap-4">
-                                    <label class="flex items-center gap-2 text-sm"><input type="radio" name="partisipasi_guru" value="Rendah" class="text-indigo-600 focus:ring-indigo-500"> Rendah</label>
-                                    <label class="flex items-center gap-2 text-sm"><input type="radio" name="partisipasi_guru" value="Sedang" class="text-indigo-600 focus:ring-indigo-500"> Sedang</label>
-                                    <label class="flex items-center gap-2 text-sm"><input type="radio" name="partisipasi_guru" value="Tinggi" class="text-indigo-600 focus:ring-indigo-500"> Tinggi</label>
+                             <div class="mt-2 sm:col-span-2">
+                                <label class="block text-xs font-bold uppercase text-slate-700 mb-2">Partisipasi Guru</label>
+                                <div class="flex gap-6">
+                                    <label class="flex items-center gap-2 text-sm font-medium"><input type="radio" name="partisipasi_guru" value="Rendah" class="text-indigo-600 focus:ring-indigo-500"> Rendah</label>
+                                    <label class="flex items-center gap-2 text-sm font-medium"><input type="radio" name="partisipasi_guru" value="Sedang" class="text-indigo-600 focus:ring-indigo-500"> Sedang</label>
+                                    <label class="flex items-center gap-2 text-sm font-medium"><input type="radio" name="partisipasi_guru" value="Tinggi" class="text-indigo-600 focus:ring-indigo-500"> Tinggi</label>
                                 </div>
                              </div>
-
                          </div>
                      </div>
                  </section>
@@ -175,56 +442,92 @@
                  <!-- BAGIAN 2: RUBRIK PENILAIAN -->
                  <section class="space-y-6">
                      <div class="mb-2">
-                        <h4 class="font-bold text-slate-700 border-b border-slate-200 pb-2">Bagian 2: Rubrik Penilaian Utama</h4>
-                        <p class="text-sm text-slate-500 mt-1">Berikan penilaian skala 1-4 (1=Pra Berkembang, 2=Berkembang, 3=Maju, 4=Unggul).</p>
+                        <h4 class="font-bold text-slate-800 border-b border-slate-200 pb-2 text-sm">Bagian 2: Rubrik Penilaian Utama</h4>
+                        <p class="text-xs text-slate-500 mt-1">Berikan penilaian skala 1-4 (1=Pra Berkembang, 2=Berkembang, 3=Maju, 4=Unggul).</p>
                      </div>
 
                      <!-- Kategori A -->
-                     <div class="bg-indigo-50/50 border border-indigo-100 rounded-xl p-4 shadow-sm">
-                         <h5 class="font-bold text-indigo-800 mb-4">Kategori A: Keunggulan Belajar Murid</h5>
-                         <div class="space-y-4" id="kategoriA"></div>
+                     <div class="bg-indigo-50/60 border border-indigo-100 rounded-2xl p-4 sm:p-5 shadow-xs">
+                         <h5 class="font-bold text-indigo-900 mb-4 text-sm">Kategori A: Keunggulan Belajar Murid</h5>
+                         <div class="space-y-3" id="kategoriA"></div>
                      </div>
 
                      <!-- Kategori B -->
-                     <div class="bg-emerald-50/50 border border-emerald-100 rounded-xl p-4 shadow-sm">
-                         <h5 class="font-bold text-emerald-800 mb-4">Kategori B: Keunggulan Mengajar Pendidik</h5>
-                         <div class="space-y-4" id="kategoriB"></div>
+                     <div class="bg-emerald-50/60 border border-emerald-100 rounded-2xl p-4 sm:p-5 shadow-xs">
+                         <h5 class="font-bold text-emerald-900 mb-4 text-sm">Kategori B: Keunggulan Mengajar Pendidik</h5>
+                         <div class="space-y-3" id="kategoriB"></div>
                      </div>
 
                      <!-- Kategori C -->
-                     <div class="bg-amber-50/50 border border-amber-100 rounded-xl p-4 shadow-sm">
-                         <h5 class="font-bold text-amber-800 mb-4">Kategori C: Keunggulan Kepemimpinan Kepala Sekolah</h5>
-                         <div class="space-y-4" id="kategoriC"></div>
+                     <div class="bg-amber-50/60 border border-amber-100 rounded-2xl p-4 sm:p-5 shadow-xs">
+                         <h5 class="font-bold text-amber-900 mb-4 text-sm">Kategori C: Keunggulan Kepemimpinan Kepala Sekolah</h5>
+                         <div class="space-y-3" id="kategoriC"></div>
                      </div>
                  </section>
 
                  <!-- BAGIAN 3: UMPAN BALIK KUALITATIF -->
-                 <section class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
-                     <h4 class="font-bold text-slate-700 mb-4 border-b border-slate-100 pb-2">Bagian 3: Umpan Balik Kualitatif</h4>
-                     <div class="space-y-4">
+                 <section class="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200 shadow-xs">
+                     <h4 class="font-bold text-slate-800 mb-4 border-b border-slate-100 pb-2 text-sm">Bagian 3: Umpan Balik Kualitatif</h4>
+                     <div class="space-y-4 text-sm">
                          <div>
-                             <label class="block text-sm font-medium text-slate-700 mb-1">Catatan Pelaksanaan TET</label>
-                             <textarea id="catatanPelaksanaan" rows="3" class="w-full border-slate-300 rounded-lg shadow-sm focus:ring-primary focus:border-primary px-4 py-2 border" placeholder="Tuliskan jalannya siklus TET..."></textarea>
+                             <label class="block text-xs font-bold uppercase text-slate-600 mb-1">Catatan Pelaksanaan TET</label>
+                             <textarea id="catatanPelaksanaan" rows="3" class="w-full border-slate-300 rounded-xl shadow-sm focus:ring-primary focus:border-primary px-4 py-2 border text-sm" placeholder="Tuliskan jalannya siklus TET..."></textarea>
                          </div>
                          <div>
-                             <label class="block text-sm font-medium text-slate-700 mb-1">Kendala dan Solusi</label>
-                             <textarea id="kendalaDitemukan" rows="2" class="w-full border-slate-300 rounded-lg shadow-sm focus:ring-primary focus:border-primary px-4 py-2 border" placeholder="Deskripsi hambatan..."></textarea>
+                             <label class="block text-xs font-bold uppercase text-slate-600 mb-1">Kendala dan Solusi</label>
+                             <textarea id="kendalaDitemukan" rows="2" class="w-full border-slate-300 rounded-xl shadow-sm focus:ring-primary focus:border-primary px-4 py-2 border text-sm" placeholder="Deskripsi hambatan..."></textarea>
                          </div>
                          <div>
-                             <label class="block text-sm font-medium text-slate-700 mb-1">Rekomendasi Tindak Lanjut</label>
-                             <textarea id="rekomendasiTindakLanjut" rows="2" class="w-full border-slate-300 rounded-lg shadow-sm focus:ring-primary focus:border-primary px-4 py-2 border" placeholder="Saran spesifik..."></textarea>
+                             <label class="block text-xs font-bold uppercase text-slate-600 mb-1">Rekomendasi Tindak Lanjut</label>
+                             <textarea id="rekomendasiTindakLanjut" rows="2" class="w-full border-slate-300 rounded-xl shadow-sm focus:ring-primary focus:border-primary px-4 py-2 border text-sm" placeholder="Saran spesifik..."></textarea>
                          </div>
                      </div>
                  </section>
              </div>
              
              <!-- Footer Modal -->
-             <div class="p-4 border-t border-slate-100 bg-white shrink-0 flex gap-3">
-                 
-                 <button type="button" onclick="generateWordReport()" class="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-3 rounded-xl font-bold transition-colors shadow-sm text-lg">Cetak Laporan</button>
-                 <button type="button" onclick="simpanKunjungan()" class="flex-1 bg-primary hover:bg-blue-700 text-white px-6 py-3 rounded-xl font-bold transition-colors shadow-sm text-lg">Simpan Laporan & Jadwal</button>
+             <div class="p-4 sm:p-5 border-t border-slate-100 bg-white shrink-0 flex gap-3">
+                 <button type="button" onclick="generateWordReport()" class="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-3 rounded-xl font-bold transition-colors shadow-sm text-sm sm:text-base flex items-center justify-center gap-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                    <span>Cetak Laporan Word</span>
+                 </button>
+                 <button type="button" onclick="simpanKunjungan()" class="flex-1 bg-primary hover:bg-indigo-700 text-white px-6 py-3 rounded-xl font-bold transition-colors shadow-md text-sm sm:text-base flex items-center justify-center gap-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                    <span>Simpan Laporan & Rubrik</span>
+                 </button>
              </div>
          </div>
+    </div>
+
+    <!-- ================= MODAL DAFTAR HADIR ================= -->
+    <div id="modalDaftarHadir" class="hidden fixed inset-0 z-50 bg-slate-900/50 flex justify-center p-4 items-start sm:items-center pt-12 pb-12 sm:pt-4 overflow-y-auto">
+        <div class="bg-white w-full max-w-lg rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh] transition-all transform scale-95 opacity-0 border border-slate-100" id="modalDaftarHadirContent">
+            
+            <!-- Header Modal -->
+            <div class="bg-indigo-600 p-5 sm:p-6 text-white shrink-0 relative">
+                <button onclick="closeModalDaftarHadir()" class="absolute top-5 right-5 text-indigo-200 hover:text-white transition-colors">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+                <h3 class="font-black text-xl sm:text-2xl pr-8">Daftar Hadir</h3>
+                <p class="text-indigo-200 text-xs sm:text-sm mt-1" id="hadirSubtitle">Kunjungan - Sekolah</p>
+            </div>
+
+            <!-- Body Modal (Scrollable) -->
+            <div class="p-5 sm:p-6 overflow-y-auto flex-1 bg-slate-50">
+                <div id="hadirListContainer" class="space-y-3">
+                    <div class="text-center py-6 text-slate-500 text-sm">Memuat data...</div>
+                </div>
+            </div>
+
+            <!-- Footer Modal -->
+            <div class="p-4 sm:p-5 border-t border-slate-100 bg-white shrink-0 flex gap-3">
+                <button type="button" onclick="salinLinkDariModal()" class="flex-1 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 px-4 py-3 rounded-xl font-bold transition-colors shadow-xs text-xs sm:text-sm flex items-center justify-center gap-2 border border-indigo-200">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+                    Salin Link Form
+                </button>
+                <button type="button" onclick="closeModalDaftarHadir()" class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-800 px-4 py-3 rounded-xl font-bold transition-colors text-xs sm:text-sm">Tutup</button>
+            </div>
+        </div>
     </div>
 
     <!-- Application Logic -->
@@ -244,8 +547,24 @@
         let fasilData = {};
         let loggedInFasil = null;
         let allSchools = {};
+        let myAssignedSchools = []; // List of NPSNs
+        let allJadwalData = {};
         let globalSettingJadwal = {};
+
+        // Calendar State
+        const todayObj = new Date();
+        let calCurrentYear = todayObj.getFullYear();
+        let calCurrentMonth = todayObj.getMonth(); // 0-indexed
+        let currentFilterSchool = 'ALL';
+        let currentActiveView = 'calendar'; // 'calendar' or 'list'
+        let currentHadirData = {};
+        let currentDetailData = null;
         
+        const monthNames = [
+            "Januari", "Februari", "Maret", "April", "Mei", "Juni",
+            "Juli", "Agustus", "September", "Oktober", "November", "Desember"
+        ];
+
         const rubrikData = {
             A: [
                 { id: 'A1_pm_bermakna', label: 'A1_pm_bermakna: Murid mengaitkan pembelajaran dengan kehidupan nyata.' },
@@ -273,13 +592,13 @@
                 let html = '';
                 rubrikData[cat].forEach(item => {
                     html += `
-                    <div class="bg-white p-3 rounded-lg border border-slate-200 shadow-sm">
-                        <p class="text-sm font-medium text-slate-700 mb-2">${item.label}</p>
+                    <div class="bg-white p-3.5 rounded-xl border border-slate-200/90 shadow-xs">
+                        <p class="text-xs font-semibold text-slate-700 mb-2 leading-relaxed">${item.label}</p>
                         <div class="flex gap-4 sm:gap-6 flex-wrap">
                             ${[1,2,3,4].map(val => `
-                            <label class="flex items-center gap-1 cursor-pointer">
+                            <label class="flex items-center gap-1.5 cursor-pointer hover:text-indigo-600 transition-colors">
                                 <input type="radio" name="${item.id}" value="${val}" class="w-4 h-4 text-primary border-slate-300 focus:ring-primary">
-                                <span class="text-sm font-medium text-slate-600">${val}</span>
+                                <span class="text-xs font-bold text-slate-700">${val}</span>
                             </label>
                             `).join('')}
                         </div>
@@ -314,7 +633,6 @@
                 { name: "Keunggulan Kepemimpinan Kepala Sekolah", avg: avgC }
             ];
             
-            // Sort descending to find strength and weakness
             cats.sort((a, b) => b.avg - a.avg);
             const kekuatan = cats[0].name;
             const evaluasi = cats[cats.length - 1].name;
@@ -342,45 +660,39 @@
                 globalSettingJadwal = snapSetting.val() || {};
                 
                 const select = document.getElementById('loginFasilId');
-            let options = '<option value="">-- Pilih Nama Anda --</option>';
-            for(let key in fasilData) {
-                options += `<option value="${key}">${fasilData[key].nama}</option>`;
-            }
-            select.innerHTML = options;
+                let options = '<option value="">-- Pilih Nama Anda --</option>';
+                for(let key in fasilData) {
+                    options += `<option value="${key}">${fasilData[key].nama}</option>`;
+                }
+                select.innerHTML = options;
 
-            const urlParams = new URLSearchParams(window.location.search);
-            const paramFasilId = urlParams.get('fasilId');
-            const paramFocus = urlParams.get('focus');
-            
-            if (paramFasilId && fasilData[paramFasilId]) {
-                // Admin quick login bypass
-                localStorage.setItem('loggedFasilId', paramFasilId);
-                loggedInFasil = fasilData[paramFasilId];
-                showDashboard();
+                const urlParams = new URLSearchParams(window.location.search);
+                const paramFasilId = urlParams.get('fasilId');
+                const paramFocus = urlParams.get('focus');
+                
                 if (paramFocus) {
-                    setTimeout(() => {
-                        const searchBox = document.getElementById('searchSekolah');
-                        if (searchBox) {
-                            searchBox.value = paramFocus;
-                            searchBox.dispatchEvent(new Event('input'));
-                        }
-                    }, 500);
+                    currentFilterSchool = paramFocus;
                 }
-                // Clear URL to prevent weird reloads
-                window.history.replaceState({}, document.title, window.location.pathname);
-            } else {
-                const storedFasilId = localStorage.getItem('loggedFasilId');
-                if(storedFasilId && fasilData[storedFasilId]) {
-                    loggedInFasil = fasilData[storedFasilId];
+                
+                if (paramFasilId && fasilData[paramFasilId]) {
+                    localStorage.setItem('loggedFasilId', paramFasilId);
+                    loggedInFasil = fasilData[paramFasilId];
                     showDashboard();
+                    window.history.replaceState({}, document.title, window.location.pathname);
+                } else {
+                    const storedFasilId = localStorage.getItem('loggedFasilId');
+                    if(storedFasilId && fasilData[storedFasilId]) {
+                        loggedInFasil = fasilData[storedFasilId];
+                        showDashboard();
+                    }
                 }
-            }
             } catch(e) {
                 console.error(e);
                 alert("Gagal memuat data fasilitator: " + e.message);
                 document.getElementById('loginFasilId').innerHTML = '<option value="">Gagal Memuat Data</option>';
             }
         }
+
         renderRubrik();
         init();
 
@@ -419,32 +731,449 @@
             document.getElementById('navUserName').innerText = loggedInFasil.nama;
             document.getElementById('dashGreeting').innerText = `Halo, ${loggedInFasil.nama}`;
             
-            const snapSekolah = await db.ref('master_guru').once('value');
-            allSchools = snapSekolah.val() || {};
+            const [snapSekolah, snapAssign, snapJadwal, snapSetting] = await Promise.all([
+                db.ref('master_guru').once('value'),
+                db.ref('fasilitator_sekolah/' + loggedInFasil.id).once('value'),
+                db.ref('jadwal_kunjungan').once('value'),
+                db.ref('setting_jadwal').once('value')
+            ]);
 
-            renderDashboard();
+            allSchools = snapSekolah.val() || {};
+            myAssignedSchools = snapAssign.val() || [];
+            allJadwalData = snapJadwal.val() || {};
+            globalSettingJadwal = snapSetting.val() || {};
+
+            document.getElementById('dashSubGreeting').innerText = `${myAssignedSchools.length} Sekolah Binaan Ditugaskan`;
+
+            // Populate School Filter & Modal School Dropdown
+            populateSchoolOptions();
+
+            // Render active view
+            if (currentActiveView === 'calendar') {
+                renderCalendar();
+            } else {
+                renderListView();
+            }
         }
 
-        async function renderDashboard() {
+        function populateSchoolOptions() {
+            const filterSel = document.getElementById('filterSekolahSelect');
+            const modalSel = document.getElementById('calInputSekolah');
+            
+            let filterHtml = '<option value="ALL">Semua Sekolah Binaan</option>';
+            let modalHtml = '<option value="">-- Pilih Sekolah Binaan --</option>';
+
+            myAssignedSchools.forEach(npsn => {
+                const firstTeacher = allSchools[npsn] ? Object.values(allSchools[npsn])[0] : null;
+                const schoolName = (firstTeacher && firstTeacher.asal_sekolah) ? firstTeacher.asal_sekolah : `Sekolah ${npsn}`;
+                
+                filterHtml += `<option value="${npsn}">${schoolName}</option>`;
+                modalHtml += `<option value="${npsn}">${schoolName}</option>`;
+            });
+
+            filterSel.innerHTML = filterHtml;
+            modalSel.innerHTML = modalHtml;
+            filterSel.value = currentFilterSchool;
+        }
+
+        function switchMainView(view) {
+            currentActiveView = view;
+            const btnCal = document.getElementById('btnViewCalendar');
+            const btnList = document.getElementById('btnViewList');
+            const cCal = document.getElementById('containerCalendarView');
+            const cList = document.getElementById('containerListView');
+
+            if (view === 'calendar') {
+                btnCal.className = "px-4 py-2 rounded-lg transition-all flex items-center gap-1.5 bg-white text-indigo-700 shadow-sm";
+                btnList.className = "px-4 py-2 rounded-lg transition-all flex items-center gap-1.5 text-slate-600 hover:text-slate-900";
+                cCal.classList.remove('hidden');
+                cList.classList.add('hidden');
+                renderCalendar();
+            } else {
+                btnList.className = "px-4 py-2 rounded-lg transition-all flex items-center gap-1.5 bg-white text-indigo-700 shadow-sm";
+                btnCal.className = "px-4 py-2 rounded-lg transition-all flex items-center gap-1.5 text-slate-600 hover:text-slate-900";
+                cList.classList.remove('hidden');
+                cCal.classList.add('hidden');
+                renderListView();
+            }
+        }
+
+        function changeSchoolFilter(npsn) {
+            currentFilterSchool = npsn;
+            if (currentActiveView === 'calendar') {
+                renderCalendar();
+            } else {
+                renderListView();
+            }
+        }
+
+        // ================= CALENDAR ENGINE =================
+        function prevMonth() {
+            calCurrentMonth--;
+            if (calCurrentMonth < 0) {
+                calCurrentMonth = 11;
+                calCurrentYear--;
+            }
+            renderCalendar();
+        }
+
+        function nextMonth() {
+            calCurrentMonth++;
+            if (calCurrentMonth > 11) {
+                calCurrentMonth = 0;
+                calCurrentYear++;
+            }
+            renderCalendar();
+        }
+
+        function goToToday() {
+            const now = new Date();
+            calCurrentYear = now.getFullYear();
+            calCurrentMonth = now.getMonth();
+            renderCalendar();
+        }
+
+        function renderCalendar() {
+            document.getElementById('calendarMonthTitle').innerText = `${monthNames[calCurrentMonth]} ${calCurrentYear}`;
+            const grid = document.getElementById('calendarGrid');
+
+            // Compute dates matrix
+            const firstDayOfMonth = new Date(calCurrentYear, calCurrentMonth, 1);
+            const lastDayOfMonth = new Date(calCurrentYear, calCurrentMonth + 1, 0);
+            
+            // Adjust day of week (Monday = 0, Sunday = 6)
+            let startDay = firstDayOfMonth.getDay() - 1;
+            if (startDay === -1) startDay = 6;
+
+            const daysInMonth = lastDayOfMonth.getDate();
+            const prevMonthLastDay = new Date(calCurrentYear, calCurrentMonth, 0).getDate();
+
+            const today = new Date();
+            const isCurrentMonthThisMonth = (today.getFullYear() === calCurrentYear && today.getMonth() === calCurrentMonth);
+            const todayDate = today.getDate();
+
+            let cellsHtml = '';
+
+            // 1. Previous month trailing days
+            for (let i = startDay - 1; i >= 0; i--) {
+                const dayNum = prevMonthLastDay - i;
+                const prevM = calCurrentMonth === 0 ? 11 : calCurrentMonth - 1;
+                const prevY = calCurrentMonth === 0 ? calCurrentYear - 1 : calCurrentYear;
+                const dateStr = `${prevY}-${String(prevM + 1).padStart(2, '0')}-${String(dayNum).padStart(2, '0')}`;
+                cellsHtml += renderDayCell(dayNum, dateStr, false, false);
+            }
+
+            // 2. Current month days
+            for (let d = 1; d <= daysInMonth; d++) {
+                const dateStr = `${calCurrentYear}-${String(calCurrentMonth + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+                const isToday = isCurrentMonthThisMonth && (d === todayDate);
+                cellsHtml += renderDayCell(d, dateStr, true, isToday);
+            }
+
+            // 3. Next month leading days (fill up to total cells multiple of 7)
+            const totalCellsSoFar = startDay + daysInMonth;
+            const nextDaysCount = (7 - (totalCellsSoFar % 7)) % 7;
+            for (let n = 1; n <= nextDaysCount; n++) {
+                const nextM = calCurrentMonth === 11 ? 0 : calCurrentMonth + 1;
+                const nextY = calCurrentMonth === 11 ? calCurrentYear + 1 : calCurrentYear;
+                const dateStr = `${nextY}-${String(nextM + 1).padStart(2, '0')}-${String(n).padStart(2, '0')}`;
+                cellsHtml += renderDayCell(n, dateStr, false, false);
+            }
+
+            grid.innerHTML = cellsHtml;
+        }
+
+        function renderDayCell(dayNumber, dateStr, isCurrentMonth, isToday) {
+            // Find active period badge from globalSettingJadwal
+            let activePeriodBadge = '';
+            for (let i = 1; i <= 6; i++) {
+                const rule = globalSettingJadwal[`kunjungan_${i}`];
+                if (rule && rule.start_date && rule.end_date) {
+                    if (dateStr >= rule.start_date && dateStr <= rule.end_date) {
+                        activePeriodBadge = `<span class="text-[9px] sm:text-[10px] font-bold text-indigo-700 bg-indigo-50/90 px-1 sm:px-1.5 py-0.5 rounded border border-indigo-200/80 shrink-0" title="Periode Resmi Kunjungan ${i}">🎯 K-${i}</span>`;
+                        break;
+                    }
+                }
+            }
+
+            // Find events matching dateStr
+            let eventsHtml = '';
+            myAssignedSchools.forEach(npsn => {
+                if (currentFilterSchool !== 'ALL' && currentFilterSchool !== npsn) return;
+
+                const schoolJadwal = allJadwalData[npsn] || {};
+                const firstTeacher = allSchools[npsn] ? Object.values(allSchools[npsn])[0] : null;
+                const schoolName = (firstTeacher && firstTeacher.asal_sekolah) ? firstTeacher.asal_sekolah : `Sekolah ${npsn}`;
+                const safeName = schoolName.replace(/'/g, "\\'").replace(/"/g, '&quot;');
+
+                for (let k = 1; k <= 6; k++) {
+                    const visit = schoolJadwal[`kunjungan_${k}`];
+                    if (visit && visit.tanggal === dateStr) {
+                        let badgeColor = "bg-blue-100/90 text-blue-800 border-blue-200 hover:bg-blue-200";
+                        let dotColor = "bg-blue-500";
+                        if (visit.status === 'Selesai') {
+                            badgeColor = "bg-emerald-100/90 text-emerald-800 border-emerald-200 hover:bg-emerald-200";
+                            dotColor = "bg-emerald-500";
+                        } else if (visit.status === 'Batal/Ditunda') {
+                            badgeColor = "bg-rose-100/90 text-rose-800 border-rose-200 hover:bg-rose-200";
+                            dotColor = "bg-rose-500";
+                        }
+
+                        eventsHtml += `
+                            <div onclick="event.stopPropagation(); bukaDetailAcaraKalender('${npsn}', '${safeName}', ${k})" class="p-1 sm:p-1.5 mb-1 rounded-lg border text-[10px] sm:text-xs font-semibold cursor-pointer transition-all shadow-2xs hover:scale-[1.02] flex items-center justify-between gap-1 ${badgeColor}" title="Kunjungan ${k} - ${schoolName} (${visit.status})">
+                                <div class="flex items-center gap-1 min-w-0 truncate">
+                                    <span class="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full ${dotColor} shrink-0"></span>
+                                    <span class="font-extrabold shrink-0">K-${k}</span>
+                                    <span class="truncate">${schoolName}</span>
+                                </div>
+                            </div>
+                        `;
+                    }
+                }
+            });
+
+            const bgClass = isCurrentMonth ? 'bg-white hover:bg-indigo-50/20' : 'bg-slate-50 text-slate-400';
+            const numClass = isToday 
+                ? 'w-6 h-6 sm:w-7 sm:h-7 bg-indigo-600 text-white rounded-full flex items-center justify-center font-bold text-xs sm:text-sm shadow-sm'
+                : `font-bold text-xs sm:text-sm ${isCurrentMonth ? 'text-slate-800' : 'text-slate-400'}`;
+
+            return `
+                <div onclick="bukaModalJadwalkanKalender('${dateStr}')" class="cal-day-cell p-1 sm:p-2.5 transition-colors cursor-pointer flex flex-col justify-between group ${bgClass}">
+                    <div>
+                        <div class="flex items-center justify-between mb-1">
+                            <span class="${numClass}">${dayNumber}</span>
+                            ${activePeriodBadge}
+                        </div>
+                        <div class="space-y-1">
+                            ${eventsHtml}
+                        </div>
+                    </div>
+                    <div class="opacity-0 group-hover:opacity-100 transition-opacity text-center mt-auto pt-1 hidden sm:block">
+                        <span class="text-[10px] font-bold text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded-full border border-indigo-100">+ Tambah</span>
+                    </div>
+                </div>
+            `;
+        }
+
+
+        // ================= MODAL JADWALKAN DARI KALENDER =================
+        function bukaModalJadwalkanKalender(dateStr) {
+            document.getElementById('calInputTanggal').value = dateStr;
+            document.getElementById('modalJadwalSelectedDateText').innerText = `Tanggal: ${formatIndoDate(dateStr)}`;
+            
+            // Set default school (first assigned school)
+            const selSchool = document.getElementById('calInputSekolah');
+            if (currentFilterSchool !== 'ALL') {
+                selSchool.value = currentFilterSchool;
+            } else if (myAssignedSchools.length > 0) {
+                selSchool.value = myAssignedSchools[0];
+            }
+
+            document.getElementById('calInputKunjungan').value = '1';
+            document.getElementById('calInputStatus').value = 'Direncanakan';
+            
+            onModalSekolahOrKunjunganChange();
+
+            const modal = document.getElementById('modalJadwalkanKalender');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function closeModalJadwalkanKalender() {
+            const modal = document.getElementById('modalJadwalkanKalender');
+            modal.classList.remove('flex');
+            modal.classList.add('hidden');
+        }
+
+        function onModalTanggalChange() {
+            const tgl = document.getElementById('calInputTanggal').value;
+            if (tgl) {
+                document.getElementById('modalJadwalSelectedDateText').innerText = `Tanggal: ${formatIndoDate(tgl)}`;
+            }
+            onModalSekolahOrKunjunganChange();
+        }
+
+        function onModalSekolahOrKunjunganChange() {
+            const npsn = document.getElementById('calInputSekolah').value;
+            const kId = document.getElementById('calInputKunjungan').value;
+            const tgl = document.getElementById('calInputTanggal').value;
+
+            const rule = globalSettingJadwal[`kunjungan_${kId}`] || {};
+            const ruleText = (rule.start_date && rule.end_date) 
+                ? `${formatIndoDate(rule.start_date)} s.d. ${formatIndoDate(rule.end_date)}`
+                : 'Belum diatur Admin';
+
+            document.getElementById('calPeriodRuleText').innerText = ruleText;
+
+            // Check if outside range
+            const warningEl = document.getElementById('calPeriodWarning');
+            if (tgl && rule.start_date && rule.end_date) {
+                if (tgl < rule.start_date || tgl > rule.end_date) {
+                    warningEl.classList.remove('hidden');
+                } else {
+                    warningEl.classList.add('hidden');
+                }
+            } else {
+                warningEl.classList.add('hidden');
+            }
+
+            // Check existing data
+            const existBox = document.getElementById('calExistingScheduleNotice');
+            const badgeEl = document.getElementById('calExistingStatusBadge');
+            if (npsn && kId && allJadwalData[npsn] && allJadwalData[npsn][`kunjungan_${kId}`]) {
+                const exist = allJadwalData[npsn][`kunjungan_${kId}`];
+                if (exist.tanggal && exist.tanggal !== '-') {
+                    existBox.classList.remove('hidden');
+                    badgeEl.innerText = `${exist.status || 'Tercatat'} (Tgl: ${exist.tanggal})`;
+                    document.getElementById('calInputStatus').value = exist.status || 'Direncanakan';
+                } else {
+                    existBox.classList.add('hidden');
+                }
+            } else {
+                existBox.classList.add('hidden');
+            }
+        }
+
+        async function simpanJadwalDariKalender(langsungIsiInstrumen = false) {
+            const npsn = document.getElementById('calInputSekolah').value;
+            const kId = document.getElementById('calInputKunjungan').value;
+            const tanggal = document.getElementById('calInputTanggal').value;
+            const status = document.getElementById('calInputStatus').value;
+
+            if (!npsn) return alert("Pilih sekolah binaan terlebih dahulu!");
+            if (!kId) return alert("Pilih kunjungan ke berapa!");
+            if (!tanggal) return alert("Pilih tanggal kunjungan!");
+
+            try {
+                // Fetch existing node to preserve any rubrik data if already filled
+                const snap = await db.ref(`jadwal_kunjungan/${npsn}/kunjungan_${kId}`).once('value');
+                const existing = snap.val() || {};
+
+                const updated = {
+                    ...existing,
+                    tanggal: tanggal,
+                    status: (status === 'Selesai' && existing.status === 'Selesai') ? 'Selesai' : status,
+                    catatan: (status === 'Direncanakan' ? 'Menunggu pelaksanaan' : (status === 'Batal/Ditunda' ? 'Dibatalkan/Ditunda' : (existing.catatan || '-')))
+                };
+
+                await db.ref(`jadwal_kunjungan/${npsn}/kunjungan_${kId}`).update(updated);
+
+                // Update local cached copy
+                if (!allJadwalData[npsn]) allJadwalData[npsn] = {};
+                allJadwalData[npsn][`kunjungan_${kId}`] = updated;
+
+                closeModalJadwalkanKalender();
+                renderCalendar();
+
+                if (langsungIsiInstrumen) {
+                    const firstTeacher = allSchools[npsn] ? Object.values(allSchools[npsn])[0] : null;
+                    const schoolName = (firstTeacher && firstTeacher.asal_sekolah) ? firstTeacher.asal_sekolah : `Sekolah ${npsn}`;
+                    bukaModalKunjungan(npsn, schoolName, kId);
+                } else {
+                    alert("Jadwal kunjungan berhasil disimpan!");
+                }
+            } catch(e) {
+                console.error(e);
+                alert("Gagal menyimpan jadwal: " + e.message);
+            }
+        }
+
+
+        // ================= MODAL DETAIL ACARA =================
+        function bukaDetailAcaraKalender(npsn, schoolName, kId) {
+            const visit = (allJadwalData[npsn] && allJadwalData[npsn][`kunjungan_${kId}`]) ? allJadwalData[npsn][`kunjungan_${kId}`] : {};
+            currentDetailData = { npsn, schoolName, kId, visit };
+
+            document.getElementById('detailEventBadge').innerText = `Kunjungan ${kId}`;
+            
+            const statusBadge = document.getElementById('detailStatusBadge');
+            const status = visit.status || 'Belum Diisi';
+            statusBadge.innerText = status;
+            if (status === 'Selesai') {
+                statusBadge.className = "px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-500 text-white";
+            } else if (status === 'Direncanakan') {
+                statusBadge.className = "px-2.5 py-0.5 rounded-full text-xs font-bold bg-blue-500 text-white";
+            } else {
+                statusBadge.className = "px-2.5 py-0.5 rounded-full text-xs font-bold bg-rose-500 text-white";
+            }
+
+            document.getElementById('detailSekolahTitle').innerText = schoolName;
+            document.getElementById('detailNpsnSubtitle').innerText = `NPSN: ${npsn}`;
+            document.getElementById('detailTanggalText').innerText = visit.tanggal ? formatIndoDate(visit.tanggal) : '-';
+            document.getElementById('detailTahapTetText').innerText = visit.tahap_siklus_tet || 'Belum diisi';
+
+            const rubrikStatus = document.getElementById('detailRubrikStatusText');
+            const previewBox = document.getElementById('detailReportPreviewBox');
+            if (visit.laporan_otomatis) {
+                rubrikStatus.innerText = `Sudah Diisi (Skor: ${visit.laporan_otomatis.totalAvg} - ${visit.laporan_otomatis.statusUtama})`;
+                rubrikStatus.className = "font-bold text-emerald-600";
+                previewBox.classList.remove('hidden');
+                document.getElementById('detailReportTeks').innerText = visit.laporan_otomatis.teksLaporan || '-';
+            } else {
+                rubrikStatus.innerText = "Belum Diisi";
+                rubrikStatus.className = "font-bold text-amber-600";
+                previewBox.classList.add('hidden');
+            }
+
+            // Setup buttons
+            document.getElementById('btnDetailIsiInstrumen').onclick = () => {
+                closeModalDetailAcara();
+                bukaModalKunjungan(npsn, schoolName, kId);
+            };
+
+            document.getElementById('btnDetailDaftarHadir').onclick = () => {
+                closeModalDetailAcara();
+                bukaModalDaftarHadir(npsn, kId, schoolName);
+            };
+
+            document.getElementById('btnDetailCetakDocx').onclick = () => {
+                closeModalDetailAcara();
+                bukaModalKunjungan(npsn, schoolName, kId);
+                setTimeout(() => generateWordReport(), 500);
+            };
+
+            document.getElementById('btnDetailHapusJadwal').onclick = async () => {
+                if (!confirm(`Hapus jadwal Kunjungan ${kId} untuk ${schoolName}?`)) return;
+                try {
+                    await db.ref(`jadwal_kunjungan/${npsn}/kunjungan_${kId}`).remove();
+                    if (allJadwalData[npsn]) delete allJadwalData[npsn][`kunjungan_${kId}`];
+                    closeModalDetailAcara();
+                    renderCalendar();
+                    alert("Jadwal kunjungan berhasil dihapus.");
+                } catch(e) {
+                    alert("Gagal menghapus: " + e.message);
+                }
+            };
+
+            const modal = document.getElementById('modalDetailAcaraKalender');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function closeModalDetailAcara() {
+            const modal = document.getElementById('modalDetailAcaraKalender');
+            modal.classList.remove('flex');
+            modal.classList.add('hidden');
+        }
+
+
+        // ================= TAMPILAN 2: DAFTAR SEKOLAH (LIST VIEW) =================
+        async function renderListView() {
             const container = document.getElementById('sekolahContainer');
-            container.innerHTML = '<div class="text-center text-slate-500 py-12">Memuat jadwal...</div>';
+            container.innerHTML = '<div class="text-center text-slate-500 py-12">Memuat daftar sekolah...</div>';
             
-            const snapAssign = await db.ref('fasilitator_sekolah/' + loggedInFasil.id).once('value');
-            const mySchools = snapAssign.val() || [];
-            
-            if(mySchools.length === 0) {
+            if(myAssignedSchools.length === 0) {
                 container.innerHTML = '<div class="text-center p-8 bg-white rounded-2xl border border-slate-100 text-slate-500">Anda belum ditugaskan ke sekolah manapun.</div>';
                 return;
             }
 
-            const snapJadwal = await db.ref('jadwal_kunjungan').once('value');
-            const allJadwal = snapJadwal.val() || {};
-
             let html = '';
-            mySchools.forEach(npsn => {
+            myAssignedSchools.forEach(npsn => {
+                if (currentFilterSchool !== 'ALL' && currentFilterSchool !== npsn) return;
+
                 const firstTeacher = allSchools[npsn] ? Object.values(allSchools[npsn])[0] : null;
                 const schoolName = (firstTeacher && firstTeacher.asal_sekolah) ? firstTeacher.asal_sekolah : npsn;
-                const schoolJadwal = allJadwal[npsn] || {};
+                const schoolJadwal = allJadwalData[npsn] || {};
 
                 let kunjunganHtml = '<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-6">';
                 for(let i = 1; i <= 6; i++) {
@@ -456,19 +1185,19 @@
 
                     const safeName = schoolName.replace(/'/g, "\\\'").replace(/"/g, '&quot;');
                     kunjunganHtml += `
-                        <div class="border border-slate-200 rounded-xl p-4 hover:border-indigo-300 transition-colors group flex flex-col justify-between">
+                        <div class="border border-slate-200 rounded-2xl p-4 hover:border-indigo-300 transition-colors group flex flex-col justify-between bg-white shadow-xs">
                             <div>
                                 <div class="flex justify-between items-center mb-2">
-                                    <span class="font-bold text-slate-800">Kunjungan ${i}</span>
-                                    <span class="px-2 py-1 rounded text-xs font-bold ${statusColor}">${jData.status}</span>
+                                    <span class="font-bold text-slate-800 text-sm">Kunjungan ${i}</span>
+                                    <span class="px-2 py-0.5 rounded-full text-xs font-bold ${statusColor}">${jData.status}</span>
                                 </div>
-                                <p class="text-sm text-slate-600 mb-1"><span class="font-medium">Tgl:</span> ${jData.tanggal}</p>
-                                <p class="text-xs text-slate-500 truncate mb-3" title="${jData.catatan}"><span class="font-medium">Catatan:</span> ${jData.catatan}</p>
+                                <p class="text-xs text-slate-600 mb-1"><span class="font-medium text-slate-400">Tgl:</span> ${jData.tanggal !== '-' ? formatIndoDate(jData.tanggal) : '-'}</p>
+                                <p class="text-xs text-slate-500 truncate mb-3" title="${jData.catatan}"><span class="font-medium text-slate-400">Catatan:</span> ${jData.catatan}</p>
                             </div>
                             <div class="flex gap-2 mt-auto">
-                                <button onclick="bukaModalAturJadwal('${npsn}', '${safeName}', ${i})" class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold py-2 rounded transition-colors border border-slate-200">Atur Jadwal</button>
-                                <button onclick="bukaModalKunjungan('${npsn}', '${safeName}', ${i})" class="flex-1 bg-primary hover:bg-blue-700 text-white text-xs font-bold py-2 rounded transition-colors shadow-sm">Isi Instrumen</button>
-                                <button onclick="bukaModalDaftarHadir('${npsn}', ${i}, '${safeName}')" class="flex-1 bg-indigo-100 hover:bg-indigo-200 text-indigo-700 text-xs font-bold py-2 rounded transition-colors border border-indigo-200">Daftar Hadir</button>
+                                <button onclick="bukaModalAturJadwal('${npsn}', '${safeName}', ${i})" class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold py-2 rounded-lg transition-colors border border-slate-200">Atur</button>
+                                <button onclick="bukaModalKunjungan('${npsn}', '${safeName}', ${i})" class="flex-1 bg-primary hover:bg-indigo-700 text-white text-xs font-bold py-2 rounded-lg transition-colors shadow-xs">Instrumen</button>
+                                <button onclick="bukaModalDaftarHadir('${npsn}', ${i}, '${safeName}')" class="flex-1 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 text-xs font-bold py-2 rounded-lg transition-colors border border-indigo-200">Presensi</button>
                             </div>
                         </div>
                     `;
@@ -476,15 +1205,15 @@
                 kunjunganHtml += '</div>';
 
                 html += `
-                    <div class="glass-card rounded-2xl p-6 md:p-8 shadow-sm mb-6">
+                    <div class="glass-card rounded-2xl p-6 md:p-8 shadow-sm mb-6 border border-slate-200">
                         <button onclick="document.getElementById('kunjungan-${npsn}').classList.toggle('hidden'); document.getElementById('icon-${npsn}').classList.toggle('rotate-180')" class="w-full text-left flex items-center justify-between pb-2 group outline-none">
-                            <h2 class="text-xl font-bold text-slate-900 flex items-center gap-3">
+                            <h2 class="text-lg sm:text-xl font-bold text-slate-900 flex items-center gap-3">
                                 <svg class="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1v1H9V7zm5 0h1v1h-1V7zm-5 4h1v1H9v-1zm5 0h1v1h-1v-1zm-5 4h1v1H9v-1zm5 0h1v1h-1v-1z"/></svg>
-                                ${schoolName} <span class="text-sm font-normal text-slate-400">(${npsn})</span>
+                                <span>${schoolName}</span> <span class="text-xs sm:text-sm font-normal text-slate-400">(${npsn})</span>
                             </h2>
                             <svg id="icon-${npsn}" class="w-6 h-6 text-slate-400 group-hover:text-indigo-600 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
                         </button>
-                        <div id="kunjungan-${npsn}" class="hidden border-t border-slate-100 pt-2">
+                        <div id="kunjungan-${npsn}" class="border-t border-slate-100 pt-2">
                             ${kunjunganHtml}
                         </div>
                     </div>
@@ -494,6 +1223,7 @@
         }
 
 
+        // ================= LEGACY / COMMON MODAL FUNCTIONS =================
         function bukaModalAturJadwal(npsn, schoolName, kunjunganId) {
             document.getElementById('aturNpsn').value = npsn;
             document.getElementById('aturId').value = kunjunganId;
@@ -537,14 +1267,20 @@
             const tanggal = document.getElementById('aturTanggal').value || '-';
             const status = document.getElementById('aturStatus').value;
             
-            await db.ref(`jadwal_kunjungan/${npsn}/kunjungan_${kId}`).update({
+            const updatePayload = {
                 tanggal, 
                 status,
                 catatan: (status === 'Direncanakan' ? 'Menunggu pelaksanaan' : (status === 'Batal/Ditunda' ? 'Dibatalkan/Ditunda' : '-'))
-            });
+            };
+
+            await db.ref(`jadwal_kunjungan/${npsn}/kunjungan_${kId}`).update(updatePayload);
             
+            if (!allJadwalData[npsn]) allJadwalData[npsn] = {};
+            allJadwalData[npsn][`kunjungan_${kId}`] = { ...(allJadwalData[npsn][`kunjungan_${kId}`] || {}), ...updatePayload };
+
             closeModalAturJadwal();
-            renderDashboard();
+            if (currentActiveView === 'calendar') renderCalendar();
+            else renderListView();
             alert("Rencana jadwal berhasil disimpan!");
         }
 
@@ -558,6 +1294,17 @@
             document.getElementById('infoNamaSekolah').value = schoolName;
             document.getElementById('infoNamaFasil').value = loggedInFasil ? loggedInFasil.nama : '';
             document.getElementById('inputKunjunganTanggal').value = '';
+            
+            // Set min and max based on setting_jadwal
+            const tglInput = document.getElementById('inputKunjunganTanggal');
+            tglInput.removeAttribute('min');
+            tglInput.removeAttribute('max');
+            if (globalSettingJadwal[`kunjungan_${kunjunganId}`]) {
+                const rules = globalSettingJadwal[`kunjungan_${kunjunganId}`];
+                if (rules.start_date) tglInput.setAttribute('min', rules.start_date);
+                if (rules.end_date) tglInput.setAttribute('max', rules.end_date);
+            }
+
             document.getElementById('inputSiklusTet').value = '';
             document.querySelectorAll('input[name="partisipasi_guru"]').forEach(r => r.checked = false);
             
@@ -606,11 +1353,6 @@
                     document.getElementById('kendalaDitemukan').value = '';
                     document.getElementById('rekomendasiTindakLanjut').value = '';
                 }
-            }).catch(e => {
-                console.error(e);
-                document.getElementById('catatanPelaksanaan').value = '';
-                document.getElementById('kendalaDitemukan').value = '';
-                document.getElementById('rekomendasiTindakLanjut').value = '';
             });
         }
 
@@ -620,91 +1362,10 @@
             modal.classList.add('hidden');
         }
 
-        
-        let currentHadirData = { npsn: '', kId: '', sekolah: '' };
-
-        async function bukaModalDaftarHadir(npsn, kId, sekolah) {
-            currentHadirData = { npsn, kId, sekolah };
-            document.getElementById('hadirSubtitle').innerText = `Kunjungan ${kId} - ${sekolah}`;
-            
-            const container = document.getElementById('hadirListContainer');
-            container.innerHTML = '<div class="text-center py-6 text-slate-500"><div class="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-500 mx-auto"></div></div>';
-            
-            const modal = document.getElementById('modalDaftarHadir');
-            const content = document.getElementById('modalDaftarHadirContent');
-            modal.classList.remove('hidden');
-            modal.classList.add('flex');
-            setTimeout(() => {
-                content.classList.remove('scale-95', 'opacity-0');
-                content.classList.add('scale-100', 'opacity-100');
-            }, 10);
-
-            try {
-                const snap = await db.ref(`jadwal_kunjungan/${npsn}/kunjungan_${kId}/daftar_hadir`).once('value');
-                if (!snap.exists()) {
-                    container.innerHTML = `
-                        <div class="text-center py-8">
-                            <div class="text-slate-400 mb-2">
-                                <svg class="w-12 h-12 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
-                            </div>
-                            <p class="text-slate-500 font-medium">Belum ada peserta yang mengisi daftar hadir.</p>
-                            <p class="text-slate-400 text-sm mt-1">Silakan bagikan link absensi kepada peserta.</p>
-                        </div>`;
-                    return;
-                }
-                
-                const data = snap.val();
-                const list = Object.values(data).sort((a,b) => a.timestamp - b.timestamp);
-                
-                let html = '';
-                list.forEach((p, idx) => {
-                    html += `
-                        <div class="bg-white p-3 rounded-lg border border-slate-200 flex items-center gap-3 shadow-sm">
-                            <div class="bg-indigo-100 text-indigo-700 font-bold w-8 h-8 flex items-center justify-center rounded-full shrink-0 text-sm">${idx+1}</div>
-                            <div>
-                                <div class="font-bold text-slate-800 text-sm">${p.nama}</div>
-                                <div class="text-xs text-slate-500">${p.jabatan}</div>
-                            </div>
-                        </div>
-                    `;
-                });
-                container.innerHTML = html;
-            } catch(e) {
-                container.innerHTML = '<div class="text-center py-6 text-red-500">Gagal memuat data.</div>';
-            }
-        }
-
-        function closeModalDaftarHadir() {
-            const modal = document.getElementById('modalDaftarHadir');
-            const content = document.getElementById('modalDaftarHadirContent');
-            content.classList.remove('scale-100', 'opacity-100');
-            content.classList.add('scale-95', 'opacity-0');
-            setTimeout(() => {
-                modal.classList.add('hidden');
-                modal.classList.remove('flex');
-            }, 300);
-        }
-
-        function salinLinkDariModal() {
-            salinLinkKehadiran(currentHadirData.npsn, currentHadirData.kId, currentHadirData.sekolah);
-        }
-
-        function salinLinkKehadiran(npsn, kId, sekolah) {
-            
-            const url = window.location.origin + '/kehadiran.html?npsn=' + npsn + '&kunjungan=' + kId + '&sekolah=' + encodeURIComponent(sekolah);
-            
-            navigator.clipboard.writeText(url).then(() => {
-                alert("Tautan daftar hadir berhasil disalin! Silakan bagikan ke grup WA peserta:\n" + url);
-            }).catch(err => {
-                alert("Gagal menyalin tautan: " + url);
-            });
-        }
-        
         async function simpanKunjungan() {
             const npsn = document.getElementById('inputKunjunganNpsn').value;
             const kId = document.getElementById('inputKunjunganId').value;
             
-            // Validate essential
             const tanggal = document.getElementById('inputKunjunganTanggal').value;
             if(!tanggal) return alert("Tanggal Kunjungan wajib diisi!");
             
@@ -717,68 +1378,116 @@
                 catatan_pelaksanaan_tet: document.getElementById('catatanPelaksanaan').value,
                 kendala_ditemukan: document.getElementById('kendalaDitemukan').value,
                 rekomendasi_tindak_lanjut: document.getElementById('rekomendasiTindakLanjut').value,
-                // Status kunjungan kita set selesai otomatis jika formulir disubmit
                 status: 'Selesai'
             };
 
-            // Ambil rubrik values
             ['A', 'B', 'C'].forEach(cat => {
                 rubrikData[cat].forEach(item => {
                     const selected = document.querySelector(`input[name="${item.id}"]:checked`);
-                    if (selected) {
-                        payload[item.id] = parseInt(selected.value);
-                    } else {
-                        payload[item.id] = 0; // Jika tidak diisi, set 0
-                    }
+                    payload[item.id] = selected ? parseInt(selected.value) : 0;
                 });
             });
 
-            // Generate report
             const report = generateReport(payload);
             payload.laporan_otomatis = report;
             
-            // Backward compatibility untuk teks di dashboard
             const reko = payload.rekomendasi_tindak_lanjut || '';
             payload.catatan = reko ? (reko.substring(0, 50) + (reko.length > 50 ? '...' : '')) : '-';
 
             await db.ref(`jadwal_kunjungan/${npsn}/kunjungan_${kId}`).update(payload);
             
+            if (!allJadwalData[npsn]) allJadwalData[npsn] = {};
+            allJadwalData[npsn][`kunjungan_${kId}`] = payload;
+
             closeModalKunjungan();
-            renderDashboard();
+            if (currentActiveView === 'calendar') renderCalendar();
+            else renderListView();
             alert("Laporan instrumen observasi berhasil disimpan!");
         }
-    </script>
 
-    <!-- MODAL DAFTAR HADIR -->
-    <div id="modalDaftarHadir" class="hidden fixed inset-0 z-50 bg-slate-900/50 flex justify-center p-4 items-start sm:items-center pt-12 pb-12 sm:pt-4 overflow-y-auto">
-        <div class="bg-white w-full max-w-lg rounded-2xl shadow-xl overflow-hidden flex flex-col max-h-[90vh] transition-all transform scale-95 opacity-0" id="modalDaftarHadirContent">
+        async function bukaModalDaftarHadir(npsn, kId, sekolah) {
+            currentHadirData = { npsn, kId, sekolah };
+            document.getElementById('hadirSubtitle').innerText = `Kunjungan Ke-${kId} - ${sekolah}`;
             
-            <!-- Header Modal -->
-            <div class="bg-indigo-600 p-4 sm:p-6 text-white shrink-0 relative">
-                <button onclick="closeModalDaftarHadir()" class="absolute top-4 right-4 sm:top-6 sm:right-6 text-indigo-200 hover:text-white transition-colors">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                </button>
-                <h3 class="font-bold text-xl sm:text-2xl pr-8">Daftar Hadir</h3>
-                <p class="text-indigo-200 text-sm mt-1" id="hadirSubtitle">Kunjungan - Sekolah</p>
-            </div>
+            const container = document.getElementById('hadirListContainer');
+            container.innerHTML = '<div class="text-center py-6 text-slate-500 text-sm">Memuat data kehadiran...</div>';
+            
+            const modal = document.getElementById('modalDaftarHadir');
+            const content = document.getElementById('modalDaftarHadirContent');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            setTimeout(() => {
+                content.classList.remove('scale-95', 'opacity-0');
+                content.classList.add('scale-100', 'opacity-100');
+            }, 10);
 
-            <!-- Body Modal (Scrollable) -->
-            <div class="p-4 sm:p-6 overflow-y-auto flex-1 bg-slate-50">
-                <div id="hadirListContainer" class="space-y-3">
-                    <div class="text-center py-6 text-slate-500">Memuat data...</div>
-                </div>
-            </div>
+            try {
+                const snap = await db.ref(`jadwal_kunjungan/${npsn}/kunjungan_${kId}/daftar_hadir`).once('value');
+                if(!snap.exists()) {
+                    container.innerHTML = `
+                        <div class="text-center py-8">
+                            <svg class="w-12 h-12 text-slate-300 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                            <p class="text-slate-500 font-medium text-sm">Belum ada peserta yang mengisi presensi.</p>
+                            <p class="text-slate-400 text-xs mt-1">Silakan bagikan link absensi kepada para peserta.</p>
+                        </div>`;
+                    return;
+                }
+                
+                const data = snap.val();
+                const list = Object.values(data).sort((a,b) => a.timestamp - b.timestamp);
+                
+                let html = '';
+                list.forEach((p, idx) => {
+                    html += `
+                        <div class="bg-white p-3 rounded-xl border border-slate-200 flex items-center gap-3 shadow-2xs">
+                            <div class="bg-indigo-100 text-indigo-700 font-bold w-8 h-8 flex items-center justify-center rounded-full shrink-0 text-xs">${idx+1}</div>
+                            <div>
+                                <div class="font-bold text-slate-800 text-xs sm:text-sm">${p.nama}</div>
+                                <div class="text-[11px] text-slate-500">${p.jabatan}</div>
+                            </div>
+                        </div>
+                    `;
+                });
+                container.innerHTML = html;
+            } catch(e) {
+                container.innerHTML = '<div class="text-center py-6 text-red-500 text-sm">Gagal memuat data kehadiran.</div>';
+            }
+        }
 
-            <!-- Footer Modal -->
-            <div class="p-4 border-t border-slate-100 bg-white shrink-0 flex gap-3">
-                <button type="button" onclick="salinLinkDariModal()" class="flex-1 bg-indigo-100 hover:bg-indigo-200 text-indigo-700 px-4 py-3 rounded-xl font-bold transition-colors shadow-sm text-sm sm:text-base flex items-center justify-center gap-2">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
-                    Copy Link Form
-                </button>
-                <button type="button" onclick="closeModalDaftarHadir()" class="flex-1 bg-slate-200 hover:bg-slate-300 text-slate-800 px-4 py-3 rounded-xl font-bold transition-colors shadow-sm text-sm sm:text-base">Tutup</button>
-            </div>
-        </div>
-    </div>
+        function closeModalDaftarHadir() {
+            const modal = document.getElementById('modalDaftarHadir');
+            const content = document.getElementById('modalDaftarHadirContent');
+            content.classList.remove('scale-100', 'opacity-100');
+            content.classList.add('scale-95', 'opacity-0');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+            }, 250);
+        }
+
+        function salinLinkDariModal() {
+            salinLinkKehadiran(currentHadirData.npsn, currentHadirData.kId, currentHadirData.sekolah);
+        }
+
+        function salinLinkKehadiran(npsn, kId, sekolah) {
+            const url = window.location.origin + '/kehadiran.html?npsn=' + npsn + '&kunjungan=' + kId + '&sekolah=' + encodeURIComponent(sekolah);
+            navigator.clipboard.writeText(url).then(() => {
+                alert("Tautan presensi berhasil disalin! Silakan bagikan ke peserta:\n" + url);
+            }).catch(err => {
+                alert("Gagal menyalin tautan: " + url);
+            });
+        }
+
+        function formatIndoDate(dateStr) {
+            if (!dateStr || dateStr === '-') return '-';
+            const parts = dateStr.split('-');
+            if (parts.length !== 3) return dateStr;
+            const y = parts[0];
+            const m = parseInt(parts[1]) - 1;
+            const d = parseInt(parts[2]);
+            return `${d} ${monthNames[m] || parts[1]} ${y}`;
+        }
+    </script>
 
     <!-- DOCX Library -->
     <script src="https://unpkg.com/docx@9.0.0/build/index.iife.js"></script>
@@ -786,11 +1495,10 @@
     <script>
         async function generateWordReport() {
             if (!window.docx) {
-                alert("Library docx belum dimuat. Coba lagi dalam beberapa detik.");
+                alert("Library docx belum dimuat. Silakan coba lagi.");
                 return;
             }
             
-            // Get basic info
             const namaFasil = document.getElementById('infoNamaFasil').value;
             const namaSekolah = document.getElementById('infoNamaSekolah').value;
             const tgl = document.getElementById('inputKunjunganTanggal').value;
@@ -800,7 +1508,6 @@
             const kendala = document.getElementById('kendalaDitemukan').value || '-';
             const rekomendasi = document.getElementById('rekomendasiTindakLanjut').value || '-';
 
-            // Get Rubrik Scores (13 indicators)
             const rubrikA = ['A1_pm_bermakna', 'A2_pm_otonomi', 'A3_pm_refleksi', 'A4_kka_projek', 'A5_kka_kompetensi'];
             const rubrikB = ['B1_pm_efektif', 'B2_pm_asesmen', 'B3_kka_literasi', 'B4_kka_kontekstual'];
             const rubrikC = ['C1_pm_memimpin', 'C2_pm_supervisi', 'C3_kka_sumberdaya', 'C4_kka_kemitraan'];
@@ -830,7 +1537,6 @@
             const kekuatan = cats[0].name;
             const evaluasi = cats[cats.length - 1].name;
 
-            // Fetch Daftar Hadir
             const npsnVal = document.getElementById('inputKunjunganNpsn').value;
             const kIdVal = document.getElementById('inputKunjunganId').value;
             let daftarHadirList = [];
@@ -844,17 +1550,14 @@
                 console.error("Gagal mengambil daftar hadir", e);
             }
 
-            // DOCX Generation
             const { Document, Packer, Paragraph, TextRun, HeadingLevel, PageBreak, AlignmentType, Table, TableRow, TableCell, WidthType, BorderStyle } = window.docx;
 
-            // Helper for justified paragraphs
             const justifyPara = (text) => new Paragraph({
                 children: [new TextRun({ text: text, font: "Times New Roman", size: 24 })],
                 alignment: AlignmentType.JUSTIFIED,
                 spacing: { after: 200, line: 360 }
             });
 
-            // Helper for headings
             const createHeading = (text, level) => new Paragraph({
                 text: text,
                 heading: level,
@@ -874,11 +1577,10 @@
                         justifyPara("Kelompok Kerja menjadi salah satu wadah strategis dalam mendukung peningkatan kompetensi pendidik melalui kolaborasi, berbagi praktik baik, refleksi pembelajaran, dan pengembangan profesional berkelanjutan. Agar Kelompok Kerja dapat berjalan secara efektif, diperlukan fasilitator yang memiliki kompetensi dalam memandu proses belajar, mengelola diskusi kolaboratif, serta mengintegrasikan pendekatan pembelajaran mendalam, koding, dan kecerdasan artifisial dalam kegiatan pengembangan profesional guru."),
                         justifyPara("Berdasarkan hal tersebut, Balai Guru dan Tenaga Kependidikan (BGTK) Provinsi Sumatera Barat menyelenggarakan kegiatan ToT Fasilitator Kelompok Kerja Pendidik dalam Implementasi Pembelajaran Mendalam, Serta Koding dan Kecerdasan Artifisial. Sebagai tindak lanjut, program pendampingan dan pemantauan pun dilaksanakan langsung kepada sekolah binaan, yakni di " + namaSekolah + ", guna memastikan penerapan metode ini berjalan sesuai dengan tujuan nasional."),
                         
-                        // BAB II
                         new Paragraph({ children: [new PageBreak()] }),
                         createHeading("BAB II", HeadingLevel.HEADING_1),
                         createHeading("PELAKSANAAN KEGIATAN", HeadingLevel.HEADING_1),
-                        justifyPara("Kegiatan pendampingan dan pemantauan implementasi Pembelajaran Mendalam (PM) serta Koding dan Kecerdasan Artifisial (KKA) telah dilaksanakan pada tanggal " + (tgl || ".......") + " bertempat di " + namaSekolah + "."),
+                        justifyPara("Kegiatan pendampingan dan pemantauan implementasi Pembelajaran Mendalam (PM) serta Koding dan Kecerdasan Artifisial (KKA) telah dilaksanakan pada tanggal " + (tgl ? formatIndoDate(tgl) : ".......") + " bertempat di " + namaSekolah + "."),
                         justifyPara("Proses fasilitasi ini dipandu langsung oleh Fasilitator " + namaFasil + ". Saat ini, sekolah tersebut sedang berada pada tahapan " + (tahap || ".......") + " berdasarkan siklus TET (Targeted Evaluation & Teaching). Selama observasi berlangsung, terpantau bahwa partisipasi guru dalam mengadopsi dan mendiskusikan materi tergolong " + partisipasi + ". Keterlibatan ini menjadi indikator penting dalam mengukur kesiapan ekosistem sekolah menuju transformasi digital yang bermakna."),
                         new Paragraph({ text: "Daftar Hadir Peserta:", font: "Times New Roman", size: 24, bold: true, spacing: { before: 200, after: 100 } }),
                         
@@ -915,7 +1617,6 @@
                                 ]
                             }),
                         
-                        // BAB III
                         new Paragraph({ children: [new PageBreak()] }),
                         createHeading("BAB III", HeadingLevel.HEADING_1),
                         createHeading("HASIL PELAKSANAAN DAN EVALUASI", HeadingLevel.HEADING_1),
@@ -924,7 +1625,6 @@
                         new Paragraph({ text: "Kendala dan Solusi di Lapangan:", font: "Times New Roman", size: 24, bold: true, spacing: { before: 200, after: 100 } }),
                         justifyPara(kendala),
 
-                        // BAB IV
                         new Paragraph({ children: [new PageBreak()] }),
                         createHeading("BAB IV", HeadingLevel.HEADING_1),
                         createHeading("PENUTUP", HeadingLevel.HEADING_1),
@@ -932,7 +1632,6 @@
                         new Paragraph({ text: "Rekomendasi Tindak Lanjut:", font: "Times New Roman", size: 24, bold: true, spacing: { before: 200, after: 100 } }),
                         justifyPara(rekomendasi),
 
-                        // LAMPIRAN
                         new Paragraph({ children: [new PageBreak()] }),
                         createHeading("LAMPIRAN", HeadingLevel.HEADING_1),
                         justifyPara("(Halaman ini disediakan untuk melampirkan foto dokumentasi kegiatan dan daftar hadir peserta)")
@@ -945,10 +1644,10 @@
                 saveAs(blob, "Laporan_Kunjungan_" + namaSekolah.replace(/\s+/g, "_") + ".docx");
             } catch(e) {
                 console.error(e);
-                alert("Gagal mencetak dokumen. Pastikan browser mendukung fitur unduhan.");
+                alert("Gagal mencetak dokumen.");
             }
         }
-</script>
+    </script>
     <script src="nav-crumbs.js"></script>
 </body>
 </html>
