@@ -74,7 +74,7 @@
             <p class="text-lg text-slate-600 max-w-2xl mx-auto">Program Sekolah Model Implementasi PM-KKA.<br/>Silakan pilih portal sesuai dengan peran Anda.</p>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             <!-- Card Admin -->
             <a href="?view=admin" class="glass-card rounded-2xl p-8 cursor-pointer transform hover:-translate-y-2 hover:shadow-2xl transition-all duration-300 text-center group border-2 border-transparent hover:border-indigo-100 relative overflow-hidden block">
                 <div class="absolute top-0 right-0 w-32 h-32 bg-indigo-500/10 rounded-full blur-3xl -mr-16 -mt-16"></div>
@@ -93,6 +93,17 @@
                 </div>
                 <h3 class="text-xl font-bold text-slate-900 mb-2">Fasilitator</h3>
                 <p class="text-slate-500 text-sm">Akses instrumen dan jadwal kunjungan.</p>
+            </a>
+
+            <!-- Card Admin Persuratan -->
+            <a href="persuratan.html" class="glass-card rounded-2xl p-8 cursor-pointer transform hover:-translate-y-2 hover:shadow-2xl transition-all duration-300 text-center group border-2 border-transparent hover:border-sky-100 relative overflow-hidden block">
+                <div class="absolute top-0 left-0 w-32 h-32 bg-sky-500/10 rounded-full blur-3xl -ml-16 -mt-16"></div>
+                <div class="w-16 h-16 mx-auto bg-sky-50 text-sky-600 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-sky-500 group-hover:text-white transition-colors">
+                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                </div>
+                <h3 class="text-xl font-bold text-slate-900 mb-2">Admin Persuratan</h3>
+                <p class="text-slate-500 text-sm">Rekap jadwal & penerbitan Surat Tugas pendampingan.</p>
+                <span class="inline-block mt-3 text-xs font-bold text-sky-600 bg-sky-50 border border-sky-200 px-2.5 py-1 rounded-full">Khusus Admin Persuratan</span>
             </a>
 
             <!-- Card Publik -->
@@ -175,7 +186,12 @@
                     </div>
 
                     <div class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mt-4 mb-2 px-3">Lainnya</div>
-                    <a href="absen.html?view=admin" target="_blank" class="flex items-center gap-3 px-3 py-2.5 rounded-lg font-medium text-slate-600 hover:bg-slate-50 transition-colors w-full text-left mt-2 border-t border-slate-100 pt-2">
+                    <a href="persuratan.html" target="_blank" class="flex items-center gap-3 px-3 py-2.5 rounded-lg font-medium text-sky-700 bg-sky-50 hover:bg-sky-100 transition-colors w-full text-left border border-sky-200 rounded-lg">
+                        <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                        <span class="text-sm font-bold">Admin Persuratan</span>
+                        <span class="ml-auto text-[10px] bg-sky-200 text-sky-800 px-1.5 py-0.5 rounded-full font-bold">NEW</span>
+                    </a>
+                    <a href="absen.html?view=admin" target="_blank" class="flex items-center gap-3 px-3 py-2.5 rounded-lg font-medium text-slate-600 hover:bg-slate-50 transition-colors w-full text-left mt-1 border-t border-slate-100 pt-2">
                         <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>
                         <span class="text-sm">Rekap Daftar Hadir</span>
                     </a>

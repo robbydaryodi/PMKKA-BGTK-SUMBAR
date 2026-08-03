@@ -1,0 +1,980 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Persuratan — Sekolah Model 2026 BGTK Sumbar</title>
+    <meta name="description" content="Portal Admin Persuratan BGTK Sumatera Barat untuk rekap dan penerbitan Surat Tugas Pendampingan Sekolah Model.">
+    <link rel="icon" type="image/jpeg" href="./favicon.jpg"/>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    colors: {
+                        primary: '#1e3a8a',
+                        accent: '#0ea5e9',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { background: linear-gradient(135deg, #f0f4ff 0%, #e8f4fb 100%); min-height: 100vh; }
+        .glass { background: rgba(255,255,255,0.92); backdrop-filter: blur(16px); border: 1px solid rgba(255,255,255,0.5); }
+        .spinner { border: 3px solid rgba(30,58,138,0.15); border-left-color: #1e3a8a; border-radius: 50%; width: 28px; height: 28px; animation: spin 0.9s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .fade-in { animation: fadeIn 0.35s ease-out forwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+        .tab-active { background: #1e3a8a; color: white; }
+        .tab-inactive { background: white; color: #475569; border: 1px solid #e2e8f0; }
+        .tab-inactive:hover { background: #f8fafc; }
+        .badge-selesai { background: #d1fae5; color: #065f46; }
+        .badge-direncanakan { background: #dbeafe; color: #1e40af; }
+        .badge-batal { background: #fee2e2; color: #991b1b; }
+        .badge-belum { background: #f1f5f9; color: #64748b; }
+        /* Print styles */
+        @media print {
+            .no-print { display: none !important; }
+            body { background: white !important; }
+            .glass { background: white !important; border: none !important; box-shadow: none !important; }
+            #surat-print-area { page-break-inside: avoid; }
+        }
+        /* Calendar */
+        .cal-cell { min-height: 90px; border: 1px solid #e2e8f0; transition: background 0.15s; }
+        .cal-cell:hover { background: #f8fafc; }
+        .cal-cell.today { background: #eff6ff; border-color: #3b82f6; }
+        .cal-cell.other-month { opacity: 0.4; }
+        .event-chip { font-size: 10px; line-height: 1.3; border-radius: 4px; padding: 2px 5px; margin: 1px 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; cursor: pointer; }
+        /* Matrix */
+        .matrix-cell { text-align: center; padding: 6px 4px; font-size: 11px; border-radius: 6px; line-height: 1.3; }
+    </style>
+</head>
+<body class="text-slate-800 antialiased">
+
+<!-- ==================== LOGIN SCREEN ==================== -->
+<div id="loginScreen" class="min-h-screen flex items-center justify-center p-4">
+    <div class="glass rounded-3xl shadow-2xl p-8 w-full max-w-md fade-in">
+        <div class="flex flex-col items-center mb-8">
+            <div class="flex items-center gap-4 mb-6">
+                <img src="./logo.png" alt="Logo BGTK" class="h-16 w-auto object-contain">
+                <div class="border-l-2 border-slate-200 pl-4">
+                    <div class="text-xs text-slate-500 font-medium uppercase tracking-widest">Portal</div>
+                    <div class="text-lg font-bold text-primary leading-tight">Admin Persuratan</div>
+                    <div class="text-xs text-slate-500">BGTK Sumatera Barat</div>
+                </div>
+            </div>
+            <div class="w-16 h-1 bg-gradient-to-r from-primary to-accent rounded-full"></div>
+        </div>
+        <div class="space-y-4">
+            <div>
+                <label class="block text-sm font-semibold text-slate-700 mb-1.5">Kata Sandi</label>
+                <input type="password" id="loginPassword" placeholder="Masukkan kata sandi..." 
+                    class="w-full border border-slate-300 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary transition-all"
+                    onkeydown="if(event.key==='Enter') doLogin()">
+            </div>
+            <div id="loginError" class="hidden text-sm text-red-600 bg-red-50 p-3 rounded-xl border border-red-100 text-center"></div>
+            <button onclick="doLogin()" class="w-full bg-primary text-white py-3 rounded-xl font-semibold hover:bg-blue-900 transition-colors shadow-lg shadow-primary/30 mt-2">
+                Masuk ke Portal Persuratan
+            </button>
+            <a href="index.html" class="block text-center text-sm text-slate-500 hover:text-primary transition-colors mt-2">
+                ← Kembali ke Portal Utama
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- ==================== MAIN APP ==================== -->
+<div id="mainApp" class="hidden min-h-screen flex flex-col">
+
+    <!-- NAVBAR -->
+    <nav class="glass border-b border-white/60 sticky top-0 z-40 shadow-sm no-print">
+        <div class="max-w-screen-2xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
+            <div class="flex items-center gap-3 flex-shrink-0">
+                <img src="./logo.png" alt="Logo BGTK" class="h-9 w-auto object-contain">
+                <div class="border-l border-slate-200 pl-3 hidden sm:block">
+                    <div class="text-xs font-semibold text-primary uppercase tracking-wider">Admin Persuratan</div>
+                    <div class="text-xs text-slate-500">Sekolah Model 2026 — BGTK Sumbar</div>
+                </div>
+            </div>
+
+            <!-- View Tabs -->
+            <div class="flex items-center gap-1.5 bg-slate-100 p-1 rounded-xl flex-1 max-w-lg">
+                <button onclick="switchView('tabel')" id="tabTabel" class="tab-active flex-1 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center justify-center gap-1.5">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M3 14h18M10 3v18M6 3h12a1 1 0 011 1v16a1 1 0 01-1 1H6a1 1 0 01-1-1V4a1 1 0 011-1z"/></svg>
+                    <span class="hidden sm:inline">Rekap Surat Tugas</span>
+                    <span class="sm:hidden">Tabel</span>
+                </button>
+                <button onclick="switchView('kalender')" id="tabKalender" class="tab-inactive flex-1 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center justify-center gap-1.5">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                    <span class="hidden sm:inline">Master Kalender</span>
+                    <span class="sm:hidden">Kalender</span>
+                </button>
+                <button onclick="switchView('matriks')" id="tabMatriks" class="tab-inactive flex-1 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center justify-center gap-1.5">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2"/></svg>
+                    <span class="hidden sm:inline">Matriks Penugasan</span>
+                    <span class="sm:hidden">Matriks</span>
+                </button>
+            </div>
+
+            <div class="flex items-center gap-2 flex-shrink-0">
+                <div class="hidden sm:flex items-center gap-1.5 text-xs text-emerald-700 bg-emerald-50 border border-emerald-100 px-2.5 py-1.5 rounded-lg">
+                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse inline-block"></span>
+                    Live
+                </div>
+                <button onclick="doLogout()" title="Keluar" class="text-slate-500 hover:text-red-600 p-2 rounded-lg hover:bg-red-50 transition-colors">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- LOADING -->
+    <div id="loadingView" class="flex-1 flex flex-col items-center justify-center gap-4 p-8">
+        <div class="spinner"></div>
+        <p class="text-slate-500 text-sm animate-pulse">Memuat data jadwal dari server...</p>
+    </div>
+
+    <!-- ====================== VIEW 1: TABEL REKAP SURAT TUGAS ====================== -->
+    <div id="viewTabel" class="hidden flex-1 flex flex-col max-w-screen-2xl mx-auto w-full px-4 sm:px-6 py-6 gap-5 fade-in">
+
+        <!-- Header & Actions -->
+        <div class="glass rounded-2xl p-5 shadow-sm">
+            <div class="flex flex-col lg:flex-row gap-4 items-start lg:items-center justify-between">
+                <div>
+                    <h1 class="text-xl font-bold text-primary">Rekap Surat Tugas Pendampingan</h1>
+                    <p class="text-sm text-slate-500 mt-0.5">Monitoring jadwal kunjungan seluruh fasilitator — siap terbit Surat Tugas</p>
+                </div>
+                <div class="flex flex-wrap gap-2">
+                    <button onclick="exportExcel()" class="flex items-center gap-2 bg-emerald-600 text-white px-4 py-2 rounded-xl text-sm font-semibold hover:bg-emerald-700 transition-colors shadow-sm shadow-emerald-200">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                        Ekspor Excel
+                    </button>
+                    <button onclick="window.print()" class="flex items-center gap-2 bg-slate-600 text-white px-4 py-2 rounded-xl text-sm font-semibold hover:bg-slate-700 transition-colors shadow-sm">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
+                        Cetak Rekap
+                    </button>
+                </div>
+            </div>
+
+            <!-- Filters -->
+            <div class="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-5 gap-3 mt-5">
+                <input type="text" id="filterSearch" oninput="applyFilters()" placeholder="🔍 Cari fasilitator / sekolah..." class="lg:col-span-2 border border-slate-300 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all">
+                <select id="filterKunjungan" onchange="applyFilters()" class="border border-slate-300 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all">
+                    <option value="ALL">Semua Kunjungan</option>
+                    <option value="1">Kunjungan 1</option>
+                    <option value="2">Kunjungan 2</option>
+                    <option value="3">Kunjungan 3</option>
+                    <option value="4">Kunjungan 4</option>
+                    <option value="5">Kunjungan 5</option>
+                    <option value="6">Kunjungan 6</option>
+                </select>
+                <select id="filterStatus" onchange="applyFilters()" class="border border-slate-300 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all">
+                    <option value="ALL">Semua Status</option>
+                    <option value="Direncanakan">Sudah Terjadwal</option>
+                    <option value="Selesai">Selesai</option>
+                    <option value="Batal/Ditunda">Batal/Ditunda</option>
+                    <option value="Belum Diisi">Belum Dijadwalkan</option>
+                </select>
+                <select id="filterFasil" onchange="applyFilters()" class="border border-slate-300 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all">
+                    <option value="ALL">Semua Fasilitator</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Summary Cards -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+            <div class="glass rounded-2xl p-4 shadow-sm flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary text-lg font-bold flex-shrink-0" id="summTotal">—</div>
+                <div><div class="text-xs text-slate-500">Total Baris</div><div class="text-sm font-bold text-slate-800" id="summTotalLabel">Jadwal</div></div>
+            </div>
+            <div class="glass rounded-2xl p-4 shadow-sm flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-emerald-100 flex items-center justify-center text-emerald-700 text-lg font-bold flex-shrink-0" id="summSelesai">—</div>
+                <div><div class="text-xs text-slate-500">Selesai</div><div class="text-sm font-bold text-emerald-700">Kunjungan</div></div>
+            </div>
+            <div class="glass rounded-2xl p-4 shadow-sm flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-blue-100 flex items-center justify-center text-blue-700 text-lg font-bold flex-shrink-0" id="summRencana">—</div>
+                <div><div class="text-xs text-slate-500">Direncanakan</div><div class="text-sm font-bold text-blue-700">Terjadwal</div></div>
+            </div>
+            <div class="glass rounded-2xl p-4 shadow-sm flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center text-slate-600 text-lg font-bold flex-shrink-0" id="summBelum">—</div>
+                <div><div class="text-xs text-slate-500">Belum</div><div class="text-sm font-bold text-slate-600">Dijadwalkan</div></div>
+            </div>
+        </div>
+
+        <!-- Table -->
+        <div class="glass rounded-2xl shadow-sm overflow-hidden">
+            <div class="overflow-x-auto">
+                <table class="w-full min-w-[900px] text-sm text-left">
+                    <thead class="bg-primary text-white text-xs uppercase tracking-wide">
+                        <tr>
+                            <th class="px-4 py-3.5 w-10 text-center">No</th>
+                            <th class="px-4 py-3.5">Fasilitator</th>
+                            <th class="px-4 py-3.5">Nama Sekolah</th>
+                            <th class="px-4 py-3.5 text-center w-24">Kunjungan</th>
+                            <th class="px-4 py-3.5 text-center w-32">Tanggal</th>
+                            <th class="px-4 py-3.5 text-center w-32">Status</th>
+                            <th class="px-4 py-3.5 text-center w-28 no-print">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabelBody" class="divide-y divide-slate-100">
+                        <tr><td colspan="7" class="text-center py-16"><div class="spinner mx-auto mb-3"></div><p class="text-slate-400 text-sm">Memuat data...</p></td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- ====================== VIEW 2: MASTER KALENDER ====================== -->
+    <div id="viewKalender" class="hidden flex-1 flex flex-col max-w-screen-2xl mx-auto w-full px-4 sm:px-6 py-6 gap-5 fade-in">
+        <div class="glass rounded-2xl p-5 shadow-sm">
+            <div class="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
+                <div>
+                    <h1 class="text-xl font-bold text-primary">Master Kalender Persuratan</h1>
+                    <p class="text-sm text-slate-500 mt-0.5">Persebaran jadwal kunjungan seluruh fasilitator dalam satu tampilan</p>
+                </div>
+                <div class="flex items-center gap-3">
+                    <select id="calFilterFasil" onchange="renderCalendar()" class="border border-slate-300 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all">
+                        <option value="ALL">Semua Fasilitator</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- Calendar Navigation -->
+        <div class="glass rounded-2xl shadow-sm overflow-hidden">
+            <div class="flex items-center justify-between px-6 py-4 border-b border-slate-100 bg-slate-50/60">
+                <button onclick="changeMonth(-1)" class="p-2 rounded-xl hover:bg-slate-200 transition-colors">
+                    <svg class="w-5 h-5 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+                </button>
+                <div class="flex items-center gap-3">
+                    <button onclick="goToToday()" class="px-3 py-1.5 rounded-lg bg-primary text-white text-xs font-semibold hover:bg-blue-900 transition-colors">Hari Ini</button>
+                    <h2 class="text-lg font-bold text-slate-800" id="calMonthLabel">Agustus 2026</h2>
+                </div>
+                <button onclick="changeMonth(1)" class="p-2 rounded-xl hover:bg-slate-200 transition-colors">
+                    <svg class="w-5 h-5 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                </button>
+            </div>
+            <!-- Day Headers -->
+            <div class="grid grid-cols-7 bg-slate-50 border-b border-slate-100">
+                <div class="text-center text-xs font-bold text-slate-500 py-2.5 uppercase tracking-wider">Sen</div>
+                <div class="text-center text-xs font-bold text-slate-500 py-2.5 uppercase tracking-wider">Sel</div>
+                <div class="text-center text-xs font-bold text-slate-500 py-2.5 uppercase tracking-wider">Rab</div>
+                <div class="text-center text-xs font-bold text-slate-500 py-2.5 uppercase tracking-wider">Kam</div>
+                <div class="text-center text-xs font-bold text-slate-500 py-2.5 uppercase tracking-wider">Jum</div>
+                <div class="text-center text-xs font-bold text-red-400 py-2.5 uppercase tracking-wider">Sab</div>
+                <div class="text-center text-xs font-bold text-red-400 py-2.5 uppercase tracking-wider">Min</div>
+            </div>
+            <div id="calGrid" class="grid grid-cols-7 bg-white"></div>
+        </div>
+
+        <!-- Legend -->
+        <div class="flex flex-wrap items-center gap-3 text-xs">
+            <span class="flex items-center gap-1.5 font-medium text-slate-600"><span class="w-3 h-3 rounded-sm bg-emerald-400 inline-block"></span> Selesai</span>
+            <span class="flex items-center gap-1.5 font-medium text-slate-600"><span class="w-3 h-3 rounded-sm bg-blue-400 inline-block"></span> Direncanakan</span>
+            <span class="flex items-center gap-1.5 font-medium text-slate-600"><span class="w-3 h-3 rounded-sm bg-red-400 inline-block"></span> Batal/Ditunda</span>
+        </div>
+    </div>
+
+    <!-- ====================== VIEW 3: MATRIKS PENUGASAN ====================== -->
+    <div id="viewMatriks" class="hidden flex-1 flex flex-col max-w-screen-2xl mx-auto w-full px-4 sm:px-6 py-6 gap-5 fade-in">
+        <div class="glass rounded-2xl p-5 shadow-sm">
+            <div class="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
+                <div>
+                    <h1 class="text-xl font-bold text-primary">Matriks Penugasan Fasilitator</h1>
+                    <p class="text-sm text-slate-500 mt-0.5">Bird-eye view: Status 6 Kunjungan per Fasilitator × Sekolah Binaan</p>
+                </div>
+                <div class="flex flex-wrap items-center gap-3 text-xs">
+                    <span class="flex items-center gap-1.5 font-medium text-slate-600"><span class="w-3 h-3 rounded-sm bg-emerald-400 inline-block"></span> Selesai</span>
+                    <span class="flex items-center gap-1.5 font-medium text-slate-600"><span class="w-3 h-3 rounded-sm bg-blue-400 inline-block"></span> Rencana</span>
+                    <span class="flex items-center gap-1.5 font-medium text-slate-600"><span class="w-3 h-3 rounded-sm bg-red-400 inline-block"></span> Batal</span>
+                    <span class="flex items-center gap-1.5 font-medium text-slate-600"><span class="w-3 h-3 rounded-sm bg-slate-200 inline-block"></span> Belum</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="glass rounded-2xl shadow-sm overflow-hidden">
+            <div class="overflow-x-auto">
+                <table class="w-full text-xs min-w-[700px]">
+                    <thead class="bg-primary text-white">
+                        <tr>
+                            <th class="px-4 py-3 text-left font-semibold">Fasilitator</th>
+                            <th class="px-4 py-3 text-left font-semibold">Sekolah Binaan</th>
+                            <th class="px-2 py-3 text-center font-semibold w-20">K-1</th>
+                            <th class="px-2 py-3 text-center font-semibold w-20">K-2</th>
+                            <th class="px-2 py-3 text-center font-semibold w-20">K-3</th>
+                            <th class="px-2 py-3 text-center font-semibold w-20">K-4</th>
+                            <th class="px-2 py-3 text-center font-semibold w-20">K-5</th>
+                            <th class="px-2 py-3 text-center font-semibold w-20">K-6</th>
+                            <th class="px-4 py-3 text-center font-semibold w-24">Progress</th>
+                        </tr>
+                    </thead>
+                    <tbody id="matriksBody" class="divide-y divide-slate-100">
+                        <tr><td colspan="9" class="text-center py-16"><div class="spinner mx-auto mb-3"></div><p class="text-slate-400 text-sm">Memuat data...</p></td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- ====================== MODAL DETAIL TANGGAL ====================== -->
+<div id="modalKalenderDetail" class="hidden fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="glass rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden fade-in">
+        <div class="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-primary/5">
+            <h3 class="font-bold text-primary text-base" id="modalKalDate">Detail Jadwal — </h3>
+            <button onclick="closeKalModal()" class="p-1.5 text-slate-400 hover:text-slate-700 hover:bg-slate-100 rounded-lg transition-colors">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+            </button>
+        </div>
+        <div class="p-6 overflow-y-auto max-h-[60vh]" id="modalKalBody"></div>
+        <div class="px-6 py-4 bg-slate-50 border-t border-slate-100 flex justify-between items-center">
+            <button onclick="generateSuratTugas()" id="btnGenSurat" class="bg-primary text-white px-4 py-2 rounded-xl text-sm font-semibold hover:bg-blue-900 transition-colors flex items-center gap-2">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                Cetak Surat Tugas
+            </button>
+            <button onclick="closeKalModal()" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold rounded-xl text-sm transition-colors">Tutup</button>
+        </div>
+    </div>
+</div>
+
+<!-- ====================== MODAL SURAT TUGAS PREVIEW ====================== -->
+<div id="modalSuratPreview" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-3xl overflow-hidden fade-in">
+        <div class="px-6 py-4 border-b border-slate-100 flex justify-between items-center no-print bg-slate-50">
+            <h3 class="font-bold text-slate-800">Pratinjau Surat Tugas</h3>
+            <div class="flex items-center gap-2">
+                <button onclick="window.print()" class="bg-primary text-white px-4 py-2 rounded-xl text-sm font-semibold hover:bg-blue-900 transition-colors flex items-center gap-2">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
+                    Cetak Surat
+                </button>
+                <button onclick="document.getElementById('modalSuratPreview').classList.add('hidden')" class="p-2 text-slate-400 hover:text-slate-700 hover:bg-slate-100 rounded-lg transition-colors">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                </button>
+            </div>
+        </div>
+        <div class="p-8 overflow-y-auto max-h-[80vh]" id="suratPreviewContent"></div>
+    </div>
+</div>
+
+<script>
+// ==========================================
+// FIREBASE CONFIG
+// ==========================================
+const firebaseConfig = {
+    apiKey: "AIzaSyCAMKzhVnGGUxdVKAWeoPXYTAZvPSq6yKY",
+    authDomain: "sekolah-model-2026.firebaseapp.com",
+    databaseURL: "https://sekolah-model-2026-default-rtdb.asia-southeast1.firebasedatabase.app",
+    projectId: "sekolah-model-2026",
+    storageBucket: "sekolah-model-2026.firebasestorage.app",
+    messagingSenderId: "1014570073770",
+    appId: "1:1014570073770:web:770e7e6cef2a52a3825ad3"
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+
+// ==========================================
+// AUTH
+// ==========================================
+const PASSWORDS = ['persuratan2026', 'bgtk2026', 'admin2026'];
+
+function doLogin() {
+    const pw = document.getElementById('loginPassword').value.trim();
+    if (PASSWORDS.includes(pw.toLowerCase())) {
+        sessionStorage.setItem('persuratan_auth', '1');
+        document.getElementById('loginScreen').classList.add('hidden');
+        document.getElementById('mainApp').classList.remove('hidden');
+        document.getElementById('mainApp').classList.add('flex');
+        loadAllData();
+    } else {
+        const el = document.getElementById('loginError');
+        el.textContent = 'Kata sandi salah. Silakan coba lagi.';
+        el.classList.remove('hidden');
+        setTimeout(() => el.classList.add('hidden'), 3000);
+    }
+}
+
+function doLogout() {
+    sessionStorage.removeItem('persuratan_auth');
+    location.reload();
+}
+
+// ==========================================
+// GLOBAL DATA STATE
+// ==========================================
+let gFasils = {};
+let gSchools = {};
+let gAssigned = {};
+let gJadwal = {};
+let gSettingJadwal = {};
+let gRows = []; // flattened rows for table view
+let gFilteredRows = [];
+let gCurrentDate = new Date();
+let gCalDate = new Date();
+let gSelectedCalEvents = [];
+
+// ==========================================
+// LOAD ALL DATA
+// ==========================================
+async function loadAllData() {
+    try {
+        document.getElementById('loadingView').classList.remove('hidden');
+        document.getElementById('viewTabel').classList.add('hidden');
+        document.getElementById('viewKalender').classList.add('hidden');
+        document.getElementById('viewMatriks').classList.add('hidden');
+
+        const [snapFasil, snapSekolah, snapAssign, snapJadwal, snapSetting] = await Promise.all([
+            db.ref('fasilitator').once('value'),
+            db.ref('master_guru').once('value'),
+            db.ref('fasilitator_sekolah').once('value'),
+            db.ref('jadwal_kunjungan').once('value'),
+            db.ref('setting_jadwal').once('value')
+        ]);
+
+        gFasils = snapFasil.val() || {};
+        gSchools = snapSekolah.val() || {};
+        gAssigned = snapAssign.val() || {};
+        gJadwal = snapJadwal.val() || {};
+        gSettingJadwal = snapSetting.val() || {};
+
+        // Flatten rows
+        gRows = [];
+        for (const fasilId in gFasils) {
+            const fasil = gFasils[fasilId];
+            const mySchools = gAssigned[fasilId] || [];
+            mySchools.forEach(npsn => {
+                const firstTeacher = gSchools[npsn] ? Object.values(gSchools[npsn])[0] : null;
+                const schoolName = (firstTeacher && firstTeacher.asal_sekolah) ? firstTeacher.asal_sekolah : npsn;
+                const schoolJadwal = gJadwal[npsn] || {};
+                for (let k = 1; k <= 6; k++) {
+                    const j = schoolJadwal[`kunjungan_${k}`] || { status: 'Belum Diisi', tanggal: '-' };
+                    gRows.push({
+                        fasilId, fasilNama: fasil.nama, fasilHp: fasil.hp,
+                        npsn, schoolName,
+                        kunjungan: k,
+                        tanggal: j.tanggal || '-',
+                        status: j.status || 'Belum Diisi',
+                        catatan: j.catatan_pelaksanaan_tet || ''
+                    });
+                }
+            });
+        }
+
+        // Populate fasil filter dropdowns
+        populateFasilDropdowns();
+
+        document.getElementById('loadingView').classList.add('hidden');
+        switchView('tabel');
+
+    } catch(e) {
+        console.error(e);
+        document.getElementById('loadingView').innerHTML = '<p class="text-red-500 text-sm">Gagal memuat data. Silakan muat ulang halaman.</p>';
+    }
+}
+
+function populateFasilDropdowns() {
+    const selects = ['filterFasil', 'calFilterFasil'];
+    selects.forEach(id => {
+        const sel = document.getElementById(id);
+        if (!sel) return;
+        // keep first option
+        while (sel.options.length > 1) sel.remove(1);
+        for (const fId in gFasils) {
+            const opt = document.createElement('option');
+            opt.value = fId;
+            opt.textContent = gFasils[fId].nama;
+            sel.appendChild(opt);
+        }
+    });
+}
+
+// ==========================================
+// VIEW SWITCHING
+// ==========================================
+function switchView(v) {
+    ['tabel','kalender','matriks'].forEach(name => {
+        document.getElementById('view'+cap(name)).classList.add('hidden');
+        document.getElementById('tab'+cap(name)).className = 'tab-inactive flex-1 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center justify-center gap-1.5';
+    });
+    document.getElementById('view'+cap(v)).classList.remove('hidden');
+    document.getElementById('tab'+cap(v)).className = 'tab-active flex-1 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center justify-center gap-1.5';
+
+    if (v === 'tabel') { applyFilters(); }
+    else if (v === 'kalender') { renderCalendar(); }
+    else if (v === 'matriks') { renderMatriks(); }
+}
+
+function cap(s) { return s.charAt(0).toUpperCase() + s.slice(1); }
+
+// ==========================================
+// VIEW 1: TABLE
+// ==========================================
+function applyFilters() {
+    const search = (document.getElementById('filterSearch').value || '').toLowerCase();
+    const kunjungan = document.getElementById('filterKunjungan').value;
+    const status = document.getElementById('filterStatus').value;
+    const fasilId = document.getElementById('filterFasil').value;
+
+    gFilteredRows = gRows.filter(r => {
+        if (search && !r.fasilNama.toLowerCase().includes(search) && !r.schoolName.toLowerCase().includes(search) && !r.npsn.includes(search)) return false;
+        if (kunjungan !== 'ALL' && r.kunjungan != kunjungan) return false;
+        if (status !== 'ALL' && r.status !== status) return false;
+        if (fasilId !== 'ALL' && r.fasilId !== fasilId) return false;
+        return true;
+    });
+
+    renderTable();
+    renderSummary();
+}
+
+function renderSummary() {
+    const total = gFilteredRows.length;
+    const selesai = gFilteredRows.filter(r => r.status === 'Selesai').length;
+    const rencana = gFilteredRows.filter(r => r.status === 'Direncanakan').length;
+    const belum = gFilteredRows.filter(r => r.status === 'Belum Diisi').length;
+    document.getElementById('summTotal').textContent = total;
+    document.getElementById('summSelesai').textContent = selesai;
+    document.getElementById('summRencana').textContent = rencana;
+    document.getElementById('summBelum').textContent = belum;
+}
+
+function statusBadge(s) {
+    if (s === 'Selesai') return `<span class="px-2.5 py-1 rounded-full text-xs font-bold badge-selesai">✅ Selesai</span>`;
+    if (s === 'Direncanakan') return `<span class="px-2.5 py-1 rounded-full text-xs font-bold badge-direncanakan">📅 Terjadwal</span>`;
+    if (s === 'Batal/Ditunda') return `<span class="px-2.5 py-1 rounded-full text-xs font-bold badge-batal">❌ Batal/Ditunda</span>`;
+    return `<span class="px-2.5 py-1 rounded-full text-xs font-bold badge-belum">— Belum</span>`;
+}
+
+function renderTable() {
+    const body = document.getElementById('tabelBody');
+    if (gFilteredRows.length === 0) {
+        body.innerHTML = `<tr><td colspan="7" class="text-center py-16 text-slate-400">Tidak ada data yang sesuai filter.</td></tr>`;
+        return;
+    }
+    body.innerHTML = gFilteredRows.map((r, i) => `
+        <tr class="hover:bg-primary/3 transition-colors ${i % 2 === 0 ? '' : 'bg-slate-50/50'}">
+            <td class="px-4 py-3 text-center text-slate-400 font-medium">${i+1}</td>
+            <td class="px-4 py-3">
+                <div class="font-semibold text-slate-800">${r.fasilNama}</div>
+                <div class="text-xs text-slate-500">${r.fasilHp}</div>
+            </td>
+            <td class="px-4 py-3">
+                <div class="font-medium text-slate-700">${r.schoolName}</div>
+                <div class="text-xs text-slate-400">NPSN: ${r.npsn}</div>
+            </td>
+            <td class="px-4 py-3 text-center">
+                <span class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-primary/10 text-primary text-xs font-bold">${r.kunjungan}</span>
+            </td>
+            <td class="px-4 py-3 text-center">
+                <div class="font-medium text-slate-700 text-xs">${r.tanggal !== '-' ? r.tanggal : '<span class="text-slate-400 italic">TBA</span>'}</div>
+            </td>
+            <td class="px-4 py-3 text-center">${statusBadge(r.status)}</td>
+            <td class="px-4 py-3 text-center no-print">
+                ${r.tanggal !== '-' ? `<button onclick='openSuratModal(${JSON.stringify(r)})' class="text-xs bg-primary/10 text-primary hover:bg-primary/20 px-2.5 py-1.5 rounded-lg font-semibold transition-colors">Surat Tugas</button>` : '<span class="text-xs text-slate-300">—</span>'}
+            </td>
+        </tr>
+    `).join('');
+}
+
+// ==========================================
+// VIEW 2: CALENDAR
+// ==========================================
+const BULAN_ID = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+
+function changeMonth(dir) {
+    gCalDate.setMonth(gCalDate.getMonth() + dir);
+    renderCalendar();
+}
+function goToToday() {
+    gCalDate = new Date();
+    renderCalendar();
+}
+
+function renderCalendar() {
+    const year = gCalDate.getFullYear();
+    const month = gCalDate.getMonth();
+    const fasilFilter = document.getElementById('calFilterFasil') ? document.getElementById('calFilterFasil').value : 'ALL';
+
+    document.getElementById('calMonthLabel').textContent = `${BULAN_ID[month]} ${year}`;
+
+    const today = new Date();
+    const firstDay = new Date(year, month, 1);
+    let startDay = firstDay.getDay(); // 0=Sun
+    startDay = startDay === 0 ? 6 : startDay - 1; // Convert to Mon=0
+
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+    const daysInPrevMonth = new Date(year, month, 0).getDate();
+
+    // Build event map: dateString -> [{fasilNama, schoolName, kunjungan, status}]
+    const eventMap = {};
+    for (const fasilId in gFasils) {
+        if (fasilFilter !== 'ALL' && fasilFilter !== fasilId) continue;
+        const mySchools = gAssigned[fasilId] || [];
+        mySchools.forEach(npsn => {
+            const firstTeacher = gSchools[npsn] ? Object.values(gSchools[npsn])[0] : null;
+            const schoolName = (firstTeacher && firstTeacher.asal_sekolah) ? firstTeacher.asal_sekolah : npsn;
+            const schoolJadwal = gJadwal[npsn] || {};
+            for (let k = 1; k <= 6; k++) {
+                const j = schoolJadwal[`kunjungan_${k}`];
+                if (j && j.tanggal && j.tanggal !== '-') {
+                    // Normalize date key to YYYY-MM-DD
+                    const dateKey = normalizeDateKey(j.tanggal);
+                    if (!eventMap[dateKey]) eventMap[dateKey] = [];
+                    eventMap[dateKey].push({
+                        fasilId, fasilNama: gFasils[fasilId].nama,
+                        schoolName, npsn, kunjungan: k,
+                        status: j.status || 'Direncanakan',
+                        tanggal: j.tanggal
+                    });
+                }
+            }
+        });
+    }
+
+    let html = '';
+    let dayCount = 0;
+
+    // Prev month days
+    for (let d = startDay - 1; d >= 0; d--) {
+        const day = daysInPrevMonth - d;
+        html += `<div class="cal-cell other-month p-1.5"><div class="text-xs text-slate-300 font-medium">${day}</div></div>`;
+        dayCount++;
+    }
+
+    // Current month days
+    for (let d = 1; d <= daysInMonth; d++) {
+        const dateKey = `${year}-${String(month+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+        const events = eventMap[dateKey] || [];
+        const isToday = today.getFullYear() === year && today.getMonth() === month && today.getDate() === d;
+
+        const eventChips = events.slice(0, 3).map(ev => {
+            const color = ev.status === 'Selesai' ? 'bg-emerald-100 text-emerald-800' : 
+                         ev.status === 'Batal/Ditunda' ? 'bg-red-100 text-red-700' : 'bg-blue-100 text-blue-800';
+            return `<span class="event-chip ${color}" title="${ev.fasilNama} — ${ev.schoolName} (K-${ev.kunjungan})">K-${ev.kunjungan}: ${ev.schoolName.substring(0,14)}</span>`;
+        }).join('');
+
+        const moreChip = events.length > 3 ? `<span class="event-chip bg-slate-100 text-slate-600">+${events.length - 3} lagi</span>` : '';
+
+        const clickHandler = events.length > 0 ? `onclick="openKalModal('${dateKey}', ${JSON.stringify(events).replace(/'/g, "&#39;")})"` : '';
+
+        html += `
+            <div class="cal-cell p-1.5 ${isToday ? 'today' : ''} ${events.length > 0 ? 'cursor-pointer hover:bg-blue-50' : ''}" ${clickHandler}>
+                <div class="flex items-center justify-between mb-1">
+                    <span class="text-xs font-bold ${isToday ? 'bg-primary text-white w-5 h-5 rounded-full flex items-center justify-center' : 'text-slate-600'}">${d}</span>
+                    ${events.length > 0 ? `<span class="text-[10px] bg-primary/10 text-primary px-1 rounded font-bold">${events.length}</span>` : ''}
+                </div>
+                ${eventChips}${moreChip}
+            </div>`;
+        dayCount++;
+    }
+
+    // Next month days
+    const remaining = (7 - (dayCount % 7)) % 7;
+    for (let d = 1; d <= remaining; d++) {
+        html += `<div class="cal-cell other-month p-1.5"><div class="text-xs text-slate-300 font-medium">${d}</div></div>`;
+    }
+
+    document.getElementById('calGrid').innerHTML = html;
+}
+
+function normalizeDateKey(dateStr) {
+    if (!dateStr || dateStr === '-') return '';
+    // Try to convert from DD MMMM YYYY or YYYY-MM-DD
+    if (dateStr.match(/^\d{4}-\d{2}-\d{2}$/)) return dateStr;
+    const BULAN = { 'Januari':'01','Februari':'02','Maret':'03','April':'04','Mei':'05','Juni':'06','Juli':'07','Agustus':'08','September':'09','Oktober':'10','November':'11','Desember':'12' };
+    const parts = dateStr.split(' ');
+    if (parts.length === 3) {
+        const d = parts[0].padStart(2,'0');
+        const m = BULAN[parts[1]] || '00';
+        const y = parts[2];
+        return `${y}-${m}-${d}`;
+    }
+    return dateStr;
+}
+
+function formatDateDisplay(dateKey) {
+    if (!dateKey) return '-';
+    if (dateKey.match(/^\d{4}-\d{2}-\d{2}$/)) {
+        const [y, m, d] = dateKey.split('-');
+        return `${d} ${BULAN_ID[parseInt(m)-1]} ${y}`;
+    }
+    return dateKey;
+}
+
+function openKalModal(dateKey, events) {
+    gSelectedCalEvents = events;
+    document.getElementById('modalKalDate').textContent = `Jadwal — ${formatDateDisplay(dateKey)}`;
+    const body = document.getElementById('modalKalBody');
+    if (!events || events.length === 0) {
+        body.innerHTML = '<p class="text-slate-500 text-sm text-center py-4">Tidak ada jadwal pada tanggal ini.</p>';
+        document.getElementById('btnGenSurat').disabled = true;
+        document.getElementById('btnGenSurat').classList.add('opacity-50');
+    } else {
+        document.getElementById('btnGenSurat').disabled = false;
+        document.getElementById('btnGenSurat').classList.remove('opacity-50');
+        body.innerHTML = `<div class="space-y-3">${events.map(ev => {
+            const color = ev.status === 'Selesai' ? 'badge-selesai' : ev.status === 'Batal/Ditunda' ? 'badge-batal' : 'badge-direncanakan';
+            return `<div class="border border-slate-200 rounded-xl p-4 flex items-start gap-3">
+                <div class="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary font-bold flex-shrink-0">K-${ev.kunjungan}</div>
+                <div class="flex-1 min-w-0">
+                    <div class="font-bold text-slate-800">${ev.fasilNama}</div>
+                    <div class="text-sm text-slate-600 mt-0.5 truncate">${ev.schoolName}</div>
+                    <div class="text-xs text-slate-400">NPSN: ${ev.npsn}</div>
+                </div>
+                <span class="px-2 py-1 rounded-lg text-xs font-bold ${color}">${ev.status}</span>
+            </div>`;
+        }).join('')}</div>`;
+    }
+    document.getElementById('modalKalenderDetail').classList.remove('hidden');
+}
+
+function closeKalModal() {
+    document.getElementById('modalKalenderDetail').classList.add('hidden');
+}
+
+// ==========================================
+// VIEW 3: MATRIKS
+// ==========================================
+function renderMatriks() {
+    const body = document.getElementById('matriksBody');
+    let html = '';
+
+    const fasilKeys = Object.keys(gFasils);
+    if (fasilKeys.length === 0) {
+        body.innerHTML = `<tr><td colspan="9" class="text-center py-8 text-slate-400">Data kosong.</td></tr>`;
+        return;
+    }
+
+    fasilKeys.forEach(fasilId => {
+        const fasil = gFasils[fasilId];
+        const mySchools = gAssigned[fasilId] || [];
+        const rowCount = mySchools.length;
+
+        mySchools.forEach((npsn, idx) => {
+            const firstTeacher = gSchools[npsn] ? Object.values(gSchools[npsn])[0] : null;
+            const schoolName = (firstTeacher && firstTeacher.asal_sekolah) ? firstTeacher.asal_sekolah : npsn;
+            const sj = gJadwal[npsn] || {};
+
+            let selesaiCount = 0;
+            let cells = '';
+            for (let k = 1; k <= 6; k++) {
+                const j = sj[`kunjungan_${k}`] || { status: 'Belum Diisi', tanggal: '-' };
+                let bg = 'bg-slate-100 text-slate-500';
+                let icon = '—';
+                if (j.status === 'Selesai') { bg = 'bg-emerald-100 text-emerald-700'; icon = '✓'; selesaiCount++; }
+                else if (j.status === 'Direncanakan') { bg = 'bg-blue-100 text-blue-700'; icon = '📅'; }
+                else if (j.status === 'Batal/Ditunda') { bg = 'bg-red-100 text-red-700'; icon = '✗'; }
+                const tanggalTip = j.tanggal && j.tanggal !== '-' ? j.tanggal : 'Belum';
+                cells += `<td class="px-1 py-2"><div class="matrix-cell ${bg}" title="${tanggalTip}">${icon}<br><span class="text-[9px] opacity-70">${tanggalTip !== 'Belum' ? tanggalTip.split(' ').slice(0,2).join(' ') : 'Belum'}</span></div></td>`;
+            }
+
+            const pct = Math.round((selesaiCount / 6) * 100);
+            const progressColor = pct === 100 ? 'bg-emerald-500' : pct >= 50 ? 'bg-blue-500' : 'bg-amber-400';
+
+            html += `<tr class="hover:bg-slate-50/80 transition-colors border-b border-slate-100">
+                ${idx === 0 ? `<td class="px-4 py-3 font-semibold text-primary align-top" rowspan="${rowCount}">${fasil.nama}<br><span class="text-xs font-normal text-slate-400">${fasil.hp}</span></td>` : ''}
+                <td class="px-4 py-3 text-slate-700 text-xs">${schoolName}</td>
+                ${cells}
+                <td class="px-4 py-3">
+                    <div class="text-center text-xs font-bold mb-1 ${pct===100 ? 'text-emerald-600' : 'text-slate-600'}">${pct}%</div>
+                    <div class="w-full bg-slate-200 rounded-full h-1.5"><div class="${progressColor} h-1.5 rounded-full transition-all" style="width:${pct}%"></div></div>
+                </td>
+            </tr>`;
+        });
+
+        if (rowCount === 0) {
+            html += `<tr class="border-b border-slate-100"><td class="px-4 py-3 font-semibold text-primary">${fasil.nama}</td><td colspan="8" class="px-4 py-3 text-xs text-slate-400 italic">Belum ada sekolah binaan</td></tr>`;
+        }
+    });
+
+    body.innerHTML = html;
+}
+
+// ==========================================
+// SURAT TUGAS GENERATOR
+// ==========================================
+function openSuratModal(r) {
+    generateSuratContent([r]);
+}
+
+function generateSuratTugas() {
+    generateSuratContent(gSelectedCalEvents);
+}
+
+function generateSuratContent(items) {
+    if (!items || items.length === 0) return;
+
+    // Group by fasilitator
+    const byFasil = {};
+    items.forEach(r => {
+        if (!byFasil[r.fasilId || r.fasilNama]) byFasil[r.fasilId || r.fasilNama] = [];
+        byFasil[r.fasilId || r.fasilNama].push(r);
+    });
+
+    // Use first item's date for the surat
+    const firstItem = items[0];
+    const tanggalPelaksanaan = firstItem.tanggal !== '-' ? firstItem.tanggal : '___________________';
+
+    // Build keterangan kegiatan list
+    const kegiatanList = items.map(r => 
+        `Untuk melakukan pendampingan ${r.kunjungan === 1 ? 'I' : r.kunjungan === 2 ? 'II' : r.kunjungan === 3 ? 'III' : r.kunjungan === 4 ? 'IV' : r.kunjungan === 5 ? 'V' : 'VI'} pasca pelatihan sekolah model Provinsi Sumatera Barat di ${r.schoolName} pada ${r.tanggal !== '-' ? r.tanggal : '___________________'}`
+    );
+
+    const nomorSurat = `___/___/2026`;
+    const tanggalSurat = formatDateDisplay(normalizeDateKey(new Date().toISOString().split('T')[0]));
+
+    const html = `
+        <style>
+            .surat-container { font-family: 'Times New Roman', Times, serif; font-size: 12pt; line-height: 1.6; color: #000; }
+            .surat-header-table { width: 100%; border-collapse: collapse; margin-bottom: 0; }
+            .surat-header-table td { vertical-align: middle; padding: 4px 8px; }
+            .divider-line { border: none; border-top: 3px solid #1a56a0; margin: 4px 0 16px 0; }
+            .divider-line-thin { border: none; border-top: 1.5px solid #1a56a0; margin: 2px 0 0 0; }
+            .surat-title { text-align: center; font-weight: bold; font-size: 14pt; text-decoration: underline; margin: 20px 0 16px 0; letter-spacing: 0.5px; }
+            .surat-nomor { text-align: center; margin-bottom: 20px; font-size: 12pt; }
+            .surat-body { text-align: justify; }
+            .surat-table { width: 100%; border-collapse: collapse; margin: 8px 0; }
+            .surat-table td { padding: 3px 6px; vertical-align: top; }
+            .surat-table td:first-child { width: 35%; }
+            .surat-table td:nth-child(2) { width: 4%; text-align: center; }
+            .ttd-area { margin-top: 32px; }
+            .ttd-table { width: 100%; }
+            .ttd-table td { text-align: center; vertical-align: top; }
+            .ttd-placeholder { height: 80px; }
+            .kop-nama { color: #1a56a0; font-weight: bold; font-size: 13pt; }
+            .kop-subtext { color: #222; font-size: 10.5pt; }
+            .kop-address { color: #444; font-size: 9.5pt; }
+        </style>
+        <div class="surat-container">
+            <!-- HEADER / KOP SURAT -->
+            <table class="surat-header-table">
+                <tr>
+                    <td style="width:90px; text-align:center;">
+                        <img src="./logo.png" alt="Logo Kemendikdasmen" style="height:80px; width:auto; object-fit:contain;">
+                    </td>
+                    <td style="width:6px; padding:0;">
+                        <div style="width:3px; height:80px; background: linear-gradient(to bottom, #1a56a0 70%, #4ab6e0 100%); border-radius:2px; margin:auto;"></div>
+                    </td>
+                    <td style="padding-left:14px;">
+                        <div class="kop-nama">Kementerian Pendidikan Dasar dan Menengah</div>
+                        <div class="kop-subtext">Balai Guru dan Tenaga Kependidikan Provinsi Sumatera Barat</div>
+                        <div class="kop-address">Jalan Dewi Sartika, Rawang, Pariaman, 25511</div>
+                        <div class="kop-address">🌐 www.kemendikdasmen.go.id</div>
+                        <div class="kop-address">📞 081364642333 &nbsp; 🎧 177</div>
+                    </td>
+                </tr>
+            </table>
+            <hr class="divider-line">
+            <hr class="divider-line-thin">
+
+            <!-- JUDUL SURAT -->
+            <div class="surat-title">SURAT TUGAS</div>
+            <div class="surat-nomor">Nomor: ${nomorSurat}</div>
+
+            <div class="surat-body">
+                <p>Kepala Balai Guru dan Tenaga Kependidikan Provinsi Sumatera Barat menugaskan kepada:</p>
+            </div>
+
+            <!-- DATA PERSONIL -->
+            <table class="surat-table">
+                ${items.map((r, i) => `
+                    <tr><td colspan="3" style="padding-top: ${i>0?'12px':'4px'}; font-weight:bold;">${i+1}. ${r.fasilNama || r.fasilNama}</td></tr>
+                    <tr>
+                        <td style="padding-left:20px;">Jabatan</td>
+                        <td>:</td>
+                        <td>Fasilitator Pendamping Sekolah Model</td>
+                    </tr>
+                    <tr>
+                        <td style="padding-left:20px;">Unit Kerja</td>
+                        <td>:</td>
+                        <td>BGTK Provinsi Sumatera Barat</td>
+                    </tr>
+                `).join('')}
+            </table>
+
+            <div class="surat-body" style="margin-top:12px;">
+                <p>Untuk melaksanakan tugas kedinasan sebagai berikut:</p>
+            </div>
+
+            <table class="surat-table">
+                <tr>
+                    <td>Kegiatan</td>
+                    <td>:</td>
+                    <td>
+                        <ol style="margin:0; padding-left:16px;">
+                            ${kegiatanList.map(k => `<li style="margin-bottom:4px;">${k}</li>`).join('')}
+                        </ol>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Pelaksanaan</td>
+                    <td>:</td>
+                    <td>${tanggalPelaksanaan}</td>
+                </tr>
+            </table>
+
+            <div class="surat-body" style="margin-top:12px;">
+                <p>Kepada semua pihak yang terkait agar dapat memberikan bantuan dan fasilitas seperlunya demi kelancaran pelaksanaan tugas tersebut.</p>
+                <p>Demikian surat tugas ini dibuat untuk dapat dilaksanakan dengan sebaik-baiknya dan penuh tanggung jawab.</p>
+            </div>
+
+            <div class="ttd-area">
+                <table class="ttd-table">
+                    <tr>
+                        <td style="width:60%"></td>
+                        <td>
+                            <div>Pariaman, ${tanggalSurat}</div>
+                            <div style="font-weight:bold;">Kepala BGTK Provinsi Sumatera Barat</div>
+                            <div class="ttd-placeholder"></div>
+                            <div style="font-weight:bold; text-decoration:underline;">________________________</div>
+                            <div>NIP. ___________________</div>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    `;
+
+    document.getElementById('suratPreviewContent').innerHTML = html;
+    document.getElementById('modalSuratPreview').classList.remove('hidden');
+}
+
+// ==========================================
+// EXCEL EXPORT
+// ==========================================
+function exportExcel() {
+    const data = [['No', 'Fasilitator', 'No. HP Fasilitator', 'Nama Sekolah', 'NPSN', 'Kunjungan Ke', 'Tanggal Pelaksanaan', 'Status']];
+    gFilteredRows.forEach((r, i) => {
+        data.push([i+1, r.fasilNama, r.fasilHp, r.schoolName, r.npsn, `Kunjungan ${r.kunjungan}`, r.tanggal !== '-' ? r.tanggal : 'Belum Dijadwalkan', r.status]);
+    });
+    const wb = XLSX.utils.book_new();
+    const ws = XLSX.utils.aoa_to_sheet(data);
+    ws['!cols'] = [5, 25, 20, 35, 15, 14, 22, 18].map(w => ({ wch: w }));
+    XLSX.utils.book_append_sheet(wb, ws, 'Rekap Surat Tugas');
+    XLSX.writeFile(wb, `Rekap_Surat_Tugas_BGTK_Sumbar_${new Date().toISOString().split('T')[0]}.xlsx`);
+}
+
+// ==========================================
+// INIT
+// ==========================================
+window.addEventListener('DOMContentLoaded', () => {
+    if (sessionStorage.getItem('persuratan_auth') === '1') {
+        document.getElementById('loginScreen').classList.add('hidden');
+        document.getElementById('mainApp').classList.remove('hidden');
+        document.getElementById('mainApp').classList.add('flex');
+        loadAllData();
+    }
+    // Allow Enter key on login
+    document.getElementById('loginPassword').focus();
+});
+</script>
+</body>
+</html>
