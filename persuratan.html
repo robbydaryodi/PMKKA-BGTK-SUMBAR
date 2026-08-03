@@ -1092,6 +1092,15 @@ async function downloadWordSuratTugas(items) {
         right: { style: BorderStyle.NONE, size: 0, color: "FFFFFF" }
     };
 
+    const noTableBorders = {
+        top: { style: BorderStyle.NONE, size: 0, color: "FFFFFF" },
+        bottom: { style: BorderStyle.NONE, size: 0, color: "FFFFFF" },
+        left: { style: BorderStyle.NONE, size: 0, color: "FFFFFF" },
+        right: { style: BorderStyle.NONE, size: 0, color: "FFFFFF" },
+        insideHorizontal: { style: BorderStyle.NONE, size: 0, color: "FFFFFF" },
+        insideVertical: { style: BorderStyle.NONE, size: 0, color: "FFFFFF" }
+    };
+
     try {
         let imageRun = null;
         try {
@@ -1100,7 +1109,7 @@ async function downloadWordSuratTugas(items) {
                 const imgBuf = await imgRes.arrayBuffer();
                 imageRun = new window.docx.ImageRun({
                     data: imgBuf,
-                    transformation: { width: 590, height: 98 }
+                    transformation: { width: 550, height: 76 } // Height dikurangi sedikit agar pas
                 });
             }
         } catch(e) {
@@ -1118,7 +1127,7 @@ async function downloadWordSuratTugas(items) {
             children.push(new Paragraph({
                 alignment: AlignmentType.CENTER,
                 children: [imageRun],
-                spacing: { after: 240 }
+                spacing: { after: 200 }
             }));
         }
 
@@ -1136,7 +1145,7 @@ async function downloadWordSuratTugas(items) {
             children: [
                 new TextRun({ text: "Nomor: ___/___/2026", size: 22, font: "Times New Roman" })
             ],
-            spacing: { after: 240 }
+            spacing: { after: 220 }
         }));
 
         // Body Intro
@@ -1148,7 +1157,7 @@ async function downloadWordSuratTugas(items) {
             spacing: { after: 160 }
         }));
 
-        // Personel List
+        // Catatan 1: Personel List (Tabel Tanpa Garis)
         items.forEach((item, idx) => {
             const f = (item.fasilId && gFasils[item.fasilId]) ? gFasils[item.fasilId] : {};
             const nama = f.nama || item.fasilNama || '___________________';
@@ -1159,46 +1168,47 @@ async function downloadWordSuratTugas(items) {
             const personRows = [
                 new TableRow({
                     children: [
-                        new TableCell({ width: { size: 30, type: WidthType.PERCENTAGE }, children: [new Paragraph({ children: [new TextRun({ text: `${idx+1}. Nama`, bold: true, size: 22, font: "Times New Roman" })] })], border: noBorder }),
+                        new TableCell({ width: { size: 28, type: WidthType.PERCENTAGE }, children: [new Paragraph({ children: [new TextRun({ text: `${idx+1}. Nama`, bold: true, size: 22, font: "Times New Roman" })] })], border: noBorder }),
                         new TableCell({ width: { size: 4, type: WidthType.PERCENTAGE }, children: [new Paragraph({ children: [new TextRun({ text: ":", size: 22, font: "Times New Roman" })] })], border: noBorder }),
-                        new TableCell({ width: { size: 66, type: WidthType.PERCENTAGE }, children: [new Paragraph({ children: [new TextRun({ text: nama, bold: true, size: 22, font: "Times New Roman" })] })], border: noBorder })
+                        new TableCell({ width: { size: 68, type: WidthType.PERCENTAGE }, children: [new Paragraph({ children: [new TextRun({ text: nama, bold: true, size: 22, font: "Times New Roman" })] })], border: noBorder })
                     ]
                 }),
                 new TableRow({
                     children: [
-                        new TableCell({ width: { size: 30, type: WidthType.PERCENTAGE }, children: [new Paragraph({ children: [new TextRun({ text: "    NIP", size: 22, font: "Times New Roman" })] })], border: noBorder }),
+                        new TableCell({ width: { size: 28, type: WidthType.PERCENTAGE }, children: [new Paragraph({ children: [new TextRun({ text: "    NIP", size: 22, font: "Times New Roman" })] })], border: noBorder }),
                         new TableCell({ width: { size: 4, type: WidthType.PERCENTAGE }, children: [new Paragraph({ children: [new TextRun({ text: ":", size: 22, font: "Times New Roman" })] })], border: noBorder }),
-                        new TableCell({ width: { size: 66, type: WidthType.PERCENTAGE }, children: [new Paragraph({ children: [new TextRun({ text: nip, size: 22, font: "Times New Roman" })] })], border: noBorder })
+                        new TableCell({ width: { size: 68, type: WidthType.PERCENTAGE }, children: [new Paragraph({ children: [new TextRun({ text: nip, size: 22, font: "Times New Roman" })] })], border: noBorder })
                     ]
                 }),
                 new TableRow({
                     children: [
-                        new TableCell({ width: { size: 30, type: WidthType.PERCENTAGE }, children: [new Paragraph({ children: [new TextRun({ text: "    Pangkat/Gol.", size: 22, font: "Times New Roman" })] })], border: noBorder }),
+                        new TableCell({ width: { size: 28, type: WidthType.PERCENTAGE }, children: [new Paragraph({ children: [new TextRun({ text: "    Pangkat/Gol.", size: 22, font: "Times New Roman" })] })], border: noBorder }),
                         new TableCell({ width: { size: 4, type: WidthType.PERCENTAGE }, children: [new Paragraph({ children: [new TextRun({ text: ":", size: 22, font: "Times New Roman" })] })], border: noBorder }),
-                        new TableCell({ width: { size: 66, type: WidthType.PERCENTAGE }, children: [new Paragraph({ children: [new TextRun({ text: pangkat, size: 22, font: "Times New Roman" })] })], border: noBorder })
+                        new TableCell({ width: { size: 68, type: WidthType.PERCENTAGE }, children: [new Paragraph({ children: [new TextRun({ text: pangkat, size: 22, font: "Times New Roman" })] })], border: noBorder })
                     ]
                 }),
                 new TableRow({
                     children: [
-                        new TableCell({ width: { size: 30, type: WidthType.PERCENTAGE }, children: [new Paragraph({ children: [new TextRun({ text: "    Jabatan", size: 22, font: "Times New Roman" })] })], border: noBorder }),
+                        new TableCell({ width: { size: 28, type: WidthType.PERCENTAGE }, children: [new Paragraph({ children: [new TextRun({ text: "    Jabatan", size: 22, font: "Times New Roman" })] })], border: noBorder }),
                         new TableCell({ width: { size: 4, type: WidthType.PERCENTAGE }, children: [new Paragraph({ children: [new TextRun({ text: ":", size: 22, font: "Times New Roman" })] })], border: noBorder }),
-                        new TableCell({ width: { size: 66, type: WidthType.PERCENTAGE }, children: [new Paragraph({ children: [new TextRun({ text: jabatan, size: 22, font: "Times New Roman" })] })], border: noBorder })
+                        new TableCell({ width: { size: 68, type: WidthType.PERCENTAGE }, children: [new Paragraph({ children: [new TextRun({ text: jabatan, size: 22, font: "Times New Roman" })] })], border: noBorder })
                     ]
                 }),
                 new TableRow({
                     children: [
-                        new TableCell({ width: { size: 30, type: WidthType.PERCENTAGE }, children: [new Paragraph({ children: [new TextRun({ text: "    Unit Kerja", size: 22, font: "Times New Roman" })] })], border: noBorder }),
+                        new TableCell({ width: { size: 28, type: WidthType.PERCENTAGE }, children: [new Paragraph({ children: [new TextRun({ text: "    Unit Kerja", size: 22, font: "Times New Roman" })] })], border: noBorder }),
                         new TableCell({ width: { size: 4, type: WidthType.PERCENTAGE }, children: [new Paragraph({ children: [new TextRun({ text: ":", size: 22, font: "Times New Roman" })] })], border: noBorder }),
-                        new TableCell({ width: { size: 66, type: WidthType.PERCENTAGE }, children: [new Paragraph({ children: [new TextRun({ text: "BGTK Provinsi Sumatera Barat", size: 22, font: "Times New Roman" })] })], border: noBorder })
+                        new TableCell({ width: { size: 68, type: WidthType.PERCENTAGE }, children: [new Paragraph({ children: [new TextRun({ text: "BGTK Provinsi Sumatera Barat", size: 22, font: "Times New Roman" })] })], border: noBorder })
                     ]
                 })
             ];
 
             children.push(new Table({
                 width: { size: 100, type: WidthType.PERCENTAGE },
+                borders: noTableBorders, // Tanpa Garis Tabel
                 rows: personRows
             }));
-            children.push(new Paragraph({ text: "", spacing: { after: 140 } }));
+            children.push(new Paragraph({ text: "", spacing: { after: 120 } }));
         });
 
         // Assignment Details Intro
@@ -1210,33 +1220,28 @@ async function downloadWordSuratTugas(items) {
             spacing: { before: 100, after: 140 }
         }));
 
-        // Kegiatan List Table
+        // Catatan 2: Bagian Kegiatan & Pelaksanaan dijadikan Paragraf (Bukan Tabel)
         items.forEach((item) => {
             const kunjRoman = ROMAN[(item.kunjungan || 1) - 1] || 'I';
             const kegText = `Untuk melakukan pendampingan ${kunjRoman} pasca pelatihan sekolah model Provinsi Sumatera Barat di ${item.schoolName || item.npsn}`;
 
-            const kegRows = [
-                new TableRow({
-                    children: [
-                        new TableCell({ width: { size: 30, type: WidthType.PERCENTAGE }, children: [new Paragraph({ children: [new TextRun({ text: "Kegiatan", size: 22, font: "Times New Roman" })] })], border: noBorder }),
-                        new TableCell({ width: { size: 4, type: WidthType.PERCENTAGE }, children: [new Paragraph({ children: [new TextRun({ text: ":", size: 22, font: "Times New Roman" })] })], border: noBorder }),
-                        new TableCell({ width: { size: 66, type: WidthType.PERCENTAGE }, children: [new Paragraph({ children: [new TextRun({ text: kegText, size: 22, font: "Times New Roman" })] })], border: noBorder })
-                    ]
-                }),
-                new TableRow({
-                    children: [
-                        new TableCell({ width: { size: 30, type: WidthType.PERCENTAGE }, children: [new Paragraph({ children: [new TextRun({ text: "Pelaksanaan", size: 22, font: "Times New Roman" })] })], border: noBorder }),
-                        new TableCell({ width: { size: 4, type: WidthType.PERCENTAGE }, children: [new Paragraph({ children: [new TextRun({ text: ":", size: 22, font: "Times New Roman" })] })], border: noBorder }),
-                        new TableCell({ width: { size: 66, type: WidthType.PERCENTAGE }, children: [new Paragraph({ children: [new TextRun({ text: `${namaHari}, ${tanggalPelaksanaan}`, size: 22, font: "Times New Roman" })] })], border: noBorder })
-                    ]
-                })
-            ];
-
-            children.push(new Table({
-                width: { size: 100, type: WidthType.PERCENTAGE },
-                rows: kegRows
+            children.push(new Paragraph({
+                alignment: AlignmentType.JUSTIFY,
+                children: [
+                    new TextRun({ text: "Kegiatan\t\t: ", bold: true, size: 22, font: "Times New Roman" }),
+                    new TextRun({ text: kegText, size: 22, font: "Times New Roman" })
+                ],
+                spacing: { after: 80 }
             }));
-            children.push(new Paragraph({ text: "", spacing: { after: 120 } }));
+
+            children.push(new Paragraph({
+                alignment: AlignmentType.JUSTIFY,
+                children: [
+                    new TextRun({ text: "Pelaksanaan\t: ", bold: true, size: 22, font: "Times New Roman" }),
+                    new TextRun({ text: `${namaHari}, ${tanggalPelaksanaan}`, size: 22, font: "Times New Roman" })
+                ],
+                spacing: { after: 140 }
+            }));
         });
 
         // Closing Paragraphs
@@ -1256,7 +1261,7 @@ async function downloadWordSuratTugas(items) {
             spacing: { after: 240 }
         }));
 
-        // TTD Table
+        // Catatan 3: TTD Table (Tanpa Garis)
         const ttdRows = [
             new TableRow({
                 children: [
@@ -1274,6 +1279,7 @@ async function downloadWordSuratTugas(items) {
 
         children.push(new Table({
             width: { size: 100, type: WidthType.PERCENTAGE },
+            borders: noTableBorders, // Tanpa Garis Tabel TTD
             rows: ttdRows
         }));
 
