@@ -11,6 +11,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+    <script src="https://unpkg.com/docx@9.0.0/build/index.iife.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
     <script>
@@ -337,9 +339,9 @@
         </div>
         <div class="p-6 overflow-y-auto max-h-[60vh]" id="modalKalBody"></div>
         <div class="px-6 py-4 bg-slate-50 border-t border-slate-100 flex justify-between items-center">
-            <button onclick="generateSuratTugas()" id="btnGenSurat" class="bg-primary text-white px-4 py-2 rounded-xl text-sm font-semibold hover:bg-blue-900 transition-colors flex items-center gap-2">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
-                Cetak Surat Tugas
+            <button onclick="downloadWordSuratTugas(gSelectedCalEvents)" id="btnGenSurat" class="bg-primary text-white px-4 py-2.5 rounded-xl text-sm font-bold hover:bg-blue-900 transition-colors flex items-center gap-2 shadow-md shadow-primary/20">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 01-2-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                Download Surat Tugas (.docx)
             </button>
             <button onclick="closeKalModal()" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold rounded-xl text-sm transition-colors">Tutup</button>
         </div>
@@ -673,7 +675,7 @@ function renderTable() {
             </td>
             <td class="px-4 py-3 text-center">${statusBadge(r.status)}</td>
             <td class="px-4 py-3 text-center no-print">
-                ${r.tanggal !== '-' ? `<button onclick='openSuratModal(${JSON.stringify(r)})' class="text-xs bg-primary/10 text-primary hover:bg-primary/20 px-2.5 py-1.5 rounded-lg font-semibold transition-colors">Surat Tugas</button>` : '<span class="text-xs text-slate-300">—</span>'}
+                ${r.tanggal !== '-' ? `<button onclick='downloadWordSuratTugas([${JSON.stringify(r).replace(/'/g, "\\'")}])' title="Download Surat Tugas Word (.docx)" class="text-xs bg-primary/10 text-primary hover:bg-primary/20 px-3 py-1.5 rounded-lg font-bold transition-colors flex items-center gap-1.5 mx-auto"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 01-2-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>Surat Tugas (.docx)</button>` : '<span class="text-xs text-slate-300">—</span>'}
             </td>
         </tr>
     `).join('');
@@ -1072,14 +1074,238 @@ function salinTeksPersuratan() {
 }
 
 // ==========================================
-// SURAT TUGAS GENERATOR
+// SURAT TUGAS GENERATOR (WORD .DOCX)
 // ==========================================
+async function downloadWordSuratTugas(items) {
+    if (!items || items.length === 0) return alert("Tidak ada data jadwal untuk dibuatkan Surat Tugas.");
+
+    if (!window.docx || !window.saveAs) {
+        return alert("Library docx sedang dimuat, silakan coba lagi dalam beberapa detik.");
+    }
+
+    const { Document, Packer, Paragraph, TextRun, AlignmentType, Table, TableRow, TableCell, WidthType, BorderStyle, UnderlineType } = window.docx;
+
+    const noBorder = {
+        top: { style: BorderStyle.NONE, size: 0, color: "FFFFFF" },
+        bottom: { style: BorderStyle.NONE, size: 0, color: "FFFFFF" },
+        left: { style: BorderStyle.NONE, size: 0, color: "FFFFFF" },
+        right: { style: BorderStyle.NONE, size: 0, color: "FFFFFF" }
+    };
+
+    try {
+        let imageRun = null;
+        try {
+            const imgRes = await fetch('./header-surat.png');
+            if (imgRes.ok) {
+                const imgBuf = await imgRes.arrayBuffer();
+                imageRun = new window.docx.ImageRun({
+                    data: imgBuf,
+                    transformation: { width: 590, height: 98 }
+                });
+            }
+        } catch(e) {
+            console.warn("Could not load header image", e);
+        }
+
+        const firstItem = items[0];
+        const tanggalPelaksanaan = firstItem.tanggal !== '-' ? formatTanggalLengkap(firstItem.tanggal) : '___________________';
+        const namaHari = getNamaHari(firstItem.tanggal);
+        const tanggalSurat = formatDateDisplay(normalizeDateKey(new Date().toISOString().split('T')[0]));
+
+        const children = [];
+
+        if (imageRun) {
+            children.push(new Paragraph({
+                alignment: AlignmentType.CENTER,
+                children: [imageRun],
+                spacing: { after: 240 }
+            }));
+        }
+
+        // Title
+        children.push(new Paragraph({
+            alignment: AlignmentType.CENTER,
+            children: [
+                new TextRun({ text: "SURAT TUGAS", bold: true, underline: { type: UnderlineType.SINGLE }, size: 28, font: "Times New Roman" })
+            ],
+            spacing: { before: 120, after: 60 }
+        }));
+
+        children.push(new Paragraph({
+            alignment: AlignmentType.CENTER,
+            children: [
+                new TextRun({ text: "Nomor: ___/___/2026", size: 22, font: "Times New Roman" })
+            ],
+            spacing: { after: 240 }
+        }));
+
+        // Body Intro
+        children.push(new Paragraph({
+            alignment: AlignmentType.JUSTIFY,
+            children: [
+                new TextRun({ text: "Kepala Balai Guru dan Tenaga Kependidikan Provinsi Sumatera Barat menugaskan kepada:", size: 22, font: "Times New Roman" })
+            ],
+            spacing: { after: 160 }
+        }));
+
+        // Personel List
+        items.forEach((item, idx) => {
+            const f = (item.fasilId && gFasils[item.fasilId]) ? gFasils[item.fasilId] : {};
+            const nama = f.nama || item.fasilNama || '___________________';
+            const nip = f.nip || '___________________';
+            const pangkat = f.pangkat_gol || '___________________';
+            const jabatan = f.jabatan || '___________________';
+
+            const personRows = [
+                new TableRow({
+                    children: [
+                        new TableCell({ width: { size: 30, type: WidthType.PERCENTAGE }, children: [new Paragraph({ children: [new TextRun({ text: `${idx+1}. Nama`, bold: true, size: 22, font: "Times New Roman" })] })], border: noBorder }),
+                        new TableCell({ width: { size: 4, type: WidthType.PERCENTAGE }, children: [new Paragraph({ children: [new TextRun({ text: ":", size: 22, font: "Times New Roman" })] })], border: noBorder }),
+                        new TableCell({ width: { size: 66, type: WidthType.PERCENTAGE }, children: [new Paragraph({ children: [new TextRun({ text: nama, bold: true, size: 22, font: "Times New Roman" })] })], border: noBorder })
+                    ]
+                }),
+                new TableRow({
+                    children: [
+                        new TableCell({ width: { size: 30, type: WidthType.PERCENTAGE }, children: [new Paragraph({ children: [new TextRun({ text: "    NIP", size: 22, font: "Times New Roman" })] })], border: noBorder }),
+                        new TableCell({ width: { size: 4, type: WidthType.PERCENTAGE }, children: [new Paragraph({ children: [new TextRun({ text: ":", size: 22, font: "Times New Roman" })] })], border: noBorder }),
+                        new TableCell({ width: { size: 66, type: WidthType.PERCENTAGE }, children: [new Paragraph({ children: [new TextRun({ text: nip, size: 22, font: "Times New Roman" })] })], border: noBorder })
+                    ]
+                }),
+                new TableRow({
+                    children: [
+                        new TableCell({ width: { size: 30, type: WidthType.PERCENTAGE }, children: [new Paragraph({ children: [new TextRun({ text: "    Pangkat/Gol.", size: 22, font: "Times New Roman" })] })], border: noBorder }),
+                        new TableCell({ width: { size: 4, type: WidthType.PERCENTAGE }, children: [new Paragraph({ children: [new TextRun({ text: ":", size: 22, font: "Times New Roman" })] })], border: noBorder }),
+                        new TableCell({ width: { size: 66, type: WidthType.PERCENTAGE }, children: [new Paragraph({ children: [new TextRun({ text: pangkat, size: 22, font: "Times New Roman" })] })], border: noBorder })
+                    ]
+                }),
+                new TableRow({
+                    children: [
+                        new TableCell({ width: { size: 30, type: WidthType.PERCENTAGE }, children: [new Paragraph({ children: [new TextRun({ text: "    Jabatan", size: 22, font: "Times New Roman" })] })], border: noBorder }),
+                        new TableCell({ width: { size: 4, type: WidthType.PERCENTAGE }, children: [new Paragraph({ children: [new TextRun({ text: ":", size: 22, font: "Times New Roman" })] })], border: noBorder }),
+                        new TableCell({ width: { size: 66, type: WidthType.PERCENTAGE }, children: [new Paragraph({ children: [new TextRun({ text: jabatan, size: 22, font: "Times New Roman" })] })], border: noBorder })
+                    ]
+                }),
+                new TableRow({
+                    children: [
+                        new TableCell({ width: { size: 30, type: WidthType.PERCENTAGE }, children: [new Paragraph({ children: [new TextRun({ text: "    Unit Kerja", size: 22, font: "Times New Roman" })] })], border: noBorder }),
+                        new TableCell({ width: { size: 4, type: WidthType.PERCENTAGE }, children: [new Paragraph({ children: [new TextRun({ text: ":", size: 22, font: "Times New Roman" })] })], border: noBorder }),
+                        new TableCell({ width: { size: 66, type: WidthType.PERCENTAGE }, children: [new Paragraph({ children: [new TextRun({ text: "BGTK Provinsi Sumatera Barat", size: 22, font: "Times New Roman" })] })], border: noBorder })
+                    ]
+                })
+            ];
+
+            children.push(new Table({
+                width: { size: 100, type: WidthType.PERCENTAGE },
+                rows: personRows
+            }));
+            children.push(new Paragraph({ text: "", spacing: { after: 140 } }));
+        });
+
+        // Assignment Details Intro
+        children.push(new Paragraph({
+            alignment: AlignmentType.JUSTIFY,
+            children: [
+                new TextRun({ text: "Untuk melaksanakan tugas kedinasan sebagai berikut:", size: 22, font: "Times New Roman" })
+            ],
+            spacing: { before: 100, after: 140 }
+        }));
+
+        // Kegiatan List Table
+        items.forEach((item) => {
+            const kunjRoman = ROMAN[(item.kunjungan || 1) - 1] || 'I';
+            const kegText = `Untuk melakukan pendampingan ${kunjRoman} pasca pelatihan sekolah model Provinsi Sumatera Barat di ${item.schoolName || item.npsn}`;
+
+            const kegRows = [
+                new TableRow({
+                    children: [
+                        new TableCell({ width: { size: 30, type: WidthType.PERCENTAGE }, children: [new Paragraph({ children: [new TextRun({ text: "Kegiatan", size: 22, font: "Times New Roman" })] })], border: noBorder }),
+                        new TableCell({ width: { size: 4, type: WidthType.PERCENTAGE }, children: [new Paragraph({ children: [new TextRun({ text: ":", size: 22, font: "Times New Roman" })] })], border: noBorder }),
+                        new TableCell({ width: { size: 66, type: WidthType.PERCENTAGE }, children: [new Paragraph({ children: [new TextRun({ text: kegText, size: 22, font: "Times New Roman" })] })], border: noBorder })
+                    ]
+                }),
+                new TableRow({
+                    children: [
+                        new TableCell({ width: { size: 30, type: WidthType.PERCENTAGE }, children: [new Paragraph({ children: [new TextRun({ text: "Pelaksanaan", size: 22, font: "Times New Roman" })] })], border: noBorder }),
+                        new TableCell({ width: { size: 4, type: WidthType.PERCENTAGE }, children: [new Paragraph({ children: [new TextRun({ text: ":", size: 22, font: "Times New Roman" })] })], border: noBorder }),
+                        new TableCell({ width: { size: 66, type: WidthType.PERCENTAGE }, children: [new Paragraph({ children: [new TextRun({ text: `${namaHari}, ${tanggalPelaksanaan}`, size: 22, font: "Times New Roman" })] })], border: noBorder })
+                    ]
+                })
+            ];
+
+            children.push(new Table({
+                width: { size: 100, type: WidthType.PERCENTAGE },
+                rows: kegRows
+            }));
+            children.push(new Paragraph({ text: "", spacing: { after: 120 } }));
+        });
+
+        // Closing Paragraphs
+        children.push(new Paragraph({
+            alignment: AlignmentType.JUSTIFY,
+            children: [
+                new TextRun({ text: "Kepada semua pihak yang terkait agar dapat memberikan bantuan dan fasilitas seperlunya demi kelancaran pelaksanaan tugas tersebut.", size: 22, font: "Times New Roman" })
+            ],
+            spacing: { before: 160, after: 140 }
+        }));
+
+        children.push(new Paragraph({
+            alignment: AlignmentType.JUSTIFY,
+            children: [
+                new TextRun({ text: "Demikian surat tugas ini dibuat untuk dapat dilaksanakan dengan sebaik-baiknya dan penuh tanggung jawab.", size: 22, font: "Times New Roman" })
+            ],
+            spacing: { after: 240 }
+        }));
+
+        // TTD Table
+        const ttdRows = [
+            new TableRow({
+                children: [
+                    new TableCell({ width: { size: 50, type: WidthType.PERCENTAGE }, children: [new Paragraph({ text: "" })], border: noBorder }),
+                    new TableCell({ width: { size: 50, type: WidthType.PERCENTAGE }, children: [
+                        new Paragraph({ alignment: AlignmentType.CENTER, children: [new TextRun({ text: `Pariaman, ${tanggalSurat}`, size: 22, font: "Times New Roman" })] }),
+                        new Paragraph({ alignment: AlignmentType.CENTER, children: [new TextRun({ text: `Kepala BGTK Provinsi Sumatera Barat`, bold: true, size: 22, font: "Times New Roman" })] }),
+                        new Paragraph({ text: "", spacing: { after: 720 } }),
+                        new Paragraph({ alignment: AlignmentType.CENTER, children: [new TextRun({ text: "________________________", bold: true, size: 22, font: "Times New Roman" })] }),
+                        new Paragraph({ alignment: AlignmentType.CENTER, children: [new TextRun({ text: "NIP. ___________________", size: 20, font: "Times New Roman" })] })
+                    ], border: noBorder })
+                ]
+            })
+        ];
+
+        children.push(new Table({
+            width: { size: 100, type: WidthType.PERCENTAGE },
+            rows: ttdRows
+        }));
+
+        const doc = new Document({
+            sections: [{
+                properties: {
+                    page: {
+                        margin: { top: 1152, bottom: 1152, left: 1440, right: 1440 }
+                    }
+                },
+                children: children
+            }]
+        });
+
+        const blob = await Packer.toBlob(doc);
+        const fasilClean = (firstItem.fasilNama || 'BGTK').replace(/[^a-zA-Z0-9]/g, '_');
+        const tglClean = (firstItem.tanggal || '2026').replace(/[^a-zA-Z0-9]/g, '_');
+        const fileName = `Surat_Tugas_${fasilClean}_${tglClean}.docx`;
+        saveAs(blob, fileName);
+
+    } catch(e) {
+        console.error("Gagal generate Word", e);
+        alert("Gagal membuat file Word: " + e.message);
+    }
+}
+
 function openSuratModal(r) {
-    generateSuratContent([r]);
+    downloadWordSuratTugas([r]);
 }
 
 function generateSuratTugas() {
-    generateSuratContent(gSelectedCalEvents);
+    downloadWordSuratTugas(gSelectedCalEvents);
 }
 
 function generateSuratContent(items) {
