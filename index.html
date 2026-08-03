@@ -1096,17 +1096,22 @@
 
         if (view === 'admin') {
             const pwd = prompt("Masukkan password Admin:");
-            if (pwd === "adminbgtk") {
-                document.getElementById('view-admin').classList.remove('hidden');
-                document.getElementById('navAdminLink').innerText = 'Kembali ke Beranda';
-                document.getElementById('navAdminLink').href = '?';
+            if (pwd === "bgtksumbar2026" || pwd === "adminbgtk") {
+                const viewAdminEl = document.getElementById('view-admin');
+                const navAdminLink = document.getElementById('navAdminLink');
+                if (viewAdminEl) viewAdminEl.classList.remove('hidden');
+                if (navAdminLink) {
+                    navAdminLink.innerText = 'Kembali ke Beranda';
+                    navAdminLink.href = '?';
+                }
                 initAdmin();
             } else {
                 alert("Password salah!");
                 window.location.href = "?";
             }
         } else {
-            document.getElementById('view-main').classList.remove('hidden');
+            const viewMainEl = document.getElementById('view-main');
+            if (viewMainEl) viewMainEl.classList.remove('hidden');
         }
 
         function toggleAdminMode() {
