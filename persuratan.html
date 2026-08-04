@@ -231,6 +231,7 @@
                     </tbody>
                 </table>
             </div>
+            <div id="tabelPagination"></div>
         </div>
     </div>
 
@@ -664,6 +665,33 @@ function cap(s) { return s.charAt(0).toUpperCase() + s.slice(1); }
 // ==========================================
 // VIEW 1: TABLE
 // ==========================================
+let gTabelPage = 1;
+const TABEL_PER_PAGE = 25;
+
+function buildPaginationPersuratan(currentPage, totalItems, perPage, onChangeFn) {
+    if (totalItems <= perPage) return '';
+    const totalPages = Math.ceil(totalItems / perPage);
+    const start = (currentPage - 1) * perPage + 1;
+    const end = Math.min(currentPage * perPage, totalItems);
+    let pageButtons = '';
+    const startPage = Math.max(1, currentPage - 2);
+    const endPage = Math.min(totalPages, currentPage + 2);
+    if (startPage > 1) pageButtons += `<button onclick="${onChangeFn}(1)" class="min-w-[32px] h-8 rounded-lg border border-slate-200 text-xs font-bold text-slate-600 hover:bg-slate-50">1</button><span class="text-slate-400 text-xs px-1">…</span>`;
+    for (let p = startPage; p <= endPage; p++) {
+        const active = p === currentPage ? 'bg-indigo-600 text-white border-indigo-600' : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50';
+        pageButtons += `<button onclick="${onChangeFn}(${p})" class="min-w-[32px] h-8 rounded-lg border text-xs font-bold ${active}">${p}</button>`;
+    }
+    if (endPage < totalPages) pageButtons += `<span class="text-slate-400 text-xs px-1">…</span><button onclick="${onChangeFn}(${totalPages})" class="min-w-[32px] h-8 rounded-lg border border-slate-200 text-xs font-bold text-slate-600 hover:bg-slate-50">${totalPages}</button>`;
+    return `<div class="flex flex-col sm:flex-row items-center justify-between gap-3 px-4 py-3 border-t border-slate-100 bg-slate-50/50 text-xs text-slate-500 no-print">
+        <span>Menampilkan <strong class="text-slate-700">${start}–${end}</strong> dari <strong class="text-slate-700">${totalItems.toLocaleString('id-ID')}</strong> baris jadwal</span>
+        <div class="flex items-center gap-1.5">
+            <button onclick="${onChangeFn}(${currentPage - 1})" ${currentPage <= 1 ? 'disabled' : ''} class="min-w-[32px] h-8 rounded-lg border border-slate-200 text-xs font-bold bg-white text-slate-600 ${currentPage <= 1 ? 'opacity-40 cursor-not-allowed' : 'hover:bg-slate-50'}">‹</button>
+            ${pageButtons}
+            <button onclick="${onChangeFn}(${currentPage + 1})" ${currentPage >= totalPages ? 'disabled' : ''} class="min-w-[32px] h-8 rounded-lg border border-slate-200 text-xs font-bold bg-white text-slate-600 ${currentPage >= totalPages ? 'opacity-40 cursor-not-allowed' : 'hover:bg-slate-50'}">›</button>
+        </div>
+    </div>`;
+}
+
 function applyFilters() {
     const search = (document.getElementById('filterSearch').value || '').toLowerCase();
     const kunjungan = document.getElementById('filterKunjungan').value;
@@ -678,9 +706,12 @@ function applyFilters() {
         return true;
     });
 
+    gTabelPage = 1; // reset to first page on filter change
     renderTable();
     renderSummary();
 }
+
+function changeTabelPage(p) { gTabelPage = p; renderTable(); }
 
 function renderSummary() {
     const total = gFilteredRows.length;
@@ -702,13 +733,17 @@ function statusBadge(s) {
 
 function renderTable() {
     const body = document.getElementById('tabelBody');
+    const paginationEl = document.getElementById('tabelPagination');
     if (gFilteredRows.length === 0) {
         body.innerHTML = `<tr><td colspan="7" class="text-center py-16 text-slate-400">Tidak ada data yang sesuai filter.</td></tr>`;
+        if (paginationEl) paginationEl.innerHTML = '';
         return;
     }
-    body.innerHTML = gFilteredRows.map((r, i) => `
-        <tr class="hover:bg-primary/3 transition-colors ${i % 2 === 0 ? '' : 'bg-slate-50/50'}">
-            <td class="px-4 py-3 text-center text-slate-400 font-medium">${i+1}</td>
+    const start = (gTabelPage - 1) * TABEL_PER_PAGE;
+    const pageItems = gFilteredRows.slice(start, start + TABEL_PER_PAGE);
+    body.innerHTML = pageItems.map((r, i) => `
+        <tr class="hover:bg-primary/3 transition-colors ${(start + i) % 2 === 0 ? '' : 'bg-slate-50/50'}">
+            <td class="px-4 py-3 text-center text-slate-400 font-medium">${start + i + 1}</td>
             <td class="px-4 py-3">
                 <div class="font-semibold text-slate-800">${r.fasilNama}</div>
                 <div class="text-xs text-slate-500">${r.fasilHp}</div>
@@ -729,7 +764,7 @@ function renderTable() {
             <td class="px-4 py-3 text-center">${statusBadge(r.status)}</td>
             <td class="px-4 py-3 text-center no-print">
                 <div class="flex flex-col sm:flex-row items-center justify-center gap-1.5">
-                    ${r.tanggal !== '-' ? `<button onclick='downloadWordSuratTugas([${JSON.stringify(r).replace(/'/g, "\\'")}])' title="Download Surat Tugas Word (.docx)" class="text-xs bg-primary/10 text-primary hover:bg-primary/20 px-2.5 py-1.5 rounded-lg font-bold transition-colors flex items-center gap-1.5"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 01-2-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>Surat Tugas</button>` : '<span class="text-xs text-slate-300">—</span>'}
+                    ${r.tanggal !== '-' ? `<button onclick='downloadWordSuratTugas([${JSON.stringify(r).replace(/'/g, "\\'").replace(/"/g,'&quot;')}])' title="Download Surat Tugas Word (.docx)" class="text-xs bg-primary/10 text-primary hover:bg-primary/20 px-2.5 py-1.5 rounded-lg font-bold transition-colors flex items-center gap-1.5"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 01-2-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>Surat Tugas</button>` : '<span class="text-xs text-slate-300">—</span>'}
                     <button onclick="openEditTanggalModal('${r.npsn}', ${r.kunjungan}, '${r.fasilNama.replace(/'/g,"\\'").replace(/"/g,'&quot;')}', '${r.schoolName.replace(/'/g,"\\'").replace(/"/g,'&quot;')}', '${r.tanggal}', '${r.status}')" title="Edit Tanggal & Status" class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 px-2.5 py-1.5 rounded-lg font-semibold transition-colors flex items-center gap-1">
                         ✏️ Edit
                     </button>
@@ -737,6 +772,7 @@ function renderTable() {
             </td>
         </tr>
     `).join('');
+    if (paginationEl) paginationEl.innerHTML = buildPaginationPersuratan(gTabelPage, gFilteredRows.length, TABEL_PER_PAGE, 'changeTabelPage');
 }
 
 // ==========================================
