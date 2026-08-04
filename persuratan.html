@@ -167,7 +167,7 @@
             </div>
 
             <!-- Filters -->
-            <div class="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-5 gap-3 mt-5">
+            <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 mt-5">
                 <input type="text" id="filterSearch" oninput="applyFilters()" placeholder="🔍 Cari fasilitator / sekolah..." class="lg:col-span-2 border border-slate-300 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all">
                 <select id="filterKunjungan" onchange="applyFilters()" class="border border-slate-300 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all">
                     <option value="ALL">Semua Kunjungan</option>
@@ -187,6 +187,14 @@
                 </select>
                 <select id="filterFasil" onchange="applyFilters()" class="border border-slate-300 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all">
                     <option value="ALL">Semua Fasilitator</option>
+                </select>
+                <select id="filterSort" onchange="applyFilters()" class="border border-amber-300 bg-amber-50/60 font-semibold text-amber-900 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500/30 transition-all">
+                    <option value="kunjungan-asc">🔢 Sort: Kunjungan (1 ➔ 6)</option>
+                    <option value="kunjungan-desc">🔢 Sort: Kunjungan (6 ➔ 1)</option>
+                    <option value="fasil-asc">👤 Sort: Fasilitator (A-Z)</option>
+                    <option value="sekolah-asc">🏫 Sort: Sekolah (A-Z)</option>
+                    <option value="tanggal-asc">📅 Sort: Tanggal</option>
+                    <option value="status-asc">📌 Sort: Status</option>
                 </select>
             </div>
         </div>
@@ -218,11 +226,21 @@
                     <thead class="bg-primary text-white text-xs uppercase tracking-wide">
                         <tr>
                             <th class="px-4 py-3.5 w-10 text-center">No</th>
-                            <th class="px-4 py-3.5">Fasilitator</th>
-                            <th class="px-4 py-3.5">Nama Sekolah</th>
-                            <th class="px-4 py-3.5 text-center w-24">Kunjungan</th>
-                            <th class="px-4 py-3.5 text-center w-32">Tanggal</th>
-                            <th class="px-4 py-3.5 text-center w-32">Status</th>
+                            <th class="px-4 py-3.5 cursor-pointer hover:bg-white/10 transition-colors" onclick="sortByHeader('fasil')" title="Klik untuk mengurutkan berdasarkan Fasilitator">
+                                Fasilitator <span id="sortIconFasil" class="ml-1 opacity-50 inline-block">↕</span>
+                            </th>
+                            <th class="px-4 py-3.5 cursor-pointer hover:bg-white/10 transition-colors" onclick="sortByHeader('sekolah')" title="Klik untuk mengurutkan berdasarkan Sekolah">
+                                Nama Sekolah <span id="sortIconSekolah" class="ml-1 opacity-50 inline-block">↕</span>
+                            </th>
+                            <th class="px-4 py-3.5 text-center w-28 cursor-pointer hover:bg-white/10 transition-colors bg-white/10" onclick="sortByHeader('kunjungan')" title="Klik untuk mengurutkan berdasarkan Kunjungan">
+                                Kunjungan <span id="sortIconKunjungan" class="ml-1 font-bold text-amber-300 inline-block">▲</span>
+                            </th>
+                            <th class="px-4 py-3.5 text-center w-32 cursor-pointer hover:bg-white/10 transition-colors" onclick="sortByHeader('tanggal')" title="Klik untuk mengurutkan berdasarkan Tanggal">
+                                Tanggal <span id="sortIconTanggal" class="ml-1 opacity-50 inline-block">↕</span>
+                            </th>
+                            <th class="px-4 py-3.5 text-center w-32 cursor-pointer hover:bg-white/10 transition-colors" onclick="sortByHeader('status')" title="Klik untuk mengurutkan berdasarkan Status">
+                                Status <span id="sortIconStatus" class="ml-1 opacity-50 inline-block">↕</span>
+                            </th>
                             <th class="px-4 py-3.5 text-center w-28 no-print">Aksi</th>
                         </tr>
                     </thead>
@@ -692,11 +710,48 @@ function buildPaginationPersuratan(currentPage, totalItems, perPage, onChangeFn)
     </div>`;
 }
 
+let gSortField = 'kunjungan';
+let gSortDir = 'asc';
+
+function sortByHeader(field) {
+    if (gSortField === field) {
+        gSortDir = gSortDir === 'asc' ? 'desc' : 'asc';
+    } else {
+        gSortField = field;
+        gSortDir = 'asc';
+    }
+    const sortSel = document.getElementById('filterSort');
+    if (sortSel) sortSel.value = `${gSortField}-${gSortDir}`;
+    applyFilters();
+}
+
+function updateHeaderSortIcons() {
+    const fields = ['fasil', 'sekolah', 'kunjungan', 'tanggal', 'status'];
+    fields.forEach(f => {
+        const iconEl = document.getElementById('sortIcon' + f.charAt(0).toUpperCase() + f.slice(1));
+        if (!iconEl) return;
+        if (gSortField === f) {
+            iconEl.textContent = gSortDir === 'asc' ? '▲' : '▼';
+            iconEl.className = 'ml-1 font-bold text-amber-300 inline-block';
+        } else {
+            iconEl.textContent = '↕';
+            iconEl.className = 'ml-1 opacity-50 inline-block';
+        }
+    });
+}
+
 function applyFilters() {
     const search = (document.getElementById('filterSearch').value || '').toLowerCase();
     const kunjungan = document.getElementById('filterKunjungan').value;
     const status = document.getElementById('filterStatus').value;
     const fasilId = document.getElementById('filterFasil').value;
+    const sortVal = document.getElementById('filterSort') ? document.getElementById('filterSort').value : 'kunjungan-asc';
+
+    if (sortVal) {
+        const parts = sortVal.split('-');
+        gSortField = parts[0];
+        gSortDir = parts[1] || 'asc';
+    }
 
     gFilteredRows = gRows.filter(r => {
         if (search && !r.fasilNama.toLowerCase().includes(search) && !r.schoolName.toLowerCase().includes(search) && !r.npsn.includes(search)) return false;
@@ -705,6 +760,32 @@ function applyFilters() {
         if (fasilId !== 'ALL' && r.fasilId !== fasilId) return false;
         return true;
     });
+
+    // Sort gFilteredRows based on gSortField & gSortDir
+    gFilteredRows.sort((a, b) => {
+        let res = 0;
+        if (gSortField === 'kunjungan') {
+            res = a.kunjungan - b.kunjungan;
+            if (res === 0) res = a.fasilNama.localeCompare(b.fasilNama);
+        } else if (gSortField === 'fasil') {
+            res = a.fasilNama.localeCompare(b.fasilNama);
+            if (res === 0) res = a.kunjungan - b.kunjungan;
+        } else if (gSortField === 'sekolah') {
+            res = a.schoolName.localeCompare(b.schoolName);
+            if (res === 0) res = a.kunjungan - b.kunjungan;
+        } else if (gSortField === 'tanggal') {
+            const tA = a.tanggal === '-' ? '9999-99-99' : a.tanggal;
+            const tB = b.tanggal === '-' ? '9999-99-99' : b.tanggal;
+            res = tA.localeCompare(tB);
+            if (res === 0) res = a.kunjungan - b.kunjungan;
+        } else if (gSortField === 'status') {
+            res = a.status.localeCompare(b.status);
+            if (res === 0) res = a.kunjungan - b.kunjungan;
+        }
+        return gSortDir === 'asc' ? res : -res;
+    });
+
+    updateHeaderSortIcons();
 
     gTabelPage = 1; // reset to first page on filter change
     renderTable();
