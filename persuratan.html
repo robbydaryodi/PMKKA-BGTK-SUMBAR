@@ -579,7 +579,14 @@ async function loadAllData() {
             db.ref('setting_jadwal').once('value')
         ]);
 
-        gFasils = snapFasil.val() || {};
+        const allFasils = snapFasil.val() || {};
+        // Filter hanya fasilitator Sekolah Model
+        gFasils = {};
+        for (const fId in allFasils) {
+            const f = allFasils[fId];
+            const progs = f.programs || (f.program_kombel ? ['kombel'] : ['sekolah_model']);
+            if (progs.includes('sekolah_model')) gFasils[fId] = f;
+        }
         gSchools = snapSekolah.val() || {};
         gAssigned = snapAssign.val() || {};
         gJadwal = snapJadwal.val() || {};
