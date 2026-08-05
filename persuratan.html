@@ -1692,15 +1692,31 @@ function exportExcel() {
 // ==========================================
 // INIT
 // ==========================================
-window.addEventListener('DOMContentLoaded', () => {
+window.addEventListener('DOMContentLoaded', async () => {
+    const adminEmail = sessionStorage.getItem('admin_bgtk_email');
+    if (adminEmail) {
+        const key = adminEmail.toLowerCase().replace(/[.#$\[\]]/g, '_');
+        try {
+            const rolesSnap = await db.ref(`user_roles/${key}`).once('value');
+            const roleData = rolesSnap.val();
+            if (roleData && roleData.permissions && roleData.permissions.persuratan === false) {
+                alert("⚠️ Anda tidak memiliki izin untuk mengakses Modul Persuratan.");
+                window.location.replace('admin.html');
+                return;
+            }
+        } catch(e) { console.warn("Role check error:", e); }
+
+        sessionStorage.setItem('persuratan_auth', '1');
+    }
+
     if (sessionStorage.getItem('persuratan_auth') === '1') {
         document.getElementById('loginScreen').classList.add('hidden');
         document.getElementById('mainApp').classList.remove('hidden');
         document.getElementById('mainApp').classList.add('flex');
         loadAllData();
+    } else {
+        document.getElementById('loginPassword')?.focus();
     }
-    // Allow Enter key on login
-    document.getElementById('loginPassword').focus();
 });
 </script>
 </body>
