@@ -2304,8 +2304,12 @@
                 const val = s.pm.sub_indikator[k];
                 const displayKey = k.replace(/_/g, '.');
                 const meta = gRubrikCatalogMap.pm ? gRubrikCatalogMap.pm[k] : null;
+                const isNA = val === '#N/A';
+                const valBadge = isNA 
+                    ? `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-slate-100 text-slate-400 border border-slate-200">#N/A</span>`
+                    : `<span class="px-2 py-0.5 rounded text-[11px] font-bold bg-indigo-50 text-indigo-800">${val}</span>`;
                 const tooltipText = meta ? `[${meta.kode}] ${meta.nama} (${meta.domain} › ${meta.sub_domain}): ${val}` : `${displayKey}: ${val}`;
-                pmSubsHtml += `<div title="${tooltipText.replace(/"/g, '&quot;')}" class="bg-white p-2.5 rounded-xl border border-slate-200 flex justify-between items-center cursor-help hover:border-indigo-400 transition-colors group"><span class="font-bold text-slate-700 text-xs">${displayKey}</span><span class="px-2 py-0.5 rounded text-[11px] font-bold bg-indigo-50 text-indigo-800">${val}</span></div>`;
+                pmSubsHtml += `<div title="${tooltipText.replace(/"/g, '&quot;')}" class="bg-white p-2.5 rounded-xl border border-slate-200 flex justify-between items-center cursor-help hover:border-indigo-400 transition-colors group"><span class="font-bold text-slate-700 text-xs">${displayKey}</span>${valBadge}</div>`;
             }
 
             let kkaSubsHtml = '';
@@ -2313,9 +2317,18 @@
                 const val = s.kka.sub_indikator[k];
                 const displayKey = k.replace(/_/g, '.');
                 const meta = gRubrikCatalogMap.kka ? gRubrikCatalogMap.kka[k] : null;
+                const isNA = val === '#N/A';
+                const valBadge = isNA 
+                    ? `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-slate-100 text-slate-400 border border-slate-200">#N/A</span>`
+                    : `<span class="px-2 py-0.5 rounded text-[11px] font-bold bg-purple-50 text-purple-800">${val}</span>`;
                 const tooltipText = meta ? `[${meta.kode}] ${meta.nama} (${meta.domain} › ${meta.sub_domain}): ${val}` : `${displayKey}: ${val}`;
-                kkaSubsHtml += `<div title="${tooltipText.replace(/"/g, '&quot;')}" class="bg-white p-2.5 rounded-xl border border-slate-200 flex justify-between items-center cursor-help hover:border-purple-400 transition-colors group"><span class="font-bold text-slate-700 text-xs">${displayKey}</span><span class="px-2 py-0.5 rounded text-[11px] font-bold bg-purple-50 text-purple-800">${val}</span></div>`;
+                kkaSubsHtml += `<div title="${tooltipText.replace(/"/g, '&quot;')}" class="bg-white p-2.5 rounded-xl border border-slate-200 flex justify-between items-center cursor-help hover:border-purple-400 transition-colors group"><span class="font-bold text-slate-700 text-xs">${displayKey}</span>${valBadge}</div>`;
             }
+
+            const isKkaBukan = s.status_pelaksana_kka === 'Bukan';
+            const kkaBukanNotice = isKkaBukan 
+                ? `<div class="bg-amber-50 text-amber-900 border border-amber-200/80 p-2.5 rounded-xl text-[11px] font-medium flex items-center gap-1.5"><span class="text-amber-600 font-bold">ℹ️ Info Pelaksana KKA:</span> Sekolah ini terdaftar sebagai <strong>Bukan Pelaksana KKA</strong> di data Excel asal, sehingga indikator KKA bernilai #N/A.</div>` 
+                : '';
 
             content.innerHTML = `
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
@@ -2348,6 +2361,7 @@
                             </div>
                             <span class="px-3 py-1 rounded-full text-xs font-black bg-purple-100 text-purple-800 border border-purple-200">${s.kka?.kategori || '-'} (${s.kka?.skor || '-'})</span>
                         </div>
+                        ${kkaBukanNotice}
                         <div class="grid grid-cols-2 gap-2 text-center text-xs">
                             <div class="bg-slate-50 p-2.5 rounded-xl border border-slate-100"><div class="text-slate-400 text-[10px] uppercase font-bold">Guru KKA</div><div class="font-bold text-slate-800 mt-0.5">${s.kka?.guru || '-'}</div></div>
                             <div class="bg-slate-50 p-2.5 rounded-xl border border-slate-100"><div class="text-slate-400 text-[10px] uppercase font-bold">Kepsek KKA</div><div class="font-bold text-slate-800 mt-0.5">${s.kka?.kepsek || '-'}</div></div>

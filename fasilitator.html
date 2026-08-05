@@ -1080,8 +1080,12 @@
                     const val = s.pm.sub_indikator[k];
                     const displayKey = k.replace(/_/g, '.');
                     const meta = gRubrikCatalogMap.pm ? gRubrikCatalogMap.pm[k] : null;
+                    const isNA = val === '#N/A';
+                    const valBadge = isNA 
+                        ? `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-slate-100 text-slate-400 border border-slate-200">#N/A</span>`
+                        : `<span class="px-2 py-0.5 rounded text-[10px] font-extrabold bg-indigo-50 text-indigo-800">${val}</span>`;
                     const tooltipText = meta ? `[${meta.kode}] ${meta.nama} (${meta.domain} › ${meta.sub_domain}): ${val}` : `${displayKey}: ${val}`;
-                    pmSubsHtml += `<div title="${tooltipText.replace(/"/g, '&quot;')}" class="bg-white p-2 rounded-lg border border-slate-200 flex justify-between items-center text-xs cursor-help hover:border-indigo-400 transition-colors"><span class="font-bold text-slate-700">${displayKey}</span><span class="px-2 py-0.5 rounded text-[10px] font-extrabold bg-indigo-50 text-indigo-800">${val}</span></div>`;
+                    pmSubsHtml += `<div title="${tooltipText.replace(/"/g, '&quot;')}" class="bg-white p-2 rounded-lg border border-slate-200 flex justify-between items-center text-xs cursor-help hover:border-indigo-400 transition-colors"><span class="font-bold text-slate-700">${displayKey}</span>${valBadge}</div>`;
                 }
 
                 let kkaSubsHtml = '';
@@ -1089,9 +1093,18 @@
                     const val = s.kka.sub_indikator[k];
                     const displayKey = k.replace(/_/g, '.');
                     const meta = gRubrikCatalogMap.kka ? gRubrikCatalogMap.kka[k] : null;
+                    const isNA = val === '#N/A';
+                    const valBadge = isNA 
+                        ? `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-slate-100 text-slate-400 border border-slate-200">#N/A</span>`
+                        : `<span class="px-2 py-0.5 rounded text-[10px] font-extrabold bg-purple-50 text-purple-800">${val}</span>`;
                     const tooltipText = meta ? `[${meta.kode}] ${meta.nama} (${meta.domain} › ${meta.sub_domain}): ${val}` : `${displayKey}: ${val}`;
-                    kkaSubsHtml += `<div title="${tooltipText.replace(/"/g, '&quot;')}" class="bg-white p-2 rounded-lg border border-slate-200 flex justify-between items-center text-xs cursor-help hover:border-purple-400 transition-colors"><span class="font-bold text-slate-700">${displayKey}</span><span class="px-2 py-0.5 rounded text-[10px] font-extrabold bg-purple-50 text-purple-800">${val}</span></div>`;
+                    kkaSubsHtml += `<div title="${tooltipText.replace(/"/g, '&quot;')}" class="bg-white p-2 rounded-lg border border-slate-200 flex justify-between items-center text-xs cursor-help hover:border-purple-400 transition-colors"><span class="font-bold text-slate-700">${displayKey}</span>${valBadge}</div>`;
                 }
+
+                const isKkaBukan = s.status_pelaksana_kka === 'Bukan';
+                const kkaBukanNotice = isKkaBukan 
+                    ? `<div class="bg-amber-50 text-amber-900 border border-amber-200/80 p-2 rounded-xl text-[11px] font-medium flex items-center gap-1.5"><span class="text-amber-600 font-bold">ℹ️ Info Pelaksana KKA:</span> Sekolah ini terdaftar sebagai <strong>Bukan Pelaksana KKA</strong> di data Excel asal, sehingga indikator KKA bernilai #N/A.</div>` 
+                    : '';
 
                 html += `
                     <div class="glass-card rounded-2xl p-6 md:p-8 border border-slate-200/90 shadow-sm space-y-6">
