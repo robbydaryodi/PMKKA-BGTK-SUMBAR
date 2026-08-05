@@ -135,6 +135,7 @@
                         <div id="submenuSekolah" class="hidden pl-8 pr-2 space-y-1 mt-1">
                             <button onclick="switchAdminView('mode7')" id="btnMode7" class="sidebar-btn flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium text-slate-500 hover:text-slate-900 hover:bg-slate-100/80 transition-all duration-200 w-full text-left border-l-2 border-transparent"><span>Data Kunjungan</span></button>
                             <button onclick="switchAdminView('mode5')" id="btnMode5" class="sidebar-btn flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium text-slate-500 hover:text-slate-900 hover:bg-slate-100/80 transition-all duration-200 w-full text-left border-l-2 border-transparent"><span>Pilih Pendamping</span></button>
+                            <button onclick="switchAdminView('modeStatusSekolah')" id="btnModeStatusSekolah" class="sidebar-btn flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium text-slate-500 hover:text-slate-900 hover:bg-slate-100/80 transition-all duration-200 w-full text-left border-l-2 border-transparent"><span>Status &amp; Baseline Sekolah</span></button>
                         </div>
                     </nav>
                 </div>
@@ -527,6 +528,82 @@
                             </table>
                         </div>
                         <div class="p-4 bg-slate-50 border-t border-slate-200 flex flex-col sm:flex-row justify-between items-center gap-3 text-xs text-slate-500" id="kombelPagination"></div>
+                    </div>
+                </div>
+
+                <!-- MODE STATUS SEKOLAH MODEL -->
+                <div id="viewModeStatusSekolah" class="hidden fade-in space-y-6">
+                    <div class="bg-gradient-to-r from-blue-900 via-indigo-900 to-slate-900 rounded-2xl shadow-md p-6 text-white">
+                        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                            <div>
+                                <span class="inline-block px-3 py-1 bg-white/20 backdrop-blur-md rounded-full text-xs font-bold text-blue-100 uppercase tracking-wider mb-2">Evaluasi Baseline Resmi</span>
+                                <h1 class="text-2xl font-black">Data Status &amp; Baseline 25 Sekolah Model</h1>
+                                <p class="text-sm text-blue-200 mt-1">Hasil asesmen Pembelajaran Mendalam (PM) &amp; Koding-Kecerdasan Artifisial (KKA) Balai GTK Sumbar.</p>
+                            </div>
+                            <button onclick="loadStatusSekolahModelData()" class="bg-white/10 hover:bg-white/20 text-white px-4 py-2 rounded-xl text-xs font-bold transition-colors flex items-center gap-2 border border-white/20">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+                                <span>Refresh Status</span>
+                            </button>
+                        </div>
+                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-6 pt-6 border-t border-white/10 text-center">
+                            <div class="bg-white/10 backdrop-blur-sm rounded-xl p-3.5"><div class="text-xs text-blue-200 uppercase font-semibold">Total Sekolah Model</div><div class="text-2xl font-black mt-1" id="statStatusTotal">25</div></div>
+                            <div class="bg-indigo-500/20 backdrop-blur-sm border border-indigo-300/30 rounded-xl p-3.5"><div class="text-xs text-indigo-200 uppercase font-semibold">Rata-Rata Skor PM</div><div class="text-2xl font-black text-indigo-300 mt-1" id="statStatusAvgPM">2.71</div></div>
+                            <div class="bg-purple-500/20 backdrop-blur-sm border border-purple-300/30 rounded-xl p-3.5"><div class="text-xs text-purple-200 uppercase font-semibold">Rata-Rata Skor KKA</div><div class="text-2xl font-black text-purple-300 mt-1" id="statStatusAvgKKA">1.95</div></div>
+                            <div class="bg-emerald-500/20 backdrop-blur-sm border border-emerald-300/30 rounded-xl p-3.5"><div class="text-xs text-emerald-200 uppercase font-semibold">Kategori Maju / Unggul</div><div class="text-2xl font-black text-emerald-300 mt-1" id="statStatusMajuCount">18 Sekolah</div></div>
+                        </div>
+                    </div>
+
+                    <!-- Filter Bar -->
+                    <div class="bg-white rounded-2xl shadow-2xs border border-slate-200/80 p-4 flex flex-col md:flex-row gap-4 justify-between items-center">
+                        <div class="relative w-full md:w-80">
+                            <input type="text" id="searchStatusSekolah" onkeyup="filterStatusSekolahTable()" placeholder="Cari NPSN, Nama Sekolah, Kab/Kota..." class="w-full pl-10 pr-4 py-2 border border-slate-300 rounded-xl text-xs focus:ring-indigo-500 focus:border-indigo-500">
+                            <svg class="w-4 h-4 text-slate-400 absolute left-3.5 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                        </div>
+                        <div class="flex flex-wrap items-center gap-3 w-full md:w-auto">
+                            <select id="filterStatusJenjang" onchange="filterStatusSekolahTable()" class="border-slate-300 rounded-xl text-xs px-3 py-2 bg-slate-50">
+                                <option value="ALL">Semua Jenjang</option>
+                                <option value="PAUD">PAUD</option>
+                                <option value="SD">SD</option>
+                                <option value="SMP">SMP</option>
+                                <option value="SMA">SMA</option>
+                                <option value="SMK">SMK</option>
+                                <option value="SLB">SLB</option>
+                            </select>
+                            <select id="filterStatusKab" onchange="filterStatusSekolahTable()" class="border-slate-300 rounded-xl text-xs px-3 py-2 bg-slate-50">
+                                <option value="ALL">Semua Kab / Kota</option>
+                            </select>
+                            <select id="filterStatusKatPM" onchange="filterStatusSekolahTable()" class="border-slate-300 rounded-xl text-xs px-3 py-2 bg-slate-50 font-semibold text-indigo-900">
+                                <option value="ALL">Semua Kategori PM</option>
+                                <option value="Unggul">Unggul</option>
+                                <option value="Maju">Maju</option>
+                                <option value="Berkembang">Berkembang</option>
+                                <option value="Pra-Berkembang">Pra-Berkembang</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Table Container -->
+                    <div class="bg-white rounded-2xl shadow-2xs border border-slate-200/80 overflow-hidden" id="containerStatusSekolahTable">
+                        <div class="text-center text-slate-500 py-12"><div class="spinner mx-auto mb-2"></div>Memuat data status sekolah...</div>
+                    </div>
+                </div>
+
+                <!-- MODAL DETAIL STATUS SEKOLAH MODEL -->
+                <div id="modalDetailStatusSekolah" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 hidden flex items-center justify-center p-4">
+                    <div class="bg-white rounded-3xl max-w-4xl w-full max-h-[90vh] flex flex-col shadow-2xl overflow-hidden border border-slate-100">
+                        <div class="p-6 bg-slate-900 text-white flex justify-between items-center flex-shrink-0">
+                            <div>
+                                <span class="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-indigo-500/30 text-indigo-200 uppercase tracking-wider mb-1 inline-block">Rapor Baseline Sekolah Model</span>
+                                <h3 class="text-xl font-bold" id="modalStatusSchoolTitle">Nama Sekolah</h3>
+                                <p class="text-xs text-slate-400 mt-0.5" id="modalStatusSchoolSub">NPSN: - | Kab/Kota: -</p>
+                            </div>
+                            <button onclick="closeModalDetailStatusSekolah()" class="text-slate-400 hover:text-white p-2 rounded-xl hover:bg-white/10 transition-colors">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                            </button>
+                        </div>
+                        <div class="p-6 overflow-y-auto space-y-6 flex-1 text-sm bg-slate-50/50" id="modalStatusSchoolContent">
+                            <!-- Populated dynamically -->
+                        </div>
                     </div>
                 </div>
 
@@ -971,7 +1048,7 @@
 
             if (targetView) targetView.classList.remove('hidden');
             if (targetBtn) {
-                if (mode === 'mode3' || mode === 'mode4' || mode === 'mode7' || mode === 'mode5') {
+                if (mode === 'mode3' || mode === 'mode4' || mode === 'mode7' || mode === 'mode5' || mode === 'modeStatusSekolah') {
                     targetBtn.className = "sidebar-btn flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-bold bg-emerald-50 text-emerald-900 border-l-2 border-emerald-600 transition-all duration-200 w-full text-left";
                 } else {
                     targetBtn.className = "sidebar-btn flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-bold bg-emerald-50 text-emerald-900 border-l-4 border-emerald-600 transition-all duration-200 w-full text-left relative group shadow-2xs";
@@ -988,6 +1065,7 @@
             else if (mode === 'mode4') { if (pageTitle) pageTitle.textContent = "Jadwal & Laporan Fasilitator"; loadJadwalFasilData(); }
             else if (mode === 'mode5') { if (pageTitle) pageTitle.textContent = "Assign Pendamping Sekolah"; loadManajemenSekolahData(); }
             else if (mode === 'mode7') { if (pageTitle) pageTitle.textContent = "Jadwal Kunjungan Semua Sekolah"; loadDataKunjunganData(); }
+            else if (mode === 'modeStatusSekolah') { if (pageTitle) pageTitle.textContent = "Status & Baseline Sekolah Model"; loadStatusSekolahModelData(); }
             else if (mode === 'mode8') { if (pageTitle) pageTitle.textContent = "Pengaturan Rentang Waktu"; }
             else if (mode === 'modeKombel') { if (pageTitle) pageTitle.textContent = "Master Komunitas Belajar (1.804)"; loadKombelData(); }
             else if (mode === 'modePegawai') { if (pageTitle) pageTitle.textContent = "Master Pegawai BGTK (57)"; loadPegawaiData(); }
@@ -2027,6 +2105,192 @@
             container.innerHTML = html;
         }
         function changeKunjunganPage(p) { gKunjunganPage = p; renderDataKunjunganTable(gFilteredKunjunganRows); }
+
+        // ==========================================
+        // STATUS & BASELINE SEKOLAH MODEL LOGIC
+        // ==========================================
+        let gStatusSekolahRaw = {};
+        let gFilteredStatusRows = [];
+        let gStatusPage = 1;
+
+        async function loadStatusSekolahModelData() {
+            const container = document.getElementById('containerStatusSekolahTable');
+            if (container) container.innerHTML = '<div class="text-center text-slate-500 py-12"><div class="spinner mx-auto mb-2"></div>Memuat data status sekolah...</div>';
+            
+            try {
+                const res = await fetch('./data_status_sekolah_model.json');
+                gStatusSekolahRaw = await res.json();
+                
+                const schools = Object.values(gStatusSekolahRaw);
+                let sumPM = 0, countPM = 0, sumKKA = 0, countKKA = 0, majuCount = 0;
+                const kabSet = new Set();
+
+                schools.forEach(s => {
+                    if (s.kab_kota) kabSet.add(s.kab_kota);
+                    if (typeof s.pm?.skor === 'number') { sumPM += s.pm.skor; countPM++; }
+                    if (typeof s.kka?.skor === 'number') { sumKKA += s.kka.skor; countKKA++; }
+                    if (s.pm?.kategori === 'Maju' || s.pm?.kategori === 'Unggul') majuCount++;
+                });
+
+                document.getElementById('statStatusTotal').textContent = schools.length;
+                document.getElementById('statStatusAvgPM').textContent = countPM ? (sumPM / countPM).toFixed(2) : '-';
+                document.getElementById('statStatusAvgKKA').textContent = countKKA ? (sumKKA / countKKA).toFixed(2) : '-';
+                document.getElementById('statStatusMajuCount').textContent = `${majuCount} Sekolah`;
+
+                const kabSel = document.getElementById('filterStatusKab');
+                if (kabSel) {
+                    kabSel.innerHTML = '<option value="ALL">Semua Kab / Kota (' + kabSet.size + ')</option>';
+                    Array.from(kabSet).sort().forEach(k => {
+                        const opt = document.createElement('option');
+                        opt.value = k; opt.textContent = k;
+                        kabSel.appendChild(opt);
+                    });
+                }
+
+                gFilteredStatusRows = schools;
+                gStatusPage = 1;
+                renderStatusSekolahTable(gFilteredStatusRows);
+            } catch(e) {
+                console.error("Gagal loadStatusSekolahModelData", e);
+                if (container) container.innerHTML = '<div class="text-center text-red-500 py-6">Gagal memuat data status sekolah.</div>';
+            }
+        }
+
+        function filterStatusSekolahTable() {
+            const q = (document.getElementById('searchStatusSekolah')?.value || '').toLowerCase();
+            const jenjang = document.getElementById('filterStatusJenjang')?.value || 'ALL';
+            const kab = document.getElementById('filterStatusKab')?.value || 'ALL';
+            const katPM = document.getElementById('filterStatusKatPM')?.value || 'ALL';
+
+            const schools = Object.values(gStatusSekolahRaw);
+            gFilteredStatusRows = schools.filter(s => {
+                if (q && !s.nama_sekolah.toLowerCase().includes(q) && !s.npsn.includes(q) && !s.kab_kota.toLowerCase().includes(q)) return false;
+                if (jenjang !== 'ALL' && s.jenjang !== jenjang) return false;
+                if (kab !== 'ALL' && s.kab_kota !== kab) return false;
+                if (katPM !== 'ALL' && s.pm?.kategori !== katPM) return false;
+                return true;
+            });
+
+            gStatusPage = 1;
+            renderStatusSekolahTable(gFilteredStatusRows);
+        }
+
+        function renderStatusSekolahTable(rows) {
+            const container = document.getElementById('containerStatusSekolahTable');
+            if (!container) return;
+            if (rows.length === 0) { container.innerHTML = '<div class="text-center text-slate-400 py-12">Tidak ada data sekolah sesuai filter.</div>'; return; }
+            
+            const start = (gStatusPage - 1) * PER_PAGE;
+            const pageItems = rows.slice(start, start + PER_PAGE);
+            
+            let html = `<div class="overflow-x-auto"><table class="w-full text-left text-xs whitespace-nowrap"><thead class="bg-slate-50 text-slate-600 font-bold border-b border-slate-200"><tr><th class="px-4 py-3 text-center">#</th><th class="px-4 py-3">Nama Sekolah Model &amp; NPSN</th><th class="px-4 py-3 text-center">Jenjang</th><th class="px-4 py-3">Kabupaten / Kota</th><th class="px-4 py-3 text-center">Pemilihan</th><th class="px-4 py-3 text-center">Kategori PM</th><th class="px-4 py-3 text-center">Kategori KKA</th><th class="px-4 py-3 text-center">Aksi Detail</th></tr></thead><tbody class="divide-y divide-slate-100">`;
+            
+            pageItems.forEach((s, idx) => {
+                let badgePM = "bg-slate-100 text-slate-600";
+                if (s.pm?.kategori === 'Unggul') badgePM = "bg-emerald-100 text-emerald-800 font-bold border border-emerald-200";
+                else if (s.pm?.kategori === 'Maju') badgePM = "bg-blue-100 text-blue-800 font-bold border border-blue-200";
+                else if (s.pm?.kategori === 'Berkembang') badgePM = "bg-amber-100 text-amber-800 font-bold border border-amber-200";
+                else if (s.pm?.kategori === 'Pra-Berkembang') badgePM = "bg-rose-100 text-rose-800 font-bold border border-rose-200";
+
+                let badgeKKA = "bg-slate-100 text-slate-600";
+                if (s.kka?.kategori === 'Unggul') badgeKKA = "bg-emerald-100 text-emerald-800 font-bold border border-emerald-200";
+                else if (s.kka?.kategori === 'Maju') badgeKKA = "bg-blue-100 text-blue-800 font-bold border border-blue-200";
+                else if (s.kka?.kategori === 'Berkembang') badgeKKA = "bg-purple-100 text-purple-800 font-bold border border-purple-200";
+                else if (s.kka?.kategori === 'Pra-Berkembang') badgeKKA = "bg-rose-100 text-rose-800 font-bold border border-rose-200";
+
+                html += `<tr class="hover:bg-slate-50 transition-colors">
+                    <td class="px-4 py-3 text-center text-slate-400 font-mono">${start + idx + 1}</td>
+                    <td class="px-4 py-3"><div class="font-bold text-slate-900">${s.nama_sekolah}</div><div class="text-[10px] text-slate-400 font-mono">NPSN: ${s.npsn}</div></td>
+                    <td class="px-4 py-3 text-center"><span class="px-2 py-0.5 rounded font-bold bg-slate-100 text-slate-700">${s.jenjang}</span></td>
+                    <td class="px-4 py-3 text-slate-600">${s.kab_kota}</td>
+                    <td class="px-4 py-3 text-center"><span class="px-2 py-0.5 rounded text-[11px] font-semibold ${s.status_pemilihan === 'Mitra' ? 'bg-purple-50 text-purple-700' : 'bg-blue-50 text-blue-700'}">${s.status_pemilihan}</span></td>
+                    <td class="px-4 py-3 text-center"><span class="px-2.5 py-1 rounded-full text-xs ${badgePM}">${s.pm?.kategori || '-'} (${s.pm?.skor || '-'})</span></td>
+                    <td class="px-4 py-3 text-center"><span class="px-2.5 py-1 rounded-full text-xs ${badgeKKA}">${s.kka?.kategori || '-'} (${s.kka?.skor || '-'})</span></td>
+                    <td class="px-4 py-3 text-center"><button onclick="openModalDetailStatusSekolah('${s.npsn}')" class="bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 px-3 py-1 rounded-xl text-xs font-bold transition-colors flex items-center gap-1 mx-auto">📊 Detail Rapor</button></td>
+                </tr>`;
+            });
+            
+            html += `</tbody></table></div>`;
+            html += buildPagination(gStatusPage, rows.length, PER_PAGE, 'changeStatusSekolahPage');
+            container.innerHTML = html;
+        }
+
+        function changeStatusSekolahPage(p) { gStatusPage = p; renderStatusSekolahTable(gFilteredStatusRows); }
+
+        function openModalDetailStatusSekolah(npsn) {
+            const s = gStatusSekolahRaw[npsn];
+            if (!s) return alert("Data sekolah tidak ditemukan.");
+            
+            document.getElementById('modalStatusSchoolTitle').textContent = s.nama_sekolah;
+            document.getElementById('modalStatusSchoolSub').textContent = `NPSN: ${s.npsn} | Jenjang: ${s.jenjang} | Kab/Kota: ${s.kab_kota} | Status Sekolah: ${s.status_sekolah}`;
+
+            const content = document.getElementById('modalStatusSchoolContent');
+            
+            let pmSubsHtml = '';
+            for (const k in s.pm?.sub_indikator || {}) {
+                const val = s.pm.sub_indikator[k];
+                const displayKey = k.replace(/_/g, '.');
+                pmSubsHtml += `<div class="bg-white p-2.5 rounded-xl border border-slate-200 flex justify-between items-center"><span class="font-bold text-slate-700 text-xs">${displayKey}</span><span class="px-2 py-0.5 rounded text-[11px] font-bold bg-indigo-50 text-indigo-800">${val}</span></div>`;
+            }
+
+            let kkaSubsHtml = '';
+            for (const k in s.kka?.sub_indikator || {}) {
+                const val = s.kka.sub_indikator[k];
+                const displayKey = k.replace(/_/g, '.');
+                kkaSubsHtml += `<div class="bg-white p-2.5 rounded-xl border border-slate-200 flex justify-between items-center"><span class="font-bold text-slate-700 text-xs">${displayKey}</span><span class="px-2 py-0.5 rounded text-[11px] font-bold bg-purple-50 text-purple-800">${val}</span></div>`;
+            }
+
+            content.innerHTML = `
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-2xs space-y-4">
+                        <div class="flex justify-between items-center border-b border-slate-100 pb-3">
+                            <div>
+                                <h4 class="font-black text-slate-900 text-base">Pembelajaran Mendalam (PM)</h4>
+                                <p class="text-xs text-slate-400">Skor Total &amp; Kategori Baseline</p>
+                            </div>
+                            <span class="px-3 py-1 rounded-full text-xs font-black bg-indigo-100 text-indigo-800 border border-indigo-200">${s.pm?.kategori || '-'} (${s.pm?.skor || '-'})</span>
+                        </div>
+                        <div class="grid grid-cols-3 gap-2 text-center text-xs">
+                            <div class="bg-slate-50 p-2.5 rounded-xl border border-slate-100"><div class="text-slate-400 text-[10px] uppercase font-bold">Murid</div><div class="font-bold text-slate-800 mt-0.5">${s.pm?.murid || '-'}</div></div>
+                            <div class="bg-slate-50 p-2.5 rounded-xl border border-slate-100"><div class="text-slate-400 text-[10px] uppercase font-bold">Guru</div><div class="font-bold text-slate-800 mt-0.5">${s.pm?.guru || '-'}</div></div>
+                            <div class="bg-slate-50 p-2.5 rounded-xl border border-slate-100"><div class="text-slate-400 text-[10px] uppercase font-bold">Kepsek</div><div class="font-bold text-slate-800 mt-0.5">${s.pm?.kepsek || '-'}</div></div>
+                        </div>
+                        <div class="space-y-2 pt-2">
+                            <div class="text-xs font-bold text-slate-700">Rincian Indikator PM:</div>
+                            <div class="grid grid-cols-2 sm:grid-cols-3 gap-2 max-h-48 overflow-y-auto pr-1">
+                                ${pmSubsHtml || '<div class="text-slate-400 text-xs col-span-3">Tidak ada data.</div>'}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-2xs space-y-4">
+                        <div class="flex justify-between items-center border-b border-slate-100 pb-3">
+                            <div>
+                                <h4 class="font-black text-slate-900 text-base">Koding &amp; KA (KKA)</h4>
+                                <p class="text-xs text-slate-400">Skor Total &amp; Kategori Baseline</p>
+                            </div>
+                            <span class="px-3 py-1 rounded-full text-xs font-black bg-purple-100 text-purple-800 border border-purple-200">${s.kka?.kategori || '-'} (${s.kka?.skor || '-'})</span>
+                        </div>
+                        <div class="grid grid-cols-2 gap-2 text-center text-xs">
+                            <div class="bg-slate-50 p-2.5 rounded-xl border border-slate-100"><div class="text-slate-400 text-[10px] uppercase font-bold">Guru KKA</div><div class="font-bold text-slate-800 mt-0.5">${s.kka?.guru || '-'}</div></div>
+                            <div class="bg-slate-50 p-2.5 rounded-xl border border-slate-100"><div class="text-slate-400 text-[10px] uppercase font-bold">Kepsek KKA</div><div class="font-bold text-slate-800 mt-0.5">${s.kka?.kepsek || '-'}</div></div>
+                        </div>
+                        <div class="space-y-2 pt-2">
+                            <div class="text-xs font-bold text-slate-700">Rincian Indikator KKA:</div>
+                            <div class="grid grid-cols-2 sm:grid-cols-3 gap-2 max-h-48 overflow-y-auto pr-1">
+                                ${kkaSubsHtml || '<div class="text-slate-400 text-xs col-span-3">Tidak ada data.</div>'}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('modalDetailStatusSekolah').classList.remove('hidden');
+        }
+
+        function closeModalDetailStatusSekolah() {
+            document.getElementById('modalDetailStatusSekolah').classList.add('hidden');
+        }
 
         // Placeholder for mode8 setting
         function simpanSettingJadwal() { alert("Fitur simpan setting jadwal akan segera tersedia."); }

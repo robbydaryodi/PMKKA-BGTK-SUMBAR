@@ -171,6 +171,10 @@
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"/></svg>
                         <span>Daftar Sekolah</span>
                     </button>
+                    <button id="btnViewStatus" onclick="switchMainView('status')" class="px-4 py-2 rounded-lg transition-all flex items-center gap-1.5 text-slate-600 hover:text-slate-900">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 00-2 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+                        <span>Status Baseline</span>
+                    </button>
                 </div>
             </div>
         </div>
@@ -248,6 +252,18 @@
             <div id="sekolahContainer" class="space-y-6">
                 <!-- Rendered via JS -->
                 <div class="text-center text-slate-500 py-12">Memuat data sekolah...</div>
+            </div>
+        </div>
+        
+        <!-- ================= CONTAINER TAMPILAN 3: STATUS BASELINE SEKOLAH BINAAN ================= -->
+        <div id="containerStatusView" class="hidden space-y-6 fade-in">
+            <div class="glass-card rounded-2xl p-6 bg-gradient-to-r from-indigo-900 via-slate-900 to-purple-950 text-white shadow-sm">
+                <span class="inline-block px-3 py-1 bg-white/20 backdrop-blur-md rounded-full text-xs font-bold text-indigo-100 uppercase tracking-wider mb-2">Asesmen Baseline Resmi BGTK</span>
+                <h2 class="text-xl font-extrabold">Status Baseline Sekolah Binaan Anda</h2>
+                <p class="text-xs text-indigo-200 mt-1">Data evaluasi awal Pembelajaran Mendalam (PM) &amp; Koding-Kecerdasan Artifisial (KKA) khusus untuk sekolah yang Anda dampingi.</p>
+            </div>
+            <div id="fasilStatusListContainer" class="space-y-6">
+                <!-- Populated dynamically per assigned school -->
             </div>
         </div>
     </div>
@@ -466,14 +482,9 @@
                                  <input type="date" id="inputKunjunganTanggal" class="w-full border-slate-300 rounded-xl shadow-sm focus:ring-primary focus:border-primary px-4 py-2 border text-sm" required>
                              </div>
                              <div>
-                                 <label class="block text-xs font-bold uppercase text-slate-600 mb-1">Tahap Siklus TET <span class="text-red-500">*</span></label>
-                                 <select id="inputSiklusTet" class="w-full border-slate-300 rounded-xl shadow-sm focus:ring-primary focus:border-primary px-4 py-2 border text-sm" required>
-                                     <option value="">Pilih Tahap...</option>
-                                     <option value="Identifikasi/Assess">Identifikasi / Assess</option>
-                                     <option value="Desain/Design">Desain / Design</option>
-                                     <option value="Implementasi/Implement">Implementasi / Implement</option>
-                                     <option value="Refleksi/Measure & Reflect">Refleksi / Measure & Reflect</option>
-                                 </select>
+                                  <label class="block text-xs font-bold uppercase text-slate-600 mb-1">Status Baseline Sekolah (Ter-set Otomatis)</label>
+                                  <input type="text" id="inputSiklusTet" readonly class="w-full bg-slate-100 border-slate-200 rounded-xl px-4 py-2 border text-slate-800 font-bold text-xs focus:outline-none" value="Maju">
+                                  <p class="text-[10px] text-slate-400 mt-1" id="infoSiklusTetDisplay">🎯 Pre-set dari Data Status Sekolah Model BGTK Sumbar</p>
                              </div>
                              
                              <div class="mt-2 sm:col-span-2">
@@ -836,12 +847,17 @@
 
             document.getElementById('dashSubGreeting').innerText = `${myAssignedSchools.length} Sekolah Binaan Ditugaskan`;
 
+            // Load baseline status data
+            await loadStatusBaselineData();
+
             // Populate School Filter & Modal School Dropdown
             populateSchoolOptions();
 
             // Render active view
             if (currentActiveView === 'calendar') {
                 renderCalendar();
+            } else if (currentActiveView === 'status') {
+                renderStatusBaselineFasil();
             } else {
                 renderListView();
             }
@@ -871,21 +887,35 @@
             currentActiveView = view;
             const btnCal = document.getElementById('btnViewCalendar');
             const btnList = document.getElementById('btnViewList');
+            const btnStatus = document.getElementById('btnViewStatus');
             const cCal = document.getElementById('containerCalendarView');
             const cList = document.getElementById('containerListView');
+            const cStatus = document.getElementById('containerStatusView');
 
             if (view === 'calendar') {
                 btnCal.className = "px-4 py-2 rounded-lg transition-all flex items-center gap-1.5 bg-white text-indigo-700 shadow-sm";
                 btnList.className = "px-4 py-2 rounded-lg transition-all flex items-center gap-1.5 text-slate-600 hover:text-slate-900";
+                btnStatus.className = "px-4 py-2 rounded-lg transition-all flex items-center gap-1.5 text-slate-600 hover:text-slate-900";
                 cCal.classList.remove('hidden');
                 cList.classList.add('hidden');
+                cStatus.classList.add('hidden');
                 renderCalendar();
-            } else {
+            } else if (view === 'list') {
                 btnList.className = "px-4 py-2 rounded-lg transition-all flex items-center gap-1.5 bg-white text-indigo-700 shadow-sm";
                 btnCal.className = "px-4 py-2 rounded-lg transition-all flex items-center gap-1.5 text-slate-600 hover:text-slate-900";
+                btnStatus.className = "px-4 py-2 rounded-lg transition-all flex items-center gap-1.5 text-slate-600 hover:text-slate-900";
                 cList.classList.remove('hidden');
                 cCal.classList.add('hidden');
+                cStatus.classList.add('hidden');
                 renderListView();
+            } else if (view === 'status') {
+                btnStatus.className = "px-4 py-2 rounded-lg transition-all flex items-center gap-1.5 bg-white text-indigo-700 shadow-sm";
+                btnCal.className = "px-4 py-2 rounded-lg transition-all flex items-center gap-1.5 text-slate-600 hover:text-slate-900";
+                btnList.className = "px-4 py-2 rounded-lg transition-all flex items-center gap-1.5 text-slate-600 hover:text-slate-900";
+                cStatus.classList.remove('hidden');
+                cCal.classList.add('hidden');
+                cList.classList.add('hidden');
+                renderStatusBaselineFasil();
             }
         }
 
@@ -893,9 +923,149 @@
             currentFilterSchool = npsn;
             if (currentActiveView === 'calendar') {
                 renderCalendar();
+            } else if (currentActiveView === 'status') {
+                renderStatusBaselineFasil();
             } else {
                 renderListView();
             }
+        }
+
+        // ================= STATUS BASELINE SEKOLAH BINAAN LOGIC =================
+        let globalStatusSekolahData = {};
+
+        async function loadStatusBaselineData() {
+            try {
+                const res = await fetch('./data_status_sekolah_model.json');
+                globalStatusSekolahData = await res.json();
+            } catch(e) {
+                console.error("Gagal loadStatusBaselineData", e);
+            }
+        }
+
+        function renderStatusBaselineFasil() {
+            const container = document.getElementById('fasilStatusListContainer');
+            if (!container) return;
+            container.innerHTML = '<div class="text-center text-slate-500 py-12"><div class="spinner mx-auto mb-2"></div>Memuat status baseline sekolah binaan...</div>';
+            
+            if (!myAssignedSchools || myAssignedSchools.length === 0) {
+                container.innerHTML = '<div class="text-center p-8 bg-white rounded-2xl border border-slate-200 text-slate-500 font-semibold">Anda belum memiliki sekolah binaan yang ditugaskan.</div>';
+                return;
+            }
+
+            let filteredSchools = myAssignedSchools;
+            if (currentFilterSchool !== 'ALL') {
+                filteredSchools = myAssignedSchools.filter(n => n === currentFilterSchool);
+            }
+
+            if (filteredSchools.length === 0) {
+                container.innerHTML = '<div class="text-center p-8 bg-white rounded-2xl border border-slate-200 text-slate-500">Tidak ada sekolah sesuai filter yang dipilih.</div>';
+                return;
+            }
+
+            let html = '';
+            filteredSchools.forEach(npsn => {
+                const s = globalStatusSekolahData[npsn];
+                const firstTeacher = allSchools[npsn] ? Object.values(allSchools[npsn])[0] : null;
+                const schoolName = (s && s.nama_sekolah) ? s.nama_sekolah : ((firstTeacher && firstTeacher.asal_sekolah) ? firstTeacher.asal_sekolah : `Sekolah ${npsn}`);
+                const jenjang = (s && s.jenjang) ? s.jenjang : ((firstTeacher && firstTeacher.jenjang) ? firstTeacher.jenjang : '-');
+                const kabKota = (s && s.kab_kota) ? s.kab_kota : ((firstTeacher && firstTeacher.kode_kabupaten) ? firstTeacher.kode_kabupaten : '-');
+                
+                if (!s) {
+                    html += `<div class="glass-card rounded-2xl p-6 border border-slate-200 text-slate-500 space-y-2"><div class="flex items-center gap-2"><span class="px-2 py-0.5 rounded text-[10px] font-bold bg-slate-100 text-slate-600">${jenjang}</span><h3 class="font-bold text-slate-900">${schoolName}</h3></div><p class="text-xs text-slate-400">NPSN: ${npsn} | Kab/Kota: ${kabKota}</p><div class="bg-amber-50 text-amber-800 p-3 rounded-xl text-xs font-medium border border-amber-200">Data status baseline belum diunggah untuk sekolah ini.</div></div>`;
+                    return;
+                }
+
+                let badgePM = "bg-indigo-100 text-indigo-800 border border-indigo-200";
+                if (s.pm?.kategori === 'Unggul') badgePM = "bg-emerald-100 text-emerald-800 font-bold border border-emerald-200";
+                else if (s.pm?.kategori === 'Maju') badgePM = "bg-blue-100 text-blue-800 font-bold border border-blue-200";
+                else if (s.pm?.kategori === 'Pra-Berkembang') badgePM = "bg-rose-100 text-rose-800 font-bold border border-rose-200";
+
+                let badgeKKA = "bg-purple-100 text-purple-800 border border-purple-200";
+                if (s.kka?.kategori === 'Unggul') badgeKKA = "bg-emerald-100 text-emerald-800 font-bold border border-emerald-200";
+                else if (s.kka?.kategori === 'Maju') badgeKKA = "bg-blue-100 text-blue-800 font-bold border border-blue-200";
+                else if (s.kka?.kategori === 'Pra-Berkembang') badgeKKA = "bg-rose-100 text-rose-800 font-bold border border-rose-200";
+
+                let pmSubsHtml = '';
+                for (const k in s.pm?.sub_indikator || {}) {
+                    const val = s.pm.sub_indikator[k];
+                    const displayKey = k.replace(/_/g, '.');
+                    pmSubsHtml += `<div class="bg-white p-2 rounded-lg border border-slate-200 flex justify-between items-center text-xs"><span class="font-bold text-slate-700">${displayKey}</span><span class="px-2 py-0.5 rounded text-[10px] font-extrabold bg-indigo-50 text-indigo-800">${val}</span></div>`;
+                }
+
+                let kkaSubsHtml = '';
+                for (const k in s.kka?.sub_indikator || {}) {
+                    const val = s.kka.sub_indikator[k];
+                    const displayKey = k.replace(/_/g, '.');
+                    kkaSubsHtml += `<div class="bg-white p-2 rounded-lg border border-slate-200 flex justify-between items-center text-xs"><span class="font-bold text-slate-700">${displayKey}</span><span class="px-2 py-0.5 rounded text-[10px] font-extrabold bg-purple-50 text-purple-800">${val}</span></div>`;
+                }
+
+                html += `
+                    <div class="glass-card rounded-2xl p-6 md:p-8 border border-slate-200/90 shadow-sm space-y-6">
+                        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 border-b border-slate-100 pb-4">
+                            <div>
+                                <div class="flex items-center gap-2 mb-1">
+                                    <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black bg-indigo-50 text-indigo-800 border border-indigo-200 uppercase tracking-wider">${s.jenjang}</span>
+                                    <span class="px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-slate-100 text-slate-600">${s.kab_kota}</span>
+                                    <span class="px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-slate-100 text-slate-600">${s.status_sekolah}</span>
+                                </div>
+                                <h3 class="text-xl font-bold text-slate-900">${s.nama_sekolah}</h3>
+                                <p class="text-xs text-slate-400 mt-0.5">NPSN: ${s.npsn} | Pelaksana KKA: <strong class="text-slate-700">${s.status_pelaksana_kka}</strong> | Pemilihan: <strong class="text-slate-700">${s.status_pemilihan}</strong></p>
+                            </div>
+                            <div class="flex flex-wrap gap-2">
+                                <span class="px-3.5 py-1.5 rounded-full text-xs font-black ${badgePM}">PM: ${s.pm?.kategori || '-'} (${s.pm?.skor || '-'})</span>
+                                <span class="px-3.5 py-1.5 rounded-full text-xs font-black ${badgeKKA}">KKA: ${s.kka?.kategori || '-'} (${s.kka?.skor || '-'})</span>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                            <!-- PM Card -->
+                            <div class="bg-indigo-50/40 p-5 rounded-2xl border border-indigo-100 space-y-4">
+                                <div class="flex justify-between items-center border-b border-indigo-100/80 pb-3">
+                                    <div>
+                                        <h4 class="font-black text-indigo-950 text-sm flex items-center gap-1.5">📘 Pembelajaran Mendalam (PM)</h4>
+                                        <p class="text-[11px] text-indigo-600">Evaluasi Baseline Berdasar Rubrik PM</p>
+                                    </div>
+                                    <span class="px-3 py-1 rounded-full text-xs font-black bg-indigo-100 text-indigo-800 border border-indigo-200">${s.pm?.kategori || '-'} (${s.pm?.skor || '-'})</span>
+                                </div>
+                                <div class="grid grid-cols-3 gap-2 text-center text-xs">
+                                    <div class="bg-white p-2.5 rounded-xl border border-indigo-100 shadow-2xs"><div class="text-[10px] text-slate-400 font-bold uppercase">Domain Murid</div><div class="font-extrabold text-slate-800 mt-0.5 text-sm">${s.pm?.murid || '-'}</div></div>
+                                    <div class="bg-white p-2.5 rounded-xl border border-indigo-100 shadow-2xs"><div class="text-[10px] text-slate-400 font-bold uppercase">Domain Guru</div><div class="font-extrabold text-slate-800 mt-0.5 text-sm">${s.pm?.guru || '-'}</div></div>
+                                    <div class="bg-white p-2.5 rounded-xl border border-indigo-100 shadow-2xs"><div class="text-[10px] text-slate-400 font-bold uppercase">Domain Kepsek</div><div class="font-extrabold text-slate-800 mt-0.5 text-sm">${s.pm?.kepsek || '-'}</div></div>
+                                </div>
+                                <div class="space-y-2 pt-1">
+                                    <div class="text-xs font-bold text-indigo-900">Rincian Level Sub-Indikator PM:</div>
+                                    <div class="grid grid-cols-2 sm:grid-cols-3 gap-2 max-h-40 overflow-y-auto pr-1">
+                                        ${pmSubsHtml || '<div class="text-slate-400 text-xs">Tidak ada data</div>'}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- KKA Card -->
+                            <div class="bg-purple-50/40 p-5 rounded-2xl border border-purple-100 space-y-4">
+                                <div class="flex justify-between items-center border-b border-purple-100/80 pb-3">
+                                    <div>
+                                        <h4 class="font-black text-purple-950 text-sm flex items-center gap-1.5">💻 Koding &amp; KA (KKA)</h4>
+                                        <p class="text-[11px] text-purple-600">Evaluasi Baseline Berdasar Rubrik KKA</p>
+                                    </div>
+                                    <span class="px-3 py-1 rounded-full text-xs font-black bg-purple-100 text-purple-800 border border-purple-200">${s.kka?.kategori || '-'} (${s.kka?.skor || '-'})</span>
+                                </div>
+                                <div class="grid grid-cols-2 gap-2 text-center text-xs">
+                                    <div class="bg-white p-2.5 rounded-xl border border-purple-100 shadow-2xs"><div class="text-[10px] text-slate-400 font-bold uppercase">Domain Guru KKA</div><div class="font-extrabold text-slate-800 mt-0.5 text-sm">${s.kka?.guru || '-'}</div></div>
+                                    <div class="bg-white p-2.5 rounded-xl border border-purple-100 shadow-2xs"><div class="text-[10px] text-slate-400 font-bold uppercase">Domain Kepsek KKA</div><div class="font-extrabold text-slate-800 mt-0.5 text-sm">${s.kka?.kepsek || '-'}</div></div>
+                                </div>
+                                <div class="space-y-2 pt-1">
+                                    <div class="text-xs font-bold text-purple-900">Rincian Level Sub-Indikator KKA:</div>
+                                    <div class="grid grid-cols-2 sm:grid-cols-3 gap-2 max-h-40 overflow-y-auto pr-1">
+                                        ${kkaSubsHtml || '<div class="text-slate-400 text-xs">Tidak ada data</div>'}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
         }
 
         // ================= CALENDAR ENGINE =================
@@ -1553,7 +1723,15 @@
                 if (rules.end_date) tglInput.setAttribute('max', rules.end_date);
             }
 
-            document.getElementById('inputSiklusTet').value = '';
+            const sBaseline = globalStatusSekolahData[npsn];
+            const pmBaseline = sBaseline ? (sBaseline.pm?.kategori || 'Berkembang') : 'Berkembang';
+            const kkaBaseline = sBaseline ? (sBaseline.kka?.kategori || 'Berkembang') : 'Berkembang';
+            const baselineVal = `PM: ${pmBaseline} | KKA: ${kkaBaseline}`;
+
+            document.getElementById('inputSiklusTet').value = baselineVal;
+            const infoDisplay = document.getElementById('infoSiklusTetDisplay');
+            if (infoDisplay) infoDisplay.textContent = `🎯 Baseline Resmi: PM ${pmBaseline} (${sBaseline?.pm?.skor || '-'}) | KKA ${kkaBaseline} (${sBaseline?.kka?.skor || '-'})`;
+            
             document.querySelectorAll('input[name="partisipasi_guru"]').forEach(r => r.checked = false);
             
             // Clear rubrik
@@ -1576,7 +1754,9 @@
                 const data = snap.val();
                 if(data) {
                     document.getElementById('inputKunjunganTanggal').value = data.tanggal && data.tanggal !== '-' ? data.tanggal : '';
-                    document.getElementById('inputSiklusTet').value = data.tahap_siklus_tet || '';
+                    if (data.tahap_siklus_tet) {
+                        document.getElementById('inputSiklusTet').value = data.tahap_siklus_tet;
+                    }
                     if(data.partisipasi_guru) {
                         const el = document.querySelector('input[name="partisipasi_guru"][value="' + data.partisipasi_guru + '"]');
                         if(el) el.checked = true;
