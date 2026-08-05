@@ -283,7 +283,7 @@
                 <!-- Sekolah Dropdown -->
                 <div>
                     <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5">Pilih Sekolah Binaan <span class="text-red-500">*</span></label>
-                    <select id="calInputSekolah" onchange="onModalSekolahOrKunjunganChange()" class="w-full border-slate-300 rounded-xl shadow-sm focus:ring-primary focus:border-primary px-4 py-2.5 border bg-white text-sm font-medium">
+                    <select id="calInputSekolah" onchange="onModalSekolahChange()" class="w-full border-slate-300 rounded-xl shadow-sm focus:ring-primary focus:border-primary px-4 py-2.5 border bg-white text-sm font-medium">
                         <option value="">-- Pilih Sekolah Binaan --</option>
                     </select>
                 </div>
@@ -1165,6 +1165,45 @@
 
 
         // ================= MODAL JADWALKAN DARI KALENDER =================
+        function updateKunjunganOptionsForSchool(npsn) {
+            const kSelect = document.getElementById('calInputKunjungan');
+            if (!kSelect) return;
+
+            kSelect.innerHTML = '';
+            let firstUnscheduled = null;
+            const schoolJadwal = (npsn && allJadwalData[npsn]) ? allJadwalData[npsn] : {};
+
+            for (let i = 1; i <= 6; i++) {
+                const jData = schoolJadwal[`kunjungan_${i}`] || {};
+                const isScheduled = !!(jData.tanggal && jData.tanggal !== '-');
+                
+                const opt = document.createElement('option');
+                opt.value = i;
+                if (isScheduled) {
+                    opt.textContent = `Kunjungan ${i} (Sudah Dijadwalkan: ${formatIndoDate(jData.tanggal)})`;
+                    opt.className = "text-slate-400 bg-slate-50";
+                } else {
+                    opt.textContent = `Kunjungan ${i} (Belum Dijadwalkan)`;
+                    opt.className = "font-bold text-slate-800";
+                    if (!firstUnscheduled) firstUnscheduled = String(i);
+                }
+                kSelect.appendChild(opt);
+            }
+
+            // Auto-select first unscheduled kunjungan (if Kunjungan 1 is done, option automatically starts from Kunjungan 2)
+            if (firstUnscheduled) {
+                kSelect.value = firstUnscheduled;
+            } else {
+                kSelect.value = '6';
+            }
+        }
+
+        function onModalSekolahChange() {
+            const npsn = document.getElementById('calInputSekolah').value;
+            updateKunjunganOptionsForSchool(npsn);
+            onModalSekolahOrKunjunganChange();
+        }
+
         function bukaModalJadwalkanKalender(dateStr) {
             document.getElementById('calInputTanggal').value = dateStr;
             document.getElementById('modalJadwalSelectedDateText').innerText = `Tanggal: ${formatIndoDate(dateStr)}`;
@@ -1177,7 +1216,8 @@
                 selSchool.value = myAssignedSchools[0];
             }
 
-            document.getElementById('calInputKunjungan').value = '1';
+            // Auto-update kunjungan options & auto-select first unscheduled stage for selected school
+            updateKunjunganOptionsForSchool(selSchool.value);
             document.getElementById('calInputStatus').value = 'Direncanakan';
             
             onModalSekolahOrKunjunganChange();
@@ -1716,34 +1756,122 @@
             const kendala = document.getElementById('kendalaDitemukan').value || '-';
             const rekomendasi = document.getElementById('rekomendasiTindakLanjut').value || '-';
 
-            const rubrikA = ['A1_pm_bermakna', 'A2_pm_otonomi', 'A3_pm_refleksi', 'A4_kka_projek', 'A5_kka_kompetensi'];
-            const rubrikB = ['B1_pm_efektif', 'B2_pm_asesmen', 'B3_kka_literasi', 'B4_kka_kontekstual'];
-            const rubrikC = ['C1_pm_memimpin', 'C2_pm_supervisi', 'C3_kka_sumberdaya', 'C4_kka_kemitraan'];
-            
+            const itemDetails = {
+                A1_pm_bermakna: { code: 'A1', label: 'PM Bermakna', cat: 'A', name: 'Keunggulan Belajar Murid' },
+                A2_pm_otonomi: { code: 'A2', label: 'PM Otonomi', cat: 'A', name: 'Keunggulan Belajar Murid' },
+                A3_pm_refleksi: { code: 'A3', label: 'PM Refleksi', cat: 'A', name: 'Keunggulan Belajar Murid' },
+                A4_kka_projek: { code: 'A4', label: 'KKA Projek', cat: 'A', name: 'Keunggulan Belajar Murid' },
+                A5_kka_kompetensi: { code: 'A5', label: 'KKA Kompetensi', cat: 'A', name: 'Keunggulan Belajar Murid' },
+                
+                B1_pm_efektif: { code: 'B1', label: 'PM Efektif', cat: 'B', name: 'Keunggulan Mengajar Pendidik' },
+                B2_pm_asesmen: { code: 'B2', label: 'PM Asesmen', cat: 'B', name: 'Keunggulan Mengajar Pendidik' },
+                B3_kka_literasi: { code: 'B3', label: 'KKA Literasi', cat: 'B', name: 'Keunggulan Mengajar Pendidik' },
+                B4_kka_kontekstual: { code: 'B4', label: 'KKA Kontekstual', cat: 'B', name: 'Keunggulan Mengajar Pendidik' },
+                
+                C1_pm_memimpin: { code: 'C1', label: 'PM Memimpin', cat: 'C', name: 'Keunggulan Kepemimpinan Kepala Sekolah' },
+                C2_pm_supervisi: { code: 'C2', label: 'PM Supervisi', cat: 'C', name: 'Keunggulan Kepemimpinan Kepala Sekolah' },
+                C3_kka_sumberdaya: { code: 'C3', label: 'KKA Sumber Daya', cat: 'C', name: 'Keunggulan Kepemimpinan Kepala Sekolah' },
+                C4_kka_kemitraan: { code: 'C4', label: 'KKA Kemitraan', cat: 'C', name: 'Keunggulan Kepemimpinan Kepala Sekolah' }
+            };
+
+            const itemScores = {};
             let sumA=0, sumB=0, sumC=0;
-            rubrikA.forEach(id => sumA += parseInt(document.querySelector('input[name="'+id+'"]:checked')?.value || 0));
-            rubrikB.forEach(id => sumB += parseInt(document.querySelector('input[name="'+id+'"]:checked')?.value || 0));
-            rubrikC.forEach(id => sumC += parseInt(document.querySelector('input[name="'+id+'"]:checked')?.value || 0));
-            
-            const avgA = rubrikA.length > 0 ? (sumA / rubrikA.length) : 0;
-            const avgB = rubrikB.length > 0 ? (sumB / rubrikB.length) : 0;
-            const avgC = rubrikC.length > 0 ? (sumC / rubrikC.length) : 0;
+            const catItems = { A: [], B: [], C: [] };
+            const allItemsList = [];
+
+            Object.keys(itemDetails).forEach(id => {
+                const val = parseInt(document.querySelector('input[name="'+id+'"]:checked')?.value || 0);
+                const info = { id, score: val, ...itemDetails[id] };
+                itemScores[id] = info;
+                catItems[info.cat].push(info);
+                allItemsList.push(info);
+                if (info.cat === 'A') sumA += val;
+                if (info.cat === 'B') sumB += val;
+                if (info.cat === 'C') sumC += val;
+            });
+
+            const avgA = sumA / 5;
+            const avgB = sumB / 4;
+            const avgC = sumC / 4;
             const totalAvg = (avgA + avgB + avgC) / 3;
 
             let statusUtama = "";
-            if (totalAvg < 2) statusUtama = "Pra Berkembang";
-            else if (totalAvg < 3) statusUtama = "Berkembang";
-            else if (totalAvg < 4) statusUtama = "Maju";
+            if (totalAvg < 1.5) statusUtama = "Pra Berkembang";
+            else if (totalAvg < 2.5) statusUtama = "Berkembang";
+            else if (totalAvg < 3.5) statusUtama = "Maju";
             else statusUtama = "Unggul";
 
-            const cats = [
-                { name: "Keunggulan Belajar Murid", avg: avgA },
-                { name: "Keunggulan Mengajar Pendidik", avg: avgB },
-                { name: "Keunggulan Kepemimpinan Kepala Sekolah", avg: avgC }
+            const catList = [
+                { key: 'A', name: "Keunggulan Belajar Murid", avg: avgA, items: catItems.A },
+                { key: 'B', name: "Keunggulan Mengajar Pendidik", avg: avgB, items: catItems.B },
+                { key: 'C', name: "Keunggulan Kepemimpinan Kepala Sekolah", avg: avgC, items: catItems.C }
             ];
-            cats.sort((a, b) => b.avg - a.avg);
-            const kekuatan = cats[0].name;
-            const evaluasi = cats[cats.length - 1].name;
+            catList.sort((a, b) => b.avg - a.avg);
+
+            const katTertinggi = catList[0];
+            const katTerendah = catList[catList.length - 1];
+
+            // 1-2 indikator penahan di kategori terendah
+            const sortedItemsTerendah = [...katTerendah.items].sort((a, b) => a.score - b.score);
+            const penahan1 = sortedItemsTerendah[0];
+            const penahan2 = sortedItemsTerendah[1];
+            let penahanText = penahan1 ? `${penahan1.code} (${penahan1.label}, skor ${penahan1.score})` : '';
+            if (penahan2 && penahan2.score === penahan1.score && penahan2.code !== penahan1.code) {
+                penahanText += ` dan ${penahan2.code} (${penahan2.label}, skor ${penahan2.score})`;
+            }
+
+            // Indikator kritis (skor 1 atau 2) di semua kategori
+            const itemKritis = allItemsList.filter(i => i.score > 0 && i.score <= 2);
+            let kritisText = itemKritis.length > 0 
+                ? itemKritis.map(i => `${i.code} (${i.label}, skor ${i.score})`).join(', ')
+                : '';
+
+            // Narasi Catatan TET
+            const catatanTetRaw = document.getElementById('catatanPelaksanaan').value || '';
+            const catatanTetText = catatanTetRaw.trim() !== '' ? catatanTetRaw : 'Pelaksanaan pendampingan berjalan sesuai alur yang direncanakan dengan keterlibatan aktif peserta';
+
+            // Narasi Kendala & Solusi
+            let kendalaNarasi = "";
+            const kendalaRaw = (document.getElementById('kendalaDitemukan').value || '').trim();
+            if (!kendalaRaw || kendalaRaw === '-' || kendalaRaw.toLowerCase() === 'tidak ada') {
+                kendalaNarasi = "Tidak terdapat kendala signifikan yang tercatat pada kunjungan ini.";
+            } else {
+                const wordCount = kendalaRaw.split(/\s+/).length;
+                const hasSolusiKeywords = /solusi|mengatasi|upaya|diatasi|tindak/i.test(kendalaRaw);
+                if (wordCount < 10 && !hasSolusiKeywords) {
+                    kendalaNarasi = `Terkait kendala teknis dan operasional di lapangan, fasilitator mencatat keberadaan hambatan yaitu: "${kendalaRaw}". Hambatan ini berdampak pada perlambatan optimalisasi pelaksanaan kegiatan di sekolah binaan. Sebagai solusi rekomendasi awal, disarankan adanya koordinasi terstruktur dan pendampingan bertahap guna menguraikan kendala tersebut (saran ini merupakan rekomendasi awal yang perlu dikonfirmasi kembali oleh fasilitator).`;
+                } else {
+                    kendalaNarasi = kendalaRaw;
+                }
+            }
+
+            // Narasi Bab III Paragraf
+            const bab3_p1 = `Pelaksanaan pendampingan program Pembelajaran Mendalam (PM) serta Koding dan Kecerdasan Artifisial (KKA) menghasilkan rekapitulasi capaian kuantitatif pada tiga kategori utama, yaitu Keunggulan Belajar Murid sebesar ${avgA.toFixed(2)}, Keunggulan Mengajar Pendidik sebesar ${avgB.toFixed(2)}, dan Keunggulan Kepemimpinan Kepala Sekolah sebesar ${avgC.toFixed(2)}. Kategori dengan perolehan skor tertinggi tercatat pada ${katTertinggi.name} (skor ${katTertinggi.avg.toFixed(2)}) yang menjadi keunggulan utama sekolah binaan. Sementara itu, kategori ${katTerendah.name} memperoleh capaian paling rendah sebesar ${katTerendah.avg.toFixed(2)}, sehingga ditetapkan sebagai area perhatian ekstra yang memerlukan intervensi pembinaan secara intensif.`;
+
+            const bab3_p2 = `Capaian pada kategori ${katTerendah.name} secara signifikan ditahan oleh indikator penyusun dengan skor terendah, yaitu ${penahanText}. Rendahnya capaian pada indikator tersebut mengindikasikan bahwa keterbatasan dalam penguasaan teknis serta penerapan operasional terkait menjadi hambatan utama dalam mengoptimalkan implementasi program secara menyeluruh di tingkat sekolah.`;
+
+            const bab3_p3 = kritisText !== ''
+                ? `Sebagai catatan evaluasi tambahan, pengamatan terhadap seluruh instrumen mengidentifikasi keberadaan indikator dengan skor tergolong kritis (skor 1 atau 2), yaitu ${kritisText}. Indikator yang masih berada pada rentang Pra Berkembang dan Berkembang ini memerlukan pengawalan serta pendampingan terfokus agar tidak memicu kendala sistematis pada laju transformasi pembelajaran di sekolah binaan.`
+                : `Secara keseluruhan, indikator penyusun di luar kategori terendah menunjukkan konsistensi capaian yang baik dan telah memenuhi standar perkembangannya.`;
+
+            const bab3_p4 = `Pelaksanaan siklus pendampingan dan observasi lapangan secara khusus mencatat perkembangan sebagai berikut: ${catatanTetText.replace(/\.+$/, '')}. Respon dan komitmen sekolah terhadap catatan pelaksanaan tersebut menjadi fondasi utama dalam menentukan arah pembinaan pada periode selanjutnya.`;
+
+            // Narasi Bab IV
+            const bab4_p1 = `Berdasarkan akumulasi hasil penilaian seluruh rubrik observasi pendampingan, sekolah binaan mencatatkan perolehan rata-rata total sebesar ${totalAvg.toFixed(2)}. Mengacu pada ketentuan penetapan predikat program Pembelajaran Mendalam (PM) serta Koding dan Kecerdasan Artifisial (KKA)—yakni Pra Berkembang (skor di bawah 1.50), Berkembang (skor 1.50 hingga 2.49), Maju (skor 2.50 hingga 3.49), dan Unggul (skor 3.50 ke atas)—maka tingkat keterlaksanaan program di sekolah ini secara umum dikategorikan berada pada tahap ${statusUtama.toUpperCase()}. Capaian ini didukung oleh kekuatan utama pada ${katTertinggi.name} dengan skor ${katTertinggi.avg.toFixed(2)}, namun masih menghadapi tantangan pada ${katTerendah.name} yang mencatatkan skor ${katTerendah.avg.toFixed(2)}.`;
+
+            const tahapTetText = (tahap && tahap.trim() !== '') ? tahap : 'Identifikasi / Assess';
+
+            const bab4_p2 = `Pencapaian predikat ${statusUtama.toUpperCase()} pada tahapan siklus TET ${tahapTetText} memberikan gambaran pemetaan yang jelas bagi arah pembinaan sekolah. Posisi pada tahapan ${tahapTetText} ini mengondisikan sekolah untuk segera melakukan konsolidasi dan penyesuaian sebelum beranjak ke tahapan siklus TET berikutnya. Fokus transisi akan diarahkan untuk membenahi area yang masih tertinggal, terutama pada indikator ${penahanText}, sehingga kesiapan ekosistem sekolah semakin mantap dalam menjalankan tahapan selanjutnya.`;
+
+            const rekomInputRaw = (rekomendasi && rekomendasi !== '-') ? rekomendasi : 'Persiapan dan pendampingan lebih dimatangkan';
+
+            const rekomPoin1 = `1. Fasilitator pendamping bersama Kepala Sekolah menyelenggarakan sesi penguatan teknis komunitas belajar dalam waktu 3 hingga 4 minggu ke depan, dengan fokus menyusun perangkat dan strategi intervensi spesifik untuk mengurai hambatan pada ${penahanText}.`;
+            const rekomPoin2 = `2. Kepala Sekolah memfasilitasi kebutuhan sarana pendukung dan mengagendakan supervisi klinis secara berkala terhadap para pendidik dalam rentang waktu 4 hingga 6 minggu ke depan guna memantau perkembangan perbaikan pada kategori ${katTerendah.name}.`;
+            const rekomPoin3 = `3. Pendidik secara kolaboratif mempraktikkan perbaikan pembelajaran dan instrumen asesmen berbasis PM dan KKA dengan target peningkatan capaian indikator ${penahan1 ? penahan1.code : 'terkait'} mencapai skor minimal 3.00 pada kunjungan pendampingan berikutnya.`;
+
+            const rekomCatatan = `(Daftar rekomendasi di atas disusun melalui pengolahan data instrumen dan masukan awal fasilitator ("${rekomInputRaw}") sebagai rujukan terstruktur dalam perumusan rencana aksi final).`;
+
+            const bab4_penutup = `Secara umum, pendampingan pada periode mendatang bertujuan untuk mengeskalasi kapasitas dan kemandirian sekolah binaan agar mampu mengimplementasikan Pembelajaran Mendalam serta Koding dan Kecerdasan Artifisial secara efektif, bermakna, dan berkelanjutan.`;
 
             const npsnVal = document.getElementById('inputKunjunganNpsn').value;
             const kIdVal = document.getElementById('inputKunjunganId').value;
@@ -1828,17 +1956,24 @@
                         new Paragraph({ children: [new PageBreak()] }),
                         createHeading("BAB III", HeadingLevel.HEADING_1),
                         createHeading("HASIL PELAKSANAAN DAN EVALUASI", HeadingLevel.HEADING_1),
-                        justifyPara("Berdasarkan hasil observasi menggunakan instrumen penilaian skala 1-4, didapatkan rata-rata capaian sebagai berikut: Aspek Keunggulan Belajar Murid (" + avgA.toFixed(2) + "), Aspek Keunggulan Mengajar Pendidik (" + avgB.toFixed(2) + "), dan Aspek Keunggulan Kepemimpinan Kepala Sekolah (" + avgC.toFixed(2) + ")."),
-                        justifyPara("Dari data tersebut, keunggulan utama " + namaSekolah + " saat ini terlihat pada aspek " + kekuatan + ". Sebaliknya, area yang masih menjadi tantangan dan memerlukan perhatian ekstra adalah aspek " + evaluasi + "."),
+                        justifyPara(bab3_p1),
+                        justifyPara(bab3_p2),
+                        justifyPara(bab3_p3),
+                        justifyPara(bab3_p4),
                         new Paragraph({ text: "Kendala dan Solusi di Lapangan:", font: "Times New Roman", size: 24, bold: true, spacing: { before: 200, after: 100 } }),
-                        justifyPara(kendala),
+                        justifyPara(kendalaNarasi),
 
                         new Paragraph({ children: [new PageBreak()] }),
                         createHeading("BAB IV", HeadingLevel.HEADING_1),
                         createHeading("PENUTUP", HeadingLevel.HEADING_1),
-                        justifyPara("Berdasarkan akumulasi nilai seluruh rubrik observasi (Rata-rata: " + totalAvg.toFixed(2) + "), secara umum " + namaSekolah + " dapat dikategorikan berada pada tahap " + statusUtama.toUpperCase() + " dalam implementasi PM dan KKA."),
+                        justifyPara(bab4_p1),
+                        justifyPara(bab4_p2),
                         new Paragraph({ text: "Rekomendasi Tindak Lanjut:", font: "Times New Roman", size: 24, bold: true, spacing: { before: 200, after: 100 } }),
-                        justifyPara(rekomendasi),
+                        justifyPara(rekomPoin1),
+                        justifyPara(rekomPoin2),
+                        justifyPara(rekomPoin3),
+                        new Paragraph({ children: [new TextRun({ text: rekomCatatan, font: "Times New Roman", size: 22, italic: true })], alignment: AlignmentType.JUSTIFIED, spacing: { after: 200, line: 360 } }),
+                        justifyPara(bab4_penutup),
 
                         new Paragraph({ children: [new PageBreak()] }),
                         createHeading("LAMPIRAN", HeadingLevel.HEADING_1),
