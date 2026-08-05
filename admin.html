@@ -1794,6 +1794,9 @@
                 gJadwalFasilRaw = [];
                 for (const fId in fasils) {
                     const fasil = fasils[fId];
+                    const progs = fasil.programs || (fasil.program_kombel ? ['kombel'] : ['sekolah_model']);
+                    if (!progs.includes('sekolah_model')) continue;
+
                     const myNpsns = assigns[fId] || [];
                     myNpsns.forEach(npsn => {
                         // master_guru[npsn] is {guru_id: {asal_sekolah, kode_kabupaten, ...}}
@@ -1851,7 +1854,11 @@
                 const fasils = fasilSnap.val() || {}; const gurus = guruSnap.val() || {}; const assigns = assignSnap.val() || {}; const jadwals = jadwalSnap.val() || {};
                 let html = '';
                 for (const fId in fasils) {
-                    const fasil = fasils[fId]; const myNpsns = assigns[fId] || []; const rowCount = myNpsns.length;
+                    const fasil = fasils[fId];
+                    const progs = fasil.programs || (fasil.program_kombel ? ['kombel'] : ['sekolah_model']);
+                    if (!progs.includes('sekolah_model')) continue;
+
+                    const myNpsns = assigns[fId] || []; const rowCount = myNpsns.length;
                     if (rowCount === 0) {
                         html += `<tr class="border-b border-slate-100"><td class="px-4 py-3 font-bold text-emerald-800">${fasil.nama}</td><td colspan="8" class="px-4 py-3 text-slate-400 italic">Belum ada sekolah binaan yang ditugaskan.</td></tr>`;
                     } else {
@@ -1937,8 +1944,12 @@
             const select = document.getElementById('selectAssignFasil');
             select.innerHTML = '<option value="">-- Pilih Fasilitator Pendamping --</option>';
             for (const fId in gFasilListMode5) {
+                const fasil = gFasilListMode5[fId];
+                const progs = fasil.programs || (fasil.program_kombel ? ['kombel'] : ['sekolah_model']);
+                if (!progs.includes('sekolah_model')) continue;
+
                 const opt = document.createElement('option');
-                opt.value = fId; opt.textContent = gFasilListMode5[fId].nama + (gFasilListMode5[fId].instansi ? ` (${gFasilListMode5[fId].instansi})` : '');
+                opt.value = fId; opt.textContent = fasil.nama + (fasil.instansi ? ` (${fasil.instansi})` : '');
                 if (fId === currentFasilId) opt.selected = true;
                 select.appendChild(opt);
             }
