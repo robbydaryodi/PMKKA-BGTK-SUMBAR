@@ -8,6 +8,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
     <style>
         body { font-family: 'Inter', sans-serif; }
         .spinner {
@@ -154,6 +155,9 @@
         };
         
         firebase.initializeApp(firebaseConfig);
+        if (firebase.auth && !firebase.auth().currentUser) {
+            firebase.auth().signInAnonymously().catch(err => console.warn("Firebase Auth Error:", err));
+        }
         const db = firebase.database();
 
         // ROUTING

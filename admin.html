@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="UTF-8">
@@ -46,6 +46,7 @@
     <!-- Firebase v10+ Compat CDN -->
     <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 
     <!-- SheetJS for Excel Export -->
     <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
@@ -644,6 +645,9 @@
 
         if (firebase.apps.length === 0) {
             firebase.initializeApp(firebaseConfig);
+        }
+        if (firebase.auth && !firebase.auth().currentUser) {
+            firebase.auth().signInAnonymously().catch(err => console.warn("Firebase Auth Error:", err));
         }
         const db = firebase.database();
 

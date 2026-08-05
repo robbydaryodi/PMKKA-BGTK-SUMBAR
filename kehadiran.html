@@ -19,6 +19,7 @@
     <!-- Firebase -->
     <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 </head>
 <body class="bg-slate-50 min-h-screen flex items-center justify-center p-4">
     
@@ -100,6 +101,9 @@
             appId: "1:1014570073770:web:770e7e6cef2a52a3825ad3"
         };
         firebase.initializeApp(firebaseConfig);
+        if (firebase.auth && !firebase.auth().currentUser) {
+            firebase.auth().signInAnonymously().catch(err => console.warn("Firebase Auth Error:", err));
+        }
         const db = firebase.database();
 
         const urlParams = new URLSearchParams(window.location.search);

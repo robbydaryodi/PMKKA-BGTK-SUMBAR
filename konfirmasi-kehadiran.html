@@ -45,6 +45,7 @@
     <!-- Firebase v10+ (Compat for easy CDN usage in single file) -->
     <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
     
     <!-- SheetJS for Excel Export -->
     <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
@@ -681,6 +682,9 @@
         let db;
         if (Object.keys(firebaseConfig).length > 0 && firebaseConfig.apiKey) {
             firebase.initializeApp(firebaseConfig);
+            if (firebase.auth && !firebase.auth().currentUser) {
+                firebase.auth().signInAnonymously().catch(err => console.warn("Firebase Auth Error:", err));
+            }
             db = firebase.database();
         } else {
             console.warn("⚠️ Firebase config belum diatur. Harap edit index.html dan masukkan config Anda.");
