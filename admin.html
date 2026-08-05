@@ -579,6 +579,9 @@
                                 <option value="Berkembang">Berkembang</option>
                                 <option value="Pra-Berkembang">Pra-Berkembang</option>
                             </select>
+                            <select id="filterStatusFasil" onchange="filterStatusSekolahTable()" class="border-slate-300 rounded-xl text-xs px-3 py-2 bg-slate-50 font-semibold text-emerald-900">
+                                <option value="ALL">Semua Fasilitator</option>
+                            </select>
                         </div>
                     </div>
 
@@ -2110,6 +2113,7 @@
         // STATUS & BASELINE SEKOLAH MODEL LOGIC
         // ==========================================
         let gStatusSekolahRaw = {};
+        let gStatusSekolahWithFasil = [];
         let gFilteredStatusRows = [];
         let gStatusPage = 1;
 
@@ -2118,21 +2122,44 @@
             if (container) container.innerHTML = '<div class="text-center text-slate-500 py-12"><div class="spinner mx-auto mb-2"></div>Memuat data status sekolah...</div>';
             
             try {
-                const res = await fetch('./data_status_sekolah_model.json');
-                gStatusSekolahRaw = await res.json();
+                const [res, fasilSnap, assignSnap] = await Promise.all([
+                    fetch('./data_status_sekolah_model.json'),
+                    db.ref('fasilitator').once('value'),
+                    db.ref('fasilitator_sekolah').once('value')
+                ]);
                 
-                const schools = Object.values(gStatusSekolahRaw);
+                gStatusSekolahRaw = await res.json();
+                const fasils = fasilSnap.val() || {};
+                const assigns = assignSnap.val() || {};
+
+                // Map NPSN -> Fasilitator Name
+                const schoolToFasil = {};
+                const fasilSet = new Set();
+                for (const fId in assigns) {
+                    if (Array.isArray(assigns[fId])) {
+                        const fName = fasils[fId] ? fasils[fId].nama : null;
+                        if (fName) {
+                            fasilSet.add(fName);
+                            assigns[fId].forEach(n => schoolToFasil[n] = fName);
+                        }
+                    }
+                }
+
+                gStatusSekolahWithFasil = Object.values(gStatusSekolahRaw).map(s => {
+                    return { ...s, fasilName: schoolToFasil[s.npsn] || 'Belum Ditugaskan' };
+                });
+                
                 let sumPM = 0, countPM = 0, sumKKA = 0, countKKA = 0, majuCount = 0;
                 const kabSet = new Set();
 
-                schools.forEach(s => {
+                gStatusSekolahWithFasil.forEach(s => {
                     if (s.kab_kota) kabSet.add(s.kab_kota);
                     if (typeof s.pm?.skor === 'number') { sumPM += s.pm.skor; countPM++; }
                     if (typeof s.kka?.skor === 'number') { sumKKA += s.kka.skor; countKKA++; }
                     if (s.pm?.kategori === 'Maju' || s.pm?.kategori === 'Unggul') majuCount++;
                 });
 
-                document.getElementById('statStatusTotal').textContent = schools.length;
+                document.getElementById('statStatusTotal').textContent = gStatusSekolahWithFasil.length;
                 document.getElementById('statStatusAvgPM').textContent = countPM ? (sumPM / countPM).toFixed(2) : '-';
                 document.getElementById('statStatusAvgKKA').textContent = countKKA ? (sumKKA / countKKA).toFixed(2) : '-';
                 document.getElementById('statStatusMajuCount').textContent = `${majuCount} Sekolah`;
@@ -2147,7 +2174,17 @@
                     });
                 }
 
-                gFilteredStatusRows = schools;
+                const fasilSel = document.getElementById('filterStatusFasil');
+                if (fasilSel) {
+                    fasilSel.innerHTML = '<option value="ALL">Semua Fasilitator (' + fasilSet.size + ')</option>';
+                    Array.from(fasilSet).sort().forEach(f => {
+                        const opt = document.createElement('option');
+                        opt.value = f; opt.textContent = f;
+                        fasilSel.appendChild(opt);
+                    });
+                }
+
+                gFilteredStatusRows = gStatusSekolahWithFasil;
                 gStatusPage = 1;
                 renderStatusSekolahTable(gFilteredStatusRows);
             } catch(e) {
@@ -2161,13 +2198,14 @@
             const jenjang = document.getElementById('filterStatusJenjang')?.value || 'ALL';
             const kab = document.getElementById('filterStatusKab')?.value || 'ALL';
             const katPM = document.getElementById('filterStatusKatPM')?.value || 'ALL';
+            const fasilName = document.getElementById('filterStatusFasil')?.value || 'ALL';
 
-            const schools = Object.values(gStatusSekolahRaw);
-            gFilteredStatusRows = schools.filter(s => {
-                if (q && !s.nama_sekolah.toLowerCase().includes(q) && !s.npsn.includes(q) && !s.kab_kota.toLowerCase().includes(q)) return false;
+            gFilteredStatusRows = gStatusSekolahWithFasil.filter(s => {
+                if (q && !s.nama_sekolah.toLowerCase().includes(q) && !s.npsn.includes(q) && !s.kab_kota.toLowerCase().includes(q) && !s.fasilName.toLowerCase().includes(q)) return false;
                 if (jenjang !== 'ALL' && s.jenjang !== jenjang) return false;
                 if (kab !== 'ALL' && s.kab_kota !== kab) return false;
                 if (katPM !== 'ALL' && s.pm?.kategori !== katPM) return false;
+                if (fasilName !== 'ALL' && s.fasilName !== fasilName) return false;
                 return true;
             });
 
@@ -2183,7 +2221,7 @@
             const start = (gStatusPage - 1) * PER_PAGE;
             const pageItems = rows.slice(start, start + PER_PAGE);
             
-            let html = `<div class="overflow-x-auto"><table class="w-full text-left text-xs whitespace-nowrap"><thead class="bg-slate-50 text-slate-600 font-bold border-b border-slate-200"><tr><th class="px-4 py-3 text-center">#</th><th class="px-4 py-3">Nama Sekolah Model &amp; NPSN</th><th class="px-4 py-3 text-center">Jenjang</th><th class="px-4 py-3">Kabupaten / Kota</th><th class="px-4 py-3 text-center">Pemilihan</th><th class="px-4 py-3 text-center">Kategori PM</th><th class="px-4 py-3 text-center">Kategori KKA</th><th class="px-4 py-3 text-center">Aksi Detail</th></tr></thead><tbody class="divide-y divide-slate-100">`;
+            let html = `<div class="overflow-x-auto"><table class="w-full text-left text-xs whitespace-nowrap"><thead class="bg-slate-50 text-slate-600 font-bold border-b border-slate-200"><tr><th class="px-4 py-3 text-center">#</th><th class="px-4 py-3">Nama Sekolah Model &amp; NPSN</th><th class="px-4 py-3 text-center">Jenjang</th><th class="px-4 py-3">Kabupaten / Kota</th><th class="px-4 py-3">Fasilitator Pendamping</th><th class="px-4 py-3 text-center">Kategori PM</th><th class="px-4 py-3 text-center">Kategori KKA</th><th class="px-4 py-3 text-center">Aksi Detail</th></tr></thead><tbody class="divide-y divide-slate-100">`;
             
             pageItems.forEach((s, idx) => {
                 let badgePM = "bg-slate-100 text-slate-600";
@@ -2198,12 +2236,14 @@
                 else if (s.kka?.kategori === 'Berkembang') badgeKKA = "bg-purple-100 text-purple-800 font-bold border border-purple-200";
                 else if (s.kka?.kategori === 'Pra-Berkembang') badgeKKA = "bg-rose-100 text-rose-800 font-bold border border-rose-200";
 
+                const isFasilSet = s.fasilName && s.fasilName !== 'Belum Ditugaskan';
+
                 html += `<tr class="hover:bg-slate-50 transition-colors">
                     <td class="px-4 py-3 text-center text-slate-400 font-mono">${start + idx + 1}</td>
                     <td class="px-4 py-3"><div class="font-bold text-slate-900">${s.nama_sekolah}</div><div class="text-[10px] text-slate-400 font-mono">NPSN: ${s.npsn}</div></td>
                     <td class="px-4 py-3 text-center"><span class="px-2 py-0.5 rounded font-bold bg-slate-100 text-slate-700">${s.jenjang}</span></td>
                     <td class="px-4 py-3 text-slate-600">${s.kab_kota}</td>
-                    <td class="px-4 py-3 text-center"><span class="px-2 py-0.5 rounded text-[11px] font-semibold ${s.status_pemilihan === 'Mitra' ? 'bg-purple-50 text-purple-700' : 'bg-blue-50 text-blue-700'}">${s.status_pemilihan}</span></td>
+                    <td class="px-4 py-3"><div class="font-bold ${isFasilSet ? 'text-slate-900' : 'text-amber-600 font-medium'}">${s.fasilName}</div></td>
                     <td class="px-4 py-3 text-center"><span class="px-2.5 py-1 rounded-full text-xs ${badgePM}">${s.pm?.kategori || '-'} (${s.pm?.skor || '-'})</span></td>
                     <td class="px-4 py-3 text-center"><span class="px-2.5 py-1 rounded-full text-xs ${badgeKKA}">${s.kka?.kategori || '-'} (${s.kka?.skor || '-'})</span></td>
                     <td class="px-4 py-3 text-center"><button onclick="openModalDetailStatusSekolah('${s.npsn}')" class="bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 px-3 py-1 rounded-xl text-xs font-bold transition-colors flex items-center gap-1 mx-auto">📊 Detail Rapor</button></td>
