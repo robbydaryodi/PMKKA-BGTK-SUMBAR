@@ -339,7 +339,7 @@
                     return userEmail === pEmail1 || userEmail === pEmail2;
                 });
 
-                if (matchedPegawai || userEmail === 'astersumbar1@gmail.com') {
+                if (matchedPegawai || userEmail === 'mastersumbar1@gmail.com' || userEmail === 'astersumbar1@gmail.com') {
                     sessionStorage.setItem('admin_bgtk_email', userEmail);
                     sessionStorage.setItem('admin_bgtk_nama', (matchedPegawai ? matchedPegawai.nama_lengkap : '') || user.displayName || 'Admin BGTK');
                     window.location.href = 'admin.html';
