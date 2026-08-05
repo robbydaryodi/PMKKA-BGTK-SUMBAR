@@ -555,8 +555,8 @@
                     <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
                         <div class="overflow-x-auto">
                             <table class="w-full text-left text-sm whitespace-nowrap">
-                                <thead class="bg-slate-50 text-slate-500 border-b border-slate-200"><tr><th class="px-4 py-3 text-center w-12">No</th><th class="px-4 py-3">Nama Pegawai &amp; NIP</th><th class="px-4 py-3">Jabatan</th><th class="px-4 py-3">Pangkat / Golongan</th><th class="px-4 py-3">Kontak &amp; Email</th><th class="px-4 py-3 text-center">Status Pegawai</th></tr></thead>
-                                <tbody id="tablePegawaiBody" class="divide-y divide-slate-100"><tr><td colspan="6" class="px-6 py-12 text-center text-slate-400"><div class="spinner mx-auto mb-2"></div>Memuat data Pegawai...</td></tr></tbody>
+                                <thead class="bg-slate-50 text-slate-500 border-b border-slate-200"><tr><th class="px-4 py-3 text-center w-12">No</th><th class="px-4 py-3">Nama Pegawai &amp; NIP</th><th class="px-4 py-3">Jabatan</th><th class="px-4 py-3">Pangkat / Golongan</th><th class="px-4 py-3">Kontak &amp; Email</th><th class="px-4 py-3 text-center">Status Pegawai</th><th class="px-4 py-3 text-center">Aksi</th></tr></thead>
+                                <tbody id="tablePegawaiBody" class="divide-y divide-slate-100"><tr><td colspan="7" class="px-6 py-12 text-center text-slate-400"><div class="spinner mx-auto mb-2"></div>Memuat data Pegawai...</td></tr></tbody>
                             </table>
                         </div>
                     </div>
@@ -708,6 +708,124 @@
                     <button type="submit" id="btnSaveUserRole" class="px-6 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-xl text-xs font-bold shadow-md shadow-purple-600/20">Simpan Hak Akses</button>
                 </div>
             </form>
+        </div>
+    </div>
+
+    <!-- MODAL DETAIL LENGKAP PEGAWAI BGTK -->
+    <div id="modalDetailPegawai" class="hidden fixed inset-0 z-[130] bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl shadow-2xl w-full max-w-2xl overflow-hidden fade-in border border-slate-100 flex flex-col max-h-[90vh]">
+            <!-- Header Modal -->
+            <div class="bg-gradient-to-r from-emerald-800 to-teal-900 p-6 text-white relative">
+                <button onclick="document.getElementById('modalDetailPegawai').classList.add('hidden')" class="absolute top-4 right-4 text-white/70 hover:text-white hover:bg-white/10 p-2 rounded-full transition-colors">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                </button>
+                <div class="flex items-center gap-4">
+                    <div class="w-16 h-16 rounded-2xl bg-white/10 backdrop-blur-md border border-white/20 text-white font-extrabold flex items-center justify-center text-2xl shadow-inner flex-shrink-0" id="detailPegInisial">
+                        P
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-2 mb-1">
+                            <span id="detailPegBadge" class="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-emerald-400/20 text-emerald-100 border border-emerald-300/30 uppercase tracking-wider">PNS</span>
+                            <span class="text-xs text-emerald-200" id="detailPegSatker">Balai GTK Sumatera Barat</span>
+                        </div>
+                        <h2 class="text-xl font-black text-white leading-tight" id="detailPegNama">Nama Pegawai</h2>
+                        <p class="text-xs text-emerald-200 mt-1 font-mono" id="detailPegNip">NIP. -</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Body Modal (Scrollable) -->
+            <div class="p-6 overflow-y-auto space-y-6 custom-sidebar-scroll flex-1">
+                <!-- Group 1: Kepegawaian & Jabatan -->
+                <div>
+                    <h4 class="text-xs font-black uppercase tracking-wider text-slate-400 mb-3 flex items-center gap-2">
+                        <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 1321 13.255A2.368 2.368 0 0112 16c-.848 0-1.613-.42-2.072-1.096L3.928 6.904A2.368 2.368 0 013 5.485V3.8c0-1.049.851-1.9 1.9-1.9h14.2c1.049 0 1.9.851 1.9 1.9v1.685c0 .54-.23 1.054-.648 1.419z"/></svg>
+                        Jabatan &amp; Pangkat / Golongan
+                    </h4>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                        <div class="bg-slate-50 p-3 rounded-xl border border-slate-100">
+                            <span class="text-slate-400 block text-[10px] uppercase font-bold">Jabatan Resmi</span>
+                            <span class="font-bold text-slate-900 text-sm mt-0.5 block" id="detailPegJabatan">-</span>
+                        </div>
+                        <div class="bg-slate-50 p-3 rounded-xl border border-slate-100">
+                            <span class="text-slate-400 block text-[10px] uppercase font-bold">Pangkat / Golongan</span>
+                            <span class="font-bold text-slate-800 text-sm mt-0.5 block" id="detailPegPangkat">-</span>
+                        </div>
+                        <div class="bg-slate-50 p-3 rounded-xl border border-slate-100">
+                            <span class="text-slate-400 block text-[10px] uppercase font-bold">Jenis Jabatan</span>
+                            <span class="font-semibold text-slate-700 mt-0.5 block" id="detailPegJenisJabatan">-</span>
+                        </div>
+                        <div class="bg-slate-50 p-3 rounded-xl border border-slate-100">
+                            <span class="text-slate-400 block text-[10px] uppercase font-bold">TMT Jabatan / Pangkat</span>
+                            <span class="font-semibold text-slate-700 mt-0.5 block" id="detailPegTmt">-</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Group 2: Biodata Diri -->
+                <div>
+                    <h4 class="text-xs font-black uppercase tracking-wider text-slate-400 mb-3 flex items-center gap-2">
+                        <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+                        Biodata &amp; Informasi Diri
+                    </h4>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
+                        <div class="bg-slate-50 p-3 rounded-xl border border-slate-100">
+                            <span class="text-slate-400 block text-[10px] uppercase font-bold">NIK</span>
+                            <span class="font-mono text-slate-800 font-bold mt-0.5 block" id="detailPegNik">-</span>
+                        </div>
+                        <div class="bg-slate-50 p-3 rounded-xl border border-slate-100">
+                            <span class="text-slate-400 block text-[10px] uppercase font-bold">Tempat, Tgl Lahir</span>
+                            <span class="font-semibold text-slate-800 mt-0.5 block" id="detailPegTtl">-</span>
+                        </div>
+                        <div class="bg-slate-50 p-3 rounded-xl border border-slate-100">
+                            <span class="text-slate-400 block text-[10px] uppercase font-bold">Usia &amp; Tgl Pensiun</span>
+                            <span class="font-semibold text-slate-800 mt-0.5 block" id="detailPegUsiaPensiun">-</span>
+                        </div>
+                        <div class="bg-slate-50 p-3 rounded-xl border border-slate-100">
+                            <span class="text-slate-400 block text-[10px] uppercase font-bold">Jenis Kelamin</span>
+                            <span class="font-semibold text-slate-800 mt-0.5 block" id="detailPegJk">-</span>
+                        </div>
+                        <div class="bg-slate-50 p-3 rounded-xl border border-slate-100">
+                            <span class="text-slate-400 block text-[10px] uppercase font-bold">Agama</span>
+                            <span class="font-semibold text-slate-800 mt-0.5 block" id="detailPegAgama">-</span>
+                        </div>
+                        <div class="bg-slate-50 p-3 rounded-xl border border-slate-100">
+                            <span class="text-slate-400 block text-[10px] uppercase font-bold">Pendidikan Terakhir</span>
+                            <span class="font-semibold text-slate-800 mt-0.5 block" id="detailPegPendidikan">-</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Group 3: Kontak & Komunikasi -->
+                <div>
+                    <h4 class="text-xs font-black uppercase tracking-wider text-slate-400 mb-3 flex items-center gap-2">
+                        <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+                        Kontak &amp; Alamat Email
+                    </h4>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                        <div class="bg-slate-50 p-3 rounded-xl border border-slate-100 flex justify-between items-center">
+                            <div>
+                                <span class="text-slate-400 block text-[10px] uppercase font-bold">Nomor Handphone / WA</span>
+                                <span class="font-bold text-slate-800 font-mono mt-0.5 block" id="detailPegHp">-</span>
+                            </div>
+                            <div id="detailPegWaBtn"></div>
+                        </div>
+                        <div class="bg-slate-50 p-3 rounded-xl border border-slate-100">
+                            <span class="text-slate-400 block text-[10px] uppercase font-bold">Email Kedinasan (Dikbud)</span>
+                            <span class="font-semibold text-emerald-700 font-mono mt-0.5 block" id="detailPegEmailDikbud">-</span>
+                        </div>
+                        <div class="bg-slate-50 p-3 rounded-xl border border-slate-100 sm:col-span-2">
+                            <span class="text-slate-400 block text-[10px] uppercase font-bold">Email Pribadi</span>
+                            <span class="font-semibold text-slate-700 font-mono mt-0.5 block" id="detailPegEmailPribadi">-</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer Modal -->
+            <div class="p-4 bg-slate-50 border-t border-slate-100 flex justify-end gap-2">
+                <button onclick="document.getElementById('modalDetailPegawai').classList.add('hidden')" class="px-6 py-2.5 bg-slate-800 hover:bg-slate-900 text-white rounded-xl text-xs font-bold shadow-md transition">Tutup Detail</button>
+            </div>
         </div>
     </div>
 
@@ -1392,16 +1510,76 @@
             const body = document.getElementById('tablePegawaiBody');
             const paginationEl = document.getElementById('pegawaiPagination');
             if (!body) return;
-            if (gFilteredPegawai.length === 0) { body.innerHTML = `<tr><td colspan="6" class="px-6 py-12 text-center text-slate-400">Tidak ada pegawai yang sesuai kata kunci.</td></tr>`; if (paginationEl) paginationEl.innerHTML = ''; return; }
+            if (gFilteredPegawai.length === 0) { body.innerHTML = `<tr><td colspan="7" class="px-6 py-12 text-center text-slate-400">Tidak ada pegawai yang sesuai kata kunci.</td></tr>`; if (paginationEl) paginationEl.innerHTML = ''; return; }
             const start = (gPegawaiPage - 1) * PER_PAGE;
             const pageItems = gFilteredPegawai.slice(start, start + PER_PAGE);
             body.innerHTML = pageItems.map((p, i) => {
+                const pId = (p.id || p.nip || '').replace(/'/g, "\\'");
                 const badgeStatus = (p.status_pegawai || '').includes('P3K')
                     ? `<span class="px-2.5 py-1 rounded-full text-xs font-bold bg-teal-100 text-teal-800 border border-teal-200">P3K Aktif</span>`
                     : `<span class="px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800 border border-emerald-200">PNS Aktif</span>`;
-                return `<tr class="hover:bg-slate-50 transition-colors"><td class="px-4 py-3 text-center text-slate-400 text-xs font-bold">${start + i + 1}</td><td class="px-4 py-3"><div class="font-bold text-slate-900 text-sm">${p.nama_lengkap}</div><div class="text-xs text-slate-500 mt-0.5">NIP: ${p.nip || '-'}</div></td><td class="px-4 py-3"><div class="font-semibold text-slate-800 text-xs">${p.jabatan || '-'}</div><div class="text-[11px] text-slate-500">${p.jenis_jabatan || ''}</div></td><td class="px-4 py-3 text-xs font-medium text-slate-700">${p.pangkat_golongan || '-'}</td><td class="px-4 py-3"><div class="text-xs font-semibold text-slate-800">${p.email_dikbud || p.email_pribadi || '-'}</div><div class="text-[11px] text-slate-500">HP: ${p.no_hp || '-'}</div></td><td class="px-4 py-3 text-center">${badgeStatus}</td></tr>`;
+                return `
+                <tr class="hover:bg-emerald-50/40 cursor-pointer transition-colors group" onclick="openDetailPegawaiModal('${pId}')">
+                    <td class="px-4 py-3 text-center text-slate-400 text-xs font-bold">${start + i + 1}</td>
+                    <td class="px-4 py-3">
+                        <div class="font-bold text-slate-900 text-sm group-hover:text-emerald-800 transition-colors">${p.nama_lengkap}</div>
+                        <div class="text-xs text-slate-500 mt-0.5 font-mono">NIP: ${p.nip || '-'}</div>
+                    </td>
+                    <td class="px-4 py-3"><div class="font-semibold text-slate-800 text-xs">${p.jabatan || '-'}</div><div class="text-[11px] text-slate-500">${p.jenis_jabatan || ''}</div></td>
+                    <td class="px-4 py-3 text-xs font-medium text-slate-700">${p.pangkat_golongan || '-'}</td>
+                    <td class="px-4 py-3"><div class="text-xs font-semibold text-slate-800 font-mono">${p.email_dikbud || p.email_pribadi || '-'}</div><div class="text-[11px] text-slate-500 font-mono">HP: ${p.no_hp || '-'}</div></td>
+                    <td class="px-4 py-3 text-center">${badgeStatus}</td>
+                    <td class="px-4 py-3 text-center">
+                        <button onclick="event.stopPropagation(); openDetailPegawaiModal('${pId}')" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold transition shadow-xs inline-flex items-center gap-1">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+                            Detail
+                        </button>
+                    </td>
+                </tr>`;
             }).join('');
             if (paginationEl) paginationEl.innerHTML = buildPagination(gPegawaiPage, gFilteredPegawai.length, PER_PAGE, 'changePegawaiPage');
+        }
+
+        function openDetailPegawaiModal(id) {
+            let p = gAllPegawai[id];
+            if (!p) {
+                p = Object.values(gAllPegawai).find(item => item.nip === id || item.id === id);
+            }
+            if (!p) return alert("Data pegawai tidak ditemukan");
+
+            const inisial = (p.nama_lengkap || p.nama_murni || 'P').charAt(0).toUpperCase();
+            document.getElementById('detailPegInisial').textContent = inisial;
+            document.getElementById('detailPegBadge').textContent = p.status_pegawai || 'PNS Aktif';
+            document.getElementById('detailPegSatker').textContent = p.satker || 'Balai GTK Sumatera Barat';
+            document.getElementById('detailPegNama').textContent = p.nama_lengkap || p.nama_murni || '-';
+            document.getElementById('detailPegNip').textContent = p.nip ? `NIP. ${p.nip}` : 'NIP. -';
+
+            document.getElementById('detailPegJabatan').textContent = p.jabatan || '-';
+            document.getElementById('detailPegPangkat').textContent = p.pangkat_golongan || '-';
+            document.getElementById('detailPegJenisJabatan').textContent = p.jenis_jabatan || '-';
+            document.getElementById('detailPegTmt').textContent = p.tmt || '-';
+
+            document.getElementById('detailPegNik').textContent = p.nik || '-';
+            document.getElementById('detailPegTtl').textContent = `${p.tempat_lahir || ''}${p.tempat_lahir && p.tgl_lahir ? ', ' : ''}${p.tgl_lahir || '-'}`;
+            document.getElementById('detailPegUsiaPensiun').textContent = `${p.usia ? p.usia + ' Tahun' : ''}${p.usia && p.tgl_pensiun ? ' • Pensiun: ' : ''}${p.tgl_pensiun || '-'}`;
+            document.getElementById('detailPegJk').textContent = p.jenis_kelamin || '-';
+            document.getElementById('detailPegAgama').textContent = p.agama || '-';
+            document.getElementById('detailPegPendidikan').textContent = p.pendidikan || '-';
+
+            document.getElementById('detailPegHp').textContent = p.no_hp || '-';
+            document.getElementById('detailPegEmailDikbud').textContent = p.email_dikbud || '-';
+            document.getElementById('detailPegEmailPribadi').textContent = p.email_pribadi || '-';
+
+            const waBtn = document.getElementById('detailPegWaBtn');
+            if (p.no_hp && p.no_hp !== '-') {
+                let cleanHp = p.no_hp.replace(/[^0-9]/g, '');
+                if (cleanHp.startsWith('0')) cleanHp = '62' + cleanHp.slice(1);
+                waBtn.innerHTML = `<a href="https://wa.me/${cleanHp}" target="_blank" class="px-3 py-1.5 bg-emerald-500 hover:bg-emerald-600 text-white rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow-xs"><svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981z"/></svg> Hubungi WA</a>`;
+            } else {
+                waBtn.innerHTML = '';
+            }
+
+            document.getElementById('modalDetailPegawai').classList.remove('hidden');
         }
         function changePegawaiPage(p) { gPegawaiPage = p; renderPegawaiTable(); }
 
