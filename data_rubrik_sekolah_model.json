@@ -1,0 +1,251 @@
+{
+  "pm": [
+    {
+      "kode": "1.1.1",
+      "nama": "Memuliakan",
+      "domain": "Murid",
+      "sub_domain": "Budaya Belajar",
+      "kode_sub_domain": "1.1"
+    },
+    {
+      "kode": "1.1.2",
+      "nama": "Berkesadaran",
+      "domain": "Murid",
+      "sub_domain": "Budaya Belajar",
+      "kode_sub_domain": ""
+    },
+    {
+      "kode": "1.1.3",
+      "nama": "Bermakna",
+      "domain": "Murid",
+      "sub_domain": "Budaya Belajar",
+      "kode_sub_domain": ""
+    },
+    {
+      "kode": "1.1.4",
+      "nama": "Menggembirakan",
+      "domain": "Murid",
+      "sub_domain": "Budaya Belajar",
+      "kode_sub_domain": ""
+    },
+    {
+      "kode": "1.1.5",
+      "nama": "Otonomi Belajar",
+      "domain": "Murid",
+      "sub_domain": "Budaya Belajar",
+      "kode_sub_domain": ""
+    },
+    {
+      "kode": "1.1.6",
+      "nama": "Refleksi",
+      "domain": "Murid",
+      "sub_domain": "Budaya Belajar",
+      "kode_sub_domain": ""
+    },
+    {
+      "kode": "2.1.1",
+      "nama": "Memuliakan",
+      "domain": "Guru",
+      "sub_domain": "Mengajar secara Efektif",
+      "kode_sub_domain": "2.1"
+    },
+    {
+      "kode": "2.1.2",
+      "nama": "Pengelolaan Pembelajaran",
+      "domain": "Guru",
+      "sub_domain": "Mengajar secara Efektif",
+      "kode_sub_domain": ""
+    },
+    {
+      "kode": "2.1.3",
+      "nama": "Refleksi",
+      "domain": "Guru",
+      "sub_domain": "Mengajar secara Efektif",
+      "kode_sub_domain": ""
+    },
+    {
+      "kode": "2.2.1",
+      "nama": "Formatif",
+      "domain": "Guru",
+      "sub_domain": "Asesmen Otentik & Berkeadilan",
+      "kode_sub_domain": "2.2"
+    },
+    {
+      "kode": "2.2.2",
+      "nama": "Sumatif",
+      "domain": "Guru",
+      "sub_domain": "Asesmen Otentik & Berkeadilan",
+      "kode_sub_domain": ""
+    },
+    {
+      "kode": "2.3.1",
+      "nama": "Belajar secara Mandiri",
+      "domain": "Guru",
+      "sub_domain": "Pengembangan Diri",
+      "kode_sub_domain": "2.3"
+    },
+    {
+      "kode": "2.3.2",
+      "nama": "Belajar bersama Komunitas",
+      "domain": "Guru",
+      "sub_domain": "Pengembangan Diri",
+      "kode_sub_domain": ""
+    },
+    {
+      "kode": "3.1.1",
+      "nama": "Memimpin Implementasi PM",
+      "domain": "Kepala Satpen",
+      "sub_domain": "Kepemimpinan Pembelajaran Mendalam",
+      "kode_sub_domain": "3.1"
+    },
+    {
+      "kode": "3.1.2",
+      "nama": "Menyelaraskan visi Misi Sekolah dengan PM Bersama Pemangku Kepentingan",
+      "domain": "Kepala Satpen",
+      "sub_domain": "Kepemimpinan Pembelajaran Mendalam",
+      "kode_sub_domain": ""
+    },
+    {
+      "kode": "3.1.3",
+      "nama": "Melakukan supervisi instruksional PM",
+      "domain": "Kepala Satpen",
+      "sub_domain": "Kepemimpinan Pembelajaran Mendalam",
+      "kode_sub_domain": ""
+    },
+    {
+      "kode": "3.1.4",
+      "nama": "Memimpin refleksi",
+      "domain": "Kepala Satpen",
+      "sub_domain": "Kepemimpinan Pembelajaran Mendalam",
+      "kode_sub_domain": ""
+    },
+    {
+      "kode": "3.2.1",
+      "nama": "Mengembangkan dan Menguatkan Kapasitas Pendidik dan Tenaga Kependidikan",
+      "domain": "Kepala Satpen",
+      "sub_domain": "Pengelolaan Sumber Daya",
+      "kode_sub_domain": "3.2"
+    },
+    {
+      "kode": "3.2.2",
+      "nama": "Mengoptimalisasi Sumber Daya untuk Kegiatan Pendidikan",
+      "domain": "Kepala Satpen",
+      "sub_domain": "Pengelolaan Sumber Daya",
+      "kode_sub_domain": ""
+    },
+    {
+      "kode": "3.2.3",
+      "nama": "Manajemen Sekolah",
+      "domain": "Kepala Satpen",
+      "sub_domain": "Pengelolaan Sumber Daya",
+      "kode_sub_domain": ""
+    },
+    {
+      "kode": "3.3.1",
+      "nama": "Mengembangkan Kemitraan dengan orang tua, masyarakat, komunitas sekolah, DUDI",
+      "domain": "Kepala Satpen",
+      "sub_domain": "Kemitraan dan Ekosistem",
+      "kode_sub_domain": "3.3"
+    },
+    {
+      "kode": "3.3.2",
+      "nama": "Lingkungan Belajar yang saling Memuliakan, aman, dan Nyaman",
+      "domain": "Kepala Satpen",
+      "sub_domain": "Kemitraan dan Ekosistem",
+      "kode_sub_domain": ""
+    },
+    {
+      "kode": "3.4.1",
+      "nama": "Mengembangkan infrastruktur teknologi digital untuk pembelajaran dan administrasi",
+      "domain": "Kepala Satpen",
+      "sub_domain": "Pemanfaatan Teknologi Digital",
+      "kode_sub_domain": "3.4"
+    },
+    {
+      "kode": "3.4.2",
+      "nama": "Meningkatkan Kapasitas Pendidik dan Tenaga Kependidikan dalam Memanfaatkan TIK",
+      "domain": "Kepala Satpen",
+      "sub_domain": "Pemanfaatan Teknologi Digital",
+      "kode_sub_domain": ""
+    }
+  ],
+  "kka": [
+    {
+      "kode": "1.1.1",
+      "nama": "Projek Koding dan KA yang dikembangkan murid",
+      "domain": "Murid",
+      "sub_domain": "Budaya Belajar",
+      "kode_sub_domain": "1.1"
+    },
+    {
+      "kode": "2.1.1",
+      "nama": "Literasi digital guru",
+      "domain": "Guru",
+      "sub_domain": "Mengajar secara Efektif",
+      "kode_sub_domain": "2.1"
+    },
+    {
+      "kode": "2.1.2",
+      "nama": "Pemanfaatan teknologi secara kontekstual dalam pelaksanaan/pengelolaan pembelajaran",
+      "domain": "Guru",
+      "sub_domain": "Mengajar secara Efektif",
+      "kode_sub_domain": ""
+    },
+    {
+      "kode": "2.2.1",
+      "nama": "Pemanfaatan teknologi secara kontekstual dalam penilaian pembelajaran",
+      "domain": "Guru",
+      "sub_domain": "Asesmen Otentik & Berkeadilan",
+      "kode_sub_domain": "2.2"
+    },
+    {
+      "kode": "3.1.1",
+      "nama": "Memimpin implementasi Koding dan Kecerdasan Artifisial",
+      "domain": "Kepala Satpen",
+      "sub_domain": "Kepemimpinan Pembelajaran Mendalam",
+      "kode_sub_domain": "3.1"
+    },
+    {
+      "kode": "3.1.2",
+      "nama": "Supervisi pembelajaran Koding dan Kecerdasan Artifisial",
+      "domain": "Kepala Satpen",
+      "sub_domain": "Kepemimpinan Pembelajaran Mendalam",
+      "kode_sub_domain": ""
+    },
+    {
+      "kode": "3.2.1",
+      "nama": "Penguatan kapasitas dan aktivasi komunitas belajar pendidik pengampu Koding dan KA",
+      "domain": "Kepala Satpen",
+      "sub_domain": "Pengelolaan Sumber Daya",
+      "kode_sub_domain": "3.2"
+    },
+    {
+      "kode": "3.2.2",
+      "nama": "Penyediaan sumber belajar Koding dan KA",
+      "domain": "Kepala Satpen",
+      "sub_domain": "Pengelolaan Sumber Daya",
+      "kode_sub_domain": ""
+    },
+    {
+      "kode": "3.3.1",
+      "nama": "Pengembangan kemitraan untuk mendukung pembelajaran Koding dan KA",
+      "domain": "Kepala Satpen",
+      "sub_domain": "Kemitraan dan Ekosistem",
+      "kode_sub_domain": "3.3"
+    },
+    {
+      "kode": "3.4.1",
+      "nama": "Penyediaan sarana dan prasarana digital yang mendukung pembelajaran Koding dan KA",
+      "domain": "Kepala Satpen",
+      "sub_domain": "Pemanfaatan Teknologi Digital",
+      "kode_sub_domain": "3.4"
+    },
+    {
+      "kode": "3.4.2",
+      "nama": "Mendorong pemanfaatan teknologi digital secara kontekstual untuk mendukung pelaksanaan pembelajaran Koding dan KA yang bermakna",
+      "domain": "Kepala Satpen",
+      "sub_domain": "Pemanfaatan Teknologi Digital",
+      "kode_sub_domain": ""
+    }
+  ]
+}

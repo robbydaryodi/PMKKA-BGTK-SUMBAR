@@ -540,10 +540,16 @@
                                 <h1 class="text-2xl font-black">Data Status &amp; Baseline 25 Sekolah Model</h1>
                                 <p class="text-sm text-blue-200 mt-1">Hasil asesmen Pembelajaran Mendalam (PM) &amp; Koding-Kecerdasan Artifisial (KKA) Balai GTK Sumbar.</p>
                             </div>
-                            <button onclick="loadStatusSekolahModelData()" class="bg-white/10 hover:bg-white/20 text-white px-4 py-2 rounded-xl text-xs font-bold transition-colors flex items-center gap-2 border border-white/20">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
-                                <span>Refresh Status</span>
-                            </button>
+                            <div class="flex flex-wrap items-center gap-2">
+                                <button onclick="openModalKamusRubrik()" class="bg-white/10 hover:bg-white/20 text-white px-4 py-2 rounded-xl text-xs font-bold transition-colors flex items-center gap-2 border border-white/20">
+                                    <svg class="w-4 h-4 text-amber-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
+                                    <span>📖 Kamus Rubrik Baseline</span>
+                                </button>
+                                <button onclick="loadStatusSekolahModelData()" class="bg-white/10 hover:bg-white/20 text-white px-4 py-2 rounded-xl text-xs font-bold transition-colors flex items-center gap-2 border border-white/20">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+                                    <span>Refresh Status</span>
+                                </button>
+                            </div>
                         </div>
                         <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-6 pt-6 border-t border-white/10 text-center">
                             <div class="bg-white/10 backdrop-blur-sm rounded-xl p-3.5"><div class="text-xs text-blue-200 uppercase font-semibold">Total Sekolah Model</div><div class="text-2xl font-black mt-1" id="statStatusTotal">25</div></div>
@@ -588,6 +594,33 @@
                     <!-- Table Container -->
                     <div class="bg-white rounded-2xl shadow-2xs border border-slate-200/80 overflow-hidden" id="containerStatusSekolahTable">
                         <div class="text-center text-slate-500 py-12"><div class="spinner mx-auto mb-2"></div>Memuat data status sekolah...</div>
+                    </div>
+                </div>
+
+                <!-- MODAL KAMUS RUBRIK BASELINE (PM & KKA) -->
+                <div id="modalKamusRubrik" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 hidden flex items-center justify-center p-4">
+                    <div class="bg-white rounded-3xl max-w-4xl w-full max-h-[90vh] flex flex-col shadow-2xl overflow-hidden border border-slate-100">
+                        <div class="p-6 bg-slate-900 text-white flex justify-between items-center flex-shrink-0">
+                            <div>
+                                <span class="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-amber-500/30 text-amber-200 uppercase tracking-wider mb-1 inline-block">Panduan Evaluasi Baseline</span>
+                                <h3 class="text-xl font-bold">Kamus Rubrik Baseline PM &amp; KKA</h3>
+                                <p class="text-xs text-slate-400 mt-0.5">Daftar lengkap indikator Pembelajaran Mendalam &amp; Koding-Kecerdasan Artifisial.</p>
+                            </div>
+                            <button onclick="closeModalKamusRubrik()" class="text-slate-400 hover:text-white p-2 rounded-xl hover:bg-white/10 transition-colors">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                            </button>
+                        </div>
+                        <div class="bg-slate-100 p-2 border-b border-slate-200 flex gap-2 flex-shrink-0">
+                            <button id="btnTabRubrikPM" onclick="switchRubrikTab('pm')" class="px-4 py-2 rounded-xl text-xs font-bold bg-white text-indigo-900 shadow-2xs border border-slate-200">
+                                📘 Rubrik Pembelajaran Mendalam (24 Indikator)
+                            </button>
+                            <button id="btnTabRubrikKKA" onclick="switchRubrikTab('kka')" class="px-4 py-2 rounded-xl text-xs font-bold text-slate-600 hover:text-slate-900">
+                                💻 Rubrik Koding &amp; KA (11 Indikator)
+                            </button>
+                        </div>
+                        <div class="p-6 overflow-y-auto space-y-6 flex-1 text-sm bg-slate-50/50" id="kamusRubrikContent">
+                            <!-- Rendered dynamically -->
+                        </div>
                     </div>
                 </div>
 
@@ -2270,14 +2303,18 @@
             for (const k in s.pm?.sub_indikator || {}) {
                 const val = s.pm.sub_indikator[k];
                 const displayKey = k.replace(/_/g, '.');
-                pmSubsHtml += `<div class="bg-white p-2.5 rounded-xl border border-slate-200 flex justify-between items-center"><span class="font-bold text-slate-700 text-xs">${displayKey}</span><span class="px-2 py-0.5 rounded text-[11px] font-bold bg-indigo-50 text-indigo-800">${val}</span></div>`;
+                const meta = gRubrikCatalogMap.pm ? gRubrikCatalogMap.pm[k] : null;
+                const tooltipText = meta ? `[${meta.kode}] ${meta.nama} (${meta.domain} › ${meta.sub_domain}): ${val}` : `${displayKey}: ${val}`;
+                pmSubsHtml += `<div title="${tooltipText.replace(/"/g, '&quot;')}" class="bg-white p-2.5 rounded-xl border border-slate-200 flex justify-between items-center cursor-help hover:border-indigo-400 transition-colors group"><span class="font-bold text-slate-700 text-xs">${displayKey}</span><span class="px-2 py-0.5 rounded text-[11px] font-bold bg-indigo-50 text-indigo-800">${val}</span></div>`;
             }
 
             let kkaSubsHtml = '';
             for (const k in s.kka?.sub_indikator || {}) {
                 const val = s.kka.sub_indikator[k];
                 const displayKey = k.replace(/_/g, '.');
-                kkaSubsHtml += `<div class="bg-white p-2.5 rounded-xl border border-slate-200 flex justify-between items-center"><span class="font-bold text-slate-700 text-xs">${displayKey}</span><span class="px-2 py-0.5 rounded text-[11px] font-bold bg-purple-50 text-purple-800">${val}</span></div>`;
+                const meta = gRubrikCatalogMap.kka ? gRubrikCatalogMap.kka[k] : null;
+                const tooltipText = meta ? `[${meta.kode}] ${meta.nama} (${meta.domain} › ${meta.sub_domain}): ${val}` : `${displayKey}: ${val}`;
+                kkaSubsHtml += `<div title="${tooltipText.replace(/"/g, '&quot;')}" class="bg-white p-2.5 rounded-xl border border-slate-200 flex justify-between items-center cursor-help hover:border-purple-400 transition-colors group"><span class="font-bold text-slate-700 text-xs">${displayKey}</span><span class="px-2 py-0.5 rounded text-[11px] font-bold bg-purple-50 text-purple-800">${val}</span></div>`;
             }
 
             content.innerHTML = `
@@ -2332,8 +2369,102 @@
             document.getElementById('modalDetailStatusSekolah').classList.add('hidden');
         }
 
-        // Placeholder for mode8 setting
-        function simpanSettingJadwal() { alert("Fitur simpan setting jadwal akan segera tersedia."); }
+        // ==========================================
+        // KAMUS RUBRIK CATALOG LOGIC
+        // ==========================================
+        let gRubrikRawData = null;
+        let gRubrikCatalogMap = { pm: {}, kka: {} };
+
+        async function loadRubrikCatalogData() {
+            if (gRubrikRawData) return gRubrikRawData;
+            try {
+                const res = await fetch('./data_rubrik_sekolah_model.json');
+                gRubrikRawData = await res.json();
+                (gRubrikRawData.pm || []).forEach(item => {
+                    gRubrikCatalogMap.pm[item.kode.replace(/\./g, '_')] = item;
+                });
+                (gRubrikRawData.kka || []).forEach(item => {
+                    gRubrikCatalogMap.kka[item.kode.replace(/\./g, '_')] = item;
+                });
+                return gRubrikRawData;
+            } catch(e) {
+                console.error("Gagal loadRubrikCatalogData", e);
+                return { pm: [], kka: [] };
+            }
+        }
+
+        // Auto load catalog on init
+        loadRubrikCatalogData();
+
+        async function openModalKamusRubrik() {
+            await loadRubrikCatalogData();
+            switchRubrikTab('pm');
+            document.getElementById('modalKamusRubrik').classList.remove('hidden');
+        }
+
+        function closeModalKamusRubrik() {
+            document.getElementById('modalKamusRubrik').classList.add('hidden');
+        }
+
+        function switchRubrikTab(tab) {
+            const btnPM = document.getElementById('btnTabRubrikPM');
+            const btnKKA = document.getElementById('btnTabRubrikKKA');
+            const content = document.getElementById('kamusRubrikContent');
+            if (!content || !gRubrikRawData) return;
+
+            if (tab === 'pm') {
+                if (btnPM) btnPM.className = "px-4 py-2 rounded-xl text-xs font-bold bg-white text-indigo-900 shadow-2xs border border-slate-200";
+                if (btnKKA) btnKKA.className = "px-4 py-2 rounded-xl text-xs font-bold text-slate-600 hover:text-slate-900";
+                renderRubrikCatalogList(gRubrikRawData.pm || [], 'PM');
+            } else {
+                if (btnKKA) btnKKA.className = "px-4 py-2 rounded-xl text-xs font-bold bg-white text-purple-900 shadow-2xs border border-slate-200";
+                if (btnPM) btnPM.className = "px-4 py-2 rounded-xl text-xs font-bold text-slate-600 hover:text-slate-900";
+                renderRubrikCatalogList(gRubrikRawData.kka || [], 'KKA');
+            }
+        }
+
+        function renderRubrikCatalogList(items, type) {
+            const content = document.getElementById('kamusRubrikContent');
+            if (!content) return;
+            if (items.length === 0) { content.innerHTML = '<div class="text-center text-slate-400 py-8">Tidak ada data rubrik.</div>'; return; }
+
+            const grouped = {};
+            items.forEach(item => {
+                const dom = item.domain || 'Lainnya';
+                if (!grouped[dom]) grouped[dom] = [];
+                grouped[dom].push(item);
+            });
+
+            let html = '';
+            const badgeBg = type === 'PM' ? 'bg-indigo-100 text-indigo-800' : 'bg-purple-100 text-purple-800';
+
+            for (const dom in grouped) {
+                html += `
+                    <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-2xs space-y-3">
+                        <div class="flex items-center gap-2 border-b border-slate-100 pb-2.5">
+                            <span class="px-2.5 py-0.5 rounded-full text-xs font-extrabold ${badgeBg}">Domain: ${dom}</span>
+                            <span class="text-xs font-bold text-slate-400">(${grouped[dom].length} Sub-Indikator)</span>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                `;
+
+                grouped[dom].forEach(item => {
+                    html += `
+                        <div class="bg-slate-50 p-3 rounded-xl border border-slate-100 space-y-1 hover:border-indigo-300 transition-colors">
+                            <div class="flex items-center justify-between gap-2">
+                                <span class="px-2 py-0.5 rounded font-mono font-bold text-xs bg-white text-slate-800 border border-slate-200 shadow-2xs">${item.kode}</span>
+                                <span class="text-[10px] text-slate-400 font-semibold">${item.sub_domain}</span>
+                            </div>
+                            <div class="font-bold text-slate-900 text-xs mt-1">${item.nama}</div>
+                        </div>
+                    `;
+                });
+
+                html += `</div></div>`;
+            }
+
+            content.innerHTML = html;
+        }
     </script>
 </body>
 </html>
