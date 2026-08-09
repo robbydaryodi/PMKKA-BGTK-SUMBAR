@@ -388,22 +388,75 @@
                     </div>
                 </div>
 
-                <!-- MODE 3: MANAJEMEN FASILITATOR -->
-                <div id="viewMode3" class="hidden fade-in">
-                    <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-6 mb-6">
-                        <h2 class="text-lg font-bold text-slate-800 mb-4">Tambah Fasilitator Baru</h2>
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            <input type="text" id="inputFasilNama" placeholder="Nama Lengkap &amp; Gelar" class="border-slate-300 rounded-lg px-4 py-2 border w-full text-sm">
-                            <input type="number" id="inputFasilHp" placeholder="No HP" class="border-slate-300 rounded-lg px-4 py-2 border w-full text-sm">
-                            <input type="text" id="inputFasilNip" placeholder="NIP (Opsional)" class="border-slate-300 rounded-lg px-4 py-2 border w-full text-sm">
-                            <input type="text" id="inputFasilPangkat" placeholder="Pangkat/Golongan (cth: Pembina IV/a)" class="border-slate-300 rounded-lg px-4 py-2 border w-full text-sm">
-                            <input type="text" id="inputFasilJabatan" placeholder="Jabatan (cth: Widyaprada Ahli Madya)" class="sm:col-span-2 border-slate-300 rounded-lg px-4 py-2 border w-full text-sm">
+                <!-- MODE 3: MANAJEMEN FASILITATOR (ENHANCED UI/UX) -->
+                <div id="viewMode3" class="hidden fade-in space-y-6">
+                    <div class="bg-white p-6 rounded-3xl border border-slate-200/80 shadow-2xs space-y-6">
+                        <!-- Top Row: Title, Subtitle, and Add Button -->
+                        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                            <div>
+                                <div class="flex items-center gap-2.5">
+                                    <h2 class="text-2xl font-black text-slate-900 tracking-tight">Data Fasilitator PM-KKA</h2>
+                                    <span id="fasilCountPill" class="px-3 py-1 rounded-full text-xs font-black bg-indigo-100 text-indigo-800 border border-indigo-200">0 Fasilitator</span>
+                                </div>
+                                <p class="text-xs text-slate-500 mt-1">Direktori resmi fasilitator pendamping Sekolah Model &amp; Komunitas Belajar BGTK Provinsi Sumatera Barat.</p>
+                            </div>
+                            <button onclick="toggleModalTambahFasil()" class="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-2xl text-xs font-bold transition-all shadow-md hover:shadow-lg flex items-center gap-2 flex-shrink-0">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                                <span>Tambah Fasilitator</span>
+                            </button>
                         </div>
-                        <button onclick="tambahFasil()" class="mt-4 bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2 rounded-lg font-bold text-sm transition-colors">Simpan Fasilitator</button>
+
+                        <!-- Summary Stat Badges -->
+                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-2">
+                            <div class="bg-slate-50 p-3.5 rounded-2xl border border-slate-200/60">
+                                <div class="text-[10px] uppercase font-bold text-slate-400">Total Fasilitator</div>
+                                <div class="text-lg font-black text-slate-800 mt-0.5" id="statFasilTotal">0</div>
+                            </div>
+                            <div class="bg-indigo-50/60 p-3.5 rounded-2xl border border-indigo-100">
+                                <div class="text-[10px] uppercase font-bold text-indigo-500">Sekolah Model</div>
+                                <div class="text-lg font-black text-indigo-900 mt-0.5" id="statFasilSekolahModel">0</div>
+                            </div>
+                            <div class="bg-purple-50/60 p-3.5 rounded-2xl border border-purple-100">
+                                <div class="text-[10px] uppercase font-bold text-purple-500">Kombel Sasaran</div>
+                                <div class="text-lg font-black text-purple-900 mt-0.5" id="statFasilKombel">0</div>
+                            </div>
+                            <div class="bg-emerald-50/60 p-3.5 rounded-2xl border border-emerald-100">
+                                <div class="text-[10px] uppercase font-bold text-emerald-600">Dual Program</div>
+                                <div class="text-lg font-black text-emerald-900 mt-0.5" id="statFasilDual">0</div>
+                            </div>
+                        </div>
+
+                        <!-- Search, Filter Tabs & View Mode Toolbar -->
+                        <div class="pt-4 border-t border-slate-100 flex flex-col lg:flex-row justify-between items-stretch lg:items-center gap-4">
+                            <!-- Filter Pills -->
+                            <div class="flex flex-wrap gap-1.5 p-1 bg-slate-100/80 rounded-2xl text-xs font-bold">
+                                <button onclick="setFasilFilter('ALL')" id="filterFasilAll" class="px-3.5 py-1.5 rounded-xl bg-white text-indigo-900 shadow-2xs font-bold transition-all">Semua (<span id="countFilterAll">0</span>)</button>
+                                <button onclick="setFasilFilter('sekolah_model')" id="filterFasilModel" class="px-3.5 py-1.5 rounded-xl text-slate-600 hover:text-slate-900 transition-all font-medium">🏫 Sekolah Model (<span id="countFilterModel">0</span>)</button>
+                                <button onclick="setFasilFilter('kombel')" id="filterFasilKombel" class="px-3.5 py-1.5 rounded-xl text-slate-600 hover:text-slate-900 transition-all font-medium">🟣 Kombel (<span id="countFilterKombel">0</span>)</button>
+                                <button onclick="setFasilFilter('dual')" id="filterFasilDual" class="px-3.5 py-1.5 rounded-xl text-slate-600 hover:text-slate-900 transition-all font-medium">🌟 Dual Program (<span id="countFilterDual">0</span>)</button>
+                            </div>
+
+                            <!-- Search Bar and View Switcher -->
+                            <div class="flex items-center gap-3">
+                                <div class="relative flex-1 sm:w-72">
+                                    <input type="text" id="searchFasilInput" onkeyup="filterFasilList()" placeholder="Cari nama, NIP, instansi..." class="w-full pl-9 pr-4 py-2 bg-white border border-slate-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all">
+                                    <svg class="w-4 h-4 text-slate-400 absolute left-3 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                                </div>
+                                <div class="flex bg-slate-100 p-1 rounded-xl text-xs font-bold">
+                                    <button onclick="setFasilViewMode('cards')" id="btnViewCards" class="p-2 rounded-lg bg-white text-slate-900 shadow-2xs" title="Tampilan Kartu">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
+                                    </button>
+                                    <button onclick="setFasilViewMode('table')" id="btnViewTable" class="p-2 rounded-lg text-slate-500 hover:text-slate-900" title="Tampilan Tabel Rapi">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"/></svg>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
-                        <div class="p-4 border-b border-slate-100 bg-slate-50/50 flex justify-between items-center"><h2 class="text-md font-bold text-slate-800">Daftar Fasilitator Terdaftar</h2></div>
-                        <div class="p-4" id="listFasilContainer"><div class="text-center text-slate-500 py-4"><div class="spinner mx-auto mb-2"></div>Memuat data fasilitator...</div></div>
+
+                    <!-- Dynamic Container -->
+                    <div id="listFasilContainer" class="mt-6">
+                        <div class="text-center text-slate-500 py-12"><div class="spinner mx-auto mb-2"></div>Memuat direktori data fasilitator...</div>
                     </div>
                 </div>
 
@@ -861,6 +914,61 @@
 
             </div>
         </main>
+    </div>
+
+    <!-- MODAL TAMBAH FASILITATOR -->
+    <div id="modalTambahFasil" class="hidden fixed inset-0 z-[120] bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl shadow-2xl w-full max-w-lg overflow-hidden fade-in border border-slate-100">
+            <div class="px-6 py-5 border-b border-slate-100 bg-gradient-to-r from-indigo-900 to-slate-900 text-white flex justify-between items-center">
+                <div>
+                    <h3 class="font-bold text-lg text-white">Tambah Fasilitator Baru</h3>
+                    <p class="text-xs text-indigo-200 mt-0.5">Pendaftaran fasilitator pendamping BGTK Sumbar</p>
+                </div>
+                <button onclick="closeModalTambahFasil()" class="text-slate-400 hover:text-white p-1.5 rounded-xl hover:bg-white/10 transition-colors">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                </button>
+            </div>
+            <div class="p-6 space-y-4 text-xs">
+                <div>
+                    <label class="block font-bold uppercase text-slate-700 mb-1">Nama Lengkap &amp; Gelar *</label>
+                    <input type="text" id="inputFasilNama" placeholder="Contoh: Dr. Rahmat Istiqlal, M.Pd." class="w-full border border-slate-300 rounded-xl px-3.5 py-2 text-xs focus:ring-2 focus:ring-indigo-500">
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block font-bold uppercase text-slate-700 mb-1">No. WhatsApp / HP *</label>
+                        <input type="text" id="inputFasilHp" placeholder="081234567890" class="w-full border border-slate-300 rounded-xl px-3.5 py-2 text-xs focus:ring-2 focus:ring-indigo-500">
+                    </div>
+                    <div>
+                        <label class="block font-bold uppercase text-slate-700 mb-1">NIP (Opsional)</label>
+                        <input type="text" id="inputFasilNip" placeholder="1985..." class="w-full border border-slate-300 rounded-xl px-3.5 py-2 text-xs focus:ring-2 focus:ring-indigo-500 font-mono">
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block font-bold uppercase text-slate-700 mb-1">Pangkat / Golongan</label>
+                        <input type="text" id="inputFasilPangkat" placeholder="Penata Tk I (III/d)" class="w-full border border-slate-300 rounded-xl px-3.5 py-2 text-xs focus:ring-2 focus:ring-indigo-500">
+                    </div>
+                    <div>
+                        <label class="block font-bold uppercase text-slate-700 mb-1">Jabatan &amp; Instansi</label>
+                        <input type="text" id="inputFasilJabatan" placeholder="Widyaiswara • BGTK Sumbar" class="w-full border border-slate-300 rounded-xl px-3.5 py-2 text-xs focus:ring-2 focus:ring-indigo-500">
+                    </div>
+                </div>
+                <div>
+                    <label class="block font-bold uppercase text-slate-700 mb-1">Penugasan Program</label>
+                    <select id="inputFasilProgram" class="w-full border border-slate-300 rounded-xl px-3.5 py-2 text-xs focus:ring-2 focus:ring-indigo-500 bg-white">
+                        <option value="sekolah_model">Sekolah Model</option>
+                        <option value="kombel">Komunitas Belajar (Kombel)</option>
+                        <option value="dual">Dual Program (Sekolah Model &amp; Kombel)</option>
+                    </select>
+                </div>
+            </div>
+            <div class="px-6 py-4 bg-slate-50 border-t border-slate-100 flex gap-2.5 justify-end">
+                <button type="button" onclick="closeModalTambahFasil()" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-bold transition-colors">Batal</button>
+                <button type="button" onclick="tambahFasil()" class="px-5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-bold shadow-md shadow-indigo-600/20 transition-all flex items-center gap-1.5">
+                    <span>💾 Simpan Fasilitator</span>
+                </button>
+            </div>
+        </div>
     </div>
 
     <!-- MODAL EDIT PROFIL FASILITATOR -->
@@ -1829,31 +1937,343 @@
         function changePegawaiPage(p) { gPegawaiPage = p; renderPegawaiTable(); }
 
         // ==========================================
-        // FASILITATOR DATA & MANAGEMENT LOGIC
+        // FASILITATOR DATA & MANAGEMENT LOGIC (ENHANCED UI/UX)
         // ==========================================
+        let gFasilRawList = [];
+        let gFasilFilteredList = [];
+        let gFasilFilterType = 'ALL';
+        let gFasilViewMode = 'cards'; // 'cards' or 'table'
+
+        function getInitials(name) {
+            if (!name) return 'F';
+            const clean = name.replace(/(Dr\.|Drs\.|Dra\.|H\.|Hj\.|M\.Pd|S\.Pd|S\.Si|M\.Si|M\.Kom|M\.M|CPEC|\.|\,)/gi, '').trim();
+            const parts = clean.split(/\s+/).filter(Boolean);
+            if (parts.length === 1) return parts[0].substring(0, 2).toUpperCase();
+            return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+        }
+
+        function toggleModalTambahFasil() {
+            const modal = document.getElementById('modalTambahFasil');
+            if (modal) modal.classList.toggle('hidden');
+        }
+
+        function closeModalTambahFasil() {
+            document.getElementById('modalTambahFasil')?.classList.add('hidden');
+        }
+
+        function setFasilFilter(type) {
+            gFasilFilterType = type;
+            ['All', 'Model', 'Kombel', 'Dual'].forEach(k => {
+                const btn = document.getElementById(`filterFasil${k}`);
+                if (!btn) return;
+                const isMatch = (k === 'All' && type === 'ALL') ||
+                                (k === 'Model' && type === 'sekolah_model') ||
+                                (k === 'Kombel' && type === 'kombel') ||
+                                (k === 'Dual' && type === 'dual');
+                btn.className = isMatch 
+                    ? "px-3.5 py-1.5 rounded-xl bg-white text-indigo-900 shadow-2xs font-bold transition-all" 
+                    : "px-3.5 py-1.5 rounded-xl text-slate-600 hover:text-slate-900 transition-all font-medium";
+            });
+            filterFasilList();
+        }
+
+        function setFasilViewMode(mode) {
+            gFasilViewMode = mode;
+            const btnCards = document.getElementById('btnViewCards');
+            const btnTable = document.getElementById('btnViewTable');
+            if (btnCards) btnCards.className = mode === 'cards' ? "p-2 rounded-lg bg-white text-slate-900 shadow-2xs" : "p-2 rounded-lg text-slate-500 hover:text-slate-900";
+            if (btnTable) btnTable.className = mode === 'table' ? "p-2 rounded-lg bg-white text-slate-900 shadow-2xs" : "p-2 rounded-lg text-slate-500 hover:text-slate-900";
+            renderFasilView();
+        }
+
         async function loadFasilitatorData() {
             const container = document.getElementById('listFasilContainer');
             if (!container) return;
-            container.innerHTML = '<div class="text-center text-slate-500 py-4"><div class="spinner mx-auto mb-2"></div>Memuat data fasilitator...</div>';
+            container.innerHTML = '<div class="text-center text-slate-500 py-12"><div class="spinner mx-auto mb-2"></div>Memuat direktori data fasilitator...</div>';
             try {
-                const [fasilSnap, assignSnap] = await Promise.all([db.ref('fasilitator').once('value'), db.ref('fasilitator_sekolah').once('value')]);
+                const [fasilSnap, assignSnap, guruSnap] = await Promise.all([
+                    db.ref('fasilitator').once('value'), 
+                    db.ref('fasilitator_sekolah').once('value'),
+                    db.ref('master_guru').once('value')
+                ]);
                 const fasils = fasilSnap.val() || {};
                 const assigned = assignSnap.val() || {};
-                const fasilList = Object.values(fasils);
-                if (fasilList.length === 0) { container.innerHTML = '<div class="text-center text-slate-400 py-8">Belum ada fasilitator terdaftar.</div>'; return; }
-                let html = `<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">`;
-                fasilList.forEach(f => {
-                    const numSekolah = (assigned[f.id] || []).length;
+                const gurus = guruSnap.val() || {};
+
+                gFasilRawList = Object.values(fasils).map(f => {
+                    const myNpsns = assigned[f.id] || [];
                     const progs = f.programs || (f.program_kombel ? ['kombel'] : ['sekolah_model']);
-                    let badgePrograms = '';
-                    if (progs.includes('sekolah_model') && progs.includes('kombel')) badgePrograms = `<span class="px-2.5 py-1 rounded-md text-[10px] font-extrabold bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-xs">DUAL PROGRAM (Model &amp; Kombel)</span>`;
-                    else if (progs.includes('kombel')) badgePrograms = `<span class="px-2 py-0.5 rounded-md text-[10px] font-bold bg-purple-100 text-purple-800 border border-purple-200">Program: Kombel</span>`;
-                    else badgePrograms = `<span class="px-2 py-0.5 rounded-md text-[10px] font-bold bg-indigo-100 text-indigo-800 border border-indigo-200">Program: Sekolah Model</span>`;
-                    html += `<div class="bg-white rounded-xl border border-slate-200 p-5 shadow-xs hover:shadow-md transition-shadow relative"><div class="flex items-start justify-between gap-2 mb-2"><div><h3 class="font-bold text-slate-900 text-base leading-snug">${f.nama}</h3><div class="text-xs text-slate-500 mt-0.5">${f.jabatan || 'Fasilitator'} ${f.instansi ? '• ' + f.instansi : ''}</div></div></div><div class="mb-3">${badgePrograms}</div><div class="space-y-1.5 my-3 text-xs text-slate-600 border-t border-b border-slate-100 py-3">${f.nip && f.nip !== '-' ? `<div><span class="text-slate-400">NIP:</span> ${f.nip}</div>` : ''}${f.pangkat_gol && f.pangkat_gol !== '-' ? `<div><span class="text-slate-400">Pangkat/Gol:</span> ${f.pangkat_gol}</div>` : ''}<div><span class="text-slate-400">No HP:</span> ${f.hp || '-'}</div>${f.mapel_kombel ? `<div><span class="text-slate-400">Mapel Kombel:</span> <strong class="text-purple-700">${f.mapel_kombel}</strong></div>` : ''}${f.fkk_1 ? `<div><span class="text-slate-400">Kombel Sasaran:</span> <strong class="text-amber-700">${f.fkk_1}</strong></div>` : ''}${progs.includes('sekolah_model') ? `<div><span class="text-slate-400">Sekolah Model Dampingan:</span> <strong class="text-indigo-600">${numSekolah} Sekolah</strong></div>` : ''}</div><div class="flex items-center justify-between pt-1"><button onclick="openEditProfilAdmin('${f.id}', '${f.nama.replace(/'/g,"\\'").replace(/"/g,'&quot;')}', '${f.nip || ''}', '${f.pangkat_gol || ''}', '${f.jabatan || ''}')" class="text-xs font-semibold text-sky-600 hover:text-sky-800">✏️ Edit Profil</button><button onclick="hapusFasil('${f.id}')" class="text-xs font-semibold text-rose-500 hover:text-rose-700">Hapus</button></div></div>`;
+                    const isDual = progs.includes('sekolah_model') && progs.includes('kombel');
+                    const isModel = progs.includes('sekolah_model');
+                    const isKombel = progs.includes('kombel');
+
+                    // Resolve assigned school names
+                    const schoolNames = myNpsns.map(npsn => {
+                        const guruGroup = gurus[npsn] || {};
+                        const first = Object.values(guruGroup)[0] || {};
+                        return first.asal_sekolah || `NPSN ${npsn}`;
+                    });
+
+                    return {
+                        ...f,
+                        assignedNpsns: myNpsns,
+                        schoolNames: schoolNames,
+                        programs: progs,
+                        isDual,
+                        isModel,
+                        isKombel
+                    };
                 });
-                html += `</div>`;
-                container.innerHTML = html;
-            } catch(e) { console.error("Gagal loadFasilitatorData", e); container.innerHTML = '<div class="text-center text-rose-500 py-4">Gagal memuat data fasilitator.</div>'; }
+
+                // Update Stats
+                const total = gFasilRawList.length;
+                const totalModel = gFasilRawList.filter(f => f.isModel).length;
+                const totalKombel = gFasilRawList.filter(f => f.isKombel).length;
+                const totalDual = gFasilRawList.filter(f => f.isDual).length;
+
+                const setEl = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
+                setEl('statFasilTotal', total);
+                setEl('statFasilSekolahModel', totalModel);
+                setEl('statFasilKombel', totalKombel);
+                setEl('statFasilDual', totalDual);
+                setEl('fasilCountPill', `${total} Fasilitator`);
+                setEl('countFilterAll', total);
+                setEl('countFilterModel', totalModel);
+                setEl('countFilterKombel', totalKombel);
+                setEl('countFilterDual', totalDual);
+
+                filterFasilList();
+            } catch(e) { 
+                console.error("Gagal loadFasilitatorData", e); 
+                container.innerHTML = '<div class="text-center text-rose-500 py-8">Gagal memuat data fasilitator: ' + e.message + '</div>'; 
+            }
+        }
+
+        function filterFasilList() {
+            const query = (document.getElementById('searchFasilInput')?.value || '').toLowerCase().trim();
+            gFasilFilteredList = gFasilRawList.filter(f => {
+                // Program filter
+                if (gFasilFilterType === 'sekolah_model' && !f.isModel) return false;
+                if (gFasilFilterType === 'kombel' && !f.isKombel) return false;
+                if (gFasilFilterType === 'dual' && !f.isDual) return false;
+
+                // Query search
+                if (!query) return true;
+                const searchStr = `${f.nama} ${f.nip || ''} ${f.hp || ''} ${f.jabatan || ''} ${f.instansi || ''} ${f.pangkat_gol || ''} ${f.mapel_kombel || ''} ${f.fkk_1 || ''} ${(f.schoolNames || []).join(' ')}`.toLowerCase();
+                return searchStr.includes(query);
+            });
+
+            renderFasilView();
+        }
+
+        function renderFasilView() {
+            const container = document.getElementById('listFasilContainer');
+            if (!container) return;
+
+            if (gFasilFilteredList.length === 0) {
+                container.innerHTML = `
+                    <div class="bg-white rounded-3xl p-12 text-center border border-slate-200/80 shadow-2xs space-y-3">
+                        <div class="text-4xl">🔍</div>
+                        <h4 class="font-bold text-slate-800 text-base">Tidak Ada Fasilitator Ditemukan</h4>
+                        <p class="text-xs text-slate-400 max-w-md mx-auto">Coba ubah kata kunci pencarian atau ganti filter kategori program di atas.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            if (gFasilViewMode === 'cards') {
+                renderFasilCardsView(container);
+            } else {
+                renderFasilTableView(container);
+            }
+        }
+
+        function renderFasilCardsView(container) {
+            const avatarGradients = [
+                'from-indigo-600 to-blue-600',
+                'from-purple-600 to-pink-600',
+                'from-emerald-600 to-teal-600',
+                'from-amber-600 to-orange-600',
+                'from-rose-600 to-red-600',
+                'from-cyan-600 to-blue-700'
+            ];
+
+            let html = `<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">`;
+            gFasilFilteredList.forEach((f, idx) => {
+                const inisial = getInitials(f.nama);
+                const grad = avatarGradients[idx % avatarGradients.length];
+
+                let cleanHp = (f.hp || '').replace(/[^0-9]/g, '');
+                if (cleanHp.startsWith('0')) cleanHp = '62' + cleanHp.slice(1);
+                const waLink = cleanHp ? `https://wa.me/${cleanHp}` : null;
+
+                let badgeProg = '';
+                if (f.isDual) {
+                    badgeProg = `<span class="px-2.5 py-1 rounded-full text-[10px] font-black bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-xs">🌟 Dual Program</span>`;
+                } else if (f.isKombel) {
+                    badgeProg = `<span class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-purple-100 text-purple-800 border border-purple-200">🟣 Kombel</span>`;
+                } else {
+                    badgeProg = `<span class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-indigo-100 text-indigo-800 border border-indigo-200">🏫 Sekolah Model</span>`;
+                }
+
+                const numSekolah = (f.assignedNpsns || []).length;
+                let penugasanInfo = '';
+                if (f.isModel && numSekolah > 0) {
+                    penugasanInfo = `
+                        <div class="bg-indigo-50/70 p-2.5 rounded-2xl border border-indigo-100">
+                            <div class="text-[10px] font-extrabold text-indigo-900 uppercase flex items-center gap-1.5">
+                                <span>🏫</span> Dampingan Sekolah Model (${numSekolah}):
+                            </div>
+                            <div class="text-xs font-semibold text-indigo-950 mt-1 line-clamp-2" title="${f.schoolNames.join(', ')}">
+                                ${f.schoolNames.join(', ')}
+                            </div>
+                        </div>
+                    `;
+                } else if (f.fkk_1) {
+                    penugasanInfo = `
+                        <div class="bg-purple-50/70 p-2.5 rounded-2xl border border-purple-100">
+                            <div class="text-[10px] font-extrabold text-purple-900 uppercase flex items-center gap-1.5">
+                                <span>🟣</span> Sasaran Komunitas Belajar:
+                            </div>
+                            <div class="text-xs font-semibold text-purple-950 mt-1">
+                                ${f.fkk_1}
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    penugasanInfo = `
+                        <div class="bg-slate-50 p-2.5 rounded-2xl border border-slate-200/60 text-slate-400 text-xs italic">
+                            Belum ada penugasan dampingan aktif.
+                        </div>
+                    `;
+                }
+
+                html += `
+                    <div class="bg-white rounded-3xl border border-slate-200/80 shadow-2xs hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200 p-5 flex flex-col justify-between h-full">
+                        <!-- Top Header -->
+                        <div>
+                            <div class="flex items-start justify-between gap-3 mb-3">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-11 h-11 rounded-2xl bg-gradient-to-br ${grad} text-white font-extrabold flex items-center justify-center text-sm shadow-md flex-shrink-0">
+                                        ${inisial}
+                                    </div>
+                                    <div>
+                                        <h3 class="font-bold text-slate-900 text-sm leading-snug hover:text-indigo-600 transition-colors cursor-pointer" onclick="openEditProfilAdmin('${f.id}', '${f.nama.replace(/'/g,"\\'").replace(/"/g,'&quot;')}', '${f.nip || ''}', '${f.pangkat_gol || ''}', '${f.jabatan || ''}')">${f.nama}</h3>
+                                        <div class="text-xs text-slate-500 line-clamp-1 mt-0.5 font-medium" title="${f.jabatan || 'Fasilitator'} • ${f.instansi || '-'}">
+                                            ${f.jabatan || 'Fasilitator'} ${f.instansi ? '• ' + f.instansi : ''}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="mb-3 flex items-center justify-between">
+                                ${badgeProg}
+                                ${f.mapel_kombel ? `<span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-slate-100 text-slate-700">${f.mapel_kombel}</span>` : ''}
+                            </div>
+
+                            <!-- Structured Chips -->
+                            <div class="grid grid-cols-2 gap-2 my-3 text-xs">
+                                <div class="bg-slate-50 p-2 rounded-xl border border-slate-100">
+                                    <div class="text-slate-400 text-[10px] uppercase font-bold">NIP</div>
+                                    <div class="font-mono text-slate-700 font-semibold truncate text-[11px] mt-0.5" title="${f.nip || '-'}">${f.nip || '-'}</div>
+                                </div>
+                                <div class="bg-slate-50 p-2 rounded-xl border border-slate-100">
+                                    <div class="text-slate-400 text-[10px] uppercase font-bold">Pangkat / Gol</div>
+                                    <div class="text-slate-700 font-semibold truncate text-[11px] mt-0.5" title="${f.pangkat_gol || '-'}">${f.pangkat_gol || '-'}</div>
+                                </div>
+                            </div>
+
+                            <!-- Penugasan Info Box -->
+                            <div class="mb-4">
+                                ${penugasanInfo}
+                            </div>
+                        </div>
+
+                        <!-- Footer Actions -->
+                        <div class="pt-3 border-t border-slate-100 flex items-center justify-between gap-2">
+                            <div class="flex items-center gap-1.5">
+                                <button onclick="openEditProfilAdmin('${f.id}', '${f.nama.replace(/'/g,"\\'").replace(/"/g,'&quot;')}', '${f.nip || ''}', '${f.pangkat_gol || ''}', '${f.jabatan || ''}')" class="px-3 py-1.5 bg-slate-100 hover:bg-indigo-50 hover:text-indigo-700 text-slate-700 font-bold rounded-xl text-xs transition-colors flex items-center gap-1">
+                                    <span>✏️ Edit</span>
+                                </button>
+                                <button onclick="hapusFasil('${f.id}')" class="px-2.5 py-1.5 text-rose-500 hover:bg-rose-50 rounded-xl text-xs font-bold transition-colors" title="Hapus Fasilitator">
+                                    <span>🗑️</span>
+                                </button>
+                            </div>
+                            ${waLink ? `
+                                <a href="${waLink}" target="_blank" class="px-3 py-1.5 bg-emerald-500 hover:bg-emerald-600 text-white rounded-xl text-xs font-bold transition-all shadow-xs flex items-center gap-1.5">
+                                    <svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981z"/></svg>
+                                    <span>WhatsApp</span>
+                                </a>
+                            ` : `<span class="text-[11px] text-slate-400 italic">No WA -</span>`}
+                        </div>
+                    </div>
+                `;
+            });
+            html += `</div>`;
+            container.innerHTML = html;
+        }
+
+        function renderFasilTableView(container) {
+            let html = `
+                <div class="bg-white rounded-3xl border border-slate-200/80 shadow-2xs overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-xs whitespace-nowrap">
+                            <thead class="bg-slate-50 text-slate-600 font-bold border-b border-slate-200">
+                                <tr>
+                                    <th class="px-4 py-3 text-center">#</th>
+                                    <th class="px-4 py-3">Nama Fasilitator</th>
+                                    <th class="px-4 py-3">Jabatan &amp; Instansi</th>
+                                    <th class="px-4 py-3 text-center">Program</th>
+                                    <th class="px-4 py-3">NIP / Pangkat</th>
+                                    <th class="px-4 py-3">Kontak WA</th>
+                                    <th class="px-4 py-3">Penugasan Dampingan</th>
+                                    <th class="px-4 py-3 text-center">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-100">
+            `;
+
+            gFasilFilteredList.forEach((f, idx) => {
+                let cleanHp = (f.hp || '').replace(/[^0-9]/g, '');
+                if (cleanHp.startsWith('0')) cleanHp = '62' + cleanHp.slice(1);
+                const waLink = cleanHp ? `https://wa.me/${cleanHp}` : null;
+
+                let badgeProg = '';
+                if (f.isDual) badgeProg = `<span class="px-2.5 py-0.5 rounded-full text-[10px] font-black bg-gradient-to-r from-indigo-600 to-purple-600 text-white">Dual Program</span>`;
+                else if (f.isKombel) badgeProg = `<span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-purple-100 text-purple-800">Kombel</span>`;
+                else badgeProg = `<span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-indigo-100 text-indigo-800">Sekolah Model</span>`;
+
+                const numSekolah = (f.assignedNpsns || []).length;
+                let penugasanText = f.isModel && numSekolah > 0 ? `<span class="font-bold text-indigo-700">${numSekolah} Sekolah Model</span>` : (f.fkk_1 ? `<span class="font-bold text-purple-700">${f.fkk_1}</span>` : `<span class="text-slate-400 italic">—</span>`);
+
+                html += `
+                    <tr class="hover:bg-slate-50/80 transition-colors">
+                        <td class="px-4 py-3.5 text-center text-slate-400 font-mono">${idx + 1}</td>
+                        <td class="px-4 py-3.5 font-bold text-slate-900">${f.nama}</td>
+                        <td class="px-4 py-3.5 text-slate-600">${f.jabatan || 'Fasilitator'} <span class="text-slate-400 block text-[10px]">${f.instansi || '-'}</span></td>
+                        <td class="px-4 py-3.5 text-center">${badgeProg}</td>
+                        <td class="px-4 py-3.5 text-slate-600 font-mono text-[11px]">${f.nip || '-'}<span class="text-slate-400 block font-sans">${f.pangkat_gol || '-'}</span></td>
+                        <td class="px-4 py-3.5">
+                            ${waLink ? `<a href="${waLink}" target="_blank" class="text-emerald-600 hover:text-emerald-700 font-bold flex items-center gap-1"><span>💬</span> ${f.hp}</a>` : `<span class="text-slate-400">${f.hp || '-'}</span>`}
+                        </td>
+                        <td class="px-4 py-3.5 max-w-xs truncate" title="${(f.schoolNames || []).join(', ')}">${penugasanText}</td>
+                        <td class="px-4 py-3.5 text-center">
+                            <div class="flex items-center justify-center gap-1.5">
+                                <button onclick="openEditProfilAdmin('${f.id}', '${f.nama.replace(/'/g,"\\'").replace(/"/g,'&quot;')}', '${f.nip || ''}', '${f.pangkat_gol || ''}', '${f.jabatan || ''}')" class="px-2.5 py-1 bg-slate-100 hover:bg-indigo-50 hover:text-indigo-700 text-slate-700 font-bold rounded-lg transition-colors">Edit</button>
+                                <button onclick="hapusFasil('${f.id}')" class="px-2 py-1 text-rose-500 hover:bg-rose-50 rounded-lg transition-colors">🗑️</button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            });
+
+            html += `
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            `;
+            container.innerHTML = html;
         }
 
         async function tambahFasil() {
@@ -1862,10 +2282,30 @@
             const nip = document.getElementById('inputFasilNip').value.trim();
             const pangkat_gol = document.getElementById('inputFasilPangkat').value.trim();
             const jabatan = document.getElementById('inputFasilJabatan').value.trim();
-            if (!nama || !hp) return alert("Nama dan No HP wajib diisi");
+            const programChoice = document.getElementById('inputFasilProgram')?.value || 'sekolah_model';
+
+            if (!nama || !hp) return alert("Nama Lengkap dan No. WhatsApp wajib diisi!");
+            
             const fasilId = "fasil_" + Date.now();
-            await db.ref('fasilitator/' + fasilId).set({ id: fasilId, nama, hp, nip, pangkat_gol, jabatan, programs: ['sekolah_model'] });
-            ['inputFasilNama','inputFasilHp','inputFasilNip','inputFasilPangkat','inputFasilJabatan'].forEach(id => { document.getElementById(id).value = ""; });
+            let programs = ['sekolah_model'];
+            if (programChoice === 'kombel') programs = ['kombel'];
+            else if (programChoice === 'dual') programs = ['sekolah_model', 'kombel'];
+
+            await db.ref('fasilitator/' + fasilId).set({ 
+                id: fasilId, 
+                nama, 
+                hp, 
+                nip, 
+                pangkat_gol, 
+                jabatan, 
+                programs 
+            });
+
+            ['inputFasilNama','inputFasilHp','inputFasilNip','inputFasilPangkat','inputFasilJabatan'].forEach(id => { 
+                const el = document.getElementById(id);
+                if (el) el.value = ""; 
+            });
+            closeModalTambahFasil();
             loadFasilitatorData();
         }
 
@@ -1884,11 +2324,17 @@
             const pangkat_gol = document.getElementById('editProfilAdminPangkat').value.trim();
             const jabatan = document.getElementById('editProfilAdminJabatan').value.trim();
             if (!id) return;
-            try { await db.ref('fasilitator/' + id).update({ nip, pangkat_gol, jabatan }); document.getElementById('modalEditProfilAdmin').classList.add('hidden'); loadFasilitatorData(); } catch(e) { alert("Gagal update profil: " + e.message); }
+            try { 
+                await db.ref('fasilitator/' + id).update({ nip, pangkat_gol, jabatan }); 
+                document.getElementById('modalEditProfilAdmin').classList.add('hidden'); 
+                loadFasilitatorData(); 
+            } catch(e) { 
+                alert("Gagal update profil: " + e.message); 
+            }
         }
 
         async function hapusFasil(id) {
-            if (!confirm("Yakin hapus fasilitator ini?")) return;
+            if (!confirm("Yakin ingin menghapus fasilitator ini dari direktori?")) return;
             await db.ref('fasilitator/' + id).remove();
             await db.ref('fasilitator_sekolah/' + id).remove();
             loadFasilitatorData();
