@@ -394,6 +394,17 @@
                 <input type="date" id="editInputTanggal" class="w-full border border-slate-300 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all">
             </div>
 
+            <div class="grid grid-cols-2 gap-3">
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1.5">Jam Mulai</label>
+                    <input type="time" id="editInputJamMulai" value="08:00" class="w-full border border-slate-300 rounded-xl px-3 py-2 text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1.5">Jam Selesai</label>
+                    <input type="time" id="editInputJamSelesai" value="12:00" class="w-full border border-slate-300 rounded-xl px-3 py-2 text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all">
+                </div>
+            </div>
+
             <div>
                 <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1.5">Status Kunjungan</label>
                 <select id="editSelectStatus" class="w-full border border-slate-300 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all">
@@ -627,6 +638,9 @@ async function loadAllData() {
                         npsn, schoolName,
                         kunjungan: k,
                         tanggal: j.tanggal || '-',
+                        jam_mulai: j.jam_mulai || '',
+                        jam_selesai: j.jam_selesai || '',
+                        waktu: j.waktu || '',
                         status: j.status || 'Belum Diisi',
                         catatan: j.catatan_pelaksanaan_tet || ''
                     });
@@ -838,15 +852,16 @@ function renderTable() {
             </td>
             <td class="px-4 py-3 text-center">
                 <div class="font-medium text-slate-700 text-xs">${r.tanggal !== '-' ? r.tanggal : '<span class="text-slate-400 italic">Belum</span>'}</div>
-                <button onclick="openEditTanggalModal('${r.npsn}', ${r.kunjungan}, '${r.fasilNama.replace(/'/g,"\\'").replace(/"/g,'&quot;')}', '${r.schoolName.replace(/'/g,"\\'").replace(/"/g,'&quot;')}', '${r.tanggal}', '${r.status}')" title="Edit Tanggal Kunjungan" class="mt-1 text-[11px] text-primary hover:underline font-semibold inline-flex items-center gap-1">
-                    ✏️ Edit Tanggal
+                ${(r.jam_mulai && r.jam_selesai) ? `<div class="text-[11px] font-bold text-indigo-600">⏰ ${r.jam_mulai} - ${r.jam_selesai} WIB</div>` : ''}
+                <button onclick="openEditTanggalModal('${r.npsn}', ${r.kunjungan}, '${r.fasilNama.replace(/'/g,"\\'").replace(/"/g,'&quot;')}', '${r.schoolName.replace(/'/g,"\\'").replace(/"/g,'&quot;')}', '${r.tanggal}', '${r.status}', '${r.jam_mulai || '08:00'}', '${r.jam_selesai || '12:00'}')" title="Edit Tanggal & Jam Kunjungan" class="mt-1 text-[11px] text-primary hover:underline font-semibold inline-flex items-center gap-1">
+                    ✏️ Edit Tanggal &amp; Jam
                 </button>
             </td>
             <td class="px-4 py-3 text-center">${statusBadge(r.status)}</td>
             <td class="px-4 py-3 text-center no-print">
                 <div class="flex flex-col sm:flex-row items-center justify-center gap-1.5">
                     ${r.tanggal !== '-' ? `<button onclick='downloadWordSuratTugas([${JSON.stringify(r).replace(/'/g, "\\'").replace(/"/g,'&quot;')}])' title="Download Surat Tugas Word (.docx)" class="text-xs bg-primary/10 text-primary hover:bg-primary/20 px-2.5 py-1.5 rounded-lg font-bold transition-colors flex items-center gap-1.5"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 01-2-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>Surat Tugas</button>` : '<span class="text-xs text-slate-300">—</span>'}
-                    <button onclick="openEditTanggalModal('${r.npsn}', ${r.kunjungan}, '${r.fasilNama.replace(/'/g,"\\'").replace(/"/g,'&quot;')}', '${r.schoolName.replace(/'/g,"\\'").replace(/"/g,'&quot;')}', '${r.tanggal}', '${r.status}')" title="Edit Tanggal & Status" class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 px-2.5 py-1.5 rounded-lg font-semibold transition-colors flex items-center gap-1">
+                    <button onclick="openEditTanggalModal('${r.npsn}', ${r.kunjungan}, '${r.fasilNama.replace(/'/g,"\\'").replace(/"/g,'&quot;')}', '${r.schoolName.replace(/'/g,"\\'").replace(/"/g,'&quot;')}', '${r.tanggal}', '${r.status}', '${r.jam_mulai || '08:00'}', '${r.jam_selesai || '12:00'}')" title="Edit Tanggal & Status" class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 px-2.5 py-1.5 rounded-lg font-semibold transition-colors flex items-center gap-1">
                         ✏️ Edit
                     </button>
                 </div>
@@ -1256,7 +1271,7 @@ function salinTeksPersuratan() {
 // ==========================================
 // EDIT TANGGAL JADWAL (ADMIN / PERSURATAN)
 // ==========================================
-function openEditTanggalModal(npsn, kunjungan, fasilNama, schoolName, currentTanggal, currentStatus) {
+function openEditTanggalModal(npsn, kunjungan, fasilNama, schoolName, currentTanggal, currentStatus, currentJamMulai = '08:00', currentJamSelesai = '12:00') {
     document.getElementById('editNpsn').value = npsn;
     document.getElementById('editKunjungan').value = kunjungan;
     document.getElementById('editInfoFasil').textContent = fasilNama || '-';
@@ -1270,6 +1285,8 @@ function openEditTanggalModal(npsn, kunjungan, fasilNama, schoolName, currentTan
         document.getElementById('editInputTanggal').value = '';
     }
 
+    document.getElementById('editInputJamMulai').value = currentJamMulai || '08:00';
+    document.getElementById('editInputJamSelesai').value = currentJamSelesai || '12:00';
     document.getElementById('editSelectStatus').value = (currentStatus && currentStatus !== 'Belum Diisi') ? currentStatus : 'Direncanakan';
     document.getElementById('modalEditTanggalJadwal').classList.remove('hidden');
 }
@@ -1282,6 +1299,8 @@ async function simpanEditTanggalJadwal() {
     const npsn = document.getElementById('editNpsn').value;
     const kunjungan = document.getElementById('editKunjungan').value;
     const rawTanggal = document.getElementById('editInputTanggal').value;
+    const jam_mulai = document.getElementById('editInputJamMulai')?.value || '08:00';
+    const jam_selesai = document.getElementById('editInputJamSelesai')?.value || '12:00';
     const status = document.getElementById('editSelectStatus').value;
 
     if (!npsn || !kunjungan) return;
@@ -1293,6 +1312,9 @@ async function simpanEditTanggalJadwal() {
         const refPath = `jadwal_kunjungan/${npsn}/kunjungan_${kunjungan}`;
         await db.ref(refPath).update({
             tanggal: tanggalFormatted,
+            jam_mulai: jam_mulai,
+            jam_selesai: jam_selesai,
+            waktu: `${jam_mulai} - ${jam_selesai} WIB`,
             status: status
         });
 
@@ -1355,8 +1377,10 @@ async function downloadWordSuratTugas(items) {
         }
 
         const firstItem = items[0];
-        const tanggalPelaksanaan = firstItem.tanggal !== '-' ? formatTanggalLengkap(firstItem.tanggal) : '___________________';
-        const namaHari = getNamaHari(firstItem.tanggal);
+        const jamPelaksanaan = (firstItem.jam_mulai && firstItem.jam_selesai) 
+            ? ` Pukul ${firstItem.jam_mulai} s.d. ${firstItem.jam_selesai} WIB` 
+            : (firstItem.jam_mulai ? ` Pukul ${firstItem.jam_mulai} WIB s.d. Selesai` : '');
+        const tanggalPelaksanaan = firstItem.tanggal !== '-' ? `${getNamaHari(firstItem.tanggal)}, ${formatTanggalLengkap(firstItem.tanggal)}${jamPelaksanaan}` : '___________________';
         const tanggalSurat = formatDateDisplay(normalizeDateKey(new Date().toISOString().split('T')[0]));
 
         const children = [];
@@ -1472,11 +1496,15 @@ async function downloadWordSuratTugas(items) {
                 spacing: { after: 80 }
             }));
 
+            const jamPelaksanaan = (item.jam_mulai && item.jam_selesai) 
+                ? ` Pukul ${item.jam_mulai} s.d. ${item.jam_selesai} WIB` 
+                : (item.jam_mulai ? ` Pukul ${item.jam_mulai} WIB s.d. Selesai` : '');
+
             children.push(new Paragraph({
                 alignment: AlignmentType.JUSTIFY,
                 children: [
                     new TextRun({ text: "Pelaksanaan\t: ", bold: true, size: 22, font: "Times New Roman" }),
-                    new TextRun({ text: `${namaHari}, ${tanggalPelaksanaan}`, size: 22, font: "Times New Roman" })
+                    new TextRun({ text: `${namaHari}, ${tanggalPelaksanaan}${jamPelaksanaan}`, size: 22, font: "Times New Roman" })
                 ],
                 spacing: { after: 140 }
             }));
@@ -1678,13 +1706,14 @@ function generateSuratContent(items) {
 // EXCEL EXPORT
 // ==========================================
 function exportExcel() {
-    const data = [['No', 'Fasilitator', 'No. HP Fasilitator', 'Nama Sekolah', 'NPSN', 'Kunjungan Ke', 'Tanggal Pelaksanaan', 'Status']];
+    const data = [['No', 'Fasilitator', 'No. HP Fasilitator', 'Nama Sekolah', 'NPSN', 'Kunjungan Ke', 'Tanggal Pelaksanaan', 'Jam Pelaksanaan', 'Status']];
     gFilteredRows.forEach((r, i) => {
-        data.push([i+1, r.fasilNama, r.fasilHp, r.schoolName, r.npsn, `Kunjungan ${r.kunjungan}`, r.tanggal !== '-' ? r.tanggal : 'Belum Dijadwalkan', r.status]);
+        const jamStr = (r.jam_mulai && r.jam_selesai) ? `${r.jam_mulai} - ${r.jam_selesai} WIB` : (r.jam_mulai ? `${r.jam_mulai} WIB` : '-');
+        data.push([i+1, r.fasilNama, r.fasilHp, r.schoolName, r.npsn, `Kunjungan ${r.kunjungan}`, r.tanggal !== '-' ? r.tanggal : 'Belum Dijadwalkan', jamStr, r.status]);
     });
     const wb = XLSX.utils.book_new();
     const ws = XLSX.utils.aoa_to_sheet(data);
-    ws['!cols'] = [5, 25, 20, 35, 15, 14, 22, 18].map(w => ({ wch: w }));
+    ws['!cols'] = [5, 25, 20, 35, 15, 14, 22, 18, 18].map(w => ({ wch: w }));
     XLSX.utils.book_append_sheet(wb, ws, 'Rekap Surat Tugas');
     XLSX.writeFile(wb, `Rekap_Surat_Tugas_BGTK_Sumbar_${new Date().toISOString().split('T')[0]}.xlsx`);
 }

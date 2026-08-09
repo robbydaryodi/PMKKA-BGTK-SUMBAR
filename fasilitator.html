@@ -390,6 +390,18 @@
                     <div id="calExistingScheduleNotice" class="text-slate-600 italic pt-1 hidden">Status saat ini: <span id="calExistingStatusBadge" class="font-bold"></span></div>
                 </div>
 
+                <!-- Jam Pelaksanaan (Jam Mulai & Jam Selesai) -->
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5">Jam Mulai <span class="text-red-500">*</span></label>
+                        <input type="time" id="calInputJamMulai" value="08:00" class="w-full border-slate-300 rounded-xl shadow-sm focus:ring-primary focus:border-primary px-3.5 py-2 border bg-white text-sm font-semibold">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5">Jam Selesai <span class="text-red-500">*</span></label>
+                        <input type="time" id="calInputJamSelesai" value="12:00" class="w-full border-slate-300 rounded-xl shadow-sm focus:ring-primary focus:border-primary px-3.5 py-2 border bg-white text-sm font-semibold">
+                    </div>
+                </div>
+
                 <!-- Status Dropdown -->
                 <div>
                     <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5">Status Pelaksanaan</label>
@@ -436,8 +448,12 @@
             <div class="p-6 space-y-4 bg-slate-50 text-sm">
                 <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-xs space-y-2.5">
                     <div class="flex justify-between items-center text-xs">
-                        <span class="text-slate-500 font-medium">Tanggal Pelaksanaan:</span>
+                        <span class="text-slate-500 font-medium">Tanggal &amp; Waktu:</span>
                         <span class="font-bold text-slate-800" id="detailTanggalText">-</span>
+                    </div>
+                    <div class="flex justify-between items-center text-xs">
+                        <span class="text-slate-500 font-medium">Jam Pelaksanaan:</span>
+                        <span class="font-bold text-indigo-700" id="detailWaktuText">-</span>
                     </div>
                     <div class="flex justify-between items-center text-xs">
                         <span class="text-slate-500 font-medium">Tahap Siklus TET:</span>
@@ -499,6 +515,16 @@
                      <label class="block text-xs font-bold uppercase text-slate-600 mb-1">Tanggal Rencana Kunjungan</label>
                      <input type="date" id="aturTanggal" class="w-full border-slate-300 rounded-xl shadow-sm focus:ring-primary focus:border-primary px-4 py-2 border text-sm">
                  </div>
+                 <div class="grid grid-cols-2 gap-3">
+                     <div>
+                         <label class="block text-xs font-bold uppercase text-slate-600 mb-1">Jam Mulai</label>
+                         <input type="time" id="aturJamMulai" value="08:00" class="w-full border-slate-300 rounded-xl shadow-sm focus:ring-primary focus:border-primary px-3 py-2 border text-sm font-semibold">
+                     </div>
+                     <div>
+                         <label class="block text-xs font-bold uppercase text-slate-600 mb-1">Jam Selesai</label>
+                         <input type="time" id="aturJamSelesai" value="12:00" class="w-full border-slate-300 rounded-xl shadow-sm focus:ring-primary focus:border-primary px-3 py-2 border text-sm font-semibold">
+                     </div>
+                 </div>
                  <div>
                      <label class="block text-xs font-bold uppercase text-slate-600 mb-1">Status Rencana</label>
                      <select id="aturStatus" class="w-full border-slate-300 rounded-xl shadow-sm focus:ring-primary focus:border-primary px-4 py-2 border text-sm">
@@ -539,24 +565,31 @@
                              <label class="block text-xs font-bold uppercase text-slate-600 mb-1">Nama Fasilitator</label>
                              <input type="text" id="infoNamaFasil" readonly class="w-full bg-slate-100 border-slate-200 rounded-xl px-4 py-2 border text-slate-700 font-semibold focus:outline-none text-sm">
                          </div>
-                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                         <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
                              <div>
                                  <label class="block text-xs font-bold uppercase text-slate-600 mb-1">Tanggal Kunjungan <span class="text-red-500">*</span></label>
-                                 <input type="date" id="inputKunjunganTanggal" class="w-full border-slate-300 rounded-xl shadow-sm focus:ring-primary focus:border-primary px-4 py-2 border text-sm" required>
+                                 <input type="date" id="inputKunjunganTanggal" class="w-full border-slate-300 rounded-xl shadow-sm focus:ring-primary focus:border-primary px-3 py-2 border text-sm font-semibold" required>
                              </div>
                              <div>
-                                  <label class="block text-xs font-bold uppercase text-slate-600 mb-1">Status Baseline Sekolah (Ter-set Otomatis)</label>
-                                  <input type="text" id="inputSiklusTet" readonly class="w-full bg-slate-100 border-slate-200 rounded-xl px-4 py-2 border text-slate-800 font-bold text-xs focus:outline-none" value="Maju">
-                                  <p class="text-[10px] text-slate-400 mt-1" id="infoSiklusTetDisplay">🎯 Pre-set dari Data Status Sekolah Model</p>
+                                 <label class="block text-xs font-bold uppercase text-slate-600 mb-1">Jam Mulai</label>
+                                 <input type="time" id="inputKunjunganJamMulai" value="08:00" class="w-full border-slate-300 rounded-xl shadow-sm focus:ring-primary focus:border-primary px-3 py-2 border text-sm font-semibold">
                              </div>
-                             
-                             <div class="mt-2 sm:col-span-2">
-                                <label class="block text-xs font-bold uppercase text-slate-700 mb-2">Partisipasi Guru</label>
-                                <div class="flex gap-6">
+                             <div>
+                                 <label class="block text-xs font-bold uppercase text-slate-600 mb-1">Jam Selesai</label>
+                                 <input type="time" id="inputKunjunganJamSelesai" value="12:00" class="w-full border-slate-300 rounded-xl shadow-sm focus:ring-primary focus:border-primary px-3 py-2 border text-sm font-semibold">
+                             </div>
+                         </div>
+                         <div>
+                              <label class="block text-xs font-bold uppercase text-slate-600 mb-1">Status Baseline Sekolah (Ter-set Otomatis)</label>
+                              <input type="text" id="inputSiklusTet" readonly class="w-full bg-slate-100 border-slate-200 rounded-xl px-4 py-2 border text-slate-800 font-bold text-xs focus:outline-none" value="Maju">
+                              <p class="text-[10px] text-slate-400 mt-1" id="infoSiklusTetDisplay">🎯 Pre-set dari Data Status Sekolah Model</p>
+                         </div>
+                         <div class="mt-2">
+                             <label class="block text-xs font-bold uppercase text-slate-700 mb-2">Partisipasi Guru</label>
+                             <div class="flex gap-6">
                                     <label class="flex items-center gap-2 text-sm font-medium"><input type="radio" name="partisipasi_guru" value="Rendah" class="text-indigo-600 focus:ring-indigo-500"> Rendah</label>
                                     <label class="flex items-center gap-2 text-sm font-medium"><input type="radio" name="partisipasi_guru" value="Sedang" class="text-indigo-600 focus:ring-indigo-500"> Sedang</label>
                                     <label class="flex items-center gap-2 text-sm font-medium"><input type="radio" name="partisipasi_guru" value="Tinggi" class="text-indigo-600 focus:ring-indigo-500"> Tinggi</label>
-                                </div>
                              </div>
                          </div>
                      </div>
@@ -1549,13 +1582,19 @@
                 const exist = allJadwalData[npsn][`kunjungan_${kId}`];
                 if (exist.tanggal && exist.tanggal !== '-') {
                     existBox.classList.remove('hidden');
-                    badgeEl.innerText = `${exist.status || 'Tercatat'} (Tgl: ${exist.tanggal})`;
+                    badgeEl.innerText = `${exist.status || 'Tercatat'} (Tgl: ${exist.tanggal}${exist.jam_mulai ? ' ' + exist.jam_mulai : ''})`;
                     document.getElementById('calInputStatus').value = exist.status || 'Direncanakan';
+                    if (exist.jam_mulai) document.getElementById('calInputJamMulai').value = exist.jam_mulai;
+                    if (exist.jam_selesai) document.getElementById('calInputJamSelesai').value = exist.jam_selesai;
                 } else {
                     existBox.classList.add('hidden');
+                    document.getElementById('calInputJamMulai').value = '08:00';
+                    document.getElementById('calInputJamSelesai').value = '12:00';
                 }
             } else {
                 existBox.classList.add('hidden');
+                document.getElementById('calInputJamMulai').value = '08:00';
+                document.getElementById('calInputJamSelesai').value = '12:00';
             }
         }
 
@@ -1563,6 +1602,8 @@
             const npsn = document.getElementById('calInputSekolah').value;
             const kId = document.getElementById('calInputKunjungan').value;
             const tanggal = document.getElementById('calInputTanggal').value;
+            const jam_mulai = document.getElementById('calInputJamMulai')?.value || '08:00';
+            const jam_selesai = document.getElementById('calInputJamSelesai')?.value || '12:00';
             const status = document.getElementById('calInputStatus').value;
 
             if (!npsn) return alert("Pilih sekolah binaan terlebih dahulu!");
@@ -1577,6 +1618,9 @@
                 const updated = {
                     ...existing,
                     tanggal: tanggal,
+                    jam_mulai: jam_mulai,
+                    jam_selesai: jam_selesai,
+                    waktu: `${jam_mulai} - ${jam_selesai} WIB`,
                     status: (status === 'Selesai' && existing.status === 'Selesai') ? 'Selesai' : status,
                     catatan: (status === 'Direncanakan' ? 'Menunggu pelaksanaan' : (status === 'Batal/Ditunda' ? 'Dibatalkan/Ditunda' : (existing.catatan || '-')))
                 };
@@ -1625,6 +1669,13 @@
             document.getElementById('detailSekolahTitle').innerText = schoolName;
             document.getElementById('detailNpsnSubtitle').innerText = `NPSN: ${npsn}`;
             document.getElementById('detailTanggalText').innerText = visit.tanggal ? formatIndoDate(visit.tanggal) : '-';
+            
+            const jamStr = (visit.jam_mulai && visit.jam_selesai) 
+                ? `Pukul ${visit.jam_mulai} s.d. ${visit.jam_selesai} WIB`
+                : (visit.jam_mulai ? `Pukul ${visit.jam_mulai} WIB s.d. Selesai` : '08:00 - 12:00 WIB (Default)');
+            const waktuEl = document.getElementById('detailWaktuText');
+            if (waktuEl) waktuEl.innerText = jamStr;
+
             document.getElementById('detailTahapTetText').innerText = visit.tahap_siklus_tet || 'Belum diisi';
 
             const rubrikStatus = document.getElementById('detailRubrikStatusText');
@@ -1709,6 +1760,7 @@
                     if(jData.status === 'Batal/Ditunda') statusColor = "bg-red-100 text-red-700";
 
                     const safeName = schoolName.replace(/'/g, "\\\'").replace(/"/g, '&quot;');
+                    const jamBadge = (jData.jam_mulai && jData.jam_selesai) ? `<span class="text-indigo-600 font-bold ml-1">⏰ ${jData.jam_mulai} - ${jData.jam_selesai} WIB</span>` : '';
                     kunjunganHtml += `
                         <div class="border border-slate-200 rounded-2xl p-4 hover:border-indigo-300 transition-colors group flex flex-col justify-between bg-white shadow-xs">
                             <div>
@@ -1716,7 +1768,7 @@
                                     <span class="font-bold text-slate-800 text-sm">Kunjungan ${i}</span>
                                     <span class="px-2 py-0.5 rounded-full text-xs font-bold ${statusColor}">${jData.status}</span>
                                 </div>
-                                <p class="text-xs text-slate-600 mb-1"><span class="font-medium text-slate-400">Tgl:</span> ${jData.tanggal !== '-' ? formatIndoDate(jData.tanggal) : '-'}</p>
+                                <p class="text-xs text-slate-600 mb-1"><span class="font-medium text-slate-400">Tgl:</span> ${jData.tanggal !== '-' ? formatIndoDate(jData.tanggal) : '-'} ${jamBadge}</p>
                                 <p class="text-xs text-slate-500 truncate mb-3" title="${jData.catatan}"><span class="font-medium text-slate-400">Catatan:</span> ${jData.catatan}</p>
                             </div>
                             <div class="flex gap-2 mt-auto">
@@ -1775,7 +1827,12 @@
                 const data = snap.val();
                 if(data) {
                     document.getElementById('aturTanggal').value = data.tanggal && data.tanggal !== '-' ? data.tanggal : '';
+                    document.getElementById('aturJamMulai').value = data.jam_mulai || '08:00';
+                    document.getElementById('aturJamSelesai').value = data.jam_selesai || '12:00';
                     document.getElementById('aturStatus').value = (data.status === 'Selesai' || data.status === 'Batal/Ditunda') ? data.status : 'Direncanakan';
+                } else {
+                    document.getElementById('aturJamMulai').value = '08:00';
+                    document.getElementById('aturJamSelesai').value = '12:00';
                 }
             });
         }
@@ -1790,10 +1847,15 @@
             const npsn = document.getElementById('aturNpsn').value;
             const kId = document.getElementById('aturId').value;
             const tanggal = document.getElementById('aturTanggal').value || '-';
+            const jam_mulai = document.getElementById('aturJamMulai')?.value || '08:00';
+            const jam_selesai = document.getElementById('aturJamSelesai')?.value || '12:00';
             const status = document.getElementById('aturStatus').value;
             
             const updatePayload = {
                 tanggal, 
+                jam_mulai,
+                jam_selesai,
+                waktu: `${jam_mulai} - ${jam_selesai} WIB`,
                 status,
                 catatan: (status === 'Direncanakan' ? 'Menunggu pelaksanaan' : (status === 'Batal/Ditunda' ? 'Dibatalkan/Ditunda' : '-'))
             };
@@ -1861,6 +1923,8 @@
                 const data = snap.val();
                 if(data) {
                     document.getElementById('inputKunjunganTanggal').value = data.tanggal && data.tanggal !== '-' ? data.tanggal : '';
+                    document.getElementById('inputKunjunganJamMulai').value = data.jam_mulai || '08:00';
+                    document.getElementById('inputKunjunganJamSelesai').value = data.jam_selesai || '12:00';
                     if (data.tahap_siklus_tet) {
                         document.getElementById('inputSiklusTet').value = data.tahap_siklus_tet;
                     }
@@ -1884,6 +1948,8 @@
                         });
                     });
                 } else {
+                    document.getElementById('inputKunjunganJamMulai').value = '08:00';
+                    document.getElementById('inputKunjunganJamSelesai').value = '12:00';
                     document.getElementById('catatanPelaksanaan').value = '';
                     document.getElementById('kendalaDitemukan').value = '';
                     document.getElementById('rekomendasiTindakLanjut').value = '';
@@ -1902,12 +1968,17 @@
             const kId = document.getElementById('inputKunjunganId').value;
             
             const tanggal = document.getElementById('inputKunjunganTanggal').value;
+            const jam_mulai = document.getElementById('inputKunjunganJamMulai')?.value || '08:00';
+            const jam_selesai = document.getElementById('inputKunjunganJamSelesai')?.value || '12:00';
             if(!tanggal) return alert("Tanggal Kunjungan wajib diisi!");
             
             const payload = {
                 nama_sekolah: document.getElementById('infoNamaSekolah').value,
                 nama_fasilitator: document.getElementById('infoNamaFasil').value,
                 tanggal: tanggal,
+                jam_mulai: jam_mulai,
+                jam_selesai: jam_selesai,
+                waktu: `${jam_mulai} - ${jam_selesai} WIB`,
                 tahap_siklus_tet: document.getElementById('inputSiklusTet').value,
                 partisipasi_guru: document.querySelector('input[name="partisipasi_guru"]:checked')?.value || '',
                 catatan_pelaksanaan_tet: document.getElementById('catatanPelaksanaan').value,
