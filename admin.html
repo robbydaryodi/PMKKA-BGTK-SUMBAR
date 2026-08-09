@@ -1874,22 +1874,49 @@
 
         async function openModalDashSekolahModel() {
             try {
+                let statusModel = gStatusSekolahRaw;
+                if (!statusModel || Object.keys(statusModel).length === 0) {
+                    try {
+                        const res = await fetch('./data_status_sekolah_model.json');
+                        statusModel = await res.json();
+                        gStatusSekolahRaw = statusModel;
+                    } catch(e) {}
+                }
+
                 const [guruSnap, fasilSnap, assignSnap] = await Promise.all([db.ref('master_guru').once('value'), db.ref('fasilitator').once('value'), db.ref('fasilitator_sekolah').once('value')]);
-                // master_guru: NPSN → {guru_id → {asal_sekolah, kode_kabupaten, ...}}
                 const gurusRaw = guruSnap.val() || {}; const fasils = fasilSnap.val() || {}; const assigns = assignSnap.val() || {};
-                gDashDetailData = Object.entries(gurusRaw).map(([npsn, guruGroup]) => {
-                    const firstGuru = Object.values(guruGroup || {})[0] || {};
-                    const namaSekolah = firstGuru.asal_sekolah || `Sekolah ${npsn}`;
-                    const kabKota = firstGuru.kode_kabupaten || '-';
+                
+                const allNpsns = Array.from(new Set([...Object.keys(gurusRaw), ...Object.keys(statusModel || {})]));
+
+                gDashDetailData = allNpsns.map(npsn => {
+                    const guruGroup = gurusRaw[npsn] || {};
+                    const firstGuru = Object.values(guruGroup)[0] || {};
+                    const sModel = (statusModel && statusModel[npsn]) ? statusModel[npsn] : null;
+
+                    const namaSekolah = sModel?.nama_sekolah || firstGuru.asal_sekolah || `Sekolah ${npsn}`;
+                    const kabKota = sModel?.kab_kota || firstGuru.kode_kabupaten || '-';
                     let fasilName = 'Belum Ditugaskan', fasilInfo = '-', isPlotted = false;
-                    for (const fId in assigns) { if (Array.isArray(assigns[fId]) && assigns[fId].includes(npsn) && fasils[fId]) { fasilName = fasils[fId].nama; fasilInfo = fasils[fId].instansi || fasils[fId].jabatan || '-'; isPlotted = true; break; } }
-                    return { col1: namaSekolah, col2: `${kabKota} (NPSN: ${npsn})`, col3: fasilName, col4: fasilInfo, colBadge: isPlotted ? `<span class="px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800">✅ Ter-plotting</span>` : `<span class="px-2.5 py-1 rounded-full text-xs font-bold bg-amber-100 text-amber-800">⚠️ Belum</span>` };
+                    for (const fId in assigns) { 
+                        if (Array.isArray(assigns[fId]) && assigns[fId].includes(npsn) && fasils[fId]) { 
+                            fasilName = fasils[fId].nama; 
+                            fasilInfo = fasils[fId].instansi || fasils[fId].jabatan || '-'; 
+                            isPlotted = true; 
+                            break; 
+                        } 
+                    }
+                    return { 
+                        col1: `<div><div class="font-bold text-slate-900">${namaSekolah}</div><div class="text-[10px] text-slate-400 font-mono">NPSN: ${npsn}</div></div>`, 
+                        col2: kabKota, 
+                        col3: `<div class="font-bold ${isPlotted ? 'text-slate-800' : 'text-amber-600 font-medium'}">${fasilName}</div>`, 
+                        col4: fasilInfo, 
+                        colBadge: isPlotted ? `<span class="px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800 border border-emerald-200">✅ Ter-plotting</span>` : `<span class="px-2.5 py-1 rounded-full text-xs font-bold bg-amber-100 text-amber-800 border border-amber-200">⚠️ Belum</span>` 
+                    };
                 });
                 document.getElementById('dashDetailTitle').textContent = "Detail 25 Sekolah Model PMKKA";
                 document.getElementById('dashDetailSub').textContent = "Daftar Sekolah Model terdaftar dan Fasilitator Dampingannya.";
                 document.getElementById('dashDetailBadge').textContent = `${gDashDetailData.length} Sekolah Model`;
                 document.getElementById('dashDetailBadge').className = "px-3 py-1 rounded-full text-xs font-black bg-indigo-100 text-indigo-800 border border-indigo-200";
-                document.getElementById('dashTh1').textContent = "Nama Sekolah Model"; document.getElementById('dashTh2').textContent = "Wilayah / NPSN"; document.getElementById('dashTh3').textContent = "Fasilitator Dampingan"; document.getElementById('dashTh4').textContent = "Instansi / Jabatan"; document.getElementById('dashTh5').textContent = "Status Ploting";
+                document.getElementById('dashTh1').textContent = "Nama Sekolah Model"; document.getElementById('dashTh2').textContent = "Kabupaten / Kota"; document.getElementById('dashTh3').textContent = "Fasilitator Dampingan"; document.getElementById('dashTh4').textContent = "Instansi / Jabatan"; document.getElementById('dashTh5').textContent = "Status Ploting";
                 const searchInput = document.getElementById('dashDetailSearch'); if (searchInput) searchInput.value = '';
                 renderDashDetailTableBody(gDashDetailData);
                 document.getElementById('modalDashDetail').classList.remove('hidden');
@@ -1919,16 +1946,64 @@
 
         async function openModalDashKunjungan() {
             try {
-                const [jadwalSnap, guruSnap] = await Promise.all([db.ref('jadwal_kunjungan').once('value'), db.ref('master_guru').once('value')]);
-                const jadwals = jadwalSnap.val() || {}; const gurus = guruSnap.val() || {};
+                let statusModel = gStatusSekolahRaw;
+                if (!statusModel || Object.keys(statusModel).length === 0) {
+                    try {
+                        const res = await fetch('./data_status_sekolah_model.json');
+                        statusModel = await res.json();
+                        gStatusSekolahRaw = statusModel;
+                    } catch(e) {}
+                }
+
+                const [jadwalSnap, guruSnap, fasilSnap, assignSnap] = await Promise.all([
+                    db.ref('jadwal_kunjungan').once('value'), 
+                    db.ref('master_guru').once('value'),
+                    db.ref('fasilitator').once('value'),
+                    db.ref('fasilitator_sekolah').once('value')
+                ]);
+                const jadwals = jadwalSnap.val() || {}; 
+                const gurus = guruSnap.val() || {};
+                const fasils = fasilSnap.val() || {};
+                const assigns = assignSnap.val() || {};
+
+                // Map NPSN to Fasilitator Name
+                const schoolToFasil = {};
+                for (const fId in assigns) {
+                    if (Array.isArray(assigns[fId])) {
+                        assigns[fId].forEach(n => {
+                            if (fasils[fId]) schoolToFasil[n] = fasils[fId].nama;
+                        });
+                    }
+                }
+
                 gDashDetailData = [];
                 for (const npsn in jadwals) {
-                    const namaSekolah = gurus[npsn]?.nama_sekolah || `NPSN ${npsn}`; const kabKota = gurus[npsn]?.kab_kota || '-';
+                    const guruGroup = gurus[npsn] || {};
+                    const firstGuru = Object.values(guruGroup)[0] || {};
+                    const sModel = (statusModel && statusModel[npsn]) ? statusModel[npsn] : null;
+
+                    const namaSekolah = sModel?.nama_sekolah || firstGuru.asal_sekolah || `Sekolah ${npsn}`;
+                    const kabKota = sModel?.kab_kota || firstGuru.kode_kabupaten || '-';
+                    const fasilNama = schoolToFasil[npsn] || 'Belum Ditugaskan';
+
                     for (const kunKey in jadwals[npsn]) {
                         const kObj = jadwals[npsn][kunKey];
-                        if (kObj && (kObj.tanggal || kObj.status || kObj.fasilNama)) {
+                        if (kObj && (kObj.tanggal && kObj.tanggal !== '-')) {
                             const kunNo = kunKey.replace('kunjungan_', 'Tahap ');
-                            gDashDetailData.push({ col1: namaSekolah, col2: `${kabKota} (${kunNo})`, col3: kObj.fasilNama || 'Fasilitator', col4: kObj.tanggal || 'Tanggal Belum Set', colBadge: `<span class="px-2.5 py-1 rounded-full text-xs font-bold bg-amber-100 text-amber-800">📅 Terjadwal</span>` });
+                            let statusBadge = `<span class="px-2.5 py-1 rounded-full text-xs font-bold bg-blue-100 text-blue-800 border border-blue-200">📅 Terjadwal</span>`;
+                            if (kObj.status === 'Selesai') {
+                                statusBadge = `<span class="px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800 border border-emerald-200">✓ Selesai</span>`;
+                            } else if (kObj.status === 'Batal/Ditunda') {
+                                statusBadge = `<span class="px-2.5 py-1 rounded-full text-xs font-bold bg-rose-100 text-rose-800 border border-rose-200">✗ Batal/Ditunda</span>`;
+                            }
+
+                            gDashDetailData.push({ 
+                                col1: `<div><div class="font-bold text-slate-900">${namaSekolah}</div><div class="text-[10px] text-slate-400 font-mono">NPSN: ${npsn}</div></div>`, 
+                                col2: `${kabKota} (${kunNo})`, 
+                                col3: `<div class="font-bold ${fasilNama !== 'Belum Ditugaskan' ? 'text-slate-800' : 'text-amber-600 font-medium'}">${fasilNama}</div>`, 
+                                col4: kObj.tanggal, 
+                                colBadge: statusBadge 
+                            });
                         }
                     }
                 }
@@ -1936,7 +2011,11 @@
                 document.getElementById('dashDetailSub').textContent = "Rincian seluruh jadwal kunjungan pendampingan fasilitator ke sekolah model.";
                 document.getElementById('dashDetailBadge').textContent = `${gDashDetailData.length} Kunjungan`;
                 document.getElementById('dashDetailBadge').className = "px-3 py-1 rounded-full text-xs font-black bg-amber-100 text-amber-800 border border-amber-200";
-                document.getElementById('dashTh1').textContent = "Nama Sekolah Model"; document.getElementById('dashTh2').textContent = "Wilayah & Tahap"; document.getElementById('dashTh3').textContent = "Fasilitator"; document.getElementById('dashTh4').textContent = "Tanggal Pelaksanaan"; document.getElementById('dashTh5').textContent = "Status Jadwal";
+                document.getElementById('dashTh1').textContent = "Nama Sekolah Model"; 
+                document.getElementById('dashTh2').textContent = "Wilayah & Tahap"; 
+                document.getElementById('dashTh3').textContent = "Fasilitator Pendamping"; 
+                document.getElementById('dashTh4').textContent = "Tanggal Pelaksanaan"; 
+                document.getElementById('dashTh5').textContent = "Status Jadwal";
                 const searchInput = document.getElementById('dashDetailSearch'); if (searchInput) searchInput.value = '';
                 renderDashDetailTableBody(gDashDetailData);
                 document.getElementById('modalDashDetail').classList.remove('hidden');
