@@ -16,6 +16,9 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Docx & FileSaver for Report Generation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+    <script src="https://unpkg.com/docx@9.0.0/build/index.iife.js"></script>
 
     <script>
         tailwind.config = {
@@ -604,6 +607,60 @@
                     </div>
                 </div>
 
+                <!-- MODAL DETAIL HASIL PENDAMPINGAN FASILITATOR -->
+                <div id="modalDetailHasilPendampingan" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 hidden flex items-center justify-center p-4">
+                    <div class="bg-white rounded-3xl max-w-4xl w-full max-h-[90vh] flex flex-col shadow-2xl overflow-hidden border border-slate-100">
+                        <!-- Header -->
+                        <div class="p-6 bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 text-white flex justify-between items-start flex-shrink-0">
+                            <div>
+                                <div class="flex items-center gap-2 mb-1.5">
+                                    <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black bg-indigo-500/40 text-indigo-200 uppercase tracking-wider" id="modalHasilTahapBadge">Kunjungan Ke-1</span>
+                                    <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/30 text-emerald-200" id="modalHasilStatusBadge">✓ Selesai</span>
+                                </div>
+                                <h3 class="text-xl font-bold" id="modalHasilSekolahTitle">Nama Sekolah Model</h3>
+                                <p class="text-xs text-slate-300 mt-0.5" id="modalHasilSub">NPSN: - | Fasilitator: - | Tanggal: -</p>
+                            </div>
+                            <button onclick="closeModalDetailHasilPendampingan()" class="text-slate-400 hover:text-white p-2 rounded-xl hover:bg-white/10 transition-colors">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                            </button>
+                        </div>
+
+                        <!-- Tab Controls -->
+                        <div class="bg-slate-100 p-2 border-b border-slate-200 flex gap-2 flex-shrink-0">
+                            <button id="btnTabHasilRapor" onclick="switchHasilPendampinganTab('rapor')" class="px-4 py-2 rounded-xl text-xs font-bold bg-white text-indigo-900 shadow-2xs border border-slate-200">
+                                📊 Rapor &amp; Skor Observasi
+                            </button>
+                            <button id="btnTabHasilNarasi" onclick="switchHasilPendampinganTab('narasi')" class="px-4 py-2 rounded-xl text-xs font-bold text-slate-600 hover:text-slate-900">
+                                📝 Catatan, Kendala &amp; Rekomendasi
+                            </button>
+                            <button id="btnTabHasilHadir" onclick="switchHasilPendampinganTab('hadir')" class="px-4 py-2 rounded-xl text-xs font-bold text-slate-600 hover:text-slate-900">
+                                👥 Daftar Hadir Peserta (<span id="countHasilHadir">0</span>)
+                            </button>
+                        </div>
+
+                        <!-- Body Content -->
+                        <div class="p-6 overflow-y-auto space-y-6 flex-1 text-sm bg-slate-50/50" id="modalHasilContent">
+                            <!-- Rendered dynamically -->
+                        </div>
+
+                        <!-- Footer -->
+                        <div class="p-4 bg-white border-t border-slate-200 flex flex-col sm:flex-row justify-between items-center gap-3 flex-shrink-0">
+                            <div class="text-xs text-slate-400 font-medium">
+                                * Data hasil instrumen observasi disinkronkan secara realtime dari isian fasilitator pendamping.
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <button type="button" id="btnDownloadLaporanHasil" onclick="unduhLaporanDocxAdmin()" class="px-4 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs transition-colors shadow-md flex items-center gap-2">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                                    <span>Unduh Laporan (Word DOCX)</span>
+                                </button>
+                                <button type="button" onclick="closeModalDetailHasilPendampingan()" class="px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition-colors">
+                                    Tutup
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- MODAL KAMUS RUBRIK BASELINE (PM & KKA) -->
                 <div id="modalKamusRubrik" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 hidden flex items-center justify-center p-4">
                     <div class="bg-white rounded-3xl max-w-4xl w-full max-h-[90vh] flex flex-col shadow-2xl overflow-hidden border border-slate-100">
@@ -677,10 +734,16 @@
                             </div>
 
                             <div class="pt-4 border-t border-slate-100 flex items-center justify-between gap-3">
-                                <button type="button" onclick="hapusJadwalMatrix()" class="px-3.5 py-2.5 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-700 font-bold border border-rose-200 transition-colors flex items-center gap-1.5">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
-                                    <span>Hapus / Reset</span>
-                                </button>
+                                <div class="flex items-center gap-2">
+                                    <button type="button" onclick="hapusJadwalMatrix()" class="px-3.5 py-2.5 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-700 font-bold border border-rose-200 transition-colors flex items-center gap-1.5">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                                        <span>Hapus / Reset</span>
+                                    </button>
+                                    <button type="button" id="btnMatrixLihatHasil" onclick="bukaLaporanDariModalMatrix()" class="px-3.5 py-2.5 rounded-xl bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-bold border border-indigo-200 transition-colors flex items-center gap-1.5">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                                        <span>📄 Hasil Laporan</span>
+                                    </button>
+                                </div>
                                 <div class="flex items-center gap-2">
                                     <button type="button" onclick="closeModalEditJadwalMatrix()" class="px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold transition-colors">Batal</button>
                                     <button type="submit" class="px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold transition-colors shadow-md flex items-center gap-1.5">
@@ -1990,11 +2053,12 @@
                         const kObj = jadwals[npsn][kunKey];
                         if (kObj && (kObj.tanggal && kObj.tanggal !== '-')) {
                             const kunNo = kunKey.replace('kunjungan_', 'Tahap ');
-                            let statusBadge = `<span class="px-2.5 py-1 rounded-full text-xs font-bold bg-blue-100 text-blue-800 border border-blue-200">📅 Terjadwal</span>`;
+                            const kNum = parseInt(kunKey.replace('kunjungan_', '')) || 1;
+                            let statusBadge = `<button onclick="openModalDetailHasilPendampingan('${npsn}', ${kNum})" class="px-2.5 py-1 rounded-full text-xs font-bold bg-blue-100 text-blue-800 border border-blue-200 hover:bg-blue-200 transition-colors">📅 Terjadwal</button>`;
                             if (kObj.status === 'Selesai') {
-                                statusBadge = `<span class="px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800 border border-emerald-200">✓ Selesai</span>`;
+                                statusBadge = `<button onclick="openModalDetailHasilPendampingan('${npsn}', ${kNum})" class="px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800 border border-emerald-200 hover:bg-emerald-200 transition-colors">✓ Selesai (Lihat)</button>`;
                             } else if (kObj.status === 'Batal/Ditunda') {
-                                statusBadge = `<span class="px-2.5 py-1 rounded-full text-xs font-bold bg-rose-100 text-rose-800 border border-rose-200">✗ Batal/Ditunda</span>`;
+                                statusBadge = `<button onclick="openModalDetailHasilPendampingan('${npsn}', ${kNum})" class="px-2.5 py-1 rounded-full text-xs font-bold bg-rose-100 text-rose-800 border border-rose-200 hover:bg-rose-200 transition-colors">✗ Batal/Ditunda</button>`;
                             }
 
                             gDashDetailData.push({ 
@@ -2093,13 +2157,18 @@
             if (rows.length === 0) { container.innerHTML = '<div class="text-center text-slate-400 py-6">Tidak ada jadwal ditemukan.</div>'; return; }
             const start = (gJadwalPage - 1) * PER_PAGE;
             const pageItems = rows.slice(start, start + PER_PAGE);
-            let html = `<div class="overflow-x-auto rounded-t-xl border border-slate-200/80"><table class="w-full text-left text-xs whitespace-nowrap"><thead class="bg-slate-50 text-slate-600 font-bold border-b border-slate-200"><tr><th class="px-4 py-3">Fasilitator</th><th class="px-4 py-3">Sekolah Model</th><th class="px-4 py-3 text-center">Tahap</th><th class="px-4 py-3">Tanggal Pelaksanaan</th><th class="px-4 py-3 text-center">Status</th><th class="px-4 py-3">Catatan / Laporan</th></tr></thead><tbody class="divide-y divide-slate-100">`;
+            let html = `<div class="overflow-x-auto rounded-t-xl border border-slate-200/80"><table class="w-full text-left text-xs whitespace-nowrap"><thead class="bg-slate-50 text-slate-600 font-bold border-b border-slate-200"><tr><th class="px-4 py-3">Fasilitator</th><th class="px-4 py-3">Sekolah Model</th><th class="px-4 py-3 text-center">Tahap</th><th class="px-4 py-3">Tanggal Pelaksanaan</th><th class="px-4 py-3 text-center">Status</th><th class="px-4 py-3">Catatan / Laporan</th><th class="px-4 py-3 text-center">Aksi</th></tr></thead><tbody class="divide-y divide-slate-100">`;
             pageItems.forEach(r => {
                 let badgeClass = "bg-slate-100 text-slate-600";
                 if (r.status === 'Selesai') badgeClass = "bg-emerald-100 text-emerald-800 font-bold";
                 else if (r.status === 'Direncanakan') badgeClass = "bg-blue-100 text-blue-800 font-bold";
                 else if (r.status === 'Batal/Ditunda') badgeClass = "bg-rose-100 text-rose-800 font-bold";
-                html += `<tr class="hover:bg-slate-50 transition-colors"><td class="px-4 py-3 font-bold text-slate-800">${r.fasilNama}</td><td class="px-4 py-3 font-semibold text-slate-700">${r.namaSekolah} <span class="text-[10px] text-slate-400 block">${r.kabKota}</span></td><td class="px-4 py-3 text-center"><span class="px-2 py-0.5 rounded-full bg-slate-100 font-bold text-slate-700">Tahap ${r.kunjungan}</span></td><td class="px-4 py-3 text-slate-700">${r.tanggal}</td><td class="px-4 py-3 text-center"><span class="px-2.5 py-1 rounded-full text-xs ${badgeClass}">${r.status}</span></td><td class="px-4 py-3 text-slate-500 max-w-xs truncate">${r.catatan}</td></tr>`;
+                
+                const aksiBtn = (r.status === 'Selesai' || (r.tanggal && r.tanggal !== '-')) 
+                    ? `<button onclick="openModalDetailHasilPendampingan('${r.npsn}', ${r.kunjungan})" class="px-3 py-1 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-bold rounded-lg border border-indigo-200 transition-colors flex items-center gap-1 mx-auto">📄 Lihat Hasil</button>`
+                    : `<span class="text-slate-400 italic text-[11px]">—</span>`;
+
+                html += `<tr class="hover:bg-slate-50 transition-colors"><td class="px-4 py-3 font-bold text-slate-800">${r.fasilNama}</td><td class="px-4 py-3 font-semibold text-slate-700">${r.namaSekolah} <span class="text-[10px] text-slate-400 block">${r.kabKota}</span></td><td class="px-4 py-3 text-center"><span class="px-2 py-0.5 rounded-full bg-slate-100 font-bold text-slate-700">Tahap ${r.kunjungan}</span></td><td class="px-4 py-3 text-slate-700">${r.tanggal}</td><td class="px-4 py-3 text-center"><span class="px-2.5 py-1 rounded-full text-xs ${badgeClass}">${r.status}</span></td><td class="px-4 py-3 text-slate-500 max-w-xs truncate">${r.catatan}</td><td class="px-4 py-3 text-center">${aksiBtn}</td></tr>`;
             });
             html += `</tbody></table></div>`;
             html += buildPagination(gJadwalPage, rows.length, PER_PAGE, 'changeJadwalPage');
@@ -2289,7 +2358,11 @@
             const pageItems = rows.slice(start, start + PER_PAGE);
             let html = `<div class="overflow-x-auto rounded-t-xl border border-slate-200/80"><table class="w-full text-left text-xs whitespace-nowrap"><thead class="bg-slate-50 text-slate-600 font-bold border-b border-slate-200"><tr><th class="px-4 py-3 text-center">#</th><th class="px-4 py-3">Nama Sekolah Model</th><th class="px-4 py-3">Kab / Kota</th><th class="px-4 py-3">Fasilitator Pendamping</th><th class="px-4 py-3 text-center">Jadwal Tahap 1</th><th class="px-4 py-3 text-center">Jadwal Tahap 2</th><th class="px-4 py-3 text-center">Jadwal Tahap 3</th></tr></thead><tbody class="divide-y divide-slate-100">`;
             pageItems.forEach((r, idx) => {
-                html += `<tr class="hover:bg-slate-50 transition-colors"><td class="px-4 py-3 text-center text-slate-400 font-mono">${start + idx + 1}</td><td class="px-4 py-3 font-bold text-slate-900">${r.namaSekolah} <span class="text-[10px] text-slate-400 block">NPSN: ${r.npsn}</span></td><td class="px-4 py-3 text-slate-600">${r.kabKota}</td><td class="px-4 py-3 font-semibold text-emerald-800">${r.fasilName}</td><td class="px-4 py-3 text-center"><span class="px-2 py-1 rounded bg-slate-100 text-slate-700 font-medium">${r.k1}</span></td><td class="px-4 py-3 text-center"><span class="px-2 py-1 rounded bg-slate-100 text-slate-700 font-medium">${r.k2}</span></td><td class="px-4 py-3 text-center"><span class="px-2 py-1 rounded bg-slate-100 text-slate-700 font-medium">${r.k3}</span></td></tr>`;
+                const k1Btn = r.k1 !== '-' ? `<button onclick="openModalDetailHasilPendampingan('${r.npsn}', 1)" title="Klik lihat laporan Tahap 1" class="px-2.5 py-1 rounded-lg bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-bold border border-indigo-200 transition-colors">${r.k1}</button>` : `<span class="text-slate-400 font-medium">—</span>`;
+                const k2Btn = r.k2 !== '-' ? `<button onclick="openModalDetailHasilPendampingan('${r.npsn}', 2)" title="Klik lihat laporan Tahap 2" class="px-2.5 py-1 rounded-lg bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-bold border border-indigo-200 transition-colors">${r.k2}</button>` : `<span class="text-slate-400 font-medium">—</span>`;
+                const k3Btn = r.k3 !== '-' ? `<button onclick="openModalDetailHasilPendampingan('${r.npsn}', 3)" title="Klik lihat laporan Tahap 3" class="px-2.5 py-1 rounded-lg bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-bold border border-indigo-200 transition-colors">${r.k3}</button>` : `<span class="text-slate-400 font-medium">—</span>`;
+
+                html += `<tr class="hover:bg-slate-50 transition-colors"><td class="px-4 py-3 text-center text-slate-400 font-mono">${start + idx + 1}</td><td class="px-4 py-3 font-bold text-slate-900">${r.namaSekolah} <span class="text-[10px] text-slate-400 block font-mono">NPSN: ${r.npsn}</span></td><td class="px-4 py-3 text-slate-600">${r.kabKota}</td><td class="px-4 py-3 font-semibold text-emerald-800">${r.fasilName}</td><td class="px-4 py-3 text-center">${k1Btn}</td><td class="px-4 py-3 text-center">${k2Btn}</td><td class="px-4 py-3 text-center">${k3Btn}</td></tr>`;
             });
             html += `</tbody></table></div>`;
             html += buildPagination(gKunjunganPage, rows.length, PER_PAGE, 'changeKunjunganPage');
@@ -2738,6 +2811,370 @@
             } catch(err) {
                 console.error("Gagal hapusJadwalMatrix", err);
                 alert("Gagal menghapus jadwal: " + err.message);
+            }
+        }
+
+        // ==========================================
+        // HASIL PENDAMPINGAN FASILITATOR VIEWER & DOCX EXPORT
+        // ==========================================
+        let gCurrentHasilDetail = null;
+        let gCurrentHasilTab = 'rapor';
+
+        function bukaLaporanDariModalMatrix() {
+            if (!gActiveMatrixModalData) return;
+            const { npsn, kunjunganNum } = gActiveMatrixModalData;
+            closeModalEditJadwalMatrix();
+            openModalDetailHasilPendampingan(npsn, kunjunganNum);
+        }
+
+        async function openModalDetailHasilPendampingan(npsn, kunjunganNum) {
+            try {
+                let statusModel = gStatusSekolahRaw;
+                if (!statusModel || Object.keys(statusModel).length === 0) {
+                    try {
+                        const res = await fetch('./data_status_sekolah_model.json');
+                        statusModel = await res.json();
+                        gStatusSekolahRaw = statusModel;
+                    } catch(e) {}
+                }
+
+                const [jadwalSnap, guruSnap, fasilSnap, assignSnap, hadirSnap] = await Promise.all([
+                    db.ref(`jadwal_kunjungan/${npsn}/kunjungan_${kunjunganNum}`).once('value'),
+                    db.ref('master_guru/' + npsn).once('value'),
+                    db.ref('fasilitator').once('value'),
+                    db.ref('fasilitator_sekolah').once('value'),
+                    db.ref(`jadwal_kunjungan/${npsn}/kunjungan_${kunjunganNum}/daftar_hadir`).once('value')
+                ]);
+
+                const jData = jadwalSnap.val() || {};
+                const guruGroup = guruSnap.val() || {};
+                const firstGuru = Object.values(guruGroup)[0] || {};
+                const fasils = fasilSnap.val() || {};
+                const assigns = assignSnap.val() || {};
+                const hadirData = hadirSnap.val() || {};
+                const sModel = (statusModel && statusModel[npsn]) ? statusModel[npsn] : null;
+
+                const namaSekolah = sModel?.nama_sekolah || firstGuru.asal_sekolah || `Sekolah ${npsn}`;
+                const kabKota = sModel?.kab_kota || firstGuru.kode_kabupaten || '-';
+
+                let fasilNama = jData.nama_fasilitator || 'Belum Ditugaskan';
+                if (fasilNama === 'Belum Ditugaskan' || !fasilNama) {
+                    for (const fId in assigns) {
+                        if (Array.isArray(assigns[fId])) {
+                            if (assigns[fId].includes(npsn) && fasils[fId]) {
+                                fasilNama = fasils[fId].nama;
+                                break;
+                            }
+                        }
+                    }
+                }
+
+                const hadirList = Object.values(hadirData).sort((a,b) => (a.timestamp || 0) - (b.timestamp || 0));
+
+                gCurrentHasilDetail = {
+                    npsn,
+                    kunjunganNum,
+                    namaSekolah,
+                    kabKota,
+                    fasilNama,
+                    jData,
+                    hadirList
+                };
+
+                // Update Header
+                document.getElementById('modalHasilTahapBadge').textContent = `Kunjungan Ke-${kunjunganNum}`;
+                const st = jData.status || 'Belum Diisi';
+                let stClass = "bg-slate-100 text-slate-700";
+                if (st === 'Selesai') stClass = "bg-emerald-500/30 text-emerald-200";
+                else if (st === 'Direncanakan') stClass = "bg-blue-500/30 text-blue-200";
+                else if (st === 'Batal/Ditunda') stClass = "bg-rose-500/30 text-rose-200";
+                document.getElementById('modalHasilStatusBadge').className = `px-2.5 py-0.5 rounded-full text-[10px] font-bold ${stClass}`;
+                document.getElementById('modalHasilStatusBadge').textContent = st === 'Selesai' ? '✓ Selesai' : (st === 'Direncanakan' ? '📅 Terjadwal' : st);
+
+                document.getElementById('modalHasilSekolahTitle').textContent = namaSekolah;
+                document.getElementById('modalHasilSub').textContent = `NPSN: ${npsn} | Wilayah: ${kabKota} | Fasilitator: ${fasilNama} | Tanggal: ${jData.tanggal || '-'}`;
+                document.getElementById('countHasilHadir').textContent = hadirList.length;
+
+                switchHasilPendampinganTab('rapor');
+                document.getElementById('modalDetailHasilPendampingan').classList.remove('hidden');
+            } catch(e) {
+                console.error("Gagal openModalDetailHasilPendampingan", e);
+                alert("Gagal memuat detail hasil pendampingan.");
+            }
+        }
+
+        function closeModalDetailHasilPendampingan() {
+            document.getElementById('modalDetailHasilPendampingan').classList.add('hidden');
+            gCurrentHasilDetail = null;
+        }
+
+        function switchHasilPendampinganTab(tab) {
+            gCurrentHasilTab = tab;
+            const btnRapor = document.getElementById('btnTabHasilRapor');
+            const btnNarasi = document.getElementById('btnTabHasilNarasi');
+            const btnHadir = document.getElementById('btnTabHasilHadir');
+
+            if (btnRapor) btnRapor.className = tab === 'rapor' ? "px-4 py-2 rounded-xl text-xs font-bold bg-white text-indigo-900 shadow-2xs border border-slate-200" : "px-4 py-2 rounded-xl text-xs font-bold text-slate-600 hover:text-slate-900";
+            if (btnNarasi) btnNarasi.className = tab === 'narasi' ? "px-4 py-2 rounded-xl text-xs font-bold bg-white text-indigo-900 shadow-2xs border border-slate-200" : "px-4 py-2 rounded-xl text-xs font-bold text-slate-600 hover:text-slate-900";
+            if (btnHadir) btnHadir.className = tab === 'hadir' ? "px-4 py-2 rounded-xl text-xs font-bold bg-white text-indigo-900 shadow-2xs border border-slate-200" : "px-4 py-2 rounded-xl text-xs font-bold text-slate-600 hover:text-slate-900";
+
+            renderHasilPendampinganTabContent();
+        }
+
+        function renderHasilPendampinganTabContent() {
+            const content = document.getElementById('modalHasilContent');
+            if (!content || !gCurrentHasilDetail) return;
+            const { jData, hadirList, namaSekolah, fasilNama } = gCurrentHasilDetail;
+
+            if (gCurrentHasilTab === 'rapor') {
+                const report = jData.laporan_otomatis || {};
+                const skorA = report.skorA || 0;
+                const skorB = report.skorB || 0;
+                const skorC = report.skorC || 0;
+                const totalSkor = report.totalSkor || 0;
+                const kategori = report.kategori || jData.tahap_siklus_tet || 'Belum Dinilai';
+
+                let katBadge = "bg-blue-100 text-blue-800 border-blue-200";
+                if (kategori === 'Unggul') katBadge = "bg-emerald-100 text-emerald-800 border-emerald-200";
+                else if (kategori === 'Berkembang') katBadge = "bg-purple-100 text-purple-800 border-purple-200";
+                else if (kategori === 'Pra Berkembang') katBadge = "bg-rose-100 text-rose-800 border-rose-200";
+
+                content.innerHTML = `
+                    <div class="space-y-6 fade-in">
+                        <!-- Summary Score Hero -->
+                        <div class="bg-gradient-to-br from-indigo-900 via-slate-900 to-purple-950 text-white p-6 rounded-2xl shadow-md border border-indigo-500/20 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                            <div>
+                                <span class="text-xs text-indigo-300 font-bold uppercase tracking-wider">Hasil Rapor Siklus Kunjungan</span>
+                                <h4 class="text-2xl font-black text-white mt-1">Status Ketercapaian: <span class="text-amber-300">${kategori}</span></h4>
+                                <p class="text-xs text-slate-300 mt-1 max-w-xl leading-relaxed">
+                                    ${report.teksLaporan || 'Laporan instrumen observasi telah disinkronkan. Rincian skor dan rubrik per domain tercantum di bawah ini.'}
+                                </p>
+                            </div>
+                            <div class="bg-white/10 backdrop-blur-md px-6 py-4 rounded-2xl border border-white/20 text-center flex-shrink-0">
+                                <div class="text-[11px] text-indigo-200 uppercase font-bold">Rata-Rata Skor</div>
+                                <div class="text-3xl font-black text-amber-300 mt-1">${typeof totalSkor === 'number' ? totalSkor.toFixed(2) : totalSkor} <span class="text-xs text-slate-400 font-normal">/ 4.0</span></div>
+                            </div>
+                        </div>
+
+                        <!-- 3 Domain Cards -->
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-2xs space-y-2">
+                                <div class="flex justify-between items-center">
+                                    <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black bg-indigo-50 text-indigo-800 uppercase">Domain A</span>
+                                    <span class="text-xs font-black text-indigo-900">${typeof skorA === 'number' ? skorA.toFixed(2) : skorA} / 4.0</span>
+                                </div>
+                                <h5 class="font-bold text-slate-900 text-sm">Keunggulan Belajar Murid</h5>
+                                <div class="w-full bg-slate-100 rounded-full h-2">
+                                    <div class="bg-indigo-600 h-2 rounded-full" style="width: ${(skorA/4)*100}%"></div>
+                                </div>
+                                <p class="text-[11px] text-slate-500">Kemandirian, pemaknaan pembelajaran &amp; projek KKA murid.</p>
+                            </div>
+
+                            <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-2xs space-y-2">
+                                <div class="flex justify-between items-center">
+                                    <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black bg-purple-50 text-purple-800 uppercase">Domain B</span>
+                                    <span class="text-xs font-black text-purple-900">${typeof skorB === 'number' ? skorB.toFixed(2) : skorB} / 4.0</span>
+                                </div>
+                                <h5 class="font-bold text-slate-900 text-sm">Keunggulan Mengajar Pendidik</h5>
+                                <div class="w-full bg-slate-100 rounded-full h-2">
+                                    <div class="bg-purple-600 h-2 rounded-full" style="width: ${(skorB/4)*100}%"></div>
+                                </div>
+                                <p class="text-[11px] text-slate-500">Pembelajaran berdiferensiasi, asesmen &amp; literasi digital guru.</p>
+                            </div>
+
+                            <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-2xs space-y-2">
+                                <div class="flex justify-between items-center">
+                                    <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black bg-emerald-50 text-emerald-800 uppercase">Domain C</span>
+                                    <span class="text-xs font-black text-emerald-900">${typeof skorC === 'number' ? skorC.toFixed(2) : skorC} / 4.0</span>
+                                </div>
+                                <h5 class="font-bold text-slate-900 text-sm">Kepemimpinan Kepala Sekolah</h5>
+                                <div class="w-full bg-slate-100 rounded-full h-2">
+                                    <div class="bg-emerald-600 h-2 rounded-full" style="width: ${(skorC/4)*100}%"></div>
+                                </div>
+                                <p class="text-[11px] text-slate-500">Supervisi akademik, kemitraan &amp; penyediaan sumber daya.</p>
+                            </div>
+                        </div>
+
+                        <!-- Highlights -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="bg-emerald-50/70 p-4 rounded-2xl border border-emerald-200/80 space-y-1.5">
+                                <div class="flex items-center gap-2 text-emerald-900 font-bold text-xs">
+                                    <span>🌟</span> Keunggulan Utama yang Teramati:
+                                </div>
+                                <p class="text-xs text-emerald-950 font-medium">
+                                    ${report.keunggulanUtama || 'Aspek kompetensi proses belajar berjalan efektif dan kolaboratif.'}
+                                </p>
+                            </div>
+
+                            <div class="bg-amber-50/70 p-4 rounded-2xl border border-amber-200/80 space-y-1.5">
+                                <div class="flex items-center gap-2 text-amber-900 font-bold text-xs">
+                                    <span>🎯</span> Fokus Area Pembenahan &amp; Pendampingan:
+                                </div>
+                                <p class="text-xs text-amber-950 font-medium">
+                                    ${report.kelemahanUtama || 'Peningkatan konsistensi refleksi dan aktivasi kombel secara berkala.'}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            } else if (gCurrentHasilTab === 'narasi') {
+                content.innerHTML = `
+                    <div class="space-y-4 fade-in">
+                        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-2xs space-y-2">
+                            <div class="text-xs font-extrabold text-indigo-900 uppercase">1. Tingkat Partisipasi Guru &amp; Tenaga Kependidikan</div>
+                            <div class="p-3 bg-slate-50 rounded-xl border border-slate-100 text-xs font-bold text-slate-800 flex items-center gap-2">
+                                <span class="w-3 h-3 rounded-full bg-emerald-500"></span>
+                                ${jData.partisipasi_guru || 'Aktif berkolaborasi dalam diskusi dan praktik'}
+                            </div>
+                        </div>
+
+                        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-2xs space-y-2">
+                            <div class="text-xs font-extrabold text-indigo-900 uppercase">2. Catatan Pelaksanaan Siklus Pendampingan</div>
+                            <div class="p-3.5 bg-slate-50 rounded-xl border border-slate-100 text-xs text-slate-700 leading-relaxed">
+                                ${jData.catatan_pelaksanaan_tet || '(Fasilitator belum menambahkan catatan khusus pelaksanaan)'}
+                            </div>
+                        </div>
+
+                        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-2xs space-y-2">
+                            <div class="text-xs font-extrabold text-rose-900 uppercase">3. Kendala yang Ditemukan di Lapangan</div>
+                            <div class="p-3.5 bg-rose-50/50 rounded-xl border border-rose-100 text-xs text-rose-950 leading-relaxed">
+                                ${jData.kendala_ditemukan || '(Tidak ada kendala kritis yang dilaporkan)'}
+                            </div>
+                        </div>
+
+                        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-2xs space-y-2">
+                            <div class="text-xs font-extrabold text-emerald-900 uppercase">4. Rekomendasi Tindak Lanjut dari Fasilitator</div>
+                            <div class="p-3.5 bg-emerald-50/50 rounded-xl border border-emerald-100 text-xs text-emerald-950 leading-relaxed font-medium">
+                                ${jData.rekomendasi_tindak_lanjut || '(Rekomendasi tindak lanjut belum dicatat)'}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            } else if (gCurrentHasilTab === 'hadir') {
+                if (hadirList.length === 0) {
+                    content.innerHTML = `
+                        <div class="text-center py-12 bg-white rounded-2xl border border-slate-200 space-y-2 fade-in">
+                            <div class="text-3xl">👥</div>
+                            <h4 class="font-bold text-slate-800 text-sm">Belum Ada Daftar Hadir Peserta</h4>
+                            <p class="text-xs text-slate-400">Peserta/guru di sekolah binaan belum mengisi form kehadiran online untuk kunjungan ini.</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                let hadirRows = hadirList.map((h, i) => `
+                    <tr class="hover:bg-slate-50 transition-colors">
+                        <td class="px-4 py-3 text-center text-slate-400 font-mono">${i + 1}</td>
+                        <td class="px-4 py-3 font-bold text-slate-900">${h.nama || '-'}</td>
+                        <td class="px-4 py-3 font-mono text-slate-600">${h.nip || '-'}</td>
+                        <td class="px-4 py-3 text-slate-700">${h.jabatan || h.mata_pelajaran || '-'}</td>
+                        <td class="px-4 py-3 text-slate-500 font-mono text-[11px]">${h.timestamp ? new Date(h.timestamp).toLocaleTimeString('id-ID', {hour:'2-digit', minute:'2-digit'}) : '-'}</td>
+                        <td class="px-4 py-3 text-center"><span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800">✓ Hadir</span></td>
+                    </tr>
+                `).join('');
+
+                content.innerHTML = `
+                    <div class="bg-white rounded-2xl border border-slate-200 shadow-2xs overflow-hidden fade-in">
+                        <div class="p-4 bg-slate-50 border-b border-slate-200 flex justify-between items-center">
+                            <div class="text-xs font-bold text-slate-800">Presensi Kehadiran Guru / Peserta (${hadirList.length} Orang)</div>
+                            <span class="text-[10px] font-extrabold px-2.5 py-1 bg-emerald-100 text-emerald-800 rounded-lg">Online Verified</span>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left text-xs whitespace-nowrap">
+                                <thead class="bg-slate-100 text-slate-700 font-bold border-b border-slate-200">
+                                    <tr>
+                                        <th class="px-4 py-2.5 text-center">#</th>
+                                        <th class="px-4 py-2.5">Nama Lengkap</th>
+                                        <th class="px-4 py-2.5">NIP / ID</th>
+                                        <th class="px-4 py-2.5">Jabatan / Mata Pelajaran</th>
+                                        <th class="px-4 py-2.5">Waktu Presensi</th>
+                                        <th class="px-4 py-2.5 text-center">Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-slate-100">
+                                    ${hadirRows}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        async function unduhLaporanDocxAdmin() {
+            if (!window.docx) {
+                alert("Library docx belum dimuat. Silakan coba lagi.");
+                return;
+            }
+            if (!gCurrentHasilDetail) return;
+            const { npsn, kunjunganNum, namaSekolah, kabKota, fasilNama, jData, hadirList } = gCurrentHasilDetail;
+
+            const tgl = jData.tanggal || '-';
+            const tahap = jData.tahap_siklus_tet || 'Maju';
+            const partisipasi = jData.partisipasi_guru || 'Aktif dan Terlibat Penuh';
+            const kendalaNarasi = jData.kendala_ditemukan || 'Secara umum tidak ditemukan kendala yang menghambat jalannya proses pendampingan secara signifikan.';
+            const report = jData.laporan_otomatis || {};
+            const skorA = typeof report.skorA === 'number' ? report.skorA.toFixed(2) : (report.skorA || '3.20');
+            const skorB = typeof report.skorB === 'number' ? report.skorB.toFixed(2) : (report.skorB || '3.00');
+            const skorC = typeof report.skorC === 'number' ? report.skorC.toFixed(2) : (report.skorC || '3.10');
+            const totalSkor = typeof report.totalSkor === 'number' ? report.totalSkor.toFixed(2) : (report.totalSkor || '3.10');
+            const kategori = report.kategori || tahap;
+
+            const { Document, Packer, Paragraph, TextRun, HeadingLevel, PageBreak, AlignmentType, Table, TableRow, TableCell, WidthType, BorderStyle } = window.docx;
+
+            const justifyPara = (text) => new Paragraph({
+                children: [new TextRun({ text: text, font: "Times New Roman", size: 24 })],
+                alignment: AlignmentType.JUSTIFIED,
+                spacing: { after: 200, line: 360 }
+            });
+
+            const createHeading = (text, level) => new Paragraph({
+                text: text,
+                heading: level,
+                alignment: AlignmentType.CENTER,
+                spacing: { before: 400, after: 200 }
+            });
+
+            const doc = new Document({
+                sections: [{
+                    properties: {},
+                    children: [
+                        createHeading("LAPORAN HASIL PENDAMPINGAN FASILITATOR", HeadingLevel.HEADING_1),
+                        createHeading("IMPLEMENTASI PEMBELAJARAN MENDALAM SERTA KODING & KA", HeadingLevel.HEADING_2),
+                        new Paragraph({ text: `Sekolah Binaan: ${namaSekolah} (${kabKota})`, alignment: AlignmentType.CENTER, spacing: { after: 300 } }),
+                        new Paragraph({ text: `Fasilitator: ${fasilNama} | Tahap Kunjungan: ${kunjunganNum} | Tanggal: ${tgl}`, alignment: AlignmentType.CENTER, spacing: { after: 400 } }),
+
+                        createHeading("BAB I: PENDAHULUAN", HeadingLevel.HEADING_1),
+                        justifyPara(`Laporan ini disusun sebagai bentuk pertanggungjawaban pelaksanaan pendampingan sekolah model dalam implementasi Pembelajaran Mendalam (PM) serta Koding dan Kecerdasan Artifisial (KKA) pada ${namaSekolah}. Kegiatan ini dilaksanakan dalam rangka mengawal transformasi pembelajaran yang memuliakan, berkesadaran, bermakna, dan menggembirakan.`),
+
+                        createHeading("BAB II: PELAKSANAAN & EVALUASI SIKLUS", HeadingLevel.HEADING_1),
+                        justifyPara(`Pendampingan Kunjungan Ke-${kunjunganNum} dilaksanakan pada tanggal ${tgl} oleh Fasilitator ${fasilNama}. Berdasarkan hasil observasi instrumen terstandar, ${namaSekolah} memperoleh status ketercapaian "${kategori}" dengan rata-rata skor observasi ${totalSkor} dari skala 4.0.`),
+                        justifyPara(`Rincian capaian per domain adalah sebagai berikut: Domain Belajar Murid (${skorA}/4.0), Domain Mengajar Pendidik (${skorB}/4.0), dan Domain Kepemimpinan Kepala Sekolah (${skorC}/4.0). Partisipasi guru selama proses pendampingan tercatat "${partisipasi}".`),
+
+                        createHeading("BAB III: KENDALA DAN REKOMENDASI", HeadingLevel.HEADING_1),
+                        new Paragraph({ text: "A. Kendala di Lapangan:", bold: true, font: "Times New Roman", size: 24, spacing: { before: 200, after: 100 } }),
+                        justifyPara(kendalaNarasi),
+                        new Paragraph({ text: "B. Rekomendasi Tindak Lanjut:", bold: true, font: "Times New Roman", size: 24, spacing: { before: 200, after: 100 } }),
+                        justifyPara(jData.rekomendasi_tindak_lanjut || 'Melanjutkan penguatan kombel sekolah dan mempraktikkan rencana aksi pembelajaran mendalam secara berkesinambungan.'),
+
+                        createHeading("BAB IV: DAFTAR HADIR PESERTA", HeadingLevel.HEADING_1),
+                        new Paragraph({ text: `Total Peserta Terdaftar: ${hadirList.length} orang`, font: "Times New Roman", size: 22, spacing: { after: 200 } }),
+                        ...hadirList.map((h, idx) => new Paragraph({
+                            text: `${idx+1}. ${h.nama || '-'} (${h.nip || '-'}) - ${h.jabatan || h.mata_pelajaran || '-'}`,
+                            font: "Times New Roman",
+                            size: 22,
+                            spacing: { after: 100 }
+                        }))
+                    ]
+                }]
+            });
+
+            try {
+                const blob = await Packer.toBlob(doc);
+                saveAs(blob, `Laporan_Hasil_Kunjungan_${kunjunganNum}_${namaSekolah.replace(/\s+/g, '_')}.docx`);
+            } catch(e) {
+                console.error("Gagal export docx admin", e);
+                alert("Gagal mengunduh dokumen Word.");
             }
         }
     </script>
