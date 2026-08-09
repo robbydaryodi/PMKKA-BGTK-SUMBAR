@@ -151,8 +151,11 @@
         <div class="glass rounded-2xl p-5 shadow-sm">
             <div class="flex flex-col lg:flex-row gap-4 items-start lg:items-center justify-between">
                 <div>
-                    <h1 class="text-xl font-bold text-primary">Rekap Surat Tugas Pendampingan</h1>
-                    <p class="text-sm text-slate-500 mt-0.5">Monitoring jadwal kunjungan seluruh fasilitator — siap terbit Surat Tugas</p>
+                    <h1 class="text-xl font-bold text-primary flex items-center gap-2">
+                        <span>Rekap Surat Tugas Pendampingan</span>
+                        <span class="px-2.5 py-0.5 rounded-full text-xs font-extrabold bg-indigo-100 text-indigo-800 border border-indigo-200">Internal Pegawai BGTK</span>
+                    </h1>
+                    <p class="text-xs text-slate-500 mt-0.5">Penerbitan &amp; monitoring Surat Tugas resmi khusus fasilitator internal Pegawai BGTK Provinsi Sumatera Barat.</p>
                 </div>
                 <div class="flex flex-wrap gap-2">
                     <button onclick="exportExcel()" class="flex items-center gap-2 bg-emerald-600 text-white px-4 py-2 rounded-xl text-sm font-semibold hover:bg-emerald-700 transition-colors shadow-sm shadow-emerald-200">
@@ -601,21 +604,67 @@ async function loadAllData() {
         document.getElementById('viewKalender').classList.add('hidden');
         document.getElementById('viewMatriks').classList.add('hidden');
 
-        const [snapFasil, snapSekolah, snapAssign, snapJadwal, snapSetting] = await Promise.all([
+        const [snapFasil, snapSekolah, snapAssign, snapJadwal, snapSetting, snapPegawai] = await Promise.all([
             db.ref('fasilitator').once('value'),
             db.ref('master_guru').once('value'),
             db.ref('fasilitator_sekolah').once('value'),
             db.ref('jadwal_kunjungan').once('value'),
-            db.ref('setting_jadwal').once('value')
+            db.ref('setting_jadwal').once('value'),
+            db.ref('master_pegawai').once('value')
         ]);
 
         const allFasils = snapFasil.val() || {};
-        // Filter hanya fasilitator Sekolah Model
+        const allPegawai = snapPegawai.val() || {};
+        const pegawaiList = Object.values(allPegawai);
+        const pegawaiNips = new Set(pegawaiList.map(p => (p.nip || '').replace(/[^0-9]/g, '')).filter(Boolean));
+        const pegawaiNames = pegawaiList.map(p => {
+            const clean = (p.nama_murni || p.nama_lengkap || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+            return { raw: p, clean };
+        });
+
+        // Helper function: Check if a fasilitator is an internal BGTK Sumbar employee
+        function isFasilitatorBgtk(f) {
+            if (!f) return false;
+            // 1. Check NIP in master_pegawai
+            const fNip = (f.nip || '').replace(/[^0-9]/g, '');
+            if (fNip && pegawaiNips.has(fNip)) return true;
+
+            // 2. Check Name in master_pegawai
+            const fClean = (f.nama || '').toLowerCase().replace(/(dr\.|drs\.|dra\.|h\.|hj\.|m\.pd|s\.pd|s\.si|m\.si|m\.kom|m\.m|cpec|\.|\,)/gi, '').replace(/[^a-z0-9]/g, '');
+            if (fClean.length >= 4) {
+                const found = pegawaiNames.find(p => p.clean && p.clean.length >= 4 && (p.clean.includes(fClean) || fClean.includes(p.clean)));
+                if (found) return true;
+            }
+
+            // 3. Check Instansi / Satker / Jabatan text
+            const instansiStr = String((f.instansi || '') + ' ' + (f.satker || '') + ' ' + (f.jabatan || '')).toLowerCase();
+            if (instansiStr.includes('bgtk') || instansiStr.includes('balai guru') || instansiStr.includes('bbgp') || instansiStr.includes('bp paud') || instansiStr.includes('kemendikdasmen')) {
+                return true;
+            }
+
+            return false;
+        }
+
+        // Filter: Hanya fasilitator Sekolah Model yang merupakan PEGAWAI INTERNAL BGTK SUMBAR
         gFasils = {};
         for (const fId in allFasils) {
             const f = allFasils[fId];
             const progs = f.programs || (f.program_kombel ? ['kombel'] : ['sekolah_model']);
-            if (progs.includes('sekolah_model')) gFasils[fId] = f;
+            if (progs.includes('sekolah_model') && isFasilitatorBgtk(f)) {
+                // Enrich fasilitator with official master_pegawai record if available
+                const fNip = (f.nip || '').replace(/[^0-9]/g, '');
+                const fClean = (f.nama || '').toLowerCase().replace(/(dr\.|drs\.|dra\.|h\.|hj\.|m\.pd|s\.pd|s\.si|m\.si|m\.kom|m\.m|cpec|\.|\,)/gi, '').replace(/[^a-z0-9]/g, '');
+                const matchedPeg = pegawaiList.find(p => (p.nip || '').replace(/[^0-9]/g, '') === fNip) ||
+                                   pegawaiNames.find(p => p.clean && p.clean.length >= 4 && (p.clean.includes(fClean) || fClean.includes(p.clean)))?.raw;
+
+                gFasils[fId] = {
+                    ...f,
+                    nip: (matchedPeg && matchedPeg.nip) ? matchedPeg.nip : (f.nip || '-'),
+                    pangkat_gol: (matchedPeg && matchedPeg.pangkat_golongan) ? matchedPeg.pangkat_golongan : (f.pangkat_gol || '-'),
+                    jabatan: (matchedPeg && matchedPeg.jabatan) ? matchedPeg.jabatan : (f.jabatan || 'Fasilitator'),
+                    satker: (matchedPeg && matchedPeg.satker) ? matchedPeg.satker : (f.instansi || 'Balai GTK Provinsi Sumatera Barat')
+                };
+            }
         }
         gSchools = snapSekolah.val() || {};
         gAssigned = snapAssign.val() || {};
