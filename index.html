@@ -213,6 +213,22 @@
         const db = firebase.database();
 
         // ==========================================
+        // ADMIN & FASILITATOR MAPPING CONFIGURATION
+        // ==========================================
+        const ADMIN_FASIL_MAPPING = {
+            "lisaanggrainiica17@gmail.com": "LISA ANGGRAINI, S.Pd.",
+            "lisa.anggraini@kemendikdasmen.go.id": "LISA ANGGRAINI, S.Pd.",
+            "vanisitioktovani@gmail.com": "SITI OKTOVANI, S.I.P.",
+            "siti.oktovani@kemendikdasmen.go.id": "SITI OKTOVANI, S.I.P.",
+            "rosariaayu5@gmail.com": "ROSA RIA AYU, S.Pd",
+            "rosa.ria@kemendikdasmen.go.id": "ROSA RIA AYU, S.Pd",
+            "aflidarneti12@gmail.com": "AFLIDARNETI, S.Sos",
+            "aflidarneti@kemendikdasmen.go.id": "AFLIDARNETI, S.Sos",
+            "ristitahumairoh71@dikbud.belajar.id": "RISTITA HUMAIROH, S.Kom.",
+            "ristita.humairoh@kemendikdasmen.go.id": "RISTITA HUMAIROH, S.Kom."
+        };
+
+        // ==========================================
         // AUTH FUNCTIONS
         // ==========================================
         let gMasterPegawaiCache = {};
@@ -417,6 +433,14 @@
                 }
             } catch(err) {
                 console.error("Google Auth Error:", err);
+                loadingEl.classList.add('hidden');
+                if (err.code === 'auth/popup-closed-by-user') {
+                    errorEl.textContent = '⚠️ Jendela login Google ditutup sebelum selesai.';
+                } else if (err.code === 'auth/unauthorized-domain') {
+                    errorEl.textContent = '❌ Domain belum diizinkan di Firebase Authentication.';
+                } else {
+                    errorEl.textContent = `❌ Gagal login Google: ${err.message || err}`;
+                }
                 errorEl.classList.remove('hidden');
             }
         }
