@@ -70,7 +70,7 @@
                     <img src="./logo.png" alt="Logo" class="h-10 w-auto object-contain">
                     <div class="truncate">
                         <span class="text-xs font-black text-slate-800 tracking-tight block leading-tight">PM-KKA BGTK Sumbar</span>
-                        <span class="text-[10px] font-bold text-emerald-700 block mt-0.5">Admin Dashboard</span>
+                        <span id="adminBrandSubtitle" class="text-[10px] font-bold text-emerald-700 block mt-0.5">Admin Dashboard</span>
                     </div>
                 </a>
                 <button onclick="toggleSidebar()" class="md:hidden text-slate-400 hover:text-slate-700 p-1 focus:outline-none">
@@ -81,7 +81,7 @@
             <!-- Navigation Items -->
             <div class="p-4 flex-1 overflow-y-auto custom-sidebar-scroll space-y-6">
                 <!-- Group 1: BGTK SUMATERA BARAT -->
-                <div>
+                <div id="sidebarGroupBgtk">
                     <div class="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest px-3 mb-2">BGTK SUMATERA BARAT</div>
                     <nav class="space-y-1">
                         <button onclick="switchAdminView('mode0')" id="btnMode0" class="sidebar-btn flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-100/80 hover:text-slate-900 transition-all duration-200 w-full text-left relative group border-l-4 border-transparent">
@@ -92,7 +92,7 @@
                 </div>
 
                 <!-- Group 2: DATA MASTER UTAMA -->
-                <div class="pt-4 border-t border-slate-100">
+                <div id="sidebarGroupMaster" class="pt-4 border-t border-slate-100">
                     <div class="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest px-3 mb-2">DATA MASTER UTAMA</div>
                     <nav class="space-y-1">
                         <button onclick="switchAdminView('modeKombel')" id="btnModeKombel" class="sidebar-btn flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-100/80 hover:text-slate-900 transition-all duration-200 w-full text-left group border-l-4 border-transparent">
@@ -113,7 +113,7 @@
                 </div>
 
                 <!-- Group 3: SEKOLAH MODEL -->
-                <div class="pt-4 border-t border-slate-100">
+                <div id="sidebarGroupSekolahModel" class="pt-4 border-t border-slate-100">
                     <div class="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest px-3 mb-2">SEKOLAH MODEL</div>
                     <nav class="space-y-1">
                         <button onclick="toggleSubmenu('submenuFasil')" class="flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-100/80 hover:text-slate-900 transition-all duration-200 w-full text-left group">
@@ -144,7 +144,7 @@
                 </div>
 
                 <!-- Group 4: VERIFIKASI PESERTA -->
-                <div class="pt-4 border-t border-slate-100">
+                <div id="sidebarGroupVerifikasi" class="pt-4 border-t border-slate-100">
                     <div class="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest px-3 mb-2">VERIFIKASI PESERTA</div>
                     <nav class="space-y-1">
                         <button onclick="switchAdminView('mode1')" id="btnMode1" class="sidebar-btn flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-100/80 hover:text-slate-900 transition-all duration-200 w-full text-left group border-l-4 border-transparent">
@@ -159,7 +159,7 @@
                 </div>
 
                 <!-- Group 5: INTERNAL BGTK -->
-                <div class="pt-4 border-t border-slate-100">
+                <div id="sidebarGroupInternal" class="pt-4 border-t border-slate-100">
                     <div class="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest px-3 mb-2">INTERNAL BGTK</div>
                     <nav class="space-y-1">
                         <button onclick="switchAdminView('mode8')" id="btnMode8" class="sidebar-btn flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-100/80 hover:text-slate-900 transition-all duration-200 w-full text-left group border-l-4 border-transparent">
@@ -184,6 +184,7 @@
                         <div class="min-w-0 flex-1">
                             <div class="text-[10px] uppercase font-bold text-slate-400 tracking-wider">Logged in as</div>
                             <div class="text-xs font-bold text-slate-800 truncate" id="adminActiveUserEmail">Pegawai BGTK</div>
+                            <div id="adminUserRoleBadge" class="text-[10px] font-extrabold text-indigo-700 bg-indigo-50 px-2 py-0.5 rounded border border-indigo-200 inline-block mt-0.5">Admin</div>
                         </div>
                     </div>
                     <button onclick="logoutAdmin()" class="mt-2.5 w-full flex items-center justify-center gap-2 px-3 py-2 rounded-xl text-xs font-bold text-rose-600 bg-rose-50/60 hover:bg-rose-100/80 hover:text-rose-700 transition-all duration-200 border border-rose-200/70 group">
@@ -878,11 +879,16 @@
                                 <span class="inline-block px-3 py-1 bg-white/20 backdrop-blur-md rounded-full text-xs font-bold text-purple-100 uppercase tracking-wider mb-2">Manajemen Keamanan System (RBAC)</span>
                                 <h1 class="text-2xl font-black">Pengaturan Hak Akses &amp; Role Pengguna</h1>
                                 <p class="text-sm text-purple-200 mt-1">Kelola peran (Super Admin, Admin Pegawai, Fasilitator) dan atur hak akses per modul aplikasi.</p>
+                            <div class="flex flex-wrap items-center gap-2">
+                                <button onclick="openTambahRoleModal()" class="px-4 py-2 bg-white text-purple-900 hover:bg-purple-50 rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow-sm">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                                    Tambah Role Pengguna
+                                </button>
+                                <button onclick="loadUserRolesData()" class="px-4 py-2 bg-white/10 hover:bg-white/20 rounded-xl text-xs font-bold transition flex items-center gap-2 border border-white/20">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+                                    Refresh Data
+                                </button>
                             </div>
-                            <button onclick="loadUserRolesData()" class="px-4 py-2 bg-white/10 hover:bg-white/20 rounded-xl text-xs font-bold transition flex items-center gap-2 border border-white/20">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
-                                Refresh Data
-                            </button>
                         </div>
                     </div>
 
@@ -1027,6 +1033,7 @@
                     <label class="block text-xs font-bold uppercase text-slate-600 mb-1">Peran Pengguna (Role) <span class="text-rose-500">*</span></label>
                     <select id="editRoleSelect" onchange="toggleRolePresets()" class="w-full border border-slate-300 rounded-xl px-4 py-2 text-sm font-bold text-slate-800 focus:ring-2 focus:ring-purple-500">
                         <option value="Admin">Admin Pegawai BGTK</option>
+                        <option value="Admin Sekolah Model">Admin Sekolah Model</option>
                         <option value="Fasilitator">Fasilitator Sekolah Model</option>
                         <option value="Super Admin">Super Admin (Akses Penuh)</option>
                     </select>
@@ -1261,9 +1268,9 @@
         const db = firebase.database();
 
         // ==========================================
-        // AUTH GUARD – redirect if not logged in
+        // AUTH GUARD & RBAC – redirect if not logged in
         // ==========================================
-        window.addEventListener('DOMContentLoaded', () => {
+        window.addEventListener('DOMContentLoaded', async () => {
             const savedEmail = sessionStorage.getItem('admin_bgtk_email');
             if (!savedEmail) {
                 // Not logged in – redirect to homepage
@@ -1275,12 +1282,117 @@
             if (emailLabel) emailLabel.textContent = savedEmail;
             const initialLabel = document.getElementById('adminUserInitial');
             if (initialLabel && savedEmail) initialLabel.textContent = savedEmail.charAt(0).toUpperCase();
+
+            // Load and apply role & permissions
+            await checkAndApplyUserRole(savedEmail);
             switchAdminView('mode0');
         });
+
+        async function checkAndApplyUserRole(email) {
+            const cleanEmail = (email || '').toLowerCase();
+            const emailKey = sanitizeEmailKey(cleanEmail);
+
+            let userRole = 'Admin';
+            let permissions = {
+                dashboard: true, master_pegawai: true, master_kombel: true,
+                fasilitator: true, jadwal_kunjungan: true, setting_jadwal: true,
+                persuratan: true, access_management: false
+            };
+
+            if (cleanEmail === 'mastersumbar1@gmail.com') {
+                userRole = 'Super Admin';
+                permissions.access_management = true;
+            } else {
+                try {
+                    const roleSnap = await db.ref(`user_roles/${emailKey}`).once('value');
+                    const roleVal = roleSnap.val();
+                    if (roleVal) {
+                        userRole = roleVal.role || userRole;
+                        permissions = roleVal.permissions || permissions;
+                    } else {
+                        const sessionRole = sessionStorage.getItem('admin_bgtk_role');
+                        if (sessionRole) userRole = sessionRole;
+                    }
+                } catch(e) {
+                    console.warn("Gagal mengecek role user:", e);
+                }
+            }
+
+            gCurrentLoggedRole = userRole;
+            gCurrentLoggedPermissions = permissions;
+            applyRolePermissionsToUI(userRole, permissions);
+        }
+
+        function applyRolePermissionsToUI(userRole, permissions) {
+            const isSuperAdmin = (userRole === 'Super Admin');
+            const isAdminSekolahModel = (userRole === 'Admin Sekolah Model');
+            const p = permissions || {};
+
+            const groupMaster = document.getElementById('sidebarGroupMaster');
+            const groupVerifikasi = document.getElementById('sidebarGroupVerifikasi');
+            const groupInternal = document.getElementById('sidebarGroupInternal');
+            const groupSekolahModel = document.getElementById('sidebarGroupSekolahModel');
+            const btnModeAkses = document.getElementById('btnModeAkses');
+
+            const brandSub = document.getElementById('adminBrandSubtitle');
+            const userRoleBadge = document.getElementById('adminUserRoleBadge');
+
+            if (isAdminSekolahModel) {
+                if (groupMaster) groupMaster.classList.add('hidden');
+                if (groupVerifikasi) groupVerifikasi.classList.add('hidden');
+                if (groupInternal) groupInternal.classList.add('hidden');
+                if (groupSekolahModel) groupSekolahModel.classList.remove('hidden');
+
+                // Automatically expand submenus for Admin Sekolah Model
+                const smFasil = document.getElementById('submenuFasil');
+                if (smFasil) smFasil.classList.remove('hidden');
+                const iconFasil = document.getElementById('icon_submenuFasil');
+                if (iconFasil) iconFasil.classList.add('rotate-180');
+
+                const smSekolah = document.getElementById('submenuSekolah');
+                if (smSekolah) smSekolah.classList.remove('hidden');
+                const iconSekolah = document.getElementById('icon_submenuSekolah');
+                if (iconSekolah) iconSekolah.classList.add('rotate-180');
+
+                if (brandSub) {
+                    brandSub.textContent = 'Admin Sekolah Model';
+                    brandSub.className = 'text-[10px] font-bold text-teal-700 block mt-0.5';
+                }
+                if (userRoleBadge) {
+                    userRoleBadge.textContent = 'Admin Sekolah Model';
+                    userRoleBadge.className = 'text-[10px] font-black text-teal-800 bg-teal-100 px-2 py-0.5 rounded-md border border-teal-300 inline-block mt-0.5';
+                }
+            } else {
+                if (groupMaster) {
+                    if (p.master_pegawai || p.master_kombel || isSuperAdmin) groupMaster.classList.remove('hidden');
+                    else groupMaster.classList.add('hidden');
+                }
+                if (groupInternal) {
+                    if (p.access_management || p.setting_jadwal || isSuperAdmin) groupInternal.classList.remove('hidden');
+                    else groupInternal.classList.add('hidden');
+                }
+                if (btnModeAkses) {
+                    if (p.access_management || isSuperAdmin) btnModeAkses.classList.remove('hidden');
+                    else btnModeAkses.classList.add('hidden');
+                }
+
+                if (brandSub) {
+                    brandSub.textContent = isSuperAdmin ? 'Super Admin Program' : 'Admin Pegawai BGTK';
+                    brandSub.className = isSuperAdmin ? 'text-[10px] font-bold text-purple-700 block mt-0.5' : 'text-[10px] font-bold text-emerald-700 block mt-0.5';
+                }
+                if (userRoleBadge) {
+                    userRoleBadge.textContent = isSuperAdmin ? '👑 Super Admin' : (userRole || 'Admin Pegawai');
+                    userRoleBadge.className = isSuperAdmin 
+                        ? 'text-[10px] font-black text-purple-800 bg-purple-100 px-2 py-0.5 rounded-md border border-purple-300 inline-block mt-0.5'
+                        : 'text-[10px] font-extrabold text-indigo-800 bg-indigo-100 px-2 py-0.5 rounded-md border border-indigo-200 inline-block mt-0.5';
+                }
+            }
+        }
 
         function logoutAdmin() {
             sessionStorage.removeItem('admin_bgtk_email');
             sessionStorage.removeItem('admin_bgtk_nama');
+            sessionStorage.removeItem('admin_bgtk_role');
             window.location.href = 'index.html';
         }
 
@@ -1311,13 +1423,21 @@
         }
 
         function switchAdminView(mode) {
-            const modes = ['mode0', 'mode1', 'mode2', 'mode3', 'mode4', 'mode5', 'mode7', 'mode8', 'modeKombel', 'modePegawai', 'modeAkses'];
+            // Guard for Admin Sekolah Model
+            if (gCurrentLoggedRole === 'Admin Sekolah Model') {
+                const allowedModes = ['mode0', 'mode3', 'mode4', 'mode5', 'mode7', 'modeStatusSekolah'];
+                if (!allowedModes.includes(mode)) {
+                    mode = 'mode0';
+                }
+            }
+
+            const modes = ['mode0', 'mode1', 'mode2', 'mode3', 'mode4', 'mode5', 'mode7', 'mode8', 'modeKombel', 'modePegawai', 'modeAkses', 'modeStatusSekolah'];
             modes.forEach(m => {
                 const viewEl = document.getElementById('view' + m.charAt(0).toUpperCase() + m.slice(1));
                 const btnEl = document.getElementById('btn' + m.charAt(0).toUpperCase() + m.slice(1));
                 if (viewEl) viewEl.classList.add('hidden');
                 if (btnEl) {
-                    if (m === 'mode3' || m === 'mode4' || m === 'mode7' || m === 'mode5') {
+                    if (m === 'mode3' || m === 'mode4' || m === 'mode7' || m === 'mode5' || m === 'modeStatusSekolah') {
                         btnEl.className = "sidebar-btn flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium text-slate-500 hover:text-slate-900 hover:bg-slate-100/80 transition-all duration-200 w-full text-left border-l-2 border-transparent";
                     } else {
                         btnEl.className = "sidebar-btn flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-100/80 hover:text-slate-900 transition-all duration-200 w-full text-left relative group border-l-4 border-transparent";
@@ -1344,7 +1464,7 @@
             }
 
             const pageTitle = document.getElementById('adminPageTitle');
-            if (mode === 'mode0') { if (pageTitle) pageTitle.textContent = "Dashboard Utama Admin"; loadDashboardUtamaData(); }
+            if (mode === 'mode0') { if (pageTitle) pageTitle.textContent = gCurrentLoggedRole === 'Admin Sekolah Model' ? "Dashboard Sekolah Model" : "Dashboard Utama Admin"; loadDashboardUtamaData(); }
             else if (mode === 'mode1' && pageTitle) pageTitle.textContent = "Progres Verifikasi Sekolah Model";
             else if (mode === 'mode2' && pageTitle) pageTitle.textContent = "Rencana Pengkelasan";
             else if (mode === 'mode3') { if (pageTitle) pageTitle.textContent = "Data Fasilitator"; loadFasilitatorData(); }
@@ -1492,6 +1612,8 @@
                 let roleBadge = '';
                 if (isSuperAdmin) {
                     roleBadge = `<span class="px-2.5 py-1 rounded-full text-xs font-black bg-purple-100 text-purple-800 border border-purple-200">👑 Super Admin</span>`;
+                } else if (user.role === 'Admin Sekolah Model') {
+                    roleBadge = `<span class="px-2.5 py-1 rounded-full text-xs font-black bg-teal-100 text-teal-800 border border-teal-200">🏫 Admin Sekolah Model</span>`;
                 } else if (user.role === 'Fasilitator') {
                     roleBadge = `<span class="px-2.5 py-1 rounded-full text-xs font-extrabold bg-emerald-100 text-emerald-800 border border-emerald-200">🤝 Fasilitator</span>`;
                 } else {
@@ -1542,13 +1664,39 @@
             renderUserRolesTable(filtered);
         }
 
+        function openTambahRoleModal() {
+            document.getElementById('editRoleEmailKey').value = '';
+            const emailInput = document.getElementById('editRoleEmail');
+            const namaInput = document.getElementById('editRoleNama');
+            emailInput.value = '';
+            emailInput.readOnly = false;
+            emailInput.placeholder = 'contoh: admin.sekolahmodel@gmail.com';
+            emailInput.className = 'w-full border border-slate-300 rounded-xl px-4 py-2 text-sm bg-white text-slate-800 font-semibold focus:ring-2 focus:ring-purple-500';
+            namaInput.value = '';
+            namaInput.readOnly = false;
+            namaInput.placeholder = 'Nama Lengkap Admin';
+            namaInput.className = 'w-full border border-slate-300 rounded-xl px-4 py-2 text-sm bg-white text-slate-800 font-medium focus:ring-2 focus:ring-purple-500';
+
+            document.getElementById('editRoleSelect').value = 'Admin Sekolah Model';
+            toggleRolePresets();
+
+            document.getElementById('modalEditHakAkses').classList.remove('hidden');
+        }
+
         function openEditRoleModal(emailKey) {
             const user = gUserRolesCache[emailKey];
             if (!user) return;
 
             document.getElementById('editRoleEmailKey').value = emailKey;
-            document.getElementById('editRoleEmail').value = user.email || '';
-            document.getElementById('editRoleNama').value = user.nama || '';
+            const emailInput = document.getElementById('editRoleEmail');
+            const namaInput = document.getElementById('editRoleNama');
+            emailInput.value = user.email || '';
+            emailInput.readOnly = true;
+            emailInput.className = 'w-full border border-slate-200 rounded-xl px-4 py-2 text-sm bg-slate-50 text-slate-700 font-semibold';
+            namaInput.value = user.nama || '';
+            namaInput.readOnly = true;
+            namaInput.className = 'w-full border border-slate-200 rounded-xl px-4 py-2 text-sm bg-slate-50 text-slate-500 font-medium';
+
             document.getElementById('editRoleSelect').value = user.role || 'Admin';
 
             const p = user.permissions || {};
@@ -1573,6 +1721,22 @@
                 document.getElementById('perm_setting_jadwal').checked = true;
                 document.getElementById('perm_persuratan').checked = true;
                 document.getElementById('perm_access_management').checked = true;
+            } else if (role === 'Admin Sekolah Model') {
+                document.getElementById('perm_master_pegawai').checked = false;
+                document.getElementById('perm_master_kombel').checked = false;
+                document.getElementById('perm_fasilitator').checked = true;
+                document.getElementById('perm_jadwal_kunjungan').checked = true;
+                document.getElementById('perm_setting_jadwal').checked = false;
+                document.getElementById('perm_persuratan').checked = false;
+                document.getElementById('perm_access_management').checked = false;
+            } else if (role === 'Admin') {
+                document.getElementById('perm_master_pegawai').checked = true;
+                document.getElementById('perm_master_kombel').checked = true;
+                document.getElementById('perm_fasilitator').checked = true;
+                document.getElementById('perm_jadwal_kunjungan').checked = true;
+                document.getElementById('perm_setting_jadwal').checked = true;
+                document.getElementById('perm_persuratan').checked = true;
+                document.getElementById('perm_access_management').checked = false;
             } else if (role === 'Fasilitator') {
                 document.getElementById('perm_master_pegawai').checked = false;
                 document.getElementById('perm_master_kombel').checked = false;
@@ -1586,15 +1750,23 @@
 
         async function saveUserRolePermissions(e) {
             e.preventDefault();
-            const emailKey = document.getElementById('editRoleEmailKey').value;
-            const email = document.getElementById('editRoleEmail').value;
-            const nama = document.getElementById('editRoleNama').value;
+            let emailKey = document.getElementById('editRoleEmailKey').value;
+            const email = (document.getElementById('editRoleEmail').value || '').trim().toLowerCase();
+            const nama = (document.getElementById('editRoleNama').value || '').trim();
             const role = document.getElementById('editRoleSelect').value;
             const btnSave = document.getElementById('btnSaveUserRole');
 
+            if (!email) {
+                alert("Silakan masukkan email pengguna.");
+                return;
+            }
+            if (!emailKey) {
+                emailKey = sanitizeEmailKey(email);
+            }
+
             const payload = {
                 email: email,
-                nama: nama,
+                nama: nama || (role === 'Admin Sekolah Model' ? 'Admin Sekolah Model' : 'Admin Pegawai'),
                 role: role,
                 permissions: {
                     dashboard: true,

@@ -281,15 +281,23 @@
                         (emailInput.includes('@') && (pEmail1.includes(emailInput) || pEmail2.includes(emailInput)));
                 });
 
+                // Check user_roles node in Firebase for Admin Sekolah Model or Custom Role
+                let matchedRoleUser = null;
+                try {
+                    const cleanKey = emailInput.toLowerCase().replace(/[.#$\[\]]/g, '_');
+                    const roleSnap = await db.ref(`user_roles/${cleanKey}`).once('value');
+                    matchedRoleUser = roleSnap.val();
+                } catch(e) {}
+
                 // Fallback for primary admin emails
-                if (!matchedPegawai) {
-                    if (emailInput.includes('bgtk') || emailInput.includes('admin') || pegawaiList.length === 0) {
+                if (!matchedPegawai && !matchedRoleUser) {
+                    if (emailInput.includes('bgtk') || emailInput.includes('admin') || emailInput === 'mastersumbar1@gmail.com' || pegawaiList.length === 0) {
                         matchedPegawai = { nama_lengkap: 'Admin BGTK Sumbar', email_dikbud: emailInput };
                     }
                 }
 
-                if (!matchedPegawai) {
-                    errorEl.textContent = '❌ Email tidak terdaftar dalam Master Data Pegawai Balai GTK Sumbar.';
+                if (!matchedPegawai && !matchedRoleUser) {
+                    errorEl.textContent = '❌ Email tidak terdaftar dalam Master Data Pegawai Balai GTK Sumbar atau Hak Akses Admin.';
                     errorEl.classList.remove('hidden');
                     loadingEl.classList.add('hidden');
                     submitBtn.disabled = false;
@@ -299,7 +307,10 @@
 
                 // SUCCESS: save session → redirect to admin.html
                 sessionStorage.setItem('admin_bgtk_email', emailInput);
-                sessionStorage.setItem('admin_bgtk_nama', matchedPegawai.nama_lengkap || 'Pegawai BGTK');
+                sessionStorage.setItem('admin_bgtk_nama', (matchedRoleUser ? matchedRoleUser.nama : '') || (matchedPegawai ? matchedPegawai.nama_lengkap : '') || 'Pegawai BGTK');
+                if (matchedRoleUser && matchedRoleUser.role) {
+                    sessionStorage.setItem('admin_bgtk_role', matchedRoleUser.role);
+                }
 
                 submitBtn.textContent = '✅ Berhasil, mengalihkan...';
                 setTimeout(() => {
@@ -338,6 +349,7 @@
                 const result = await firebase.auth().signInWithPopup(provider);
                 const user = result.user;
                 const userEmail = (user.email || '').toLowerCase();
+                const emailKey = userEmail.replace(/[.#$\[\]]/g, '_');
 
                 if (Object.keys(gMasterPegawaiCache).length === 0) {
                     const snap = await db.ref('master_pegawai').once('value');
@@ -351,9 +363,19 @@
                     return userEmail === pEmail1 || userEmail === pEmail2;
                 });
 
-                if (matchedPegawai || userEmail === 'mastersumbar1@gmail.com' || userEmail === 'astersumbar1@gmail.com') {
+                // Check user_roles
+                let matchedRoleUser = null;
+                try {
+                    const roleSnap = await db.ref(`user_roles/${emailKey}`).once('value');
+                    matchedRoleUser = roleSnap.val();
+                } catch(e) {}
+
+                if (matchedPegawai || matchedRoleUser || userEmail === 'mastersumbar1@gmail.com' || userEmail === 'astersumbar1@gmail.com') {
                     sessionStorage.setItem('admin_bgtk_email', userEmail);
-                    sessionStorage.setItem('admin_bgtk_nama', (matchedPegawai ? matchedPegawai.nama_lengkap : '') || user.displayName || 'Admin BGTK');
+                    sessionStorage.setItem('admin_bgtk_nama', (matchedRoleUser ? matchedRoleUser.nama : '') || (matchedPegawai ? matchedPegawai.nama_lengkap : '') || user.displayName || 'Admin BGTK');
+                    if (matchedRoleUser && matchedRoleUser.role) {
+                        sessionStorage.setItem('admin_bgtk_role', matchedRoleUser.role);
+                    }
                     window.location.href = 'admin.html';
                 } else {
                     const snapFasil = await db.ref('fasilitator').once('value');
@@ -367,7 +389,7 @@
                         localStorage.setItem('loggedFasilId', matchedFasilKey);
                         window.location.href = `fasilitator.html?fasilId=${matchedFasilKey}`;
                     } else {
-                        errorEl.textContent = `❌ Email Google (${userEmail}) tidak terdaftar sebagai Pegawai BGTK atau Fasilitator.`;
+                        errorEl.textContent = `❌ Email Google (${userEmail}) tidak terdaftar sebagai Pegawai BGTK, Admin Sekolah Model, atau Fasilitator.`;
                         errorEl.classList.remove('hidden');
                         loadingEl.classList.add('hidden');
                     }
