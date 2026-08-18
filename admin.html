@@ -474,9 +474,38 @@
                         </div>
                     </div>
                     <div id="mode4ViewTabel" class="bg-white rounded-2xl shadow-2xs border border-slate-200/80 overflow-hidden">
-                        <div class="p-4 border-b border-slate-100 bg-slate-50/50 flex flex-col sm:flex-row justify-between items-center gap-3">
-                            <input type="text" id="searchJadwalFasil" onkeyup="filterJadwalFasilData()" placeholder="Cari fasilitator atau sekolah..." class="w-full sm:w-72 px-3 py-2 bg-white border border-slate-200 rounded-xl text-xs focus:outline-none focus:border-emerald-500">
-                            <span class="text-xs text-slate-500 font-semibold" id="jadwalFasilCountBadge">0 Data</span>
+                        <div class="p-4 border-b border-slate-100 bg-slate-50/50 flex flex-col md:flex-row justify-between items-stretch md:items-center gap-3">
+                            <div class="flex flex-wrap items-center gap-2.5 flex-1">
+                                <div class="relative w-full sm:w-60">
+                                    <input type="text" id="searchJadwalFasil" onkeyup="filterJadwalFasilData()" placeholder="Cari fasilitator atau sekolah..." class="w-full pl-8 pr-3 py-2 bg-white border border-slate-200 rounded-xl text-xs focus:outline-none focus:border-emerald-500">
+                                    <svg class="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                                </div>
+                                <select id="filterJadwalFasilScope" onchange="filterJadwalFasilData()" class="w-full sm:w-auto px-3 py-2 bg-white border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 focus:outline-none focus:border-emerald-500">
+                                    <option value="ALL">🌐 Semua Fasilitator</option>
+                                </select>
+                                <select id="filterJadwalStatus" onchange="filterJadwalFasilData()" class="w-full sm:w-auto px-3 py-2 bg-white border border-slate-200 rounded-xl text-xs font-bold text-slate-800 focus:outline-none focus:border-emerald-500">
+                                    <option value="ACTIVE" selected>✨ Terjadwal &amp; Selesai (Default)</option>
+                                    <option value="ALL">📋 Semua Status (Termasuk Belum Diisi)</option>
+                                    <option value="Selesai">✓ Hanya Selesai</option>
+                                    <option value="Direncanakan">📅 Hanya Direncanakan</option>
+                                    <option value="Belum Diisi">⚪ Hanya Belum Diisi</option>
+                                </select>
+                                <select id="filterJadwalTahap" onchange="filterJadwalFasilData()" class="w-full sm:w-auto px-3 py-2 bg-white border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 focus:outline-none focus:border-emerald-500">
+                                    <option value="ALL">Semua Tahap (1-6)</option>
+                                    <option value="1">Tahap 1</option>
+                                    <option value="2">Tahap 2</option>
+                                    <option value="3">Tahap 3</option>
+                                    <option value="4">Tahap 4</option>
+                                    <option value="5">Tahap 5</option>
+                                    <option value="6">Tahap 6</option>
+                                </select>
+                            </div>
+                            <div class="flex items-center justify-between sm:justify-end gap-2 shrink-0">
+                                <span class="text-xs text-slate-600 font-bold bg-slate-100 px-3 py-1.5 rounded-xl border border-slate-200" id="jadwalFasilCountBadge">0 Data</span>
+                                <button onclick="loadJadwalFasilData()" title="Muat Ulang Data" class="p-2 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-xl transition">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+                                </button>
+                            </div>
                         </div>
                         <div class="p-4" id="listJadwalFasilContainer"><div class="text-center text-slate-500 py-4"><div class="spinner mx-auto mb-2"></div>Memuat jadwal...</div></div>
                     </div>
@@ -486,7 +515,10 @@
                                 <h3 class="font-bold text-slate-900 text-sm">Matriks Visual Pendampingan Fasilitator (Tahap 1 - 6)</h3>
                                 <p class="text-xs text-slate-500 mt-0.5">Status realtime seluruh tahap pendampingan per fasilitator &amp; sekolah binaan.</p>
                             </div>
-                            <div class="flex gap-2">
+                            <div class="flex flex-wrap items-center gap-2">
+                                <select id="filterMatriksFasilScope" onchange="renderMode4Matriks()" class="px-3 py-1.5 bg-white border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 focus:outline-none">
+                                    <option value="ALL">🌐 Semua Fasilitator</option>
+                                </select>
                                 <span class="px-2 py-1 bg-emerald-100 text-emerald-800 text-[10px] font-bold rounded">✓ Selesai</span>
                                 <span class="px-2 py-1 bg-blue-100 text-blue-800 text-[10px] font-bold rounded">📅 Terjadwal</span>
                                 <span class="px-2 py-1 bg-slate-100 text-slate-600 text-[10px] font-bold rounded">— Belum</span>
@@ -3031,16 +3063,26 @@
             try {
                 const container = document.getElementById('listJadwalFasilContainer');
                 if (container) container.innerHTML = '<div class="text-center text-slate-500 py-4"><div class="spinner mx-auto mb-2"></div>Memuat jadwal...</div>';
-                const [fasilSnap, guruSnap, assignSnap, jadwalSnap] = await Promise.all([db.ref('fasilitator').once('value'), db.ref('master_guru').once('value'), db.ref('fasilitator_sekolah').once('value'), db.ref('jadwal_kunjungan').once('value')]);
-                const fasils = fasilSnap.val() || {}; const gurus = guruSnap.val() || {}; const assigns = assignSnap.val() || {}; const jadwals = jadwalSnap.val() || {};
-                gJadwalFasilRaw = [];
-                for (const fId in fasils) {
-                    // Scoped check for Admin Sekolah Model
-                    if (gAssignedFasilIds && gAssignedFasilIds.length > 0 && !gAssignedFasilIds.includes(fId)) continue;
+                const [fasilSnap, guruSnap, assignSnap, jadwalSnap] = await Promise.all([
+                    db.ref('fasilitator').once('value'), 
+                    db.ref('master_guru').once('value'), 
+                    db.ref('fasilitator_sekolah').once('value'), 
+                    db.ref('jadwal_kunjungan').once('value')
+                ]);
+                const fasils = fasilSnap.val() || {}; 
+                const gurus = guruSnap.val() || {}; 
+                const assigns = assignSnap.val() || {}; 
+                const jadwals = jadwalSnap.val() || {};
 
+                gJadwalFasilRaw = [];
+                const fasilModelList = [];
+
+                for (const fId in fasils) {
                     const fasil = fasils[fId];
                     const progs = fasil.programs || (fasil.program_kombel ? ['kombel'] : ['sekolah_model']);
                     if (!progs.includes('sekolah_model')) continue;
+
+                    fasilModelList.push({ id: fId, nama: fasil.nama });
 
                     const myNpsns = assigns[fId] || [];
                     myNpsns.forEach(npsn => {
@@ -3070,7 +3112,44 @@
                         }
                     });
                 }
-                renderJadwalFasilTable(gJadwalFasilRaw);
+
+                // Populate Dropdown Scope Filters
+                const scopeSelect = document.getElementById('filterJadwalFasilScope');
+                const matriksScopeSelect = document.getElementById('filterMatriksFasilScope');
+                
+                let scopeHtml = '';
+                const hasAssigned = (gAssignedFasilIds && gAssignedFasilIds.length > 0);
+                
+                if (hasAssigned) {
+                    const assignedNamesStr = gAssignedFasilNames && gAssignedFasilNames.length > 0 ? gAssignedFasilNames.join(', ') : 'Tanggung Jawab Saya';
+                    scopeHtml += `<option value="MY_ASSIGNED" selected>⭐ Fasilitator Saya (${assignedNamesStr})</option>`;
+                    scopeHtml += `<option value="ALL">🌐 Semua Fasilitator (${fasilModelList.length})</option>`;
+                } else {
+                    scopeHtml += `<option value="ALL" selected>🌐 Semua Fasilitator (${fasilModelList.length})</option>`;
+                }
+
+                // Individual options
+                fasilModelList.sort((a, b) => a.nama.localeCompare(b.nama)).forEach(f => {
+                    scopeHtml += `<option value="${f.id}">Fasil: ${f.nama}</option>`;
+                });
+
+                if (scopeSelect) {
+                    const prevVal = scopeSelect.value;
+                    scopeSelect.innerHTML = scopeHtml;
+                    if (prevVal && scopeSelect.querySelector(`option[value="${prevVal}"]`)) {
+                        scopeSelect.value = prevVal;
+                    }
+                }
+
+                if (matriksScopeSelect) {
+                    const prevMVal = matriksScopeSelect.value;
+                    matriksScopeSelect.innerHTML = scopeHtml;
+                    if (prevMVal && matriksScopeSelect.querySelector(`option[value="${prevMVal}"]`)) {
+                        matriksScopeSelect.value = prevMVal;
+                    }
+                }
+
+                filterJadwalFasilData();
             } catch(e) {
                 console.error("Gagal loadJadwalFasilData", e);
                 const container = document.getElementById('listJadwalFasilContainer');
@@ -3079,8 +3158,51 @@
         }
 
         function filterJadwalFasilData() {
-            const q = (document.getElementById('searchJadwalFasil')?.value || '').toLowerCase();
-            gFilteredJadwalRows = gJadwalFasilRaw.filter(r => r.fasilNama.toLowerCase().includes(q) || r.namaSekolah.toLowerCase().includes(q) || r.kabKota.toLowerCase().includes(q) || r.status.toLowerCase().includes(q));
+            const q = (document.getElementById('searchJadwalFasil')?.value || '').toLowerCase().trim();
+            const scope = document.getElementById('filterJadwalFasilScope')?.value || (gAssignedFasilIds && gAssignedFasilIds.length > 0 ? 'MY_ASSIGNED' : 'ALL');
+            const statusFilter = document.getElementById('filterJadwalStatus')?.value || 'ACTIVE';
+            const tahapFilter = document.getElementById('filterJadwalTahap')?.value || 'ALL';
+
+            gFilteredJadwalRows = gJadwalFasilRaw.filter(r => {
+                // Scope Fasilitator filter
+                if (scope === 'MY_ASSIGNED') {
+                    if (!gAssignedFasilIds || !gAssignedFasilIds.includes(r.fasilId)) return false;
+                } else if (scope !== 'ALL') {
+                    if (r.fasilId !== scope) return false;
+                }
+
+                // Status filter
+                if (statusFilter === 'ACTIVE') {
+                    // Default awal: hanya yang sudah direncanakan atau selesai (bukan yang belum sama sekali)
+                    const isAktif = (r.status === 'Selesai' || r.status === 'Direncanakan' || (r.tanggal && r.tanggal !== '-'));
+                    if (!isAktif) return false;
+                } else if (statusFilter === 'Selesai') {
+                    if (r.status !== 'Selesai') return false;
+                } else if (statusFilter === 'Direncanakan') {
+                    if (r.status !== 'Direncanakan') return false;
+                } else if (statusFilter === 'Belum Diisi') {
+                    const isBelum = (r.status === 'Belum Diisi' || !r.status) && (!r.tanggal || r.tanggal === '-');
+                    if (!isBelum) return false;
+                }
+
+                // Tahap filter
+                if (tahapFilter !== 'ALL') {
+                    if (String(r.kunjungan) !== String(tahapFilter)) return false;
+                }
+
+                // Search query
+                if (q) {
+                    const matchFasil = r.fasilNama && r.fasilNama.toLowerCase().includes(q);
+                    const matchSekolah = r.namaSekolah && r.namaSekolah.toLowerCase().includes(q);
+                    const matchKab = r.kabKota && r.kabKota.toLowerCase().includes(q);
+                    const matchTgl = r.tanggal && r.tanggal.toLowerCase().includes(q);
+                    const matchStatus = r.status && r.status.toLowerCase().includes(q);
+                    if (!matchFasil && !matchSekolah && !matchKab && !matchTgl && !matchStatus) return false;
+                }
+
+                return true;
+            });
+
             gJadwalPage = 1;
             renderJadwalFasilTable(gFilteredJadwalRows);
         }
@@ -3090,7 +3212,7 @@
             const badge = document.getElementById('jadwalFasilCountBadge');
             if (badge) badge.textContent = `${rows.length} Baris Jadwal`;
             if (!container) return;
-            if (rows.length === 0) { container.innerHTML = '<div class="text-center text-slate-400 py-6">Tidak ada jadwal ditemukan.</div>'; return; }
+            if (rows.length === 0) { container.innerHTML = '<div class="text-center text-slate-400 py-6">Tidak ada jadwal ditemukan untuk filter ini.</div>'; return; }
             const start = (gJadwalPage - 1) * PER_PAGE;
             const pageItems = rows.slice(start, start + PER_PAGE);
             let html = `<div class="overflow-x-auto rounded-t-xl border border-slate-200/80"><table class="w-full text-left text-xs whitespace-nowrap"><thead class="bg-slate-50 text-slate-600 font-bold border-b border-slate-200"><tr><th class="px-4 py-3">Fasilitator</th><th class="px-4 py-3">Sekolah Model</th><th class="px-4 py-3 text-center">Tahap &amp; Metode</th><th class="px-4 py-3">Tanggal &amp; Waktu</th><th class="px-4 py-3 text-center">Status</th><th class="px-4 py-3">Pertemuan / Rekaman</th><th class="px-4 py-3 text-center">Aksi &amp; Presensi</th></tr></thead><tbody class="divide-y divide-slate-100">`;
@@ -3153,26 +3275,42 @@
             try {
                 const tbody = document.getElementById('mode4MatriksBody');
                 if (!tbody) return;
-                const [fasilSnap, guruSnap, assignSnap, jadwalSnap] = await Promise.all([db.ref('fasilitator').once('value'), db.ref('master_guru').once('value'), db.ref('fasilitator_sekolah').once('value'), db.ref('jadwal_kunjungan').once('value')]);
-                const fasils = fasilSnap.val() || {}; const gurus = guruSnap.val() || {}; const assigns = assignSnap.val() || {}; const jadwals = jadwalSnap.val() || {};
+                const [fasilSnap, guruSnap, assignSnap, jadwalSnap] = await Promise.all([
+                    db.ref('fasilitator').once('value'), 
+                    db.ref('master_guru').once('value'), 
+                    db.ref('fasilitator_sekolah').once('value'), 
+                    db.ref('jadwal_kunjungan').once('value')
+                ]);
+                const fasils = fasilSnap.val() || {}; 
+                const gurus = guruSnap.val() || {}; 
+                const assigns = assignSnap.val() || {}; 
+                const jadwals = jadwalSnap.val() || {};
+
+                const scope = document.getElementById('filterMatriksFasilScope')?.value || (gAssignedFasilIds && gAssignedFasilIds.length > 0 ? 'MY_ASSIGNED' : 'ALL');
+
                 let html = '';
                 for (const fId in fasils) {
-                    if (gAssignedFasilIds && gAssignedFasilIds.length > 0 && !gAssignedFasilIds.includes(fId)) continue;
+                    if (scope === 'MY_ASSIGNED') {
+                        if (!gAssignedFasilIds || !gAssignedFasilIds.includes(fId)) continue;
+                    } else if (scope !== 'ALL') {
+                        if (fId !== scope) continue;
+                    }
 
                     const fasil = fasils[fId];
                     const progs = fasil.programs || (fasil.program_kombel ? ['kombel'] : ['sekolah_model']);
                     if (!progs.includes('sekolah_model')) continue;
 
-                    const myNpsns = assigns[fId] || []; const rowCount = myNpsns.length;
+                    const myNpsns = assigns[fId] || []; 
+                    const rowCount = myNpsns.length;
                     if (rowCount === 0) {
                         html += `<tr class="border-b border-slate-100"><td class="px-4 py-3 font-bold text-emerald-800">${fasil.nama}</td><td colspan="8" class="px-4 py-3 text-slate-400 italic">Belum ada sekolah binaan yang ditugaskan.</td></tr>`;
                     } else {
                         myNpsns.forEach((npsn, idx) => {
-                            // master_guru[npsn] is {guru_id: {asal_sekolah, kode_kabupaten, ...}}
                             const guruGroup = gurus[npsn] || {};
                             const firstGuru = Object.values(guruGroup)[0] || {};
                             const namaSekolah = firstGuru.asal_sekolah || npsn;
-                            const sj = jadwals[npsn] || {}; let selesaiCount = 0, cells = '';
+                            const sj = jadwals[npsn] || {}; 
+                            let selesaiCount = 0, cells = '';
                             for (let k = 1; k <= 6; k++) {
                                 const j = sj[`kunjungan_${k}`] || { status: 'Belum Diisi', tanggal: '-' };
                                 let bg = 'bg-slate-100 text-slate-500 hover:bg-slate-200', icon = '—';
