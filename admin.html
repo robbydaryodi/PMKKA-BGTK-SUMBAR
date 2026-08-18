@@ -688,14 +688,14 @@
 
                         <!-- Tab Controls -->
                         <div class="bg-slate-100 p-2 border-b border-slate-200 flex flex-wrap gap-2 flex-shrink-0">
-                            <button id="btnTabHasilRapor" onclick="switchHasilPendampinganTab('rapor')" class="px-4 py-2 rounded-xl text-xs font-bold bg-white text-indigo-900 shadow-2xs border border-slate-200">
+                            <button id="btnTabHasilHadir" onclick="switchHasilPendampinganTab('hadir')" class="px-4 py-2 rounded-xl text-xs font-bold bg-white text-emerald-900 shadow-2xs border border-slate-200">
+                                👥 Presensi Peserta &amp; Link Pertemuan (<span id="countHasilHadir">0</span>)
+                            </button>
+                            <button id="btnTabHasilRapor" onclick="switchHasilPendampinganTab('rapor')" class="px-4 py-2 rounded-xl text-xs font-bold text-slate-600 hover:text-slate-900">
                                 📊 Rapor &amp; Skor Observasi
                             </button>
                             <button id="btnTabHasilNarasi" onclick="switchHasilPendampinganTab('narasi')" class="px-4 py-2 rounded-xl text-xs font-bold text-slate-600 hover:text-slate-900">
                                 📝 Catatan, Kendala &amp; Rekomendasi
-                            </button>
-                            <button id="btnTabHasilHadir" onclick="switchHasilPendampinganTab('hadir')" class="px-4 py-2 rounded-xl text-xs font-bold text-slate-600 hover:text-slate-900">
-                                👥 Presensi Peserta &amp; Link Pertemuan (<span id="countHasilHadir">0</span>)
                             </button>
                         </div>
 
@@ -4034,7 +4034,7 @@
         // HASIL PENDAMPINGAN FASILITATOR VIEWER & DOCX EXPORT
         // ==========================================
         let gCurrentHasilDetail = null;
-        let gCurrentHasilTab = 'rapor';
+        let gCurrentHasilTab = 'hadir';
 
         function bukaLaporanDariModalMatrix() {
             if (!gActiveMatrixModalData) return;
@@ -4122,7 +4122,7 @@
                 document.getElementById('modalHasilSub').textContent = `NPSN: ${npsn} | Wilayah: ${kabKota} | Fasilitator: ${fasilNama} | Tanggal: ${jData.tanggal || '-'}${jamInfo}`;
                 document.getElementById('countHasilHadir').textContent = hadirList.length;
 
-                switchHasilPendampinganTab('rapor');
+                switchHasilPendampinganTab('hadir');
                 document.getElementById('modalDetailHasilPendampingan').classList.remove('hidden');
             } catch(e) {
                 console.error("Gagal openModalDetailHasilPendampingan", e);
@@ -4137,13 +4137,13 @@
 
         function switchHasilPendampinganTab(tab) {
             gCurrentHasilTab = tab;
+            const btnHadir = document.getElementById('btnTabHasilHadir');
             const btnRapor = document.getElementById('btnTabHasilRapor');
             const btnNarasi = document.getElementById('btnTabHasilNarasi');
-            const btnHadir = document.getElementById('btnTabHasilHadir');
 
+            if (btnHadir) btnHadir.className = tab === 'hadir' ? "px-4 py-2 rounded-xl text-xs font-bold bg-white text-emerald-900 shadow-2xs border border-slate-200" : "px-4 py-2 rounded-xl text-xs font-bold text-slate-600 hover:text-slate-900";
             if (btnRapor) btnRapor.className = tab === 'rapor' ? "px-4 py-2 rounded-xl text-xs font-bold bg-white text-indigo-900 shadow-2xs border border-slate-200" : "px-4 py-2 rounded-xl text-xs font-bold text-slate-600 hover:text-slate-900";
             if (btnNarasi) btnNarasi.className = tab === 'narasi' ? "px-4 py-2 rounded-xl text-xs font-bold bg-white text-indigo-900 shadow-2xs border border-slate-200" : "px-4 py-2 rounded-xl text-xs font-bold text-slate-600 hover:text-slate-900";
-            if (btnHadir) btnHadir.className = tab === 'hadir' ? "px-4 py-2 rounded-xl text-xs font-bold bg-white text-indigo-900 shadow-2xs border border-slate-200" : "px-4 py-2 rounded-xl text-xs font-bold text-slate-600 hover:text-slate-900";
 
             renderHasilPendampinganTabContent();
         }
