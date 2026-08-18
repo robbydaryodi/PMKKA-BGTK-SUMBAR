@@ -455,6 +455,10 @@
                         <span class="text-slate-500 font-medium">Jam Pelaksanaan:</span>
                         <span class="font-bold text-indigo-700" id="detailWaktuText">-</span>
                     </div>
+                    <div class="flex justify-between items-center text-xs" id="detailTipeRow">
+                        <span class="text-slate-500 font-medium">Metode Kunjungan:</span>
+                        <span class="font-bold text-slate-800" id="detailTipeText">🏫 Luring (Tatap Muka)</span>
+                    </div>
                     <div class="flex justify-between items-center text-xs">
                         <span class="text-slate-500 font-medium">Tahap Siklus TET:</span>
                         <span class="font-bold text-slate-800" id="detailTahapTetText">-</span>
@@ -463,6 +467,23 @@
                         <span class="text-slate-500 font-medium">Status Laporan Rubrik:</span>
                         <span class="font-bold" id="detailRubrikStatusText">-</span>
                     </div>
+                </div>
+
+                <!-- GMeet & Rekaman Box for Facilitator -->
+                <div id="detailGMeetBox" class="p-3 bg-blue-50 border border-blue-200 rounded-2xl space-y-2 hidden">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-bold text-blue-900 flex items-center gap-1.5">📹 Google Meet (Daring)</span>
+                        <a id="btnBukaGMeetDetail" href="#" target="_blank" class="px-2.5 py-1 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-[11px] font-bold transition">Gabung Meet</a>
+                    </div>
+                    <div class="text-[11px] font-mono text-blue-800 truncate" id="detailGMeetUrlText">-</div>
+                </div>
+
+                <div id="detailRekamanBox" class="p-3 bg-purple-50 border border-purple-200 rounded-2xl space-y-2 hidden">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-bold text-purple-900 flex items-center gap-1.5">🎬 Rekaman Pertemuan</span>
+                        <a id="btnBukaRekamanDetail" href="#" target="_blank" class="px-2.5 py-1 bg-purple-600 hover:bg-purple-700 text-white rounded-lg text-[11px] font-bold transition">Buka Rekaman</a>
+                    </div>
+                    <div class="text-[11px] font-mono text-purple-800 truncate" id="detailRekamanUrlText">-</div>
                 </div>
 
                 <div id="detailReportPreviewBox" class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-xs hidden">
@@ -1676,6 +1697,32 @@
             const waktuEl = document.getElementById('detailWaktuText');
             if (waktuEl) waktuEl.innerText = jamStr;
 
+            const tipeText = document.getElementById('detailTipeText');
+            const tipe = visit.tipe_kunjungan || (visit.link_gmeet ? 'Daring' : 'Luring');
+            if (tipeText) tipeText.innerText = tipe === 'Daring' ? '🌐 Daring (Online GMeet)' : '🏫 Luring (Tatap Muka)';
+
+            const gmeetBox = document.getElementById('detailGMeetBox');
+            const gmeetBtn = document.getElementById('btnBukaGMeetDetail');
+            const gmeetUrlText = document.getElementById('detailGMeetUrlText');
+            if (visit.link_gmeet) {
+                if (gmeetBox) gmeetBox.classList.remove('hidden');
+                if (gmeetBtn) gmeetBtn.href = visit.link_gmeet;
+                if (gmeetUrlText) gmeetUrlText.innerText = visit.link_gmeet;
+            } else {
+                if (gmeetBox) gmeetBox.classList.add('hidden');
+            }
+
+            const rekamanBox = document.getElementById('detailRekamanBox');
+            const rekamanBtn = document.getElementById('btnBukaRekamanDetail');
+            const rekamanUrlText = document.getElementById('detailRekamanUrlText');
+            if (visit.link_rekaman_gmeet) {
+                if (rekamanBox) rekamanBox.classList.remove('hidden');
+                if (rekamanBtn) rekamanBtn.href = visit.link_rekaman_gmeet;
+                if (rekamanUrlText) rekamanUrlText.innerText = visit.link_rekaman_gmeet;
+            } else {
+                if (rekamanBox) rekamanBox.classList.add('hidden');
+            }
+
             document.getElementById('detailTahapTetText').innerText = visit.tahap_siklus_tet || 'Belum diisi';
 
             const rubrikStatus = document.getElementById('detailRubrikStatusText');
@@ -1761,14 +1808,22 @@
 
                     const safeName = schoolName.replace(/'/g, "\\\'").replace(/"/g, '&quot;');
                     const jamBadge = (jData.jam_mulai && jData.jam_selesai) ? `<span class="text-indigo-600 font-bold ml-1">⏰ ${jData.jam_mulai} - ${jData.jam_selesai} WIB</span>` : '';
+                    const tipeBadge = (jData.tipe_kunjungan === 'Daring' || jData.link_gmeet) ? `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-blue-100 text-blue-800">🌐 Daring</span>` : '';
+                    const gmeetBtn = jData.link_gmeet ? `<a href="${jData.link_gmeet}" target="_blank" class="px-2 py-1 bg-blue-50 hover:bg-blue-100 text-blue-700 font-bold text-[11px] rounded-lg border border-blue-200 transition-colors inline-flex items-center gap-1">📹 Meet</a>` : '';
+                    const rekamanBtn = jData.link_rekaman_gmeet ? `<a href="${jData.link_rekaman_gmeet}" target="_blank" class="px-2 py-1 bg-purple-50 hover:bg-purple-100 text-purple-700 font-bold text-[11px] rounded-lg border border-purple-200 transition-colors inline-flex items-center gap-1">🎬 Rekaman</a>` : '';
+
                     kunjunganHtml += `
                         <div class="border border-slate-200 rounded-2xl p-4 hover:border-indigo-300 transition-colors group flex flex-col justify-between bg-white shadow-xs">
                             <div>
                                 <div class="flex justify-between items-center mb-2">
-                                    <span class="font-bold text-slate-800 text-sm">Kunjungan ${i}</span>
+                                    <div class="flex items-center gap-1.5">
+                                        <span class="font-bold text-slate-800 text-sm">Kunjungan ${i}</span>
+                                        ${tipeBadge}
+                                    </div>
                                     <span class="px-2 py-0.5 rounded-full text-xs font-bold ${statusColor}">${jData.status}</span>
                                 </div>
                                 <p class="text-xs text-slate-600 mb-1"><span class="font-medium text-slate-400">Tgl:</span> ${jData.tanggal !== '-' ? formatIndoDate(jData.tanggal) : '-'} ${jamBadge}</p>
+                                ${(gmeetBtn || rekamanBtn) ? `<div class="flex items-center gap-1.5 mb-2">${gmeetBtn} ${rekamanBtn}</div>` : ''}
                                 <p class="text-xs text-slate-500 truncate mb-3" title="${jData.catatan}"><span class="font-medium text-slate-400">Catatan:</span> ${jData.catatan}</p>
                             </div>
                             <div class="flex gap-2 mt-auto">

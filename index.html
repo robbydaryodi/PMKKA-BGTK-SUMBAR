@@ -267,6 +267,18 @@
             submitBtn.textContent = 'Memverifikasi...';
 
             try {
+                // Check if admin is part of Admin Sekolah Model mapping
+                if (ADMIN_FASIL_MAPPING[emailInput]) {
+                    sessionStorage.setItem('admin_bgtk_email', emailInput);
+                    sessionStorage.setItem('admin_bgtk_nama', ADMIN_FASIL_MAPPING[emailInput]);
+                    sessionStorage.setItem('admin_bgtk_role', 'Admin Sekolah Model');
+                    submitBtn.textContent = '✅ Berhasil, mengalihkan...';
+                    setTimeout(() => {
+                        window.location.href = 'admin.html';
+                    }, 400);
+                    return;
+                }
+
                 // If cache is empty (failed to preload), load now
                 if (Object.keys(gMasterPegawaiCache).length === 0) {
                     const snap = await db.ref('master_pegawai').once('value');
@@ -351,6 +363,15 @@
                 const userEmail = (user.email || '').toLowerCase();
                 const emailKey = userEmail.replace(/[.#$\[\]]/g, '_');
 
+                // Check Admin Sekolah Model mapping first
+                if (ADMIN_FASIL_MAPPING[userEmail]) {
+                    sessionStorage.setItem('admin_bgtk_email', userEmail);
+                    sessionStorage.setItem('admin_bgtk_nama', ADMIN_FASIL_MAPPING[userEmail]);
+                    sessionStorage.setItem('admin_bgtk_role', 'Admin Sekolah Model');
+                    window.location.href = 'admin.html';
+                    return;
+                }
+
                 if (Object.keys(gMasterPegawaiCache).length === 0) {
                     const snap = await db.ref('master_pegawai').once('value');
                     gMasterPegawaiCache = snap.val() || {};
@@ -396,12 +417,6 @@
                 }
             } catch(err) {
                 console.error("Google Auth Error:", err);
-                loadingEl.classList.add('hidden');
-                if (err.code === 'auth/unauthorized-domain') {
-                    errorEl.textContent = '❌ Domain ini belum didaftarkan di Firebase Console -> Authentication -> Settings -> Authorized Domains.';
-                } else {
-                    errorEl.textContent = '❌ Gagal Login Google: ' + (err.message || err);
-                }
                 errorEl.classList.remove('hidden');
             }
         }
