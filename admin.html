@@ -2651,29 +2651,28 @@
             return kab;
         }
 
-        // Keyword mapping untuk pencocokan mapel fuzzy
+        // Keyword mapping untuk pencocokan mapel & jenjang fuzzy
         const MAPEL_KEYWORDS = {
-            'PAUD': ['PAUD', 'TK', 'TAMAN KANAK'],
-            'KKA SD': ['KKA SD', 'KECERDASAN', 'KODING', 'SD KELAS'],
-            'KKA SMP': ['KKA SMP', 'KECERDASAN SMP', 'KODING SMP'],
-            'KKA SMA/SMK': ['KKA SMA', 'KKA SMK', 'KECERDASAN SMA'],
-            'Matematika SD': ['MATEMATIKA SD', 'MATEMAT', 'KKG SD', 'GURU KELAS SD'],
-            'Matematika SMP': ['MATEMATIKA SMP', 'MGMP MATEMATIKA SMP', 'MGMP MAT SMP'],
-            'Matematika SMA': ['MATEMATIKA SMA', 'MGMP MATEMATIKA SMA', 'MGMP MAT SMA'],
-            'Bahasa Indonesia SD': ['BAHASA INDONESIA SD', 'B.INDONESIA SD', 'KKG BAHASA'],
-            'Bahasa Indonesia SMP': ['BAHASA INDONESIA SMP', 'MGMP BAHASA INDONESIA SMP', 'B.IND SMP'],
-            'Bahasa Indonesia SMA': ['BAHASA INDONESIA SMA', 'MGMP BAHASA INDONESIA SMA', 'B.IND SMA'],
-            'Bahasa Inggris SMA': ['BAHASA INGGRIS SMA', 'MGMP BAHASA INGGRIS SMA', 'B.ING SMA'],
-            'IPA SMP': ['IPA SMP', 'MGMP IPA SMP', 'ILMU PENGETAHUAN ALAM SMP'],
-            'Biologi SMA': ['BIOLOGI SMA', 'MGMP BIOLOGI SMA'],
-            'Ekonomi SMA/SMK': ['EKONOMI SMA', 'EKONOMI SMK', 'MGMP EKONOMI'],
+            'PAUD': ['PAUD', 'TK', 'TAMAN KANAK', 'GUGUS PAUD'],
+            'KKA SD': ['KKA SD', 'KECERDASAN', 'KODING', 'SD KELAS', 'KKG SD', 'SD'],
+            'KKA SMP': ['KKA SMP', 'KECERDASAN SMP', 'KODING SMP', 'SMP'],
+            'KKA SMA/SMK': ['KKA SMA', 'KKA SMK', 'KECERDASAN SMA', 'SMA', 'SMK'],
+            'Matematika SD': ['MATEMATIKA SD', 'MATEMAT', 'KKG SD', 'GURU KELAS SD', 'SD'],
+            'Matematika SMP': ['MATEMATIKA SMP', 'MGMP MATEMATIKA SMP', 'MGMP MAT SMP', 'SMP'],
+            'Matematika SMA': ['MATEMATIKA SMA', 'MGMP MATEMATIKA SMA', 'MGMP MAT SMA', 'SMA'],
+            'Bahasa Indonesia SD': ['BAHASA INDONESIA SD', 'B.INDONESIA SD', 'KKG BAHASA', 'SD'],
+            'Bahasa Indonesia SMP': ['BAHASA INDONESIA SMP', 'MGMP BAHASA INDONESIA SMP', 'B.IND SMP', 'SMP'],
+            'Bahasa Indonesia SMA': ['BAHASA INDONESIA SMA', 'MGMP BAHASA INDONESIA SMA', 'B.IND SMA', 'SMA'],
+            'Bahasa Inggris SMA': ['BAHASA INGGRIS SMA', 'MGMP BAHASA INGGRIS SMA', 'B.ING SMA', 'SMA'],
+            'IPA SMP': ['IPA SMP', 'MGMP IPA SMP', 'ILMU PENGETAHUAN ALAM SMP', 'SAINS SMP', 'SMP'],
+            'Biologi SMA': ['BIOLOGI SMA', 'MGMP BIOLOGI SMA', 'SMA'],
+            'Ekonomi SMA/SMK': ['EKONOMI SMA', 'EKONOMI SMK', 'MGMP EKONOMI', 'SMA', 'SMK'],
             'Kesetaraan': ['KESETARAAN', 'PAKET A', 'PAKET B', 'PAKET C', 'PKBM'],
-            'Guru Kesetaraan': ['KESETARAAN', 'PAKET'],
+            'Guru Kesetaraan': ['KESETARAAN', 'PAKET A', 'PAKET B', 'PAKET C', 'PKBM'],
             'Kepala Sekolah': ['MKKS', 'KEPALA SEKOLAH', 'MKPS'],
-            'Kepala Sekolah Kesetaraan': ['MKKS', 'KEPALA SEKOLAH KESETARAAN'],
+            'Kepala Sekolah Kesetaraan': ['MKKS', 'KEPALA SEKOLAH KESETARAAN', 'PKBM'],
             'SLB': ['SLB', 'LUAR BIASA', 'INKLUSI'],
-            'Pengawas': ['MKPS', 'PENGAWAS'],
-            'IPA SMP': ['IPA SMP', 'SAINS SMP'],
+            'Pengawas': ['MKPS', 'PENGAWAS']
         };
 
         function cocokanMapel(namaKombel, jenjangKombel, mapelFasda) {
