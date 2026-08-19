@@ -3069,17 +3069,29 @@
         function populateKabKombelDropdown() {
             const sel = document.getElementById('filterKabKombel');
             if (!sel) return;
+            const currentVal = sel.value || 'ALL';
+
             const kabSet = new Set();
             Object.values(gAllKombels).forEach(k => { if (k.kab_kota) kabSet.add(k.kab_kota); });
             let options = '<option value="ALL">Semua Kab / Kota (19)</option>';
-            Array.from(kabSet).sort().forEach(kab => { options += `<option value="${kab}">${kab}</option>`; });
+            Array.from(kabSet).sort().forEach(kab => {
+                const selected = (kab === currentVal) ? 'selected' : '';
+                options += `<option value="${kab}" ${selected}>${kab}</option>`;
+            });
             sel.innerHTML = options;
+            if (currentVal && Array.from(sel.options).some(o => o.value === currentVal)) {
+                sel.value = currentVal;
+            }
         }
 
         function populateMapelKombelDropdown() {
             const sel = document.getElementById('filterMapelKombel');
             if (!sel) return;
-            if (sel.options.length > 1) return;
+            const currentVal = sel.value || 'ALL';
+            if (sel.options.length > 1 && currentVal) {
+                sel.value = currentVal;
+                return;
+            }
             const mapelList = [
                 "Matematika SD", "Matematika SMP", "Matematika SMA",
                 "IPA SMP", "Biologi SMA", "Ekonomi SMA/SMK",
@@ -3090,9 +3102,13 @@
             ];
             let options = '<option value="ALL">Semua Mapel / Bidang (20)</option>';
             mapelList.forEach(m => {
-                options += `<option value="${m}">${m}</option>`;
+                const selected = (m === currentVal) ? 'selected' : '';
+                options += `<option value="${m}" ${selected}>${m}</option>`;
             });
             sel.innerHTML = options;
+            if (currentVal && Array.from(sel.options).some(o => o.value === currentVal)) {
+                sel.value = currentVal;
+            }
         }
 
         function filterKombelData() {
