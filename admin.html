@@ -658,7 +658,7 @@
                         <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-6 pt-6 border-t border-white/10">
                             <div class="bg-white/10 backdrop-blur-sm rounded-xl p-4"><div class="text-xs text-purple-200 uppercase font-semibold">Total Komunitas Belajar</div><div class="text-2xl font-black mt-1" id="statKombelTotal">1.804</div></div>
                             <button onclick="filterKombelBySasaran()" title="Klik untuk melihat hanya 54 Kombel Sasaran PMKKA" class="bg-amber-400/20 backdrop-blur-sm border border-amber-300/30 rounded-xl p-4 text-left hover:bg-amber-400/40 transition-all hover:scale-[1.02] cursor-pointer w-full group"><div class="text-xs text-amber-200 uppercase font-semibold group-hover:text-amber-100">Kombel Sasaran PMKKA <span class="text-[10px] normal-case font-normal opacity-70">(klik untuk filter)</span></div><div class="text-2xl font-black text-amber-300 mt-1 group-hover:text-amber-100" id="statKombelSasaran">0 / 54</div><div class="text-[10px] text-amber-300/70 mt-0.5 group-hover:text-amber-200">⭐ Tampilkan 54 Sasaran KK →</div></button>
-                            <div class="bg-white/10 backdrop-blur-sm rounded-xl p-4"><div class="text-xs text-purple-200 uppercase font-semibold">Kabupaten / Kota</div><div class="text-2xl font-black mt-1">19 Wilayah</div></div>
+                            <div class="bg-emerald-500/20 backdrop-blur-sm border border-emerald-300/30 rounded-xl p-4"><div class="text-xs text-emerald-200 uppercase font-semibold">Plotting Selesai (Lengkap)</div><div class="text-2xl font-black text-emerald-300 mt-1" id="statKombelPlottingLengkap">0 / 54 Selesai</div><div class="text-[10px] text-emerald-200/80 mt-0.5 font-medium" id="statKombelPlottingProgress">Progress Selesai: 0% (Fasil, Admin &amp; Peserta)</div></div>
                         </div>
                     </div>
                     <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-4 mb-6 flex flex-col md:flex-row gap-4 justify-between items-center">
@@ -682,15 +682,15 @@
                             <table class="w-full text-left text-sm whitespace-nowrap">
                                 <thead class="bg-slate-100/90 text-slate-700 font-extrabold border-b border-slate-200 text-xs">
                                     <tr>
-                                        <th class="px-4 py-3.5 text-center w-12">No</th>
+                                        <th class="px-3 py-3.5 text-center w-10">No</th>
+                                        <th class="px-4 py-3.5 text-center bg-amber-100/70 text-amber-950 border-r border-amber-200">Aksi &amp; Penugasan</th>
                                         <th class="px-4 py-3.5">Nama Kelompok Kerja / Kombel</th>
                                         <th class="px-4 py-3.5">Kab / Kota &amp; Kec</th>
                                         <th class="px-4 py-3.5 text-center bg-purple-50/70 text-purple-900 border-x border-purple-100">Fasilitator Pendamping (FKK)</th>
                                         <th class="px-4 py-3.5 text-center bg-indigo-50/70 text-indigo-900 border-r border-indigo-100">Admin BGTK (Pengampu)</th>
                                         <th class="px-4 py-3.5">Ketua &amp; Kontak</th>
                                         <th class="px-4 py-3.5 text-center">Peserta</th>
-                                        <th class="px-4 py-3.5 text-center">Status</th>
-                                        <th class="px-4 py-3.5 text-center">Aksi &amp; Import</th>
+                                        <th class="px-4 py-3.5 text-center">Status Konfirmasi</th>
                                     </tr>
                                 </thead>
                                 <tbody id="tableKombelBody" class="divide-y divide-slate-100"><tr><td colspan="9" class="px-6 py-12 text-center text-slate-400"><div class="spinner mx-auto mb-2"></div>Memuat data Komunitas Belajar...</td></tr></tbody>
@@ -3111,9 +3111,26 @@
                 return matchSearch && matchKab && matchMapel && matchStatus && matchRekomendasi;
             });
 
-            const sasaranCount = list.filter(k => k.is_sasaran).length;
+            const sasaranList = list.filter(k => k.is_sasaran);
+            const sasaranCount = sasaranList.length;
+
+            // Plotting Selesai (Lengkap): Fasil + Admin + Peserta/Konfirmasi
+            const lengkapList = sasaranList.filter(k => {
+                const hasFasil = !!k.fasil_nama;
+                const hasAdmin = !!k.admin_nama;
+                const pesertaList = k.peserta ? (Array.isArray(k.peserta) ? k.peserta : Object.values(k.peserta)) : [];
+                const hasPeserta = pesertaList.length > 0 || (k.konfirmasi && k.konfirmasi.is_konfirmasi) || (k.jumlah_anggota && k.jumlah_anggota > 0);
+                return hasFasil && hasAdmin && hasPeserta;
+            });
+
+            const lengkapCount = lengkapList.length;
+            const pctLengkap = sasaranCount > 0 ? Math.round((lengkapCount / sasaranCount) * 100) : 0;
+
             const totalEl = document.getElementById('statKombelTotal');
             const sasaranEl = document.getElementById('statKombelSasaran');
+            const statLengkapEl = document.getElementById('statKombelPlottingLengkap');
+            const statProgressEl = document.getElementById('statKombelPlottingProgress');
+
             if (totalEl) totalEl.textContent = list.length.toLocaleString('id-ID');
 
             if (gModeRekomendasi) {
@@ -3121,6 +3138,9 @@
             } else {
                 if (sasaranEl) sasaranEl.textContent = `${sasaranCount} / 54`;
             }
+
+            if (statLengkapEl) statLengkapEl.textContent = `${lengkapCount} / ${sasaranCount || 54} Selesai`;
+            if (statProgressEl) statProgressEl.textContent = `Progress Selesai: ${pctLengkap}% (Fasil, Admin & Peserta)`;
 
             gKombelPage = 1;
             renderKombelTable();
@@ -3216,7 +3236,8 @@
 
                 return `
                 <tr class="${rowClass}">
-                    <td class="px-4 py-3 text-center text-slate-400 text-xs font-bold">${start + i + 1}</td>
+                    <td class="px-3 py-3 text-center text-slate-400 text-xs font-bold">${start + i + 1}</td>
+                    <td class="px-3 py-3 text-center bg-amber-50/40 border-r border-amber-200/60">${btnActions}</td>
                     <td class="px-4 py-3">
                         <div class="font-bold text-slate-800 text-sm whitespace-normal max-w-xs">${k.nama_kombel}</div>
                         <div class="text-xs text-slate-500 mt-0.5">${k.jenjang || ''} ${k.instansi ? '• ' + k.instansi : ''}</div>
@@ -3233,7 +3254,6 @@
                     </td>
                     <td class="px-4 py-3 text-center">${anggotaHtml}</td>
                     <td class="px-4 py-3 text-center">${badgeSasaran}</td>
-                    <td class="px-4 py-3 text-center">${btnActions}</td>
                 </tr>`;
             }).join('');
             const totalPages = Math.ceil(gFilteredKombels.length / gKombelPerPage);
