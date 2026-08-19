@@ -3561,14 +3561,36 @@
             filterKombelData();
         }
 
+        const DUAL_PROGRAM_ADMIN_EMAILS = [
+            'mastersumbar1@gmail.com',
+            'robby.daryodi@gmail.com',
+            'yantisumbar168@gmail.com',
+            'rosariaayu8@gmail.com',
+            'vanisitioktovani@gmail.com',
+            'aflidarneti12@gmail.com',
+            'ristitahumairoh71@dikbud.belajar.id',
+            'lisaanggrainiica17@gmail.com',
+            'irawati.2308@gmail.com'
+        ];
+
+        const DUAL_PROGRAM_ADMIN_NAMES = [
+            'rosa ria ayu',
+            'siti oktovani',
+            'aflidarneti',
+            'ristita',
+            'lisa anggraini',
+            'irawati'
+        ];
+
         function checkAdminRoleAccess() {
             const userEmail = (sessionStorage.getItem('admin_bgtk_email') || '').toLowerCase().trim();
             const userNama = (sessionStorage.getItem('admin_bgtk_nama') || '').toLowerCase().trim();
 
-            const isMaster = userEmail === 'mastersumbar1@gmail.com';
-            const isRosaRiaAyu = userEmail.includes('rosariaayu') || userNama.includes('rosa ria ayu');
+            const isDualEmail = DUAL_PROGRAM_ADMIN_EMAILS.some(e => userEmail.includes(e));
+            const isDualName = DUAL_PROGRAM_ADMIN_NAMES.some(n => userNama.includes(n));
 
-            const canAccessSekolahModel = isMaster || isRosaRiaAyu;
+            // Jika belum login / admin umum, berikan akses penuh jika master atau match 6 admin dual program
+            const canAccessSekolahModel = !userEmail || isDualEmail || isDualName;
 
             const menuSekolahModel = document.getElementById('menuSekolahModelGroup');
             if (menuSekolahModel) {
