@@ -79,89 +79,99 @@
             </div>
 
             <!-- Navigation Items -->
-            <div class="p-4 flex-1 overflow-y-auto custom-sidebar-scroll space-y-6">
-                <!-- Group 1: BGTK SUMATERA BARAT -->
+            <div class="p-4 flex-1 overflow-y-auto custom-sidebar-scroll space-y-5">
+                <!-- Group 1: MONITORING TERPADU -->
                 <div id="sidebarGroupBgtk">
-                    <div class="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest px-3 mb-2">BGTK SUMATERA BARAT</div>
+                    <div class="text-[10px] font-black text-slate-400 uppercase tracking-widest px-3 mb-2 flex items-center justify-between">
+                        <span>PUSAT MONITORING</span>
+                    </div>
                     <nav class="space-y-1">
                         <button onclick="switchAdminView('mode0')" id="btnMode0" class="sidebar-btn flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-100/80 hover:text-slate-900 transition-all duration-200 w-full text-left relative group border-l-4 border-transparent">
-                            <svg class="w-5 h-5 flex-shrink-0 text-slate-400 group-hover:text-slate-600 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
-                            <span>Dashboard Utama</span>
+                            <svg class="w-5 h-5 flex-shrink-0 text-purple-600 group-hover:text-purple-700 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+                            <span class="font-bold">Dashboard Utama</span>
                         </button>
                     </nav>
                 </div>
 
-                <!-- Group 2: DATA MASTER UTAMA -->
-                <div id="sidebarGroupMaster" class="pt-4 border-t border-slate-100">
-                    <div class="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest px-3 mb-2">DATA MASTER UTAMA</div>
-                    <nav class="space-y-1">
-                        <button onclick="switchAdminView('modeKombel')" id="btnModeKombel" class="sidebar-btn flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-100/80 hover:text-slate-900 transition-all duration-200 w-full text-left group border-l-4 border-transparent">
-                            <div class="flex items-center gap-3">
-                                <svg class="w-5 h-5 flex-shrink-0 text-purple-500 group-hover:text-purple-600 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
-                                <span>Master Kombel</span>
-                            </div>
-                            <span class="text-[10px] bg-purple-100 text-purple-800 font-extrabold px-2 py-0.5 rounded-full border border-purple-200">1.804</span>
-                        </button>
-                        <button onclick="switchAdminView('modePegawai')" id="btnModePegawai" class="sidebar-btn flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-100/80 hover:text-slate-900 transition-all duration-200 w-full text-left group border-l-4 border-transparent">
-                            <div class="flex items-center gap-3">
-                                <svg class="w-5 h-5 flex-shrink-0 text-emerald-500 group-hover:text-emerald-600 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1v1H9V7zm5 0h1v1h-1V7zm-5 4h1v1H9v-1zm5 0h1v1h-1v-1zm-5 4h1v1H9v-1zm5 0h1v1h-1v-1z"/></svg>
-                                <span>Master Pegawai</span>
-                            </div>
-                            <span class="text-[10px] bg-emerald-100 text-emerald-800 font-extrabold px-2 py-0.5 rounded-full border border-emerald-200">57</span>
-                        </button>
-                    </nav>
-                </div>
-
-                <!-- Group 3: SEKOLAH MODEL -->
-                <div id="sidebarGroupSekolahModel" class="pt-4 border-t border-slate-100">
-                    <div class="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest px-3 mb-2">SEKOLAH MODEL</div>
-                    <nav class="space-y-1">
-                        <button onclick="toggleSubmenu('submenuFasil')" class="flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-100/80 hover:text-slate-900 transition-all duration-200 w-full text-left group">
-                            <div class="flex items-center gap-3">
-                                <svg class="w-5 h-5 flex-shrink-0 text-slate-400 group-hover:text-slate-600 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
-                                <span>Manajemen Fasilitator</span>
-                            </div>
-                            <svg class="w-4 h-4 text-slate-400 transition-transform duration-200" id="icon_submenuFasil" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
-                        </button>
-                        <div id="submenuFasil" class="hidden pl-8 pr-2 space-y-1 mt-1">
-                            <button onclick="switchAdminView('mode3')" id="btnMode3" class="sidebar-btn flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium text-slate-500 hover:text-slate-900 hover:bg-slate-100/80 transition-all duration-200 w-full text-left border-l-2 border-transparent"><span>Data Fasilitator</span></button>
-                            <button onclick="switchAdminView('mode4')" id="btnMode4" class="sidebar-btn flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium text-slate-500 hover:text-slate-900 hover:bg-slate-100/80 transition-all duration-200 w-full text-left border-l-2 border-transparent"><span>Jadwal &amp; Laporan</span></button>
+                <!-- Group 2: RUANG KERJA PMKKA KELOMPOK KERJA (54 SASARAN) -->
+                <div id="sidebarGroupFKK" class="pt-3 border-t border-slate-100">
+                    <div class="px-2 mb-2">
+                        <div class="flex items-center justify-between bg-amber-500/10 border border-amber-500/20 px-2.5 py-1.5 rounded-xl">
+                            <span class="text-[11px] font-black text-amber-900 flex items-center gap-1.5">⭐ PMKKA KK (FKK)</span>
+                            <span class="text-[10px] font-extrabold bg-amber-200 text-amber-950 px-1.5 py-0.5 rounded-md">54 Sasaran</span>
                         </div>
-
-                        <button onclick="toggleSubmenu('submenuSekolah')" class="flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-100/80 hover:text-slate-900 transition-all duration-200 w-full text-left group">
+                    </div>
+                    <nav class="space-y-1">
+                        <button onclick="switchAdminView('modeKombel')" id="btnModeKombel" class="sidebar-btn flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-medium text-slate-600 hover:bg-amber-50/80 hover:text-amber-950 transition-all duration-200 w-full text-left group border-l-4 border-transparent">
                             <div class="flex items-center gap-3">
-                                <svg class="w-5 h-5 flex-shrink-0 text-slate-400 group-hover:text-slate-600 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1v1H9V7zm5 0h1v1h-1V7zm-5 4h1v1H9v-1zm5 0h1v1h-1v-1zm-5 4h1v1H9v-1zm5 0h1v1h-1v-1z"/></svg>
-                                <span>Sekolah Model</span>
+                                <svg class="w-5 h-5 flex-shrink-0 text-amber-600 group-hover:text-amber-700 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+                                <span class="font-bold">Master Kombel &amp; 54 KK</span>
+                            </div>
+                            <span class="text-[10px] bg-amber-100 text-amber-900 font-extrabold px-2 py-0.5 rounded-full border border-amber-300">1.804</span>
+                        </button>
+                    </nav>
+                </div>
+
+                <!-- Group 3: RUANG KERJA SEKOLAH MODEL (25 SASARAN) -->
+                <div id="sidebarGroupSekolahModel" class="pt-3 border-t border-slate-100">
+                    <div class="px-2 mb-2">
+                        <div class="flex items-center justify-between bg-teal-500/10 border border-teal-500/20 px-2.5 py-1.5 rounded-xl">
+                            <span class="text-[11px] font-black text-teal-900 flex items-center gap-1.5">🏫 SEKOLAH MODEL</span>
+                            <span class="text-[10px] font-extrabold bg-teal-200 text-teal-950 px-1.5 py-0.5 rounded-md">25 Sekolah</span>
+                        </div>
+                    </div>
+                    <nav class="space-y-1">
+                        <button onclick="toggleSubmenu('submenuSekolah')" class="flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-medium text-slate-600 hover:bg-teal-50/80 hover:text-teal-950 transition-all duration-200 w-full text-left group">
+                            <div class="flex items-center gap-3">
+                                <svg class="w-5 h-5 flex-shrink-0 text-teal-600 group-hover:text-teal-700 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1v1H9V7zm5 0h1v1h-1V7zm-5 4h1v1H9v-1zm5 0h1v1h-1v-1zm-5 4h1v1H9v-1zm5 0h1v1h-1v-1z"/></svg>
+                                <span class="font-bold">Sekolah &amp; Pendamping</span>
                             </div>
                             <svg class="w-4 h-4 text-slate-400 transition-transform duration-200" id="icon_submenuSekolah" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
                         </button>
-                        <div id="submenuSekolah" class="hidden pl-8 pr-2 space-y-1 mt-1">
-                            <button onclick="switchAdminView('mode7')" id="btnMode7" class="sidebar-btn flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium text-slate-500 hover:text-slate-900 hover:bg-slate-100/80 transition-all duration-200 w-full text-left border-l-2 border-transparent"><span>Data Kunjungan</span></button>
-                            <button onclick="switchAdminView('mode5')" id="btnMode5" class="sidebar-btn flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium text-slate-500 hover:text-slate-900 hover:bg-slate-100/80 transition-all duration-200 w-full text-left border-l-2 border-transparent"><span>Pilih Pendamping</span></button>
-                            <button onclick="switchAdminView('modeStatusSekolah')" id="btnModeStatusSekolah" class="sidebar-btn flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium text-slate-500 hover:text-slate-900 hover:bg-slate-100/80 transition-all duration-200 w-full text-left border-l-2 border-transparent"><span>Status &amp; Baseline Sekolah</span></button>
+                        <div id="submenuSekolah" class="hidden pl-6 pr-2 space-y-1 mt-1">
+                            <button onclick="switchAdminView('modeStatusSekolah')" id="btnModeStatusSekolah" class="sidebar-btn flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium text-slate-500 hover:text-slate-900 hover:bg-slate-100/80 transition-all duration-200 w-full text-left border-l-2 border-transparent"><span>Status &amp; Baseline 25 Sekolah</span></button>
+                            <button onclick="switchAdminView('mode5')" id="btnMode5" class="sidebar-btn flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium text-slate-500 hover:text-slate-900 hover:bg-slate-100/80 transition-all duration-200 w-full text-left border-l-2 border-transparent"><span>Pilih Pendamping Sekolah</span></button>
+                            <button onclick="switchAdminView('mode7')" id="btnMode7" class="sidebar-btn flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium text-slate-500 hover:text-slate-900 hover:bg-slate-100/80 transition-all duration-200 w-full text-left border-l-2 border-transparent"><span>Data Kunjungan Sekolah</span></button>
+                        </div>
+
+                        <button onclick="toggleSubmenu('submenuFasil')" class="flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-medium text-slate-600 hover:bg-teal-50/80 hover:text-teal-950 transition-all duration-200 w-full text-left group">
+                            <div class="flex items-center gap-3">
+                                <svg class="w-5 h-5 flex-shrink-0 text-teal-600 group-hover:text-teal-700 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+                                <span class="font-bold">Fasilitator Sekolah Model</span>
+                            </div>
+                            <svg class="w-4 h-4 text-slate-400 transition-transform duration-200" id="icon_submenuFasil" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                        </button>
+                        <div id="submenuFasil" class="hidden pl-6 pr-2 space-y-1 mt-1">
+                            <button onclick="switchAdminView('mode3')" id="btnMode3" class="sidebar-btn flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium text-slate-500 hover:text-slate-900 hover:bg-slate-100/80 transition-all duration-200 w-full text-left border-l-2 border-transparent"><span>Data Fasilitator</span></button>
+                            <button onclick="switchAdminView('mode4')" id="btnMode4" class="sidebar-btn flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium text-slate-500 hover:text-slate-900 hover:bg-slate-100/80 transition-all duration-200 w-full text-left border-l-2 border-transparent"><span>Jadwal &amp; Laporan Fasil</span></button>
+                        </div>
+
+                        <!-- Verifikasi Peserta Submenu -->
+                        <button onclick="toggleSubmenu('submenuVerifSekolah')" class="flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-medium text-slate-600 hover:bg-teal-50/80 hover:text-teal-950 transition-all duration-200 w-full text-left group">
+                            <div class="flex items-center gap-3">
+                                <svg class="w-5 h-5 flex-shrink-0 text-teal-600 group-hover:text-teal-700 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                                <span class="font-bold">Verifikasi Peserta</span>
+                            </div>
+                            <svg class="w-4 h-4 text-slate-400 transition-transform duration-200" id="icon_submenuVerifSekolah" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                        </button>
+                        <div id="submenuVerifSekolah" class="hidden pl-6 pr-2 space-y-1 mt-1">
+                            <button onclick="switchAdminView('mode1')" id="btnMode1" class="sidebar-btn flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium text-slate-500 hover:text-slate-900 hover:bg-slate-100/80 transition-all duration-200 w-full text-left border-l-2 border-transparent"><span>Progres Verifikasi</span></button>
+                            <button onclick="switchAdminView('mode2')" id="btnMode2" class="sidebar-btn flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium text-slate-500 hover:text-slate-900 hover:bg-slate-100/80 transition-all duration-200 w-full text-left border-l-2 border-transparent"><span>Rencana Pengkelasan</span></button>
                         </div>
                     </nav>
                 </div>
 
-                <!-- Group 4: VERIFIKASI PESERTA -->
-                <div id="sidebarGroupVerifikasi" class="pt-4 border-t border-slate-100">
-                    <div class="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest px-3 mb-2">VERIFIKASI PESERTA</div>
+                <!-- Group 4: DATA MASTER & ADMINISTRASI BGTK -->
+                <div id="sidebarGroupInternal" class="pt-3 border-t border-slate-100">
+                    <div class="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest px-3 mb-2">ADMINISTRASI &amp; MASTER</div>
                     <nav class="space-y-1">
-                        <button onclick="switchAdminView('mode1')" id="btnMode1" class="sidebar-btn flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-100/80 hover:text-slate-900 transition-all duration-200 w-full text-left group border-l-4 border-transparent">
-                            <svg class="w-5 h-5 flex-shrink-0 text-slate-400 group-hover:text-slate-600 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                            <span>Progres Verifikasi</span>
+                        <button onclick="switchAdminView('modePegawai')" id="btnModePegawai" class="sidebar-btn flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-100/80 hover:text-slate-900 transition-all duration-200 w-full text-left group border-l-4 border-transparent">
+                            <div class="flex items-center gap-3">
+                                <svg class="w-5 h-5 flex-shrink-0 text-emerald-500 group-hover:text-emerald-600 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1v1H9V7zm5 0h1v1h-1V7zm-5 4h1v1H9v-1zm5 0h1v1h-1v-1zm-5 4h1v1H9v-1zm5 0h1v1h-1v-1z"/></svg>
+                                <span>Master Pegawai BGTK</span>
+                            </div>
+                            <span class="text-[10px] bg-emerald-100 text-emerald-800 font-extrabold px-2 py-0.5 rounded-full border border-emerald-200">57</span>
                         </button>
-                        <button onclick="switchAdminView('mode2')" id="btnMode2" class="sidebar-btn flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-100/80 hover:text-slate-900 transition-all duration-200 w-full text-left group border-l-4 border-transparent">
-                            <svg class="w-5 h-5 flex-shrink-0 text-slate-400 group-hover:text-slate-600 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-                            <span>Rencana Pengkelasan</span>
-                        </button>
-                    </nav>
-                </div>
-
-                <!-- Group 5: INTERNAL BGTK -->
-                <div id="sidebarGroupInternal" class="pt-4 border-t border-slate-100">
-                    <div class="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest px-3 mb-2">INTERNAL BGTK</div>
-                    <nav class="space-y-1">
                         <button onclick="switchAdminView('mode8')" id="btnMode8" class="sidebar-btn flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-100/80 hover:text-slate-900 transition-all duration-200 w-full text-left group border-l-4 border-transparent">
                             <svg class="w-5 h-5 flex-shrink-0 text-slate-400 group-hover:text-slate-600 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
                             <span>Rentang Waktu</span>
@@ -198,11 +208,12 @@
         <!-- MAIN CONTENT -->
         <main class="flex-1 flex flex-col min-w-0">
             <header class="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-4 md:px-8 flex-shrink-0">
-                <div class="flex items-center">
-                    <button onclick="toggleSidebar()" class="md:hidden mr-4 text-slate-600 hover:text-slate-900 focus:outline-none">
+                <div class="flex items-center gap-3">
+                    <button onclick="toggleSidebar()" class="md:hidden text-slate-600 hover:text-slate-900 focus:outline-none">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
                     </button>
-                    <h2 class="text-lg font-bold text-slate-800" id="adminPageTitle">Dashboard Admin</h2>
+                    <h2 class="text-lg font-black text-slate-800" id="adminPageTitle">Dashboard Admin</h2>
+                    <span id="adminProgramTrackBadge" class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-black bg-purple-100 text-purple-800 border border-purple-200 shadow-2xs">👑 Monitoring Terpadu</span>
                 </div>
                 <div class="flex items-center gap-3">
                     <a href="index.html" class="text-xs text-slate-500 hover:text-slate-800 font-semibold flex items-center gap-1 transition-colors">
@@ -213,15 +224,53 @@
                 </div>
             </header>
 
+            <!-- TOP WORKSPACE SELECTOR BAR (PERJELAS PEMISAHAN RUANG KERJA) -->
+            <div class="bg-white border-b border-slate-200/90 px-4 md:px-8 py-3 shadow-2xs flex-shrink-0">
+                <div class="flex flex-wrap items-center justify-between gap-3">
+                    <div class="flex items-center gap-2 overflow-x-auto custom-sidebar-scroll py-0.5" id="topWorkspaceSelectorContainer">
+                        <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest mr-1">PILIH PROGRAM:</span>
+                        
+                        <!-- TAB 1: SEKOLAH MODEL -->
+                        <button onclick="selectWorkspaceTrack('sekolah_model')" id="tabWorkspaceSekolahModel" class="workspace-track-tab px-3.5 py-1.5 rounded-xl text-xs font-black transition-all flex items-center gap-2 border border-slate-200 text-slate-700 hover:bg-teal-50 hover:text-teal-900">
+                            <span class="w-2.5 h-2.5 rounded-full bg-teal-500 flex-shrink-0"></span>
+                            <span>🏫 1. SEKOLAH MODEL (25 SASARAN)</span>
+                        </button>
+
+                        <!-- TAB 2: PMKKA KK (FKK) -->
+                        <button onclick="selectWorkspaceTrack('fkk')" id="tabWorkspaceFKK" class="workspace-track-tab px-3.5 py-1.5 rounded-xl text-xs font-black transition-all flex items-center gap-2 border border-slate-200 text-slate-700 hover:bg-amber-50 hover:text-amber-900">
+                            <span class="w-2.5 h-2.5 rounded-full bg-amber-500 flex-shrink-0"></span>
+                            <span>⭐ 2. PMKKA KK / FKK (54 SASARAN)</span>
+                        </button>
+
+                        <!-- TAB 3: MONITORING TERPADU -->
+                        <button onclick="selectWorkspaceTrack('dashboard')" id="tabWorkspaceDashboard" class="workspace-track-tab px-3.5 py-1.5 rounded-xl text-xs font-black transition-all flex items-center gap-2 border border-purple-600 bg-purple-600 text-white shadow-sm">
+                            <span class="w-2.5 h-2.5 rounded-full bg-white flex-shrink-0"></span>
+                            <span>👑 3. MONITORING TERPADU</span>
+                        </button>
+
+                        <!-- TAB 4: MASTER & ADMIN -->
+                        <button onclick="selectWorkspaceTrack('master')" id="tabWorkspaceMaster" class="workspace-track-tab px-3.5 py-1.5 rounded-xl text-xs font-black transition-all flex items-center gap-2 border border-slate-200 text-slate-700 hover:bg-emerald-50 hover:text-emerald-900">
+                            <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 flex-shrink-0"></span>
+                            <span>⚙️ 4. DATA MASTER &amp; ADMIN</span>
+                        </button>
+                    </div>
+                    <div id="activeWorkspacePill" class="hidden sm:flex items-center gap-1.5 text-xs font-extrabold text-slate-500">
+                        <span>Status:</span>
+                        <span id="activeWorkspacePillText" class="px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-800 border border-slate-200 font-black">👑 Monitoring Terpadu</span>
+                    </div>
+                </div>
+            </div>
+
             <div class="flex-1 overflow-auto p-6 md:p-8">
 
                 <!-- MODE 0: DASHBOARD UTAMA -->
                 <div id="viewMode0" class="fade-in space-y-8">
+                    <!-- HERO HEADER -->
                     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white p-6 rounded-2xl border border-slate-200/80 shadow-2xs">
                         <div>
-                            <span class="inline-block px-3 py-1 bg-emerald-100 text-emerald-800 rounded-full text-xs font-extrabold uppercase tracking-wider mb-2">Monitoring Realtime PM-KKA</span>
-                            <h2 class="text-2xl font-black text-slate-900">Rekap Penjadwalan &amp; Ploting Fasilitator</h2>
-                            <p class="text-sm text-slate-500 mt-1">Ringkasan status penugasan pendamping terhadap Komunitas Belajar &amp; Sekolah Model.</p>
+                            <span class="inline-block px-3 py-1 bg-purple-100 text-purple-800 rounded-full text-xs font-black uppercase tracking-wider mb-2">BGTK PROVINSI SUMATERA BARAT</span>
+                            <h2 class="text-2xl font-black text-slate-900">Pusat Monitoring &amp; Ruang Kerja Terpadu</h2>
+                            <p class="text-sm text-slate-500 mt-1">Pemisahan 2 program kerja utama: <strong>25 Sekolah Model</strong> (Pasca Pelatihan) &amp; <strong>54 Kelompok Kerja PMKKA</strong> (Penugasan &amp; Plotting).</p>
                         </div>
                         <button onclick="loadDashboardUtamaData()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-4 py-2 rounded-xl text-xs font-bold transition-colors flex items-center gap-2">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
@@ -229,102 +278,101 @@
                         </button>
                     </div>
 
-                    <!-- Stat Cards -->
-                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-                        <div onclick="openModalDashKombelSasaran()" class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-2xs relative overflow-hidden flex flex-col justify-between cursor-pointer hover:shadow-md hover:-translate-y-1 transition-all duration-200 group">
-                            <div class="flex items-center justify-between mb-3">
-                                <span class="text-xs font-extrabold text-purple-700 uppercase tracking-wider">Kombel Sasaran (54)</span>
-                                <div class="p-2 bg-purple-100 text-purple-700 rounded-xl group-hover:bg-purple-600 group-hover:text-white transition-colors">
-                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+                    <!-- DUAL WORKSPACE SHOWCASE (2 PROGRAM CARDS) -->
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <!-- CARD 1: SEKOLAH MODEL (25 SASARAN) -->
+                        <div class="bg-gradient-to-br from-teal-900 via-slate-900 to-teal-950 text-white rounded-3xl p-6 shadow-md border border-teal-500/30 relative overflow-hidden flex flex-col justify-between">
+                            <div class="absolute -right-6 -bottom-6 w-36 h-36 bg-teal-500/10 rounded-full blur-2xl pointer-events-none"></div>
+                            <div>
+                                <div class="flex items-center justify-between gap-2 mb-3">
+                                    <span class="px-3 py-1 rounded-full text-[11px] font-black bg-teal-400/20 text-teal-200 border border-teal-400/30 inline-flex items-center gap-1.5">
+                                        <span>🏫 PROGRAM 1</span> • <span>25 SASARAN</span>
+                                    </span>
+                                    <span class="text-xs font-extrabold text-teal-300">Status: Pasca Pelatihan</span>
+                                </div>
+                                <h3 class="text-xl font-black tracking-tight">Pendampingan Sekolah Model</h3>
+                                <p class="text-xs text-teal-100/80 mt-1">25 Sekolah Model jenjang PAUD, SD, SMP, SMA, SMK, dan SLB di Sumatera Barat.</p>
+                                
+                                <div class="grid grid-cols-3 gap-3 my-5 pt-4 border-t border-teal-500/20">
+                                    <div class="bg-white/10 rounded-xl p-3 text-center">
+                                        <div class="text-[10px] text-teal-200 uppercase font-bold">Sasaran</div>
+                                        <div class="text-xl font-black mt-0.5" id="dash_sekolah_plotted_val">25 / 25</div>
+                                        <div class="text-[9px] text-teal-300">Sekolah Model</div>
+                                    </div>
+                                    <div class="bg-white/10 rounded-xl p-3 text-center">
+                                        <div class="text-[10px] text-teal-200 uppercase font-bold">Kunjungan</div>
+                                        <div class="text-xl font-black mt-0.5" id="dash_kunjungan_count">0</div>
+                                        <div class="text-[9px] text-teal-300">Laporan Masuk</div>
+                                    </div>
+                                    <div class="bg-white/10 rounded-xl p-3 text-center">
+                                        <div class="text-[10px] text-teal-200 uppercase font-bold">Pendamping</div>
+                                        <div class="text-xl font-black mt-0.5 text-emerald-300">100%</div>
+                                        <div class="text-[9px] text-teal-300">Terplotting</div>
+                                    </div>
                                 </div>
                             </div>
-                            <div>
-                                <div class="text-2xl font-black text-slate-800" id="dash_kombel_plotted_val">0 / 54</div>
-                                <div class="text-xs text-slate-500 font-medium mt-1" id="dash_kombel_plotted_sub">Komunitas Belajar Terplotting</div>
-                            </div>
-                            <div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between">
-                                <div class="w-2/3 bg-slate-100 rounded-full h-2 overflow-hidden"><div class="bg-purple-600 h-2 rounded-full transition-all duration-500" id="dash_kombel_bar" style="width: 0%"></div></div>
-                                <span class="text-[10px] font-bold text-purple-700 flex items-center gap-0.5 group-hover:underline">Detail ↗</span>
+                            <div class="flex flex-wrap items-center gap-2 pt-3 border-t border-teal-500/20">
+                                <button onclick="switchAdminView('modeStatusSekolah')" class="flex-1 px-4 py-2.5 bg-teal-500 hover:bg-teal-400 text-slate-950 font-black rounded-xl text-xs transition-colors text-center shadow-md">
+                                    Buka Status &amp; Baseline ↗
+                                </button>
+                                <button onclick="switchAdminView('mode5')" class="px-4 py-2.5 bg-white/10 hover:bg-white/20 text-white font-bold rounded-xl text-xs transition-colors border border-white/20">
+                                    Pilih Pendamping
+                                </button>
                             </div>
                         </div>
-                        <div onclick="openModalDashSekolahModel()" class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-2xs relative overflow-hidden flex flex-col justify-between cursor-pointer hover:shadow-md hover:-translate-y-1 transition-all duration-200 group">
-                            <div class="flex items-center justify-between mb-3">
-                                <span class="text-xs font-extrabold text-indigo-700 uppercase tracking-wider">Sekolah Model (25)</span>
-                                <div class="p-2 bg-indigo-100 text-indigo-700 rounded-xl group-hover:bg-indigo-600 group-hover:text-white transition-colors">
-                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1v1H9V7zm5 0h1v1h-1V7zm-5 4h1v1H9v-1zm5 0h1v1h-1v-1zm-5 4h1v1H9v-1zm5 0h1v1h-1v-1z"/></svg>
+
+                        <!-- CARD 2: PMKKA KELOMPOK KERJA / FKK (54 SASARAN) -->
+                        <div class="bg-gradient-to-br from-purple-950 via-slate-900 to-amber-950 text-white rounded-3xl p-6 shadow-md border border-amber-500/30 relative overflow-hidden flex flex-col justify-between">
+                            <div class="absolute -right-6 -bottom-6 w-36 h-36 bg-amber-500/10 rounded-full blur-2xl pointer-events-none"></div>
+                            <div>
+                                <div class="flex items-center justify-between gap-2 mb-3">
+                                    <span class="px-3 py-1 rounded-full text-[11px] font-black bg-amber-400/20 text-amber-200 border border-amber-400/30 inline-flex items-center gap-1.5">
+                                        <span>⭐ PROGRAM 2</span> • <span>54 SASARAN</span>
+                                    </span>
+                                    <span class="text-xs font-extrabold text-amber-300">Status: Penugasan &amp; Plotting</span>
+                                </div>
+                                <h3 class="text-xl font-black tracking-tight">PMKKA Kelompok Kerja (Kombel)</h3>
+                                <p class="text-xs text-amber-100/80 mt-1">54 Kelompok Kerja sasaran dari 1.804 Komunitas Belajar aktif se-Sumatera Barat.</p>
+                                
+                                <div class="grid grid-cols-3 gap-3 my-5 pt-4 border-t border-amber-500/20">
+                                    <div class="bg-white/10 rounded-xl p-3 text-center">
+                                        <div class="text-[10px] text-amber-200 uppercase font-bold">Target KK</div>
+                                        <div class="text-xl font-black mt-0.5" id="dash_kombel_plotted_val">0 / 54</div>
+                                        <div class="text-[9px] text-amber-300">Sasaran Terpilih</div>
+                                    </div>
+                                    <div class="bg-white/10 rounded-xl p-3 text-center">
+                                        <div class="text-[10px] text-amber-200 uppercase font-bold">Total Kombel</div>
+                                        <div class="text-xl font-black mt-0.5">1.804</div>
+                                        <div class="text-[9px] text-amber-300">19 Kab / Kota</div>
+                                    </div>
+                                    <div class="bg-white/10 rounded-xl p-3 text-center">
+                                        <div class="text-[10px] text-amber-200 uppercase font-bold">Fasilitator</div>
+                                        <div class="text-xl font-black mt-0.5 text-amber-300" id="dash_total_fasil_val">0</div>
+                                        <div class="text-[9px] text-amber-300">Fasil BGTK</div>
+                                    </div>
                                 </div>
                             </div>
-                            <div>
-                                <div class="text-2xl font-black text-slate-800" id="dash_sekolah_plotted_val">0 / 25</div>
-                                <div class="text-xs text-slate-500 font-medium mt-1" id="dash_sekolah_plotted_sub">Sekolah Diberi Pendamping</div>
-                            </div>
-                            <div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between">
-                                <div class="w-2/3 bg-slate-100 rounded-full h-2 overflow-hidden"><div class="bg-indigo-600 h-2 rounded-full transition-all duration-500" id="dash_sekolah_bar" style="width: 0%"></div></div>
-                                <span class="text-[10px] font-bold text-indigo-700 flex items-center gap-0.5 group-hover:underline">Detail ↗</span>
-                            </div>
-                        </div>
-                        <div onclick="openModalDashFasilitator()" class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-2xs relative overflow-hidden flex flex-col justify-between cursor-pointer hover:shadow-md hover:-translate-y-1 transition-all duration-200 group">
-                            <div class="flex items-center justify-between mb-3">
-                                <span class="text-xs font-extrabold text-emerald-700 uppercase tracking-wider">Total Fasilitator</span>
-                                <div class="p-2 bg-emerald-100 text-emerald-700 rounded-xl group-hover:bg-emerald-600 group-hover:text-white transition-colors">
-                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
-                                </div>
-                            </div>
-                            <div>
-                                <div class="text-2xl font-black text-slate-800" id="dash_total_fasil_val">0</div>
-                                <div class="text-xs text-slate-500 font-medium mt-1">Fasilitator Terdaftar</div>
-                            </div>
-                            <div class="mt-4 pt-3 border-t border-slate-100 text-[11px] text-slate-500 font-semibold flex justify-between items-center">
-                                <div class="flex gap-2"><span id="dash_dual_fasil_count">Dual: 0</span><span id="dash_single_fasil_count">Single: 0</span></div>
-                                <span class="text-[10px] font-bold text-emerald-700 group-hover:underline">Detail ↗</span>
-                            </div>
-                        </div>
-                        <div onclick="openModalDashKunjungan()" class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-2xs relative overflow-hidden flex flex-col justify-between cursor-pointer hover:shadow-md hover:-translate-y-1 transition-all duration-200 group">
-                            <div class="flex items-center justify-between mb-3">
-                                <span class="text-xs font-extrabold text-amber-700 uppercase tracking-wider">Jadwal Kunjungan</span>
-                                <div class="p-2 bg-amber-100 text-amber-700 rounded-xl group-hover:bg-amber-600 group-hover:text-white transition-colors">
-                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-                                </div>
-                            </div>
-                            <div>
-                                <div class="text-2xl font-black text-slate-800" id="dash_kunjungan_count">0</div>
-                                <div class="text-xs text-slate-500 font-medium mt-1">Kunjungan Terkonfirmasi</div>
-                            </div>
-                            <div class="mt-4 pt-3 border-t border-slate-100 text-[11px] text-amber-700 font-bold flex justify-between items-center">
-                                <span>Kunjungan Tahap 1, 2, 3</span>
-                                <span class="text-[10px] font-bold text-amber-700 group-hover:underline">Detail ↗</span>
+                            <div class="flex flex-wrap items-center gap-2 pt-3 border-t border-amber-500/20">
+                                <button onclick="switchAdminView('modeKombel')" class="flex-1 px-4 py-2.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black rounded-xl text-xs transition-colors text-center shadow-md">
+                                    Buka Master Kombel &amp; 54 KK ↗
+                                </button>
+                                <button onclick="switchAdminView('modeKombel')" class="px-4 py-2.5 bg-white/10 hover:bg-white/20 text-white font-bold rounded-xl text-xs transition-colors border border-white/20">
+                                    Import Peserta CSV
+                                </button>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Live Tables -->
+                    <!-- DUAL LIVE MONITORING TABLES -->
                     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                        <div class="bg-white rounded-2xl border border-slate-200/80 shadow-2xs overflow-hidden flex flex-col">
-                            <div class="p-5 border-b border-slate-100 bg-purple-50/50 flex justify-between items-center">
+                        <!-- TABLE 1: SEKOLAH MODEL -->
+                        <div class="bg-white rounded-2xl border border-teal-100 shadow-2xs overflow-hidden flex flex-col">
+                            <div class="p-4 border-b border-teal-100 bg-teal-50/60 flex justify-between items-center">
                                 <div>
-                                    <h3 class="font-bold text-slate-900 text-base">Ploting Fasilitator vs Kombel Sasaran</h3>
-                                    <p class="text-xs text-slate-500 mt-0.5">Daftar Kombel Sasaran PMKKA &amp; Penugasan Fasilitator</p>
+                                    <div class="text-[10px] font-black text-teal-800 uppercase tracking-wider">PROGRAM SEKOLAH MODEL</div>
+                                    <h3 class="font-bold text-slate-900 text-sm mt-0.5">Pendampingan 25 Sekolah Model</h3>
                                 </div>
-                                <span class="px-2.5 py-1 rounded-full text-xs font-extrabold bg-purple-100 text-purple-800">54 Sasaran</span>
-                            </div>
-                            <div class="overflow-x-auto flex-1 max-h-96">
-                                <table class="w-full text-left text-xs whitespace-nowrap">
-                                    <thead class="bg-slate-50 text-slate-500 border-b border-slate-100 sticky top-0">
-                                        <tr><th class="px-4 py-3">Nama Kombel</th><th class="px-4 py-3">Kab / Kota</th><th class="px-4 py-3">Fasilitator Pendamping</th><th class="px-4 py-3 text-center">Status</th></tr>
-                                    </thead>
-                                    <tbody id="tableDashKombelBody" class="divide-y divide-slate-100">
-                                        <tr><td colspan="4" class="px-4 py-8 text-center text-slate-400"><div class="spinner mx-auto mb-2"></div>Memuat progres Kombel...</td></tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                        <div class="bg-white rounded-2xl border border-slate-200/80 shadow-2xs overflow-hidden flex flex-col">
-                            <div class="p-5 border-b border-slate-100 bg-indigo-50/50 flex justify-between items-center">
-                                <div>
-                                    <h3 class="font-bold text-slate-900 text-base">Ploting Fasilitator vs Sekolah Model</h3>
-                                    <p class="text-xs text-slate-500 mt-0.5">Daftar 25 Sekolah Model &amp; Fasilitator Dampingan</p>
-                                </div>
-                                <span class="px-2.5 py-1 rounded-full text-xs font-extrabold bg-indigo-100 text-indigo-800">25 Sekolah</span>
+                                <span class="px-2.5 py-1 rounded-full text-xs font-black bg-teal-100 text-teal-900 border border-teal-300">25 Sekolah</span>
                             </div>
                             <div class="overflow-x-auto flex-1 max-h-96">
                                 <table class="w-full text-left text-xs whitespace-nowrap">
@@ -333,6 +381,27 @@
                                     </thead>
                                     <tbody id="tableDashSekolahBody" class="divide-y divide-slate-100">
                                         <tr><td colspan="4" class="px-4 py-8 text-center text-slate-400"><div class="spinner mx-auto mb-2"></div>Memuat progres Sekolah Model...</td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- TABLE 2: PMKKA KK -->
+                        <div class="bg-white rounded-2xl border border-amber-100 shadow-2xs overflow-hidden flex flex-col">
+                            <div class="p-4 border-b border-amber-100 bg-amber-50/60 flex justify-between items-center">
+                                <div>
+                                    <div class="text-[10px] font-black text-amber-900 uppercase tracking-wider">PROGRAM PMKKA KK (FKK)</div>
+                                    <h3 class="font-bold text-slate-900 text-sm mt-0.5">Plotting Fasilitator vs 54 Kelompok Kerja</h3>
+                                </div>
+                                <span class="px-2.5 py-1 rounded-full text-xs font-black bg-amber-100 text-amber-900 border border-amber-300">54 Sasaran KK</span>
+                            </div>
+                            <div class="overflow-x-auto flex-1 max-h-96">
+                                <table class="w-full text-left text-xs whitespace-nowrap">
+                                    <thead class="bg-slate-50 text-slate-500 border-b border-slate-100 sticky top-0">
+                                        <tr><th class="px-4 py-3">Nama Kombel / KK</th><th class="px-4 py-3">Kab / Kota</th><th class="px-4 py-3">Fasilitator Pendamping</th><th class="px-4 py-3 text-center">Status</th></tr>
+                                    </thead>
+                                    <tbody id="tableDashKombelBody" class="divide-y divide-slate-100">
+                                        <tr><td colspan="4" class="px-4 py-8 text-center text-slate-400"><div class="spinner mx-auto mb-2"></div>Memuat progres Kombel...</td></tr>
                                     </tbody>
                                 </table>
                             </div>
@@ -602,7 +671,7 @@
                         </div>
                         <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-6 pt-6 border-t border-white/10">
                             <div class="bg-white/10 backdrop-blur-sm rounded-xl p-4"><div class="text-xs text-purple-200 uppercase font-semibold">Total Komunitas Belajar</div><div class="text-2xl font-black mt-1" id="statKombelTotal">1.804</div></div>
-                            <div class="bg-amber-400/20 backdrop-blur-sm border border-amber-300/30 rounded-xl p-4"><div class="text-xs text-amber-200 uppercase font-semibold">Kombel Sasaran PMKKA</div><div class="text-2xl font-black text-amber-300 mt-1" id="statKombelSasaran">0 / 54</div></div>
+                            <button onclick="filterKombelBySasaran()" title="Klik untuk melihat hanya 54 Kombel Sasaran PMKKA" class="bg-amber-400/20 backdrop-blur-sm border border-amber-300/30 rounded-xl p-4 text-left hover:bg-amber-400/40 transition-all hover:scale-[1.02] cursor-pointer w-full group"><div class="text-xs text-amber-200 uppercase font-semibold group-hover:text-amber-100">Kombel Sasaran PMKKA <span class="text-[10px] normal-case font-normal opacity-70">(klik untuk filter)</span></div><div class="text-2xl font-black text-amber-300 mt-1 group-hover:text-amber-100" id="statKombelSasaran">0 / 54</div><div class="text-[10px] text-amber-300/70 mt-0.5 group-hover:text-amber-200">⭐ Tampilkan 54 Sasaran KK →</div></button>
                             <div class="bg-white/10 backdrop-blur-sm rounded-xl p-4"><div class="text-xs text-purple-200 uppercase font-semibold">Kabupaten / Kota</div><div class="text-2xl font-black mt-1">19 Wilayah</div></div>
                         </div>
                     </div>
@@ -619,8 +688,19 @@
                     <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
                         <div class="overflow-x-auto">
                             <table class="w-full text-left text-sm whitespace-nowrap">
-                                <thead class="bg-slate-50 text-slate-500 border-b border-slate-200"><tr><th class="px-4 py-3 text-center w-12">No</th><th class="px-4 py-3">Nama Komunitas Belajar</th><th class="px-4 py-3">Kabupaten / Kota &amp; Kec</th><th class="px-4 py-3">Ketua &amp; Kontak</th><th class="px-4 py-3 text-center">Anggota</th><th class="px-4 py-3 text-center">Status Sasaran</th><th class="px-4 py-3 text-center">Aksi Sasaran</th></tr></thead>
-                                <tbody id="tableKombelBody" class="divide-y divide-slate-100"><tr><td colspan="7" class="px-6 py-12 text-center text-slate-400"><div class="spinner mx-auto mb-2"></div>Memuat data Komunitas Belajar...</td></tr></tbody>
+                                <thead class="bg-slate-100/90 text-slate-700 font-extrabold border-b border-slate-200 text-xs">
+                                    <tr>
+                                        <th class="px-4 py-3.5 text-center w-12">No</th>
+                                        <th class="px-4 py-3.5">Nama Kelompok Kerja / Kombel</th>
+                                        <th class="px-4 py-3.5">Kab / Kota &amp; Kec</th>
+                                        <th class="px-4 py-3.5 text-center bg-purple-50/70 text-purple-900 border-x border-purple-100">Fasilitator Pendamping (FKK)</th>
+                                        <th class="px-4 py-3.5">Ketua &amp; Kontak</th>
+                                        <th class="px-4 py-3.5 text-center">Peserta</th>
+                                        <th class="px-4 py-3.5 text-center">Status</th>
+                                        <th class="px-4 py-3.5 text-center">Aksi &amp; Import</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tableKombelBody" class="divide-y divide-slate-100"><tr><td colspan="8" class="px-6 py-12 text-center text-slate-400"><div class="spinner mx-auto mb-2"></div>Memuat data Komunitas Belajar...</td></tr></tbody>
                             </table>
                         </div>
                         <div class="p-4 bg-slate-50 border-t border-slate-200 flex flex-col sm:flex-row justify-between items-center gap-3 text-xs text-slate-500" id="kombelPagination"></div>
@@ -1162,6 +1242,175 @@
         </div>
     </div>
 
+    <!-- MODAL KELOLA KOMBEL SASARAN & IMPORT PESERTA (PMKKA KK) -->
+    <div id="modalKelolaKombelSasaran" class="hidden fixed inset-0 z-[125] bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
+        <div class="bg-white rounded-3xl shadow-2xl w-full max-w-5xl overflow-hidden fade-in border border-slate-100 flex flex-col max-h-[92vh] my-auto">
+            <!-- Modal Header -->
+            <div class="bg-gradient-to-r from-purple-900 via-indigo-900 to-slate-900 p-5 sm:p-6 text-white relative flex-shrink-0">
+                <button onclick="closeKelolaKombelModal()" class="absolute top-4 right-4 text-white/70 hover:text-white hover:bg-white/10 p-2 rounded-full transition-colors">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                </button>
+                <div class="flex flex-wrap items-center gap-2 mb-2">
+                    <span class="px-2.5 py-0.5 rounded-full text-xs font-black bg-amber-400 text-amber-950 uppercase tracking-wider">⭐ Sasaran PMKKA KK (54)</span>
+                    <span id="modalKombelJenjangBadge" class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-white/20 text-white backdrop-blur-sm">Jenjang</span>
+                    <span id="modalKombelKabBadge" class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-white/20 text-white backdrop-blur-sm">Kab/Kota</span>
+                </div>
+                <h2 class="text-xl sm:text-2xl font-black leading-tight" id="modalKombelNama">Nama Kelompok Kerja</h2>
+                <div class="text-xs text-purple-200 mt-1 flex flex-wrap items-center gap-x-4 gap-y-1">
+                    <span id="modalKombelKecDesa">Kecamatan / Desa</span>
+                    <span>•</span>
+                    <span id="modalKombelKetuaKontak">Ketua: -</span>
+                </div>
+            </div>
+
+            <!-- Modal Body (Scrollable) -->
+            <div class="p-5 sm:p-6 overflow-y-auto space-y-6 flex-1 bg-slate-50/50">
+                <input type="hidden" id="modalCurrentKombelId">
+
+                <!-- SECTION 1: PENUGASAN FASILITATOR KK -->
+                <div class="bg-white rounded-2xl p-5 border border-purple-100 shadow-2xs">
+                    <div class="flex items-center justify-between gap-2 mb-3">
+                        <div class="flex items-center gap-2">
+                            <div class="w-8 h-8 rounded-xl bg-purple-100 text-purple-700 flex items-center justify-center font-bold text-sm">🤝</div>
+                            <div>
+                                <h3 class="font-bold text-slate-800 text-sm">Penugasan Fasilitator PMKKA KK</h3>
+                                <p class="text-[11px] text-slate-500">Pilih Fasilitator pendamping untuk kelompok kerja sasaran ini.</p>
+                            </div>
+                        </div>
+                        <div id="statusFasilTerpilihBadge" class="text-xs"></div>
+                    </div>
+                    <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 pt-2">
+                        <div class="flex-1">
+                            <select id="modalSelectFasilKombel" class="w-full border border-slate-300 rounded-xl px-4 py-2.5 text-sm font-semibold text-slate-800 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-purple-500 focus:outline-none">
+                                <option value="">-- Pilih Fasilitator Pendamping KK --</option>
+                            </select>
+                        </div>
+                        <button onclick="simpanPenugasanFasilKombel()" class="px-5 py-2.5 bg-purple-600 hover:bg-purple-700 text-white rounded-xl text-xs font-bold transition shadow-sm flex items-center justify-center gap-1.5 flex-shrink-0">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                            <span>Simpan Fasilitator</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- SECTION 2: IMPORT DATA PESERTA VIA CSV (FORMAT 1) -->
+                <div class="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-2xs">
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-4 pb-3 border-b border-slate-100">
+                        <div class="flex items-center gap-2">
+                            <div class="w-8 h-8 rounded-xl bg-indigo-100 text-indigo-700 flex items-center justify-center font-bold text-sm">📁</div>
+                            <div>
+                                <h3 class="font-bold text-slate-800 text-sm">Import Data Peserta Kelompok Kerja (Format 1)</h3>
+                                <p class="text-[11px] text-slate-500">Unduh data peserta dari aplikasi pusat (Sindara), lalu unggah file .CSV di sini.</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <label class="cursor-pointer px-4 py-2 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 rounded-xl text-xs font-bold transition flex items-center gap-2">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
+                                <span>Pilih File CSV Peserta</span>
+                                <input type="file" id="modalInputPesertaCSV" accept=".csv,text/csv" class="hidden" onchange="handlePesertaCSVUpload(event)">
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- FORMAT INFO ALERT -->
+                    <div class="bg-blue-50/70 border border-blue-200 rounded-xl p-3 text-[11px] text-blue-900 flex items-start gap-2 mb-4">
+                        <svg class="w-4 h-4 text-blue-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                        <div>
+                            <strong>Format CSV yang Didukung:</strong> File ekspor anggota dari sistem Pusat (memiliki kolom: <code>Slug, Nama Kelompok Kerja, Tipe, Provinsi, Kab/Kota, Kecamatan, Desa, Nama Anggota, Sekolah, NPSN, Email login/belajar ID, Role</code>). Sistem akan otomatis memvalidasi keaslian domain <code>belajar.id</code>.
+                        </div>
+                    </div>
+
+                    <!-- PREVIEW CONTAINER (Shown when file is uploaded) -->
+                    <div id="modalPesertaUploadPreview" class="hidden space-y-3 mb-6 bg-slate-50 p-4 rounded-xl border border-slate-200">
+                        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
+                            <div>
+                                <h4 class="font-bold text-slate-800 text-xs">Preview Data Hasil Pembacaan CSV</h4>
+                                <div class="text-[11px] text-slate-500" id="modalPreviewStats">0 Peserta terbaca</div>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <button onclick="cancelUploadPreview()" class="px-3 py-1.5 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-lg text-xs font-bold transition">Batal</button>
+                                <button onclick="simpanPesertaKombel()" id="btnSimpanPesertaBatch" class="px-4 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-bold shadow-xs transition flex items-center gap-1.5">
+                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                                    <span>Simpan ke Database</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- WARNING BANNER IF TYPO DETECTED -->
+                        <div id="modalEmailWarningBanner" class="hidden bg-amber-50 border border-amber-300 rounded-xl p-3 text-xs text-amber-900 flex items-start gap-2.5">
+                            <span class="text-base flex-shrink-0">⚠️</span>
+                            <div>
+                                <strong class="font-bold">Peringatan Format Email Dicurigai Salah / Typo!</strong>
+                                <p class="text-[11px] text-amber-800 mt-0.5">Ditemukan baris dengan penulisan domain akun belajar.id yang tidak sesuai (misal: <code>@gutu.</code> atau bukan format standar). Anda dapat mengoreksi langsung email tersebut di tabel preview di bawah sebelum menekan tombol simpan.</p>
+                            </div>
+                        </div>
+
+                        <div class="overflow-x-auto max-h-64 border border-slate-200 rounded-xl bg-white">
+                            <table class="w-full text-left text-xs whitespace-nowrap">
+                                <thead class="bg-slate-100 text-slate-600 sticky top-0 border-b border-slate-200 font-bold">
+                                    <tr>
+                                        <th class="px-3 py-2 text-center w-8">No</th>
+                                        <th class="px-3 py-2">Nama Anggota</th>
+                                        <th class="px-3 py-2">Sekolah &amp; NPSN</th>
+                                        <th class="px-3 py-2">Email login/belajar ID</th>
+                                        <th class="px-3 py-2 text-center">Peran</th>
+                                        <th class="px-3 py-2 text-center">Validasi Email</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="modalTablePreviewBody" class="divide-y divide-slate-100 font-medium"></tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- ACTIVE PARTICIPANTS TABLE (Stored in DB) -->
+                    <div class="space-y-3">
+                        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
+                            <div class="flex items-center gap-2">
+                                <h4 class="font-bold text-slate-800 text-xs uppercase tracking-wider">Daftar Peserta Terdaftar di Database</h4>
+                                <span id="modalActivePesertaCountBadge" class="px-2 py-0.5 rounded-full text-xs font-black bg-purple-100 text-purple-800 border border-purple-200">0 Peserta</span>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <button onclick="exportActivePesertaKombelCSV()" id="btnExportPesertaCSV" class="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-300 rounded-lg text-xs font-bold transition flex items-center gap-1">
+                                    <svg class="w-3.5 h-3.5 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                                    <span>Export CSV</span>
+                                </button>
+                                <button onclick="hapusSemuaPesertaKombel()" id="btnHapusSemuaPeserta" class="px-3 py-1.5 bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 rounded-lg text-xs font-bold transition flex items-center gap-1">
+                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                                    <span>Hapus Semua</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="overflow-x-auto max-h-72 border border-slate-200 rounded-xl bg-white">
+                            <table class="w-full text-left text-xs whitespace-nowrap">
+                                <thead class="bg-slate-50 text-slate-500 sticky top-0 border-b border-slate-200 font-bold">
+                                    <tr>
+                                        <th class="px-3 py-2 text-center w-8">No</th>
+                                        <th class="px-3 py-2">Nama Anggota</th>
+                                        <th class="px-3 py-2">Sekolah / NPSN</th>
+                                        <th class="px-3 py-2">Akun Belajar ID</th>
+                                        <th class="px-3 py-2 text-center">Peran</th>
+                                        <th class="px-3 py-2 text-center">Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="modalTableActivePesertaBody" class="divide-y divide-slate-100">
+                                    <tr><td colspan="6" class="px-4 py-8 text-center text-slate-400">Belum ada data peserta yang diimpor untuk kelompok kerja ini.</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal Footer -->
+            <div class="px-6 py-4 bg-slate-50 border-t border-slate-100 flex justify-between items-center flex-shrink-0">
+                <div class="text-xs text-slate-500">
+                    💡 Data peserta yang tersimpan siap digunakan untuk plotting kelas PMKKA.
+                </div>
+                <button onclick="closeKelolaKombelModal()" class="px-6 py-2 bg-slate-800 hover:bg-slate-900 text-white rounded-xl text-xs font-bold shadow-sm transition">Tutup</button>
+            </div>
+        </div>
+    </div>
+
     <!-- MODAL EDIT HAK AKSES & ROLE -->
     <div id="modalEditHakAkses" class="hidden fixed inset-0 z-[120] bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
         <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden fade-in border border-slate-100">
@@ -1186,8 +1435,9 @@
                     <label class="block text-xs font-bold uppercase text-slate-600 mb-1">Peran Pengguna (Role) <span class="text-rose-500">*</span></label>
                     <select id="editRoleSelect" onchange="toggleRolePresets()" class="w-full border border-slate-300 rounded-xl px-4 py-2 text-sm font-bold text-slate-800 focus:ring-2 focus:ring-purple-500">
                         <option value="Admin">Admin Pegawai BGTK</option>
+                        <option value="Admin FKK">⭐ Admin FKK (Komunitas Belajar)</option>
                         <option value="Admin Sekolah Model">Admin Sekolah Model</option>
-                        <option value="Fasilitator">Fasilitator Sekolah Model</option>
+                        <option value="Fasilitator">Fasilitator</option>
                         <option value="Super Admin">Super Admin (Akses Penuh)</option>
                     </select>
                 </div>
@@ -1421,90 +1671,38 @@
         const db = firebase.database();
 
         // ==========================================
-        // ADMIN & FASILITATOR MAPPING CONFIGURATION
+        // ADMIN FKK & ROLE MAPPING CONFIGURATION
         // ==========================================
-        const ADMIN_FASIL_MAPPING = {
-            // 1. Lisa Anggraini -> Surya Marlina
-            "lisaanggrainiica17@gmail.com": {
-                adminNama: "LISA ANGGRAINI, S.Pd.",
-                nip: "199105272025212039",
-                fasilIds: ["fasil_1783917064370"], // Surya Marlina
-                fasilNames: ["Surya Marlina. M.Pd"]
-            },
-            "lisaanggraini15@dikbud.belajar.id": {
-                adminNama: "LISA ANGGRAINI, S.Pd.",
-                nip: "199105272025212039",
-                fasilIds: ["fasil_1783917064370"], // Surya Marlina
-                fasilNames: ["Surya Marlina. M.Pd"]
-            },
-            "lisa.anggraini@kemendikdasmen.go.id": {
-                adminNama: "LISA ANGGRAINI, S.Pd.",
-                nip: "199105272025212039",
-                fasilIds: ["fasil_1783917064370"],
-                fasilNames: ["Surya Marlina. M.Pd"]
-            },
-
-            // 2. Siti Oktovani -> Irawati & Silvi Hevria
-            "vanisitioktovani@gmail.com": {
-                adminNama: "SITI OKTOVANI, S.I.P.",
-                nip: "199010062019022006",
-                fasilIds: ["fasil_1783916892878", "fasil_1783916851823"], // Irawati & Silvi Hevria
-                fasilNames: ["Irawati, S.Pd., M.Pd", "Dr. Silvi Hevria, M.Pd"]
-            },
-            "siti.oktovani@kemendikdasmen.go.id": {
-                adminNama: "SITI OKTOVANI, S.I.P.",
-                nip: "199010062019022006",
-                fasilIds: ["fasil_1783916892878", "fasil_1783916851823"],
-                fasilNames: ["Irawati, S.Pd., M.Pd", "Dr. Silvi Hevria, M.Pd"]
-            },
-
-            // 3. Rosa Ria Ayu -> Subriyeni & Elsis
-            "rosariaayu8@gmail.com": {
-                adminNama: "ROSA RIA AYU, S.Pd",
-                nip: "198308162010012029",
-                fasilIds: ["fasil_1783916929152", "fasil_1783916957996"], // Subriyeni & Elsis Indra
-                fasilNames: ["Subriyeni, M.Pd", "Elsis Indra, M.Pd"]
-            },
-            "rosariaayu5@gmail.com": {
-                adminNama: "ROSA RIA AYU, S.Pd",
-                nip: "198308162010012029",
-                fasilIds: ["fasil_1783916929152", "fasil_1783916957996"],
-                fasilNames: ["Subriyeni, M.Pd", "Elsis Indra, M.Pd"]
-            },
-            "rosa.ria@kemendikdasmen.go.id": {
-                adminNama: "ROSA RIA AYU, S.Pd",
-                nip: "198308162010012029",
-                fasilIds: ["fasil_1783916929152", "fasil_1783916957996"],
-                fasilNames: ["Subriyeni, M.Pd", "Elsis Indra, M.Pd"]
-            },
-
-            // 4. Aflidarneti -> Fourindra & Iryasman
-            "aflidarneti12@gmail.com": {
-                adminNama: "AFLIDARNETI, S.Sos",
-                nip: "198204202012122001",
-                fasilIds: ["fasil_1783917864965", "fasil_1783917397583"], // Fourindra & Iryasman
-                fasilNames: ["Fourindra, S.Pd., M.Si", "Iryasman, M.Pd"]
-            },
-            "aflidarneti@kemendikdasmen.go.id": {
-                adminNama: "AFLIDARNETI, S.Sos",
-                nip: "198204202012122001",
-                fasilIds: ["fasil_1783917864965", "fasil_1783917397583"],
-                fasilNames: ["Fourindra, S.Pd., M.Si", "Iryasman, M.Pd"]
-            },
-
-            // 5. Ristita Humairoh -> Riza & Pitria
-            "ristitahumairoh71@dikbud.belajar.id": {
-                adminNama: "RISTITA HUMAIROH, S.Kom.",
-                nip: "199711232025212030",
-                fasilIds: ["fasil_1783916996269", "fasil_1783917032352"], // Riza Safriani & Pitria Gusliati
-                fasilNames: ["Riza Safriani, M.Pd", "Pitria Gusliati, M.Pd"]
-            },
-            "ristita.humairoh@kemendikdasmen.go.id": {
-                adminNama: "RISTITA HUMAIROH, S.Kom.",
-                nip: "199711232025212030",
-                fasilIds: ["fasil_1783916996269", "fasil_1783917032352"],
-                fasilNames: ["Riza Safriani, M.Pd", "Pitria Gusliati, M.Pd"]
-            }
+        const ADMIN_FKK_MAPPING = {
+            // 1. Leindrawati Megahayu
+            "leindrawatimegahayu70@gmail.com": { adminNama: "LEINDRAWATI MEGAHAYU, S.P.", nip: "197005042009012002" },
+            "leindrawati.megahayu@kemendikdasmen.go.id": { adminNama: "LEINDRAWATI MEGAHAYU, S.P.", nip: "197005042009012002" },
+            // 2. Abi Rafdhi
+            "abidigi92@gmail.com": { adminNama: "ABI RAFDHI, S.Kom.", nip: "199204062025211055" },
+            "abi.rafdhi@kemendikdasmen.go.id": { adminNama: "ABI RAFDHI, S.Kom.", nip: "199204062025211055" },
+            // 3. Andri Alphonso
+            "andrialphonso23@gmail.com": { adminNama: "ANDRI ALPHONSO, S.AP.", nip: "199508232025211023" },
+            "andri.alphonso@kemendikdasmen.go.id": { adminNama: "ANDRI ALPHONSO, S.AP.", nip: "199508232025211023" },
+            // 4. Desi Permata Sari
+            "desipermata661@gmail.com": { adminNama: "DESI PERMATA SARI, A.Md.", nip: "199112112025212041" },
+            "desi.permata@kemendikdasmen.go.id": { adminNama: "DESI PERMATA SARI, A.Md.", nip: "199112112025212041" },
+            // 5. Lisa Anggraini
+            "lisaanggrainiica17@gmail.com": { adminNama: "LISA ANGGRAINI, S.Pd.", nip: "199105272025212039" },
+            "lisa.anggraini@kemendikdasmen.go.id": { adminNama: "LISA ANGGRAINI, S.Pd.", nip: "199105272025212039" },
+            "lisaanggraini15@dikbud.belajar.id": { adminNama: "LISA ANGGRAINI, S.Pd.", nip: "199105272025212039" },
+            // 6. Siti Oktovani
+            "vanisitioktovani@gmail.com": { adminNama: "SITI OKTOVANI, S.I.P.", nip: "199010062019022006" },
+            "siti.oktovani@kemendikdasmen.go.id": { adminNama: "SITI OKTOVANI, S.I.P.", nip: "199010062019022006" },
+            // 7. Rosa Ria Ayu
+            "rosariaayu8@gmail.com": { adminNama: "ROSA RIA AYU, S.Pd", nip: "198308162010012029" },
+            "rosariaayu5@gmail.com": { adminNama: "ROSA RIA AYU, S.Pd", nip: "198308162010012029" },
+            "rosa.ria@kemendikdasmen.go.id": { adminNama: "ROSA RIA AYU, S.Pd", nip: "198308162010012029" },
+            // 8. Aflidarneti
+            "aflidarneti12@gmail.com": { adminNama: "AFLIDARNETI, S.Sos", nip: "198204202012122001" },
+            "aflidarneti@kemendikdasmen.go.id": { adminNama: "AFLIDARNETI, S.Sos", nip: "198204202012122001" },
+            // 9. Ristita Humairoh
+            "ristitahumairoh71@dikbud.belajar.id": { adminNama: "RISTITA HUMAIROH, S.Kom.", nip: "199711232025212030" },
+            "ristita.humairoh@kemendikdasmen.go.id": { adminNama: "RISTITA HUMAIROH, S.Kom.", nip: "199711232025212030" }
         };
 
         let gAssignedFasilIds = null;
@@ -1530,35 +1728,47 @@
             switchAdminView('mode0');
         });
 
+        const SUPER_ADMIN_EMAILS = [
+            'mastersumbar1@gmail.com',
+            'irawati.2308@gmail.com',
+            'irawati@kemendikdasmen.go.id'
+        ];
+
         async function checkAndApplyUserRole(email) {
             const cleanEmail = (email || '').toLowerCase();
             const emailKey = sanitizeEmailKey(cleanEmail);
 
-            let userRole = 'Admin';
+            let userRole = 'Admin Pegawai';
             let permissions = {
-                dashboard: true, master_pegawai: true, master_kombel: true,
-                fasilitator: true, jadwal_kunjungan: true, setting_jadwal: true,
-                persuratan: true, access_management: false
+                dashboard: true, master_pegawai: false, master_kombel: false,
+                fasilitator: false, jadwal_kunjungan: false, setting_jadwal: false,
+                persuratan: false, access_management: false
             };
 
-            // Check hardcoded admin-fasil mapping first
-            const mapping = ADMIN_FASIL_MAPPING[cleanEmail];
-            if (mapping) {
-                userRole = 'Admin Sekolah Model';
-                gAssignedFasilIds = mapping.fasilIds;
-                gAssignedFasilNames = mapping.fasilNames;
-                gAdminNama = mapping.adminNama;
-                permissions = {
-                    dashboard: true, master_pegawai: false, master_kombel: false,
-                    fasilitator: true, jadwal_kunjungan: true, setting_jadwal: false,
-                    persuratan: false, access_management: false
-                };
-            } else if (cleanEmail === 'mastersumbar1@gmail.com') {
+            // 1. Check Super Admin first (Akses Penuh 100%)
+            if (SUPER_ADMIN_EMAILS.includes(cleanEmail)) {
                 userRole = 'Super Admin';
+                gAdminNama = (cleanEmail.includes('irawati')) ? 'IRAWATI, S.Pd, M.Pd.' : 'Super Admin Utama';
                 gAssignedFasilIds = null;
                 gAssignedFasilNames = null;
-                permissions.access_management = true;
-            } else {
+                permissions = {
+                    dashboard: true, master_pegawai: true, master_kombel: true,
+                    fasilitator: true, jadwal_kunjungan: true, setting_jadwal: true,
+                    persuratan: true, access_management: true
+                };
+            } 
+            // 2. Check Admin FKK mapping (9 personil pegawai BGTK)
+            else if (ADMIN_FKK_MAPPING[cleanEmail]) {
+                userRole = 'Admin FKK';
+                gAdminNama = ADMIN_FKK_MAPPING[cleanEmail].adminNama;
+                permissions = {
+                    dashboard: true, master_pegawai: false, master_kombel: true,
+                    fasilitator: true, jadwal_kunjungan: false, setting_jadwal: false,
+                    persuratan: false, access_management: false
+                };
+            } 
+            // 3. Check custom role in database
+            else {
                 try {
                     const roleSnap = await db.ref(`user_roles/${emailKey}`).once('value');
                     const roleVal = roleSnap.val();
@@ -1580,27 +1790,68 @@
             gCurrentLoggedRole = userRole;
             gCurrentLoggedPermissions = permissions;
             applyRolePermissionsToUI(userRole, permissions);
+
+            // Auto-route initial view based on role
+            if (userRole === 'Admin FKK') {
+                selectWorkspaceTrack('fkk');
+            } else if (userRole === 'Admin Sekolah Model') {
+                selectWorkspaceTrack('sekolah_model');
+            } else {
+                selectWorkspaceTrack('dashboard');
+            }
         }
 
         function applyRolePermissionsToUI(userRole, permissions) {
             const isSuperAdmin = (userRole === 'Super Admin');
+            const isAdminFKK = (userRole === 'Admin FKK');
             const isAdminSekolahModel = (userRole === 'Admin Sekolah Model');
             const p = permissions || {};
 
-            const groupMaster = document.getElementById('sidebarGroupMaster');
-            const groupVerifikasi = document.getElementById('sidebarGroupVerifikasi');
-            const groupInternal = document.getElementById('sidebarGroupInternal');
+            const groupFKK = document.getElementById('sidebarGroupFKK');
             const groupSekolahModel = document.getElementById('sidebarGroupSekolahModel');
+            const groupInternal = document.getElementById('sidebarGroupInternal');
             const btnModeAkses = document.getElementById('btnModeAkses');
+
+            // Top Workspace Tabs
+            const tabSekolah = document.getElementById('tabWorkspaceSekolahModel');
+            const tabFKK = document.getElementById('tabWorkspaceFKK');
+            const tabDash = document.getElementById('tabWorkspaceDashboard');
+            const tabMaster = document.getElementById('tabWorkspaceMaster');
 
             const brandSub = document.getElementById('adminBrandSubtitle');
             const userRoleBadge = document.getElementById('adminUserRoleBadge');
 
-            if (isAdminSekolahModel) {
-                if (groupMaster) groupMaster.classList.add('hidden');
-                if (groupVerifikasi) groupVerifikasi.classList.add('hidden');
+            if (isAdminFKK) {
+                // Strict isolation for Admin FKK
+                if (groupFKK) groupFKK.classList.remove('hidden');
+                if (groupSekolahModel) groupSekolahModel.classList.add('hidden');
                 if (groupInternal) groupInternal.classList.add('hidden');
+                if (btnModeAkses) btnModeAkses.classList.add('hidden');
+
+                if (tabSekolah) tabSekolah.classList.add('hidden');
+                if (tabMaster) tabMaster.classList.add('hidden');
+                if (tabFKK) tabFKK.classList.remove('hidden');
+                if (tabDash) tabDash.classList.remove('hidden');
+
+                if (brandSub) {
+                    brandSub.textContent = gAdminNama ? `Admin FKK (${gAdminNama.split(',')[0]})` : 'Admin FKK (PMKKA KK)';
+                    brandSub.className = 'text-[10px] font-bold text-amber-700 block mt-0.5';
+                }
+                if (userRoleBadge) {
+                    userRoleBadge.innerHTML = `⭐ Admin FKK (54 Sasaran)`;
+                    userRoleBadge.className = 'text-[10px] font-black text-amber-900 bg-amber-100 px-2 py-0.5 rounded-md border border-amber-300 inline-block mt-0.5';
+                }
+            } else if (isAdminSekolahModel) {
+                // Strict isolation for Admin Sekolah Model
+                if (groupFKK) groupFKK.classList.add('hidden');
                 if (groupSekolahModel) groupSekolahModel.classList.remove('hidden');
+                if (groupInternal) groupInternal.classList.add('hidden');
+                if (btnModeAkses) btnModeAkses.classList.add('hidden');
+
+                if (tabFKK) tabFKK.classList.add('hidden');
+                if (tabMaster) tabMaster.classList.add('hidden');
+                if (tabSekolah) tabSekolah.classList.remove('hidden');
+                if (tabDash) tabDash.classList.remove('hidden');
 
                 // Automatically expand submenus for Admin Sekolah Model
                 const smFasil = document.getElementById('submenuFasil');
@@ -1623,17 +1874,30 @@
                     userRoleBadge.className = 'text-[10px] font-black text-teal-800 bg-teal-100 px-2 py-1 rounded-md border border-teal-300 inline-block mt-0.5';
                 }
             } else {
-                if (groupMaster) {
-                    if (p.master_pegawai || p.master_kombel || isSuperAdmin) groupMaster.classList.remove('hidden');
-                    else groupMaster.classList.add('hidden');
+                // Super Admin / Pegawai BGTK
+                if (groupFKK) {
+                    if (p.master_kombel || isSuperAdmin) groupFKK.classList.remove('hidden');
+                    else groupFKK.classList.add('hidden');
+                }
+                if (groupSekolahModel) {
+                    if (p.fasilitator || p.jadwal_kunjungan || isSuperAdmin) groupSekolahModel.classList.remove('hidden');
+                    else groupSekolahModel.classList.add('hidden');
                 }
                 if (groupInternal) {
-                    if (p.access_management || p.setting_jadwal || isSuperAdmin) groupInternal.classList.remove('hidden');
+                    if (p.master_pegawai || p.access_management || p.setting_jadwal || isSuperAdmin) groupInternal.classList.remove('hidden');
                     else groupInternal.classList.add('hidden');
                 }
                 if (btnModeAkses) {
                     if (p.access_management || isSuperAdmin) btnModeAkses.classList.remove('hidden');
                     else btnModeAkses.classList.add('hidden');
+                }
+
+                if (tabSekolah) tabSekolah.classList.remove('hidden');
+                if (tabFKK) tabFKK.classList.remove('hidden');
+                if (tabDash) tabDash.classList.remove('hidden');
+                if (tabMaster) {
+                    if (isSuperAdmin || p.access_management || p.master_pegawai) tabMaster.classList.remove('hidden');
+                    else tabMaster.classList.add('hidden');
                 }
 
                 if (brandSub) {
@@ -1646,6 +1910,33 @@
                         ? 'text-[10px] font-black text-purple-800 bg-purple-100 px-2 py-0.5 rounded-md border border-purple-300 inline-block mt-0.5'
                         : 'text-[10px] font-extrabold text-indigo-800 bg-indigo-100 px-2 py-0.5 rounded-md border border-indigo-200 inline-block mt-0.5';
                 }
+            }
+        }
+
+        function selectWorkspaceTrack(track) {
+            const tabSekolah = document.getElementById('tabWorkspaceSekolahModel');
+            const tabFKK = document.getElementById('tabWorkspaceFKK');
+            const tabDash = document.getElementById('tabWorkspaceDashboard');
+            const tabMaster = document.getElementById('tabWorkspaceMaster');
+
+            const defaultClass = "workspace-track-tab px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-2 border border-slate-200 text-slate-700 hover:bg-slate-100 bg-white";
+            if (tabSekolah) tabSekolah.className = defaultClass;
+            if (tabFKK) tabFKK.className = defaultClass;
+            if (tabDash) tabDash.className = defaultClass;
+            if (tabMaster) tabMaster.className = defaultClass;
+
+            if (track === 'sekolah_model') {
+                if (tabSekolah) tabSekolah.className = "workspace-track-tab px-3.5 py-1.5 rounded-xl text-xs font-black transition-all flex items-center gap-2 border border-teal-600 bg-teal-600 text-white shadow-sm";
+                switchAdminView('modeStatusSekolah');
+            } else if (track === 'fkk') {
+                if (tabFKK) tabFKK.className = "workspace-track-tab px-3.5 py-1.5 rounded-xl text-xs font-black transition-all flex items-center gap-2 border border-amber-500 bg-amber-500 text-slate-950 shadow-sm";
+                switchAdminView('modeKombel');
+            } else if (track === 'master') {
+                if (tabMaster) tabMaster.className = "workspace-track-tab px-3.5 py-1.5 rounded-xl text-xs font-black transition-all flex items-center gap-2 border border-emerald-700 bg-emerald-700 text-white shadow-sm";
+                switchAdminView('modePegawai');
+            } else {
+                if (tabDash) tabDash.className = "workspace-track-tab px-3.5 py-1.5 rounded-xl text-xs font-black transition-all flex items-center gap-2 border border-purple-600 bg-purple-600 text-white shadow-sm";
+                switchAdminView('mode0');
             }
         }
 
@@ -1687,7 +1978,14 @@
             if (gCurrentLoggedRole === 'Admin Sekolah Model') {
                 const allowedModes = ['mode0', 'mode3', 'mode4', 'mode5', 'mode7', 'modeStatusSekolah'];
                 if (!allowedModes.includes(mode)) {
-                    mode = 'mode0';
+                    mode = 'modeStatusSekolah';
+                }
+            }
+            // Guard for Admin FKK
+            if (gCurrentLoggedRole === 'Admin FKK') {
+                const allowedModes = ['mode0', 'modeKombel'];
+                if (!allowedModes.includes(mode)) {
+                    mode = 'modeKombel';
                 }
             }
 
@@ -1697,7 +1995,7 @@
                 const btnEl = document.getElementById('btn' + m.charAt(0).toUpperCase() + m.slice(1));
                 if (viewEl) viewEl.classList.add('hidden');
                 if (btnEl) {
-                    if (m === 'mode3' || m === 'mode4' || m === 'mode7' || m === 'mode5' || m === 'modeStatusSekolah') {
+                    if (m === 'mode3' || m === 'mode4' || m === 'mode7' || m === 'mode5' || m === 'modeStatusSekolah' || m === 'mode1' || m === 'mode2') {
                         btnEl.className = "sidebar-btn flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium text-slate-500 hover:text-slate-900 hover:bg-slate-100/80 transition-all duration-200 w-full text-left border-l-2 border-transparent";
                     } else {
                         btnEl.className = "sidebar-btn flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-100/80 hover:text-slate-900 transition-all duration-200 w-full text-left relative group border-l-4 border-transparent";
@@ -1714,28 +2012,86 @@
 
             if (targetView) targetView.classList.remove('hidden');
             if (targetBtn) {
-                if (mode === 'mode3' || mode === 'mode4' || mode === 'mode7' || mode === 'mode5' || mode === 'modeStatusSekolah') {
-                    targetBtn.className = "sidebar-btn flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-bold bg-emerald-50 text-emerald-900 border-l-2 border-emerald-600 transition-all duration-200 w-full text-left";
+                if (mode === 'mode3' || mode === 'mode4' || mode === 'mode7' || mode === 'mode5' || mode === 'modeStatusSekolah' || mode === 'mode1' || mode === 'mode2') {
+                    targetBtn.className = "sidebar-btn flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-bold bg-teal-50 text-teal-900 border-l-2 border-teal-600 transition-all duration-200 w-full text-left";
+                } else if (mode === 'modeKombel') {
+                    targetBtn.className = "sidebar-btn flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-bold bg-amber-50 text-amber-950 border-l-4 border-amber-500 transition-all duration-200 w-full text-left relative group shadow-2xs";
                 } else {
-                    targetBtn.className = "sidebar-btn flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-bold bg-emerald-50 text-emerald-900 border-l-4 border-emerald-600 transition-all duration-200 w-full text-left relative group shadow-2xs";
+                    targetBtn.className = "sidebar-btn flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-bold bg-purple-50 text-purple-900 border-l-4 border-purple-600 transition-all duration-200 w-full text-left relative group shadow-2xs";
                 }
                 const svgIcon = targetBtn.querySelector('svg');
-                if (svgIcon) svgIcon.className = "w-5 h-5 flex-shrink-0 text-emerald-600 transition-colors";
+                if (svgIcon) {
+                    if (mode === 'modeKombel') svgIcon.className = "w-5 h-5 flex-shrink-0 text-amber-600 transition-colors";
+                    else if (mode.includes('mode1') || mode.includes('mode2') || mode.includes('mode3') || mode.includes('mode4') || mode.includes('mode5') || mode.includes('mode7') || mode.includes('modeStatusSekolah')) svgIcon.className = "w-5 h-5 flex-shrink-0 text-teal-600 transition-colors";
+                    else svgIcon.className = "w-5 h-5 flex-shrink-0 text-purple-600 transition-colors";
+                }
             }
 
             const pageTitle = document.getElementById('adminPageTitle');
-            if (mode === 'mode0') { if (pageTitle) pageTitle.textContent = gCurrentLoggedRole === 'Admin Sekolah Model' ? "Dashboard Sekolah Model" : "Dashboard Utama Admin"; loadDashboardUtamaData(); }
-            else if (mode === 'mode1' && pageTitle) pageTitle.textContent = "Progres Verifikasi Sekolah Model";
-            else if (mode === 'mode2' && pageTitle) pageTitle.textContent = "Rencana Pengkelasan";
-            else if (mode === 'mode3') { if (pageTitle) pageTitle.textContent = "Data Fasilitator"; loadFasilitatorData(); }
-            else if (mode === 'mode4') { if (pageTitle) pageTitle.textContent = "Jadwal & Laporan Fasilitator"; loadJadwalFasilData(); }
-            else if (mode === 'mode5') { if (pageTitle) pageTitle.textContent = "Assign Pendamping Sekolah"; loadManajemenSekolahData(); }
-            else if (mode === 'mode7') { if (pageTitle) pageTitle.textContent = "Jadwal Kunjungan Semua Sekolah"; loadDataKunjunganData(); }
-            else if (mode === 'modeStatusSekolah') { if (pageTitle) pageTitle.textContent = "Status & Baseline Sekolah Model"; loadStatusSekolahModelData(); }
-            else if (mode === 'mode8') { if (pageTitle) pageTitle.textContent = "Pengaturan Rentang Waktu"; }
-            else if (mode === 'modeKombel') { if (pageTitle) pageTitle.textContent = "Master Komunitas Belajar (1.804)"; loadKombelData(); }
-            else if (mode === 'modePegawai') { if (pageTitle) pageTitle.textContent = "Master Pegawai BGTK (57)"; loadPegawaiData(); }
-            else if (mode === 'modeAkses') { if (pageTitle) pageTitle.textContent = "Pengaturan Hak Akses & Role"; loadUserRolesData(); }
+            const trackBadge = document.getElementById('adminProgramTrackBadge');
+            const pillText = document.getElementById('activeWorkspacePillText');
+
+            const tabSekolah = document.getElementById('tabWorkspaceSekolahModel');
+            const tabFKK = document.getElementById('tabWorkspaceFKK');
+            const tabDash = document.getElementById('tabWorkspaceDashboard');
+            const tabMaster = document.getElementById('tabWorkspaceMaster');
+
+            const defaultTabClass = "workspace-track-tab px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-2 border border-slate-200 text-slate-700 hover:bg-slate-100 bg-white";
+
+            // Reset tab styles
+            if (tabSekolah) tabSekolah.className = defaultTabClass;
+            if (tabFKK) tabFKK.className = defaultTabClass;
+            if (tabDash) tabDash.className = defaultTabClass;
+            if (tabMaster) tabMaster.className = defaultTabClass;
+
+            if (mode === 'mode0') { 
+                if (pageTitle) pageTitle.textContent = gCurrentLoggedRole === 'Admin Sekolah Model' ? "Dashboard Sekolah Model" : (gCurrentLoggedRole === 'Admin FKK' ? "Dashboard PMKKA KK" : "Dashboard Utama Admin"); 
+                if (trackBadge) trackBadge.innerHTML = '👑 Monitoring Terpadu';
+                if (pillText) {
+                    pillText.className = 'px-2.5 py-0.5 rounded-full bg-purple-100 text-purple-900 border border-purple-300 font-black';
+                    pillText.textContent = '👑 Monitoring Terpadu';
+                }
+                if (tabDash) tabDash.className = "workspace-track-tab px-3.5 py-1.5 rounded-xl text-xs font-black transition-all flex items-center gap-2 border border-purple-600 bg-purple-600 text-white shadow-sm";
+                loadDashboardUtamaData(); 
+            }
+            else if (mode === 'modeKombel') { 
+                if (pageTitle) pageTitle.textContent = "Master Komunitas Belajar & 54 Sasaran KK"; 
+                if (trackBadge) trackBadge.innerHTML = '⭐ Program PMKKA KK (54 Sasaran)';
+                if (pillText) {
+                    pillText.className = 'px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-950 border border-amber-300 font-black';
+                    pillText.textContent = '⭐ Ruang Kerja: 54 Sasaran KK';
+                }
+                if (tabFKK) tabFKK.className = "workspace-track-tab px-3.5 py-1.5 rounded-xl text-xs font-black transition-all flex items-center gap-2 border border-amber-500 bg-amber-500 text-slate-950 shadow-sm";
+                loadKombelData(); 
+            }
+            else if (mode === 'modeStatusSekolah' || mode === 'mode5' || mode === 'mode7' || mode === 'mode3' || mode === 'mode4' || mode === 'mode1' || mode === 'mode2') { 
+                if (tabSekolah) tabSekolah.className = "workspace-track-tab px-3.5 py-1.5 rounded-xl text-xs font-black transition-all flex items-center gap-2 border border-teal-600 bg-teal-600 text-white shadow-sm";
+                if (pillText) {
+                    pillText.className = 'px-2.5 py-0.5 rounded-full bg-teal-100 text-teal-950 border border-teal-300 font-black';
+                    pillText.textContent = '🏫 Ruang Kerja: 25 Sekolah Model';
+                }
+                if (trackBadge) trackBadge.innerHTML = '🏫 Program Sekolah Model (25 Sasaran)';
+
+                if (mode === 'modeStatusSekolah') { if (pageTitle) pageTitle.textContent = "Status & Baseline 25 Sekolah Model"; loadStatusSekolahModelData(); }
+                else if (mode === 'mode5') { if (pageTitle) pageTitle.textContent = "Assign Pendamping Sekolah Model"; loadManajemenSekolahData(); }
+                else if (mode === 'mode7') { if (pageTitle) pageTitle.textContent = "Jadwal Kunjungan Semua Sekolah Model"; loadDataKunjunganData(); }
+                else if (mode === 'mode3') { if (pageTitle) pageTitle.textContent = "Data Fasilitator Sekolah Model"; loadFasilitatorData(); }
+                else if (mode === 'mode4') { if (pageTitle) pageTitle.textContent = "Jadwal & Laporan Fasilitator Sekolah"; loadJadwalFasilData(); }
+                else if (mode === 'mode1') { if (pageTitle) pageTitle.textContent = "Progres Verifikasi Sekolah Model"; }
+                else if (mode === 'mode2') { if (pageTitle) pageTitle.textContent = "Rencana Pengkelasan Sekolah Model"; }
+            }
+            else if (mode === 'modePegawai' || mode === 'mode8' || mode === 'modeAkses') { 
+                if (tabMaster) tabMaster.className = "workspace-track-tab px-3.5 py-1.5 rounded-xl text-xs font-black transition-all flex items-center gap-2 border border-emerald-700 bg-emerald-700 text-white shadow-sm";
+                if (pillText) {
+                    pillText.className = 'px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-950 border border-emerald-300 font-black';
+                    pillText.textContent = '⚙️ Data Master & Administrasi';
+                }
+                if (trackBadge) trackBadge.innerHTML = '⚙️ Administrasi BGTK';
+
+                if (mode === 'modePegawai') { if (pageTitle) pageTitle.textContent = "Master Pegawai BGTK (57)"; loadPegawaiData(); }
+                else if (mode === 'mode8') { if (pageTitle) pageTitle.textContent = "Pengaturan Rentang Waktu"; }
+                else if (mode === 'modeAkses') { if (pageTitle) pageTitle.textContent = "Pengaturan Hak Akses & Role"; loadUserRolesData(); }
+            }
         }
 
         // ==========================================
@@ -1768,18 +2124,25 @@
 
                 let combinedUsersMap = {};
 
-                // 1. Always ensure Super Admin is included
-                const superAdminKey = sanitizeEmailKey('mastersumbar1@gmail.com');
-                combinedUsersMap[superAdminKey] = {
-                    email: 'mastersumbar1@gmail.com',
-                    nama: 'Super Admin Utama',
-                    role: 'Super Admin',
-                    permissions: {
-                        dashboard: true, master_pegawai: true, master_kombel: true,
-                        fasilitator: true, jadwal_kunjungan: true, setting_jadwal: true,
-                        persuratan: true, access_management: true
-                    }
-                };
+                // 1. Always ensure Super Admins are included (mastersumbar1 & Irawati)
+                const superAdminUsers = [
+                    { email: 'mastersumbar1@gmail.com', nama: 'Super Admin Utama' },
+                    { email: 'irawati.2308@gmail.com', nama: 'IRAWATI, S.Pd, M.Pd.' },
+                    { email: 'irawati@kemendikdasmen.go.id', nama: 'IRAWATI, S.Pd, M.Pd.' }
+                ];
+                superAdminUsers.forEach(sa => {
+                    const saKey = sanitizeEmailKey(sa.email);
+                    combinedUsersMap[saKey] = {
+                        email: sa.email,
+                        nama: sa.nama,
+                        role: 'Super Admin',
+                        permissions: {
+                            dashboard: true, master_pegawai: true, master_kombel: true,
+                            fasilitator: true, jadwal_kunjungan: true, setting_jadwal: true,
+                            persuratan: true, access_management: true
+                        }
+                    };
+                });
 
                 // 2. Add Pegawai
                 Object.values(pegawaiData).forEach(p => {
@@ -1821,7 +2184,25 @@
                     }
                 });
 
-                // 4. Override with stored roles in Firebase
+                // 4. Add Admin FKK Defaults
+                Object.entries(ADMIN_FKK_MAPPING).forEach(([email, data]) => {
+                    const cleanEmail = email.toLowerCase();
+                    const key = sanitizeEmailKey(cleanEmail);
+                    if (!combinedUsersMap[key] || combinedUsersMap[key].role === 'Admin') {
+                        combinedUsersMap[key] = {
+                            email: cleanEmail,
+                            nama: data.adminNama || 'Admin FKK',
+                            role: 'Admin FKK',
+                            permissions: {
+                                dashboard: true, master_pegawai: true, master_kombel: true,
+                                fasilitator: true, jadwal_kunjungan: false, setting_jadwal: false,
+                                persuratan: false, access_management: false
+                            }
+                        };
+                    }
+                });
+
+                // 5. Override with stored roles in Firebase
                 Object.keys(rolesData).forEach(key => {
                     if (combinedUsersMap[key]) {
                         combinedUsersMap[key] = { ...combinedUsersMap[key], ...rolesData[key] };
@@ -1830,15 +2211,18 @@
                     }
                 });
 
-                // Force mastersumbar1@gmail.com to remain Super Admin
-                if (combinedUsersMap[superAdminKey]) {
-                    combinedUsersMap[superAdminKey].role = 'Super Admin';
-                    combinedUsersMap[superAdminKey].permissions = {
-                        dashboard: true, master_pegawai: true, master_kombel: true,
-                        fasilitator: true, jadwal_kunjungan: true, setting_jadwal: true,
-                        persuratan: true, access_management: true
-                    };
-                }
+                // Force Super Admins to remain Super Admin
+                superAdminUsers.forEach(sa => {
+                    const saKey = sanitizeEmailKey(sa.email);
+                    if (combinedUsersMap[saKey]) {
+                        combinedUsersMap[saKey].role = 'Super Admin';
+                        combinedUsersMap[saKey].permissions = {
+                            dashboard: true, master_pegawai: true, master_kombel: true,
+                            fasilitator: true, jadwal_kunjungan: true, setting_jadwal: true,
+                            persuratan: true, access_management: true
+                        };
+                    }
+                });
 
                 gUserRolesCache = combinedUsersMap;
                 renderUserRolesTable(Object.values(combinedUsersMap));
@@ -1866,12 +2250,15 @@
 
             let html = '';
             userList.forEach((user, idx) => {
-                const key = sanitizeEmailKey(user.email);
-                const isSuperAdmin = (user.email === 'mastersumbar1@gmail.com' || user.role === 'Super Admin');
+                const cleanUserEmail = (user.email || '').toLowerCase();
+                const key = sanitizeEmailKey(cleanUserEmail);
+                const isSuperAdmin = (SUPER_ADMIN_EMAILS.includes(cleanUserEmail) || user.role === 'Super Admin');
 
                 let roleBadge = '';
                 if (isSuperAdmin) {
                     roleBadge = `<span class="px-2.5 py-1 rounded-full text-xs font-black bg-purple-100 text-purple-800 border border-purple-200">👑 Super Admin</span>`;
+                } else if (user.role === 'Admin FKK') {
+                    roleBadge = `<span class="px-2.5 py-1 rounded-full text-xs font-black bg-amber-100 text-amber-900 border border-amber-300">⭐ Admin FKK</span>`;
                 } else if (user.role === 'Admin Sekolah Model') {
                     roleBadge = `<span class="px-2.5 py-1 rounded-full text-xs font-black bg-teal-100 text-teal-800 border border-teal-200">🏫 Admin Sekolah Model</span>`;
                 } else if (user.role === 'Fasilitator') {
@@ -1883,7 +2270,7 @@
                 const p = user.permissions || {};
                 let permBadges = [];
                 if (p.master_pegawai) permBadges.push('<span class="bg-slate-100 text-slate-700 px-2 py-0.5 rounded font-mono text-[11px]">Pegawai</span>');
-                if (p.master_kombel) permBadges.push('<span class="bg-slate-100 text-slate-700 px-2 py-0.5 rounded font-mono text-[11px]">Kombel</span>');
+                if (p.master_kombel) permBadges.push('<span class="bg-amber-100 text-amber-800 px-2 py-0.5 rounded font-mono text-[11px] font-bold">Kombel</span>');
                 if (p.fasilitator) permBadges.push('<span class="bg-slate-100 text-slate-700 px-2 py-0.5 rounded font-mono text-[11px]">Fasilitator</span>');
                 if (p.jadwal_kunjungan) permBadges.push('<span class="bg-slate-100 text-slate-700 px-2 py-0.5 rounded font-mono text-[11px]">Jadwal/Laporan</span>');
                 if (p.persuratan) permBadges.push('<span class="bg-slate-100 text-slate-700 px-2 py-0.5 rounded font-mono text-[11px]">Persuratan</span>');
@@ -1930,14 +2317,14 @@
             const namaInput = document.getElementById('editRoleNama');
             emailInput.value = '';
             emailInput.readOnly = false;
-            emailInput.placeholder = 'contoh: admin.sekolahmodel@gmail.com';
+            emailInput.placeholder = 'contoh: admin.fkk@gmail.com';
             emailInput.className = 'w-full border border-slate-300 rounded-xl px-4 py-2 text-sm bg-white text-slate-800 font-semibold focus:ring-2 focus:ring-purple-500';
             namaInput.value = '';
             namaInput.readOnly = false;
             namaInput.placeholder = 'Nama Lengkap Admin';
             namaInput.className = 'w-full border border-slate-300 rounded-xl px-4 py-2 text-sm bg-white text-slate-800 font-medium focus:ring-2 focus:ring-purple-500';
 
-            document.getElementById('editRoleSelect').value = 'Admin Sekolah Model';
+            document.getElementById('editRoleSelect').value = 'Admin FKK';
             toggleRolePresets();
 
             document.getElementById('modalEditHakAkses').classList.remove('hidden');
@@ -1981,6 +2368,14 @@
                 document.getElementById('perm_setting_jadwal').checked = true;
                 document.getElementById('perm_persuratan').checked = true;
                 document.getElementById('perm_access_management').checked = true;
+            } else if (role === 'Admin FKK') {
+                document.getElementById('perm_master_pegawai').checked = true;
+                document.getElementById('perm_master_kombel').checked = true;
+                document.getElementById('perm_fasilitator').checked = true;
+                document.getElementById('perm_jadwal_kunjungan').checked = false;
+                document.getElementById('perm_setting_jadwal').checked = false;
+                document.getElementById('perm_persuratan').checked = false;
+                document.getElementById('perm_access_management').checked = false;
             } else if (role === 'Admin Sekolah Model') {
                 document.getElementById('perm_master_pegawai').checked = false;
                 document.getElementById('perm_master_kombel').checked = false;
@@ -2241,12 +2636,24 @@
             renderKombelTable();
         }
 
+        function filterKombelBySasaran() {
+            // Set filter dropdown ke SASARAN dan trigger filter
+            const statusFilterEl = document.getElementById('filterStatusSasaran');
+            if (statusFilterEl) {
+                statusFilterEl.value = 'SASARAN';
+                // Scroll ke area tabel
+                const tblArea = document.getElementById('tableKombelBody');
+                if (tblArea) tblArea.closest('.bg-white')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+            filterKombelData();
+        }
+
         function renderKombelTable() {
             const body = document.getElementById('tableKombelBody');
             const pagination = document.getElementById('kombelPagination');
             if (!body) return;
             if (gFilteredKombels.length === 0) {
-                body.innerHTML = `<tr><td colspan="7" class="px-6 py-12 text-center text-slate-400">Tidak ada Komunitas Belajar yang sesuai filter.</td></tr>`;
+                body.innerHTML = `<tr><td colspan="8" class="px-6 py-12 text-center text-slate-400">Tidak ada Komunitas Belajar yang sesuai filter.</td></tr>`;
                 if (pagination) pagination.innerHTML = '';
                 return;
             }
@@ -2255,11 +2662,66 @@
             const pageItems = gFilteredKombels.slice(start, end);
             body.innerHTML = pageItems.map((k, i) => {
                 const isSasaran = !!k.is_sasaran;
-                const badgeSasaran = isSasaran ? `<span class="px-2.5 py-1 rounded-full text-xs font-extrabold bg-amber-100 text-amber-800 border border-amber-300">⭐ Sasaran PMKKA</span>` : `<span class="px-2.5 py-1 rounded-full text-xs font-medium bg-slate-100 text-slate-500">Biasa</span>`;
-                const btnToggle = isSasaran
-                    ? `<button onclick="toggleSasaranKombel('${k.id}', false)" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-rose-50 text-rose-700 hover:bg-rose-100 transition-colors border border-rose-200">❌ Batal Sasaran</button>`
-                    : `<button onclick="toggleSasaranKombel('${k.id}', true)" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-amber-50 text-amber-800 hover:bg-amber-100 transition-colors border border-amber-300">⭐ Tandai Sasaran</button>`;
-                return `<tr class="hover:bg-slate-50 transition-colors ${isSasaran ? 'bg-amber-50/40 font-medium' : ''}"><td class="px-4 py-3 text-center text-slate-400 text-xs font-bold">${start + i + 1}</td><td class="px-4 py-3"><div class="font-bold text-slate-800 text-sm whitespace-normal max-w-md">${k.nama_kombel}</div><div class="text-xs text-slate-500 mt-0.5">${k.jenjang || ''} ${k.instansi ? '• ' + k.instansi : ''}</div></td><td class="px-4 py-3"><div class="font-semibold text-slate-700 text-xs">${k.kab_kota || '-'}</div><div class="text-[11px] text-slate-500">${k.kecamatan || ''}</div></td><td class="px-4 py-3"><div class="font-semibold text-slate-800 text-xs">${k.nama_ketua || '-'}</div><div class="text-[11px] text-slate-500">${k.email || k.no_hp || '-'}</div></td><td class="px-4 py-3 text-center text-xs font-bold text-slate-600">${k.jumlah_anggota || 0}</td><td class="px-4 py-3 text-center">${badgeSasaran}</td><td class="px-4 py-3 text-center">${btnToggle}</td></tr>`;
+                const pesertaList = k.peserta ? (Array.isArray(k.peserta) ? k.peserta : Object.values(k.peserta)) : [];
+                const pesertaCount = pesertaList.length > 0 ? pesertaList.length : (k.jumlah_anggota || 0);
+                const hasImportedPeserta = pesertaList.length > 0;
+
+                // Fasilitator Column Content
+                let fasilColHtml = `<span class="text-slate-300 text-xs">-</span>`;
+                if (isSasaran) {
+                    if (k.fasil_nama) {
+                        fasilColHtml = `
+                        <button onclick="openKelolaKombelModal('${k.id}')" title="Klik untuk mengubah penugasan fasilitator" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-black bg-purple-100 hover:bg-purple-200 text-purple-900 border border-purple-300 transition-all shadow-2xs hover:scale-105">
+                            <span>🤝 ${k.fasil_nama}</span>
+                            <span class="text-[10px] bg-purple-200 text-purple-950 px-1.5 py-0.5 rounded font-extrabold">Ubah ✏️</span>
+                        </button>`;
+                    } else {
+                        fasilColHtml = `
+                        <button onclick="openKelolaKombelModal('${k.id}')" title="Klik untuk memilih fasilitator pendamping" class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-black bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-500 hover:to-amber-600 text-amber-950 border border-amber-500 transition-all shadow-sm hover:scale-105">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"/></svg>
+                            <span>PILIH FASIL ↗</span>
+                        </button>`;
+                    }
+                }
+
+                const badgeSasaran = isSasaran 
+                    ? `<button onclick="openKelolaKombelModal('${k.id}')" title="Klik untuk Kelola Fasilitator & Peserta" class="px-2.5 py-1 rounded-full text-xs font-black bg-amber-100 hover:bg-amber-200 text-amber-900 border border-amber-300 transition-all shadow-2xs hover:scale-105 inline-flex items-center gap-1 cursor-pointer"><span>⭐ 54 Sasaran KK</span></button>` 
+                    : `<span class="px-2.5 py-1 rounded-full text-xs font-medium bg-slate-100 text-slate-500">Bukan Sasaran</span>`;
+
+                const btnActions = isSasaran
+                    ? `<div class="flex items-center justify-center gap-1.5">
+                        <button onclick="openKelolaKombelModal('${k.id}')" class="px-3 py-1.5 rounded-xl text-xs font-black bg-indigo-600 hover:bg-indigo-700 text-white transition-colors shadow-2xs flex items-center gap-1">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+                            <span>Kelola &amp; CSV</span>
+                        </button>
+                        <button onclick="toggleSasaranKombel('${k.id}', false)" title="Batalkan status sasaran" class="p-1.5 rounded-xl text-xs font-bold bg-rose-50 text-rose-700 hover:bg-rose-100 transition-colors border border-rose-200">❌</button>
+                       </div>`
+                    : `<button onclick="toggleSasaranKombel('${k.id}', true)" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-amber-50 text-amber-900 hover:bg-amber-100 transition-colors border border-amber-300">⭐ Tandai Sasaran</button>`;
+
+                const anggotaHtml = hasImportedPeserta
+                    ? `<button onclick="openKelolaKombelModal('${k.id}')" class="px-2.5 py-0.5 rounded-full text-xs font-extrabold bg-emerald-100 text-emerald-800 border border-emerald-200 shadow-2xs hover:scale-105 transition-transform">${pesertaCount} Peserta</button>`
+                    : `<span class="text-xs font-bold text-slate-600">${pesertaCount}</span>`;
+
+                return `
+                <tr class="hover:bg-slate-50 transition-colors ${isSasaran ? 'bg-amber-50/40 font-medium' : ''}">
+                    <td class="px-4 py-3 text-center text-slate-400 text-xs font-bold">${start + i + 1}</td>
+                    <td class="px-4 py-3">
+                        <div class="font-bold text-slate-800 text-sm whitespace-normal max-w-xs">${k.nama_kombel}</div>
+                        <div class="text-xs text-slate-500 mt-0.5">${k.jenjang || ''} ${k.instansi ? '• ' + k.instansi : ''}</div>
+                    </td>
+                    <td class="px-4 py-3">
+                        <div class="font-semibold text-slate-700 text-xs">${k.kab_kota || '-'}</div>
+                        <div class="text-[11px] text-slate-500">${k.kecamatan || ''} ${k.desa_kelurahan ? '• ' + k.desa_kelurahan : ''}</div>
+                    </td>
+                    <td class="px-4 py-3 text-center bg-purple-50/20 border-x border-purple-100/50">${fasilColHtml}</td>
+                    <td class="px-4 py-3">
+                        <div class="font-semibold text-slate-800 text-xs">${k.nama_ketua || '-'}</div>
+                        <div class="text-[11px] text-slate-500">${k.email || k.no_hp || '-'}</div>
+                    </td>
+                    <td class="px-4 py-3 text-center">${anggotaHtml}</td>
+                    <td class="px-4 py-3 text-center">${badgeSasaran}</td>
+                    <td class="px-4 py-3 text-center">${btnActions}</td>
+                </tr>`;
             }).join('');
             const totalPages = Math.ceil(gFilteredKombels.length / gKombelPerPage);
             if (pagination) {
@@ -2275,6 +2737,436 @@
                 if (gAllKombels[id]) gAllKombels[id].is_sasaran = isSasaran;
                 filterKombelData();
             } catch(e) { alert("Gagal mengupdate status: " + e.message); }
+        }
+
+        // ==========================================
+        // MODAL KELOLA KOMBEL SASARAN & IMPORT PESERTA (PMKKA KK)
+        // ==========================================
+        let gCurrentModalKombelId = null;
+        let gTempUploadedPeserta = [];
+        let gCachedFasilitators = null;
+
+        async function openKelolaKombelModal(kombelId) {
+            gCurrentModalKombelId = kombelId;
+            const kombel = gAllKombels[kombelId] || {};
+
+            document.getElementById('modalCurrentKombelId').value = kombelId;
+            document.getElementById('modalKombelNama').textContent = kombel.nama_kombel || 'Kelompok Kerja';
+            document.getElementById('modalKombelJenjangBadge').textContent = kombel.jenjang || 'Semua Jenjang';
+            document.getElementById('modalKombelKabBadge').textContent = kombel.kab_kota || 'Sumatera Barat';
+            document.getElementById('modalKombelKecDesa').textContent = `${kombel.kecamatan || '-'} • ${kombel.desa_kelurahan || '-'}`;
+            document.getElementById('modalKombelKetuaKontak').textContent = `Ketua: ${kombel.nama_ketua || '-'} (${kombel.email || kombel.no_hp || '-'})`;
+
+            // Reset upload preview
+            cancelUploadPreview();
+
+            // Populate Fasilitator selector
+            await populateModalFasilSelect(kombel);
+
+            // Render existing registered participants
+            renderActivePesertaTable(kombel);
+
+            document.getElementById('modalKelolaKombelSasaran').classList.remove('hidden');
+        }
+
+        function closeKelolaKombelModal() {
+            document.getElementById('modalKelolaKombelSasaran').classList.add('hidden');
+            gCurrentModalKombelId = null;
+            gTempUploadedPeserta = [];
+        }
+
+        async function populateModalFasilSelect(kombel) {
+            const sel = document.getElementById('modalSelectFasilKombel');
+            const badge = document.getElementById('statusFasilTerpilihBadge');
+            if (!sel) return;
+
+            try {
+                if (!gCachedFasilitators) {
+                    const snap = await db.ref('fasilitator').once('value');
+                    gCachedFasilitators = snap.val() || {};
+                }
+
+                let options = '<option value="">-- Pilih Fasilitator Pendamping KK --</option>';
+                const fasilList = Object.values(gCachedFasilitators);
+
+                fasilList.forEach(f => {
+                    const fId = f.id || f.key;
+                    const mapelSub = f.mapel_kombel || f.mapel || '';
+                    const instansiSub = f.instansi ? ` - ${f.instansi}` : '';
+                    const selected = (fId === kombel.fasil_id || f.nama === kombel.fasil_nama) ? 'selected' : '';
+                    options += `<option value="${fId}" data-nama="${f.nama}" ${selected}>${f.nama} (${f.jabatan || 'Fasilitator'}${instansiSub}${mapelSub ? ' • ' + mapelSub : ''})</option>`;
+                });
+
+                sel.innerHTML = options;
+
+                if (kombel.fasil_nama) {
+                    if (badge) badge.innerHTML = `<span class="px-2.5 py-1 rounded-full font-bold bg-emerald-100 text-emerald-800 border border-emerald-200">✅ Ditugaskan: ${kombel.fasil_nama}</span>`;
+                } else {
+                    if (badge) badge.innerHTML = `<span class="px-2.5 py-1 rounded-full font-bold bg-amber-100 text-amber-800 border border-amber-200">⚠️ Belum Ada Fasilitator</span>`;
+                }
+            } catch(e) {
+                console.error("Gagal memuat list fasilitator:", e);
+            }
+        }
+
+        async function simpanPenugasanFasilKombel() {
+            if (!gCurrentModalKombelId) return;
+            const sel = document.getElementById('modalSelectFasilKombel');
+            const fasilId = sel.value;
+            const fasilNama = sel.options[sel.selectedIndex]?.getAttribute('data-nama') || '';
+
+            try {
+                await db.ref(`master_kombel/${gCurrentModalKombelId}`).update({
+                    fasil_id: fasilId || null,
+                    fasil_nama: fasilNama || null
+                });
+
+                if (gAllKombels[gCurrentModalKombelId]) {
+                    gAllKombels[gCurrentModalKombelId].fasil_id = fasilId || null;
+                    gAllKombels[gCurrentModalKombelId].fasil_nama = fasilNama || null;
+                }
+
+                const badge = document.getElementById('statusFasilTerpilihBadge');
+                if (fasilNama) {
+                    if (badge) badge.innerHTML = `<span class="px-2.5 py-1 rounded-full font-bold bg-emerald-100 text-emerald-800 border border-emerald-200">✅ Ditugaskan: ${fasilNama}</span>`;
+                } else {
+                    if (badge) badge.innerHTML = `<span class="px-2.5 py-1 rounded-full font-bold bg-amber-100 text-amber-800 border border-amber-200">⚠️ Belum Ada Fasilitator</span>`;
+                }
+
+                renderKombelTable();
+                alert("✅ Berhasil menyimpan penugasan fasilitator untuk kelompok kerja ini!");
+            } catch(e) {
+                alert("Gagal menyimpan penugasan: " + e.message);
+            }
+        }
+
+        // ==========================================
+        // CSV PARSER & EMAIL VALIDATOR (FORMAT 1)
+        // ==========================================
+        function parseCSVTextRobust(text) {
+            const lines = [];
+            let curLine = [];
+            let curCell = '';
+            let inQuotes = false;
+
+            for (let i = 0; i < text.length; i++) {
+                const c = text[i];
+                if (c === '"') {
+                    if (inQuotes && text[i+1] === '"') {
+                        curCell += '"';
+                        i++;
+                    } else {
+                        inQuotes = !inQuotes;
+                    }
+                } else if (c === ',' && !inQuotes) {
+                    curLine.push(curCell.trim());
+                    curCell = '';
+                } else if ((c === '\r' || c === '\n') && !inQuotes) {
+                    if (c === '\r' && text[i+1] === '\n') i++;
+                    curLine.push(curCell.trim());
+                    if (curLine.some(x => x !== '')) lines.push(curLine);
+                    curLine = [];
+                    curCell = '';
+                } else {
+                    curCell += c;
+                }
+            }
+            if (curCell || curLine.length > 0) {
+                curLine.push(curCell.trim());
+                if (curLine.some(x => x !== '')) lines.push(curLine);
+            }
+            return lines;
+        }
+
+        function validateEmailPeserta(email) {
+            if (!email) return { isValid: false, isTypo: true, reason: 'Email kosong' };
+            const clean = email.trim().toLowerCase();
+
+            // Check typo indicators
+            if (clean.includes('@gutu.') || clean.includes('@guri.') || clean.includes('@gitu.') || clean.includes('belajr') || clean.includes('belajar.com')) {
+                return { isValid: false, isTypo: true, reason: 'Format dicurigai typo (misal: @gutu / domain salah)' };
+            }
+
+            // Must have @ and at least one dot
+            const standardEmailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!standardEmailRegex.test(clean)) {
+                return { isValid: false, isTypo: true, reason: 'Bukan format email valid' };
+            }
+
+            // Ideal Belajar ID check
+            const isBelajarId = clean.includes('.belajar.id') || clean.includes('@kemendikdasmen.go.id') || clean.includes('@guru.sd.belajar.id') || clean.includes('@guru.smp.belajar.id') || clean.includes('@guru.sma.belajar.id') || clean.includes('@guru.smk.belajar.id') || clean.includes('@admin.');
+            
+            return { isValid: true, isTypo: false, isBelajarId: isBelajarId, reason: 'Format Valid' };
+        }
+
+        function handlePesertaCSVUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const content = e.target.result;
+                    const rows = parseCSVTextRobust(content);
+
+                    if (rows.length < 2) {
+                        alert("File CSV tidak memiliki baris data peserta.");
+                        return;
+                    }
+
+                    // Map rows
+                    const pesertaList = [];
+                    let hasTypo = false;
+
+                    for (let i = 1; i < rows.length; i++) {
+                        const r = rows[i];
+                        if (r.length < 5 || !r.some(x => x !== '')) continue;
+
+                        const email = r[10] || r[11] || '';
+                        const validation = validateEmailPeserta(email);
+                        if (!validation.isValid) hasTypo = true;
+
+                        pesertaList.push({
+                            slug: r[0] || '',
+                            nama_kombel_csv: r[1] || '',
+                            tipe_kombel: r[2] || '',
+                            provinsi: r[3] || '',
+                            kab_kota: r[4] || '',
+                            kecamatan: r[5] || '',
+                            desa: r[6] || '',
+                            nama_anggota: r[7] || '',
+                            sekolah: r[8] || '',
+                            npsn: r[9] || '',
+                            email: email,
+                            role: r[11] || r[12] || 'Anggota',
+                            isValidEmail: validation.isValid,
+                            validationReason: validation.reason
+                        });
+                    }
+
+                    gTempUploadedPeserta = pesertaList;
+                    renderPreviewPesertaTable(hasTypo);
+
+                } catch(err) {
+                    alert("Gagal membaca file CSV: " + err.message);
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        function renderPreviewPesertaTable(hasTypoFlag) {
+            const previewBox = document.getElementById('modalPesertaUploadPreview');
+            const tbody = document.getElementById('modalTablePreviewBody');
+            const statsEl = document.getElementById('modalPreviewStats');
+            const warningBanner = document.getElementById('modalEmailWarningBanner');
+
+            if (!previewBox || !tbody) return;
+
+            previewBox.classList.remove('hidden');
+
+            const typoCount = gTempUploadedPeserta.filter(p => !p.isValidEmail).length;
+            if (statsEl) {
+                statsEl.innerHTML = `<strong>${gTempUploadedPeserta.length}</strong> Calon Peserta terbaca ${typoCount > 0 ? `• <span class="text-amber-600 font-bold">⚠️ ${typoCount} Email Perlu Diperiksa</span>` : '• <span class="text-emerald-600 font-bold">✅ Semua Format Email Valid</span>'}`;
+            }
+
+            if (typoCount > 0 || hasTypoFlag) {
+                if (warningBanner) warningBanner.classList.remove('hidden');
+            } else {
+                if (warningBanner) warningBanner.classList.add('hidden');
+            }
+
+            tbody.innerHTML = gTempUploadedPeserta.map((p, idx) => {
+                const isWarning = !p.isValidEmail;
+                const statusBadge = isWarning
+                    ? `<span class="px-2 py-0.5 rounded-md text-[11px] font-bold bg-amber-100 text-amber-900 border border-amber-300 block">⚠️ ${p.validationReason}</span>`
+                    : `<span class="px-2 py-0.5 rounded-md text-[11px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-200">✅ Valid</span>`;
+
+                return `
+                <tr class="hover:bg-slate-50 transition-colors ${isWarning ? 'bg-amber-50/60 font-semibold' : ''}">
+                    <td class="px-3 py-2 text-center text-slate-400 font-bold">${idx + 1}</td>
+                    <td class="px-3 py-2">
+                        <div class="font-bold text-slate-800">${p.nama_anggota || '-'}</div>
+                    </td>
+                    <td class="px-3 py-2">
+                        <div class="font-medium text-slate-700">${p.sekolah || '-'}</div>
+                        <div class="text-[10px] text-slate-400 font-mono">NPSN: ${p.npsn || '-'}</div>
+                    </td>
+                    <td class="px-3 py-2">
+                        <div class="flex items-center gap-1.5">
+                            <input type="text" value="${p.email}" onchange="updateTempPesertaEmail(${idx}, this.value)" class="px-2 py-1 border ${isWarning ? 'border-amber-400 bg-amber-50 text-amber-950 font-bold' : 'border-slate-300 bg-white text-slate-800'} rounded-lg text-xs w-64 focus:ring-2 focus:ring-purple-500 focus:outline-none font-mono" title="Klik untuk mengedit/memperbaiki email">
+                        </div>
+                    </td>
+                    <td class="px-3 py-2 text-center">
+                        <span class="px-2 py-0.5 rounded-md text-[10px] font-bold ${p.role.toLowerCase() === 'ketua' ? 'bg-purple-100 text-purple-800' : 'bg-slate-100 text-slate-600'}">${p.role}</span>
+                    </td>
+                    <td class="px-3 py-2 text-center">${statusBadge}</td>
+                </tr>`;
+            }).join('');
+        }
+
+        function updateTempPesertaEmail(idx, newEmail) {
+            if (!gTempUploadedPeserta[idx]) return;
+            gTempUploadedPeserta[idx].email = newEmail.trim();
+            const val = validateEmailPeserta(newEmail);
+            gTempUploadedPeserta[idx].isValidEmail = val.isValid;
+            gTempUploadedPeserta[idx].validationReason = val.reason;
+            renderPreviewPesertaTable(false);
+        }
+
+        function cancelUploadPreview() {
+            gTempUploadedPeserta = [];
+            const fileInput = document.getElementById('modalInputPesertaCSV');
+            if (fileInput) fileInput.value = '';
+            const previewBox = document.getElementById('modalPesertaUploadPreview');
+            if (previewBox) previewBox.classList.add('hidden');
+        }
+
+        async function simpanPesertaKombel() {
+            if (!gCurrentModalKombelId || gTempUploadedPeserta.length === 0) return;
+
+            const btn = document.getElementById('btnSimpanPesertaBatch');
+            if (btn) { btn.disabled = true; btn.textContent = 'Menyimpan ke Firebase...'; }
+
+            try {
+                // Save to master_kombel/{id}/peserta
+                await db.ref(`master_kombel/${gCurrentModalKombelId}/peserta`).set(gTempUploadedPeserta);
+                await db.ref(`master_kombel/${gCurrentModalKombelId}/jumlah_anggota`).set(gTempUploadedPeserta.length);
+
+                if (gAllKombels[gCurrentModalKombelId]) {
+                    gAllKombels[gCurrentModalKombelId].peserta = gTempUploadedPeserta;
+                    gAllKombels[gCurrentModalKombelId].jumlah_anggota = gTempUploadedPeserta.length;
+                }
+
+                alert(`✅ Berhasil menyimpan ${gTempUploadedPeserta.length} data peserta ke database!`);
+
+                // Re-render
+                renderActivePesertaTable(gAllKombels[gCurrentModalKombelId]);
+                cancelUploadPreview();
+                renderKombelTable();
+
+            } catch(e) {
+                alert("Gagal menyimpan peserta: " + e.message);
+            } finally {
+                if (btn) { btn.disabled = false; btn.textContent = 'Simpan ke Database'; }
+            }
+        }
+
+        function renderActivePesertaTable(kombel) {
+            const tbody = document.getElementById('modalTableActivePesertaBody');
+            const badge = document.getElementById('modalActivePesertaCountBadge');
+            if (!tbody) return;
+
+            const rawPeserta = kombel.peserta || [];
+            const pesertaList = Array.isArray(rawPeserta) ? rawPeserta : Object.values(rawPeserta);
+
+            if (badge) badge.textContent = `${pesertaList.length} Peserta`;
+
+            if (pesertaList.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" class="px-4 py-8 text-center text-slate-400">Belum ada data peserta yang diimpor untuk kelompok kerja ini. Silakan pilih file CSV di atas.</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = pesertaList.map((p, idx) => {
+                return `
+                <tr class="hover:bg-slate-50 transition-colors">
+                    <td class="px-3 py-2.5 text-center text-slate-400 font-bold">${idx + 1}</td>
+                    <td class="px-3 py-2.5 font-bold text-slate-800">${p.nama_anggota || '-'}</td>
+                    <td class="px-3 py-2.5">
+                        <div class="font-medium text-slate-700">${p.sekolah || '-'}</div>
+                        <div class="text-[10px] text-slate-400 font-mono">NPSN: ${p.npsn || '-'}</div>
+                    </td>
+                    <td class="px-3 py-2.5 font-mono text-xs text-indigo-700 font-semibold">${p.email || '-'}</td>
+                    <td class="px-3 py-2.5 text-center">
+                        <span class="px-2 py-0.5 rounded-md text-[10px] font-bold ${ (p.role || '').toLowerCase() === 'ketua' ? 'bg-purple-100 text-purple-800' : 'bg-slate-100 text-slate-600'}">${p.role || 'Anggota'}</span>
+                    </td>
+                    <td class="px-3 py-2.5 text-center">
+                        <button onclick="hapusPesertaKombel(${idx})" title="Hapus Peserta" class="text-rose-500 hover:text-rose-700 p-1 hover:bg-rose-50 rounded transition-colors">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                        </button>
+                    </td>
+                </tr>`;
+            }).join('');
+        }
+
+        async function hapusPesertaKombel(idx) {
+            if (!gCurrentModalKombelId || !gAllKombels[gCurrentModalKombelId]) return;
+            const kombel = gAllKombels[gCurrentModalKombelId];
+            const rawPeserta = kombel.peserta || [];
+            let pesertaList = Array.isArray(rawPeserta) ? [...rawPeserta] : Object.values(rawPeserta);
+
+            if (!confirm(`Hapus peserta "${pesertaList[idx]?.nama_anggota || 'Peserta'}"?`)) return;
+
+            pesertaList.splice(idx, 1);
+
+            try {
+                await db.ref(`master_kombel/${gCurrentModalKombelId}/peserta`).set(pesertaList);
+                await db.ref(`master_kombel/${gCurrentModalKombelId}/jumlah_anggota`).set(pesertaList.length);
+                kombel.peserta = pesertaList;
+                kombel.jumlah_anggota = pesertaList.length;
+
+                renderActivePesertaTable(kombel);
+                renderKombelTable();
+            } catch(e) {
+                alert("Gagal menghapus peserta: " + e.message);
+            }
+        }
+
+        async function hapusSemuaPesertaKombel() {
+            if (!gCurrentModalKombelId) return;
+            if (!confirm("Apakah Anda yakin ingin menghapus SEMUA peserta terdaftar untuk kelompok kerja ini?")) return;
+
+            try {
+                await db.ref(`master_kombel/${gCurrentModalKombelId}/peserta`).remove();
+                await db.ref(`master_kombel/${gCurrentModalKombelId}/jumlah_anggota`).set(0);
+
+                if (gAllKombels[gCurrentModalKombelId]) {
+                    gAllKombels[gCurrentModalKombelId].peserta = [];
+                    gAllKombels[gCurrentModalKombelId].jumlah_anggota = 0;
+                }
+
+                renderActivePesertaTable(gAllKombels[gCurrentModalKombelId]);
+                renderKombelTable();
+                alert("Semua peserta berhasil dihapus.");
+            } catch(e) {
+                alert("Gagal menghapus semua peserta: " + e.message);
+            }
+        }
+
+        function exportActivePesertaKombelCSV() {
+            if (!gCurrentModalKombelId || !gAllKombels[gCurrentModalKombelId]) return;
+            const kombel = gAllKombels[gCurrentModalKombelId];
+            const rawPeserta = kombel.peserta || [];
+            const pesertaList = Array.isArray(rawPeserta) ? rawPeserta : Object.values(rawPeserta);
+
+            if (pesertaList.length === 0) {
+                alert("Belum ada data peserta untuk diekspor.");
+                return;
+            }
+
+            const header = ["Slug","Nama Kelompok Kerja","Tipe Kelompok Kerja","Provinsi","Kab/Kota","Kecamatan","Desa","Nama Anggota","Sekolah","NPSN","Email login/belajar ID","Role"];
+            const rows = pesertaList.map(p => [
+                `"${p.slug || kombel.id || ''}"`,
+                `"${p.nama_kombel_csv || kombel.nama_kombel || ''}"`,
+                `"${p.tipe_kombel || kombel.jenjang || ''}"`,
+                `"${p.provinsi || kombel.provinsi || 'Prov. Sumatera Barat'}"`,
+                `"${p.kab_kota || kombel.kab_kota || ''}"`,
+                `"${p.kecamatan || kombel.kecamatan || ''}"`,
+                `"${p.desa || kombel.desa_kelurahan || ''}"`,
+                `"${p.nama_anggota || ''}"`,
+                `"${p.sekolah || ''}"`,
+                `"${p.npsn || ''}"`,
+                `"${p.email || ''}"`,
+                `"${p.role || 'Anggota'}"`
+            ]);
+
+            const csvContent = "data:text/csv;charset=utf-8," + [header.join(','), ...rows.map(r => r.join(','))].join('\n');
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", `Peserta_${(kombel.nama_kombel || 'Kombel').replace(/[^a-zA-Z0-9]/g, '_')}.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
         }
 
         // ==========================================

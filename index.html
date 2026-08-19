@@ -206,21 +206,35 @@
         const db = firebase.database();
 
         // ==========================================
-        // ADMIN & FASILITATOR MAPPING CONFIGURATION
+        // ADMIN & ROLE MAPPING CONFIGURATION
         // ==========================================
-        const ADMIN_FASIL_MAPPING = {
-            "lisaanggrainiica17@gmail.com": "LISA ANGGRAINI, S.Pd.",
-            "lisaanggraini15@dikbud.belajar.id": "LISA ANGGRAINI, S.Pd.",
-            "lisa.anggraini@kemendikdasmen.go.id": "LISA ANGGRAINI, S.Pd.",
-            "vanisitioktovani@gmail.com": "SITI OKTOVANI, S.I.P.",
-            "siti.oktovani@kemendikdasmen.go.id": "SITI OKTOVANI, S.I.P.",
-            "rosariaayu8@gmail.com": "ROSA RIA AYU, S.Pd",
-            "rosariaayu5@gmail.com": "ROSA RIA AYU, S.Pd",
-            "rosa.ria@kemendikdasmen.go.id": "ROSA RIA AYU, S.Pd",
-            "aflidarneti12@gmail.com": "AFLIDARNETI, S.Sos",
-            "aflidarneti@kemendikdasmen.go.id": "AFLIDARNETI, S.Sos",
-            "ristitahumairoh71@dikbud.belajar.id": "RISTITA HUMAIROH, S.Kom.",
-            "ristita.humairoh@kemendikdasmen.go.id": "RISTITA HUMAIROH, S.Kom."
+        const SUPER_ADMIN_EMAILS = [
+            'mastersumbar1@gmail.com',
+            'irawati.2308@gmail.com',
+            'irawati@kemendikdasmen.go.id'
+        ];
+
+        const ADMIN_FKK_MAPPING = {
+            "leindrawatimegahayu70@gmail.com": { adminNama: "LEINDRAWATI MEGAHAYU, S.P.", nip: "197005042009012002" },
+            "leindrawati.megahayu@kemendikdasmen.go.id": { adminNama: "LEINDRAWATI MEGAHAYU, S.P.", nip: "197005042009012002" },
+            "abidigi92@gmail.com": { adminNama: "ABI RAFDHI, S.Kom.", nip: "199204062025211055" },
+            "abi.rafdhi@kemendikdasmen.go.id": { adminNama: "ABI RAFDHI, S.Kom.", nip: "199204062025211055" },
+            "andrialphonso23@gmail.com": { adminNama: "ANDRI ALPHONSO, S.AP.", nip: "199508232025211023" },
+            "andri.alphonso@kemendikdasmen.go.id": { adminNama: "ANDRI ALPHONSO, S.AP.", nip: "199508232025211023" },
+            "desipermata661@gmail.com": { adminNama: "DESI PERMATA SARI, A.Md.", nip: "199112112025212041" },
+            "desi.permata@kemendikdasmen.go.id": { adminNama: "DESI PERMATA SARI, A.Md.", nip: "199112112025212041" },
+            "lisaanggrainiica17@gmail.com": { adminNama: "LISA ANGGRAINI, S.Pd.", nip: "199105272025212039" },
+            "lisa.anggraini@kemendikdasmen.go.id": { adminNama: "LISA ANGGRAINI, S.Pd.", nip: "199105272025212039" },
+            "lisaanggraini15@dikbud.belajar.id": { adminNama: "LISA ANGGRAINI, S.Pd.", nip: "199105272025212039" },
+            "vanisitioktovani@gmail.com": { adminNama: "SITI OKTOVANI, S.I.P.", nip: "199010062019022006" },
+            "siti.oktovani@kemendikdasmen.go.id": { adminNama: "SITI OKTOVANI, S.I.P.", nip: "199010062019022006" },
+            "rosariaayu8@gmail.com": { adminNama: "ROSA RIA AYU, S.Pd", nip: "198308162010012029" },
+            "rosariaayu5@gmail.com": { adminNama: "ROSA RIA AYU, S.Pd", nip: "198308162010012029" },
+            "rosa.ria@kemendikdasmen.go.id": { adminNama: "ROSA RIA AYU, S.Pd", nip: "198308162010012029" },
+            "aflidarneti12@gmail.com": { adminNama: "AFLIDARNETI, S.Sos", nip: "198204202012122001" },
+            "aflidarneti@kemendikdasmen.go.id": { adminNama: "AFLIDARNETI, S.Sos", nip: "198204202012122001" },
+            "ristitahumairoh71@dikbud.belajar.id": { adminNama: "RISTITA HUMAIROH, S.Kom.", nip: "199711232025212030" },
+            "ristita.humairoh@kemendikdasmen.go.id": { adminNama: "RISTITA HUMAIROH, S.Kom.", nip: "199711232025212030" }
         };
 
         // ==========================================
@@ -229,13 +243,11 @@
         let gMasterPegawaiCache = {};
 
         window.addEventListener('DOMContentLoaded', async () => {
-            // If already logged in as admin, redirect straight to admin.html
             const savedEmail = sessionStorage.getItem('admin_bgtk_email');
             if (savedEmail) {
                 window.location.replace('admin.html');
                 return;
             }
-            // Pre-load pegawai cache in background
             try {
                 const snap = await db.ref('master_pegawai').once('value');
                 gMasterPegawaiCache = snap.val() || {};
@@ -267,7 +279,6 @@
             const loadingEl = document.getElementById('loginLoading');
             errorEl.classList.add('hidden');
 
-            // Check if running on local file:// protocol
             if (window.location.protocol === 'file:') {
                 errorEl.innerHTML = '⚠️ <strong>Google Sign-In membutuhkan server web (HTTP/HTTPS)</strong>.<br>Karena Anda membuka file secara lokal (<code>file:///</code>), silakan gunakan form <strong>Password Admin</strong> (masukkan email &amp; password <code>adminbgtk</code>) atau jalankan melalui domain web / localhost.';
                 errorEl.classList.remove('hidden');
@@ -283,11 +294,18 @@
                 const userEmail = (user.email || '').toLowerCase();
                 const emailKey = userEmail.replace(/[.#$\[\]]/g, '_');
 
-                // Check Admin Sekolah Model mapping first
-                if (ADMIN_FASIL_MAPPING[userEmail]) {
+                if (SUPER_ADMIN_EMAILS.includes(userEmail)) {
                     sessionStorage.setItem('admin_bgtk_email', userEmail);
-                    sessionStorage.setItem('admin_bgtk_nama', ADMIN_FASIL_MAPPING[userEmail]);
-                    sessionStorage.setItem('admin_bgtk_role', 'Admin Sekolah Model');
+                    sessionStorage.setItem('admin_bgtk_nama', userEmail.includes('irawati') ? 'IRAWATI, S.Pd, M.Pd.' : 'Super Admin Utama');
+                    sessionStorage.setItem('admin_bgtk_role', 'Super Admin');
+                    window.location.href = 'admin.html';
+                    return;
+                }
+
+                if (ADMIN_FKK_MAPPING[userEmail]) {
+                    sessionStorage.setItem('admin_bgtk_email', userEmail);
+                    sessionStorage.setItem('admin_bgtk_nama', ADMIN_FKK_MAPPING[userEmail].adminNama);
+                    sessionStorage.setItem('admin_bgtk_role', 'Admin FKK');
                     window.location.href = 'admin.html';
                     return;
                 }
@@ -304,19 +322,16 @@
                     return userEmail === pEmail1 || userEmail === pEmail2;
                 });
 
-                // Check user_roles
                 let matchedRoleUser = null;
                 try {
                     const roleSnap = await db.ref(`user_roles/${emailKey}`).once('value');
                     matchedRoleUser = roleSnap.val();
                 } catch(e) {}
 
-                if (matchedPegawai || matchedRoleUser || userEmail === 'mastersumbar1@gmail.com' || userEmail === 'astersumbar1@gmail.com') {
+                if (matchedPegawai || matchedRoleUser) {
                     sessionStorage.setItem('admin_bgtk_email', userEmail);
                     sessionStorage.setItem('admin_bgtk_nama', (matchedRoleUser ? matchedRoleUser.nama : '') || (matchedPegawai ? matchedPegawai.nama_lengkap : '') || user.displayName || 'Admin BGTK');
-                    if (matchedRoleUser && matchedRoleUser.role) {
-                        sessionStorage.setItem('admin_bgtk_role', matchedRoleUser.role);
-                    }
+                    sessionStorage.setItem('admin_bgtk_role', (matchedRoleUser ? matchedRoleUser.role : '') || 'Admin Pegawai');
                     window.location.href = 'admin.html';
                 } else {
                     const snapFasil = await db.ref('fasilitator').once('value');
