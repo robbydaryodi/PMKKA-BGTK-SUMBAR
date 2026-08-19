@@ -683,6 +683,11 @@
                         <div class="flex flex-wrap items-center gap-3 w-full md:w-auto">
                             <select id="filterKabKombel" onchange="filterKombelData()" class="border-slate-300 rounded-xl text-sm px-3 py-2 bg-slate-50"><option value="ALL">Semua Kab / Kota (19)</option></select>
                             <select id="filterStatusSasaran" onchange="filterKombelData()" class="border-slate-300 rounded-xl text-sm px-3 py-2 bg-slate-50 font-semibold text-slate-700"><option value="ALL">Semua Data (1.804)</option><option value="SASARAN">⭐ Hanya 54 Sasaran PMKKA</option><option value="NON_SASARAN">Belum Terpilih</option></select>
+                            <button id="btnModeRekomendasi" onclick="toggleModeRekomendasi()" title="Mode Rekomendasi: cocokkan fasilitator berdasarkan Kab/Kota & Mapel" class="flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-black border border-violet-300 bg-white text-violet-700 hover:bg-violet-50 transition-all shadow-sm">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.347.347a3.001 3.001 0 01-2.474 1.298H9.5a3.001 3.001 0 01-2.474-1.298l-.347-.347z"/></svg>
+                                <span id="btnRekomendasiLabel">✨ Rekomendasi Fasil</span>
+                                <span id="fasdaLoadingBadge" class="hidden text-[10px] bg-violet-100 text-violet-700 px-1.5 py-0.5 rounded font-bold">Memuat...</span>
+                            </button>
                         </div>
                     </div>
                     <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
@@ -1290,6 +1295,8 @@
                             <span>Simpan Fasilitator</span>
                         </button>
                     </div>
+                    <!-- Panel Rekomendasi Fasda dari Google Sheets -->
+                    <div id="modalRekomendasiPanel" class="hidden"></div>
                 </div>
 
                 <!-- SECTION 2: IMPORT DATA PESERTA VIA CSV (FORMAT 1) -->
@@ -2597,6 +2604,321 @@
             </div>`;
         }
 
+        // ==================================================
+        // SISTEM REKOMENDASI FASILITATOR ↔ KOMBEL
+        // Data diambil dari Google Sheets "Fasda Gab" secara otomatis
+        // ==================================================
+        const FASDA_SHEET_URL = 'https://docs.google.com/spreadsheets/d/18cuJgBonJCLoi_ooQ7Ca6UFVYAs3IFfAyjkuiLXcX9U/export?format=csv&gid=1907961467';
+
+        let gFasdaData = [];        // Array fasda yang sudah diparsing
+        let gFasdaLoaded = false;   // Flag apakah sudah berhasil dimuat
+        let gModeRekomendasi = false; // Toggle mode rekomendasi
+
+        async function loadFasdaData() {
+            if (gFasdaLoaded) return gFasdaData;
+            const badge = document.getElementById('fasdaLoadingBadge');
+            if (badge) badge.classList.remove('hidden');
+            try {
+                const resp = await fetch(FASDA_SHEET_URL);
+                const csv = await resp.text();
+                gFasdaData = parseFasdaCSV(csv);
+                gFasdaLoaded = true;
+                console.log(`✅ Fasda dimuat: ${gFasdaData.length} baris`);
+            } catch(e) {
+                console.warn('Gagal load Fasda dari Google Sheets:', e);
+                // Fallback ke data hardcode jika gagal fetch
+                gFasdaData = FASDA_FALLBACK;
+                gFasdaLoaded = true;
+            }
+            if (badge) badge.classList.add('hidden');
+            return gFasdaData;
+        }
+
+        function parseFasdaCSV(csv) {
+            const lines = csv.split(/\r?\n/).filter(l => l.trim());
+            const result = [];
+            // Skip header baris pertama
+            for (let i = 1; i < lines.length; i++) {
+                const cols = parseCSVLine(lines[i]);
+                if (!cols[2] || cols[2].trim() === '') continue; // Skip baris kosong
+                const no = (cols[0] || '').trim();
+                if (!no || isNaN(parseInt(no))) continue; // Skip baris tanpa nomor
+                const entry = {
+                    no: parseInt(no),
+                    admin: (cols[1] || '').trim(),
+                    nama: (cols[2] || '').trim(),
+                    jabatan: (cols[3] || '').trim(),
+                    instansi: (cols[4] || '').trim(),
+                    mapel: (cols[5] || '').trim(),
+                    kab_instansi: (cols[6] || '').trim(),
+                    kab_penugasan: normalisasiKab((cols[7] || '').trim()),
+                    kab_penugasan_raw: (cols[7] || '').trim(),
+                    fkk1: (cols[10] || '').trim(),
+                    fkk2: (cols[11] || '').trim(),
+                };
+                if (entry.nama) result.push(entry);
+            }
+            return result;
+        }
+
+        function parseCSVLine(line) {
+            const result = [];
+            let inQuote = false;
+            let current = '';
+            for (let i = 0; i < line.length; i++) {
+                const ch = line[i];
+                if (ch === '"') {
+                    if (inQuote && line[i+1] === '"') { current += '"'; i++; }
+                    else inQuote = !inQuote;
+                } else if (ch === ',' && !inQuote) {
+                    result.push(current);
+                    current = '';
+                } else {
+                    current += ch;
+                }
+            }
+            result.push(current);
+            return result;
+        }
+
+        function normalisasiKab(kab) {
+            // Normalize variasi penulisan Mentawai & lainnya
+            if (!kab) return kab;
+            kab = kab.trim();
+            if (kab.startsWith('Kab. Kepulauan Mentawai')) return 'Kab. Kepulauan Mentawai';
+            return kab;
+        }
+
+        // Keyword mapping untuk pencocokan mapel fuzzy
+        const MAPEL_KEYWORDS = {
+            'PAUD': ['PAUD', 'TK', 'TAMAN KANAK'],
+            'KKA SD': ['KKA SD', 'KECERDASAN', 'KODING', 'SD KELAS'],
+            'KKA SMP': ['KKA SMP', 'KECERDASAN SMP', 'KODING SMP'],
+            'KKA SMA/SMK': ['KKA SMA', 'KKA SMK', 'KECERDASAN SMA'],
+            'Matematika SD': ['MATEMATIKA SD', 'MATEMAT', 'KKG SD', 'GURU KELAS SD'],
+            'Matematika SMP': ['MATEMATIKA SMP', 'MGMP MATEMATIKA SMP', 'MGMP MAT SMP'],
+            'Matematika SMA': ['MATEMATIKA SMA', 'MGMP MATEMATIKA SMA', 'MGMP MAT SMA'],
+            'Bahasa Indonesia SD': ['BAHASA INDONESIA SD', 'B.INDONESIA SD', 'KKG BAHASA'],
+            'Bahasa Indonesia SMP': ['BAHASA INDONESIA SMP', 'MGMP BAHASA INDONESIA SMP', 'B.IND SMP'],
+            'Bahasa Indonesia SMA': ['BAHASA INDONESIA SMA', 'MGMP BAHASA INDONESIA SMA', 'B.IND SMA'],
+            'Bahasa Inggris SMA': ['BAHASA INGGRIS SMA', 'MGMP BAHASA INGGRIS SMA', 'B.ING SMA'],
+            'IPA SMP': ['IPA SMP', 'MGMP IPA SMP', 'ILMU PENGETAHUAN ALAM SMP'],
+            'Biologi SMA': ['BIOLOGI SMA', 'MGMP BIOLOGI SMA'],
+            'Ekonomi SMA/SMK': ['EKONOMI SMA', 'EKONOMI SMK', 'MGMP EKONOMI'],
+            'Kesetaraan': ['KESETARAAN', 'PAKET A', 'PAKET B', 'PAKET C', 'PKBM'],
+            'Guru Kesetaraan': ['KESETARAAN', 'PAKET'],
+            'Kepala Sekolah': ['MKKS', 'KEPALA SEKOLAH', 'MKPS'],
+            'Kepala Sekolah Kesetaraan': ['MKKS', 'KEPALA SEKOLAH KESETARAAN'],
+            'SLB': ['SLB', 'LUAR BIASA', 'INKLUSI'],
+            'Pengawas': ['MKPS', 'PENGAWAS'],
+            'IPA SMP': ['IPA SMP', 'SAINS SMP'],
+        };
+
+        function cocokanMapel(namaKombel, jenjangKombel, mapelFasda) {
+            if (!mapelFasda || !namaKombel) return false;
+            const kombel = (namaKombel + ' ' + (jenjangKombel || '')).toUpperCase();
+            const keywords = MAPEL_KEYWORDS[mapelFasda] || [mapelFasda.toUpperCase()];
+            return keywords.some(kw => kombel.includes(kw));
+        }
+
+        function hitungSkorRekomendasi(kombel, fasda) {
+            let skor = 0;
+            const kabKombel = normalisasiKab(kombel.kab_kota || '');
+            const kabFasda = fasda.kab_penugasan;
+
+            // Kab/Kota match
+            const kabMatch = kabKombel && kabFasda && kabKombel.toLowerCase() === kabFasda.toLowerCase();
+            if (kabMatch) skor += 10;
+
+            // Mapel match
+            const mapelMatch = cocokanMapel(kombel.nama_kombel, kombel.jenjang, fasda.mapel);
+            if (mapelMatch) skor += 8;
+
+            // FKK1 exact match: nama kombel di spreadsheet cocok dengan nama kombel di app
+            if (fasda.fkk1 && kombel.nama_kombel) {
+                const fkk1norm = fasda.fkk1.toUpperCase().replace(/\s+/g, ' ').trim();
+                const kombelNorm = kombel.nama_kombel.toUpperCase().replace(/\s+/g, ' ').trim();
+                if (fkk1norm === kombelNorm || kombelNorm.includes(fkk1norm) || fkk1norm.includes(kombelNorm.substring(0, 20))) {
+                    skor += 20; // Bonus besar untuk match FKK1 langsung
+                }
+            }
+
+            return skor;
+        }
+
+        function getTopRekomendasi(kombel, topN = 3) {
+            if (!gFasdaData.length) return [];
+            const scored = gFasdaData
+                .map(fasda => ({ ...fasda, skor: hitungSkorRekomendasi(kombel, fasda) }))
+                .filter(f => f.skor > 0)
+                .sort((a, b) => b.skor - a.skor);
+
+            // Deduplikasi berdasarkan nama fasda
+            const seen = new Set();
+            const unique = [];
+            for (const f of scored) {
+                if (!seen.has(f.nama)) {
+                    seen.add(f.nama);
+                    unique.push(f);
+                }
+                if (unique.length >= topN) break;
+            }
+            return unique;
+        }
+
+        function getLabelSkor(skor) {
+            if (skor >= 20) return { label: '🎯 Sangat Cocok', cls: 'bg-emerald-100 text-emerald-800 border-emerald-300' };
+            if (skor >= 18) return { label: '✅ Cocok', cls: 'bg-teal-100 text-teal-800 border-teal-300' };
+            if (skor >= 10) return { label: '🗺️ Wilayah Sama', cls: 'bg-blue-100 text-blue-800 border-blue-300' };
+            return { label: '📚 Mapel Sama', cls: 'bg-violet-100 text-violet-800 border-violet-300' };
+        }
+
+        function toggleModeRekomendasi() {
+            gModeRekomendasi = !gModeRekomendasi;
+            const btn = document.getElementById('btnModeRekomendasi');
+            const label = document.getElementById('btnRekomendasiLabel');
+
+            if (gModeRekomendasi) {
+                btn.className = 'flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-black border border-violet-600 bg-violet-600 text-white transition-all shadow-sm';
+                if (label) label.textContent = '✨ Mode Rekomendasi ON';
+                // Auto-filter ke sasaran saja saat mode rekomendasi aktif
+                const statusEl = document.getElementById('filterStatusSasaran');
+                if (statusEl) statusEl.value = 'SASARAN';
+                // Load Fasda data jika belum
+                loadFasdaData().then(() => filterKombelData());
+            } else {
+                btn.className = 'flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-black border border-violet-300 bg-white text-violet-700 hover:bg-violet-50 transition-all shadow-sm';
+                if (label) label.textContent = '✨ Rekomendasi Fasil';
+                filterKombelData();
+            }
+        }
+
+        function buildFasilRekomendasiColHtml(kombel) {
+            // Mode non-rekomendasi atau bukan sasaran: tampilan biasa
+            if (!gModeRekomendasi || !kombel.is_sasaran) {
+                if (kombel.fasil_nama) {
+                    return `<button onclick="openKelolaKombelModal('${kombel.id}')" title="Klik untuk mengubah penugasan fasilitator" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-black bg-purple-100 hover:bg-purple-200 text-purple-900 border border-purple-300 transition-all shadow-2xs hover:scale-105">
+                        <span>🤝 ${kombel.fasil_nama}</span>
+                        <span class="text-[10px] bg-purple-200 text-purple-950 px-1.5 py-0.5 rounded font-extrabold">Ubah ✏️</span>
+                    </button>`;
+                }
+                if (kombel.is_sasaran) {
+                    return `<button onclick="openKelolaKombelModal('${kombel.id}')" title="Klik untuk memilih fasilitator pendamping" class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-black bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-500 hover:to-amber-600 text-amber-950 border border-amber-500 transition-all shadow-sm hover:scale-105">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"/></svg>
+                        <span>PILIH FASIL ↗</span>
+                    </button>`;
+                }
+                return `<span class="text-slate-300 text-xs">-</span>`;
+            }
+
+            // Mode rekomendasi ON + sasaran:
+            if (kombel.fasil_nama) {
+                // Sudah ada fasil terpilih
+                return `<div class="flex flex-col gap-1">
+                    <button onclick="openKelolaKombelModal('${kombel.id}')" class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-black bg-purple-100 text-purple-900 border border-purple-300 hover:bg-purple-200">
+                        🤝 ${kombel.fasil_nama} <span class="text-[10px] bg-purple-200 px-1 rounded">✓ Ubah</span>
+                    </button>
+                </div>`;
+            }
+
+            // Belum ada fasil → tampilkan rekomendasi
+            const rekomendasi = getTopRekomendasi(kombel, 3);
+            if (!rekomendasi.length) {
+                return `<div class="text-[11px] text-slate-400 italic">Belum ada rekomendasi</div>`;
+            }
+
+            const rekHtml = rekomendasi.map((f, idx) => {
+                const { label, cls } = getLabelSkor(f.skor);
+                return `<div class="flex items-center gap-1.5 mb-1">
+                    <button onclick="quickAssignFasda('${kombel.id}', '${f.nama.replace(/'/g, "\\'")}')" title="Assign ${f.nama} langsung" class="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg text-[11px] font-extrabold bg-violet-600 hover:bg-violet-700 text-white transition-colors">
+                        ⚡ ${f.nama.split(',')[0]}
+                    </button>
+                    <span class="text-[9px] px-1.5 py-0.5 rounded border font-bold ${cls}">${label}</span>
+                </div>`;
+            }).join('');
+
+            return `<div class="text-[10px] text-violet-600 font-extrabold mb-1 flex items-center gap-1">
+                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.347.347a3.001 3.001 0 01-2.474 1.298H9.5a3.001 3.001 0 01-2.474-1.298l-.347-.347z"/></svg>
+                Rekomendasi:
+            </div>${rekHtml}
+            <button onclick="openKelolaKombelModal('${kombel.id}')" class="text-[10px] text-slate-500 hover:text-indigo-600 hover:underline">+ Pilih manual ↗</button>`;
+        }
+
+        async function quickAssignFasda(kombelId, namafasda) {
+            if (!kombelId || !namafasda) return;
+            const konfirm = confirm(`Assign ${namafasda} sebagai fasilitator untuk kombel ini?`);
+            if (!konfirm) return;
+            try {
+                await db.ref(`master_kombel/${kombelId}`).update({ fasil_nama: namafasda, fasil_id: null });
+                if (gAllKombels[kombelId]) gAllKombels[kombelId].fasil_nama = namafasda;
+                renderKombelTable();
+                showToast(`✅ ${namafasda.split(',')[0]} berhasil diassign!`, 'emerald');
+            } catch(e) {
+                console.error('Gagal assign fasda:', e);
+                showToast('❌ Gagal menyimpan penugasan', 'rose');
+            }
+        }
+
+        function showToast(msg, color = 'emerald') {
+            let toast = document.getElementById('globalToast');
+            if (!toast) {
+                toast = document.createElement('div');
+                toast.id = 'globalToast';
+                toast.style.cssText = 'position:fixed;bottom:24px;right:24px;z-index:9999;transition:all 0.3s ease;';
+                document.body.appendChild(toast);
+            }
+            const cls = color === 'emerald' ? 'bg-emerald-600 text-white' : 'bg-rose-600 text-white';
+            toast.innerHTML = `<div class="px-5 py-3 rounded-2xl shadow-2xl font-bold text-sm ${cls} flex items-center gap-2">${msg}</div>`;
+            toast.style.opacity = '1';
+            toast.style.transform = 'translateY(0)';
+            setTimeout(() => { toast.style.opacity = '0'; toast.style.transform = 'translateY(10px)'; }, 3000);
+        }
+
+        // Fallback data hardcode jika Google Sheets tidak bisa diakses
+        const FASDA_FALLBACK = [
+            {no:1,admin:'Lisa',nama:'Rahmi Isra, S.Pd',jabatan:'Guru',mapel:'KKA SD',kab_penugasan:'Kab. Agam',fkk1:'KKG SD - Guru Kelas SD - GUGUS I KEC. BANUHAMPU'},
+            {no:2,admin:'Lisa',nama:'Pitria Gusliati, M .Pd.',jabatan:'PTP',mapel:'PAUD',kab_penugasan:'Kab. Agam',fkk1:''},
+            {no:3,admin:'Lisa',nama:'Rahma Maulida, S.Pd, M.Si, CPEC.',jabatan:'Pengawas',mapel:'Matematika SMA',kab_penugasan:'Kab. Dharmasraya',fkk1:''},
+            {no:4,admin:'Lisa',nama:'Rahma Maulida, S.Pd, M.Si, CPEC.',jabatan:'Pengawas',mapel:'Matematika SMA',kab_penugasan:'Kota Sawahlunto',fkk1:''},
+            {no:5,admin:'Lisa',nama:'Syafrial Nurdin, S.Pd.I., M.Pd.',jabatan:'Kepala Sekolah',mapel:'Matematika SMP',kab_penugasan:'Kab. Kepulauan Mentawai',fkk1:'MGMP MATEMATIKA SMP MENTAWAI'},
+            {no:6,admin:'Ristita',nama:'Syafrial Nurdin, S.Pd.I., M.Pd.',jabatan:'Kepala Sekolah',mapel:'Matematika SMP',kab_penugasan:'Kab. Kepulauan Mentawai',fkk1:''},
+            {no:7,admin:'Ristita',nama:'Rita Marlinda',jabatan:'Penilik',mapel:'Kesetaraan',kab_penugasan:'Kab. Lima Puluh Kota',fkk1:''},
+            {no:8,admin:'Ristita',nama:'Doni Aizus Indris, A.Md.KG., S.Pd.',jabatan:'Praktisi',mapel:'Kepala Sekolah Kesetaraan',kab_penugasan:'Kab. Pasaman',fkk1:''},
+            {no:9,admin:'Ristita',nama:'Doni Aizus Indris, A.Md.KG., S.Pd.',jabatan:'Praktisi',mapel:'Kepala Sekolah Kesetaraan',kab_penugasan:'Kab. Lima Puluh Kota',fkk1:''},
+            {no:10,admin:'Ristita',nama:'Rosa Ria Ayu, S. Pd.',jabatan:'Fungsional Umum',mapel:'Guru Kesetaraan',kab_penugasan:'Kab. Padang Pariaman',fkk1:'MGMP EKONOMI KESETARAAN PADANG PARIAMAN'},
+            {no:11,admin:'Desi',nama:'Rizka Asyriati, M.Si.',jabatan:'Praktisi',mapel:'SLB',kab_penugasan:'Kab. Padang Pariaman',fkk1:'KOMUNITAS KKG KELAS III SDN VII KOTO SUNGAI SARIK KAB. PADANG PARIAMAN'},
+            {no:12,admin:'Desi',nama:'Nannsi Marwarinda',jabatan:'Pengawas',mapel:'IPA SMP',kab_penugasan:'Kab. Pasaman',fkk1:''},
+            {no:13,admin:'Desi',nama:'Azwar, M. Pd.',jabatan:'Pengawas',mapel:'Matematika SD',kab_penugasan:'Kab. Pasaman',fkk1:''},
+            {no:14,admin:'Desi',nama:'Ernia Devita, M. Pd.',jabatan:'Pengawas',mapel:'Bahasa Indonesia SMP',kab_penugasan:'Kab. Pasaman Barat',fkk1:''},
+            {no:15,admin:'Desi',nama:'Nazman, S. Pd., Gr.',jabatan:'Guru',mapel:'KKA SMA/SMK',kab_penugasan:'Kab. Pasaman Barat',fkk1:''},
+            {no:16,admin:'Abi',nama:'Intan Sari Ramadani, S. Pd. Gr.',jabatan:'Guru',mapel:'Ekonomi SMA/SMK',kab_penugasan:'Kab. Pesisir Selatan',fkk1:''},
+            {no:17,admin:'Abi',nama:'Musda Rahmawati, S. Si., M. Pd.',jabatan:'Pengawas',mapel:'IPA SMP',kab_penugasan:'Kab. Sijunjung',fkk1:''},
+            {no:18,admin:'Abi',nama:'Herry Herlambang, S. Kom., M.T.',jabatan:'WP',mapel:'KKA SMP',kab_penugasan:'Kab. Sijunjung',fkk1:''},
+            {no:19,admin:'Abi',nama:'Dr. Yuni Cenrikawaty, M.Pd',jabatan:'Pengawas',mapel:'Bahasa Inggris SMA',kab_penugasan:'Kab. Solok',fkk1:''},
+            {no:20,admin:'Abi',nama:'Wirza Nengsih, S.Pd, M.M',jabatan:'Guru',mapel:'IPA SMP',kab_penugasan:'Kab. Solok Selatan',fkk1:'MGMP IPA KAB.SOLOK SELATAN'},
+            {no:21,admin:'Uncu',nama:'Septiana Aisyah, M. Pd.',jabatan:'Guru',mapel:'Matematika SD',kab_penugasan:'Kab. Tanah Datar',fkk1:''},
+            {no:22,admin:'Uncu',nama:'Nefri Leni, S.E, S. Pd., M. Pd.',jabatan:'WI',mapel:'Ekonomi SMA/SMK',kab_penugasan:'Kota Bukittinggi',fkk1:''},
+            {no:23,admin:'Uncu',nama:'Dr. Silvi Hevria, M. Pd.',jabatan:'PTP',mapel:'Kepala Sekolah',kab_penugasan:'Kota Bukittinggi',fkk1:''},
+            {no:24,admin:'Uncu',nama:'Susanda Febriani, M.Pd',jabatan:'Guru',mapel:'KKA SMP',kab_penugasan:'Kota Bukittinggi',fkk1:''},
+            {no:25,admin:'Uncu',nama:'Rahmat Istiqlal, S. Pd.',jabatan:'PTP',mapel:'Matematika SD',kab_penugasan:'Kota Bukittinggi',fkk1:''},
+            {no:26,admin:'Andri',nama:'Afri Dewita, S. Pd., M. Pd.',jabatan:'WI',mapel:'PAUD',kab_penugasan:'Kota Bukittinggi',fkk1:'Komunitas belajar gugus VII dan VIII Paud Kecamatan ABTB'},
+            {no:27,admin:'Andri',nama:'Surya Marlina, M. Pd.',jabatan:'PTP',mapel:'Bahasa Indonesia SD',kab_penugasan:'Kota Padang',fkk1:'KKG_Guru Kelas SD Kota Padang'},
+            {no:28,admin:'Andri',nama:'Refnita, S. Pd., M. Pd.',jabatan:'Pengawas',mapel:'Bahasa Inggris SMA',kab_penugasan:'Kota Padang',fkk1:'Musyawarah Guru Mata Pelajaran Bahasa Inggris SMA Negeri dan Swasta se-Kota Padang'},
+            {no:29,admin:'Andri',nama:'Irawati, S. Pd., M. Pd.',jabatan:'PTP',mapel:'Kepala Sekolah',kab_penugasan:'Kota Padang',fkk1:'Tumbuh Bersama'},
+            {no:30,admin:'Andri',nama:'Rusva R, S. Kom., M. Pd',jabatan:'PTP',mapel:'KKA SD',kab_penugasan:'Kota Padang',fkk1:'KKG SD - Guru Kelas SD - GUGUS V PADANG TIMUR'},
+            {no:31,admin:'Vani',nama:'Madesa Rini Saputri, S. Si.',jabatan:'PTP',mapel:'Matematika SMP',kab_penugasan:'Kota Padang',fkk1:'MGMP SMP - Matematika - Kota Padang'},
+            {no:32,admin:'Vani',nama:'Yanti Liwasdilla, M. Pd.',jabatan:'WI',mapel:'Pengawas',kab_penugasan:'Kota Padang',fkk1:'PS DIKDAS - MKPS SMP KOTA PADANG'},
+            {no:33,admin:'Vani',nama:'Novri Wahyuni',jabatan:'Guru',mapel:'SLB',kab_penugasan:'Kota Padang',fkk1:''},
+            {no:34,admin:'Vani',nama:'Zulkifli, M. Pd.',jabatan:'Pengawas',mapel:'Matematika SMA',kab_penugasan:'Kota Padang Panjang',fkk1:''},
+            {no:35,admin:'Vani',nama:'Asliati, M. Pd.',jabatan:'Pengawas',mapel:'Bahasa Indonesia SMP',kab_penugasan:'Kota Pariaman',fkk1:''},
+            {no:36,admin:'Vani',nama:'Misdawati, M.Pd.',jabatan:'Pengawas',mapel:'Biologi SMA',kab_penugasan:'Kota Pariaman',fkk1:''},
+            {no:37,admin:'Ayuk',nama:'Robi Rahman, M. Pd.',jabatan:'WI',mapel:'Bahasa Indonesia SD',kab_penugasan:'Kota Payakumbuh',fkk1:''},
+            {no:38,admin:'Ayuk',nama:'Oria Lasmana, M. Pd',jabatan:'Guru',mapel:'Biologi SMA',kab_penugasan:'Kota Payakumbuh',fkk1:''},
+            {no:39,admin:'Ayuk',nama:'Riyan Fernandes, S. Pd. M. Kom.T.',jabatan:'WI',mapel:'KKA SMA/SMK',kab_penugasan:'Kota Payakumbuh',fkk1:''},
+            {no:40,admin:'Ayuk',nama:'Desfiar Hanif',jabatan:'Penilik',mapel:'PAUD',kab_penugasan:'Kota Payakumbuh',fkk1:''},
+            {no:41,admin:'Ayuk',nama:'Animar, M. Pd.',jabatan:'Pengawas',mapel:'Bahasa Indonesia SMA',kab_penugasan:'Kota Sawahlunto',fkk1:''},
+        ];
+
         async function loadKombelData() {
             try {
                 const snap = await db.ref('master_kombel').once('value');
@@ -2605,6 +2927,7 @@
                 filterKombelData();
             } catch(e) { console.error("Gagal load master_kombel", e); }
         }
+
 
         function populateKabKombelDropdown() {
             const sel = document.getElementById('filterKabKombel');
@@ -2666,22 +2989,14 @@
                 const pesertaCount = pesertaList.length > 0 ? pesertaList.length : (k.jumlah_anggota || 0);
                 const hasImportedPeserta = pesertaList.length > 0;
 
-                // Fasilitator Column Content
-                let fasilColHtml = `<span class="text-slate-300 text-xs">-</span>`;
+                // Fasilitator Column — menggunakan fungsi rekomendasi terpadu
+                const fasilColHtml = buildFasilRekomendasiColHtml(k);
+
+                // Row highlight: mode rekomendasi + belum ada fasil = highlight violet
+                let rowClass = 'hover:bg-slate-50 transition-colors';
                 if (isSasaran) {
-                    if (k.fasil_nama) {
-                        fasilColHtml = `
-                        <button onclick="openKelolaKombelModal('${k.id}')" title="Klik untuk mengubah penugasan fasilitator" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-black bg-purple-100 hover:bg-purple-200 text-purple-900 border border-purple-300 transition-all shadow-2xs hover:scale-105">
-                            <span>🤝 ${k.fasil_nama}</span>
-                            <span class="text-[10px] bg-purple-200 text-purple-950 px-1.5 py-0.5 rounded font-extrabold">Ubah ✏️</span>
-                        </button>`;
-                    } else {
-                        fasilColHtml = `
-                        <button onclick="openKelolaKombelModal('${k.id}')" title="Klik untuk memilih fasilitator pendamping" class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-black bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-500 hover:to-amber-600 text-amber-950 border border-amber-500 transition-all shadow-sm hover:scale-105">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"/></svg>
-                            <span>PILIH FASIL ↗</span>
-                        </button>`;
-                    }
+                    if (gModeRekomendasi && !k.fasil_nama) rowClass += ' bg-violet-50/50';
+                    else rowClass += ' bg-amber-50/40 font-medium';
                 }
 
                 const badgeSasaran = isSasaran 
@@ -2703,7 +3018,7 @@
                     : `<span class="text-xs font-bold text-slate-600">${pesertaCount}</span>`;
 
                 return `
-                <tr class="hover:bg-slate-50 transition-colors ${isSasaran ? 'bg-amber-50/40 font-medium' : ''}">
+                <tr class="${rowClass}">
                     <td class="px-4 py-3 text-center text-slate-400 text-xs font-bold">${start + i + 1}</td>
                     <td class="px-4 py-3">
                         <div class="font-bold text-slate-800 text-sm whitespace-normal max-w-xs">${k.nama_kombel}</div>
@@ -2713,7 +3028,7 @@
                         <div class="font-semibold text-slate-700 text-xs">${k.kab_kota || '-'}</div>
                         <div class="text-[11px] text-slate-500">${k.kecamatan || ''} ${k.desa_kelurahan ? '• ' + k.desa_kelurahan : ''}</div>
                     </td>
-                    <td class="px-4 py-3 text-center bg-purple-50/20 border-x border-purple-100/50">${fasilColHtml}</td>
+                    <td class="px-3 py-2.5 ${gModeRekomendasi && isSasaran && !k.fasil_nama ? 'bg-violet-50/60 border-x border-violet-200' : 'bg-purple-50/20 border-x border-purple-100/50'}">${fasilColHtml}</td>
                     <td class="px-4 py-3">
                         <div class="font-semibold text-slate-800 text-xs">${k.nama_ketua || '-'}</div>
                         <div class="text-[11px] text-slate-500">${k.email || k.no_hp || '-'}</div>
@@ -2778,17 +3093,23 @@
         async function populateModalFasilSelect(kombel) {
             const sel = document.getElementById('modalSelectFasilKombel');
             const badge = document.getElementById('statusFasilTerpilihBadge');
+            const rekPanel = document.getElementById('modalRekomendasiPanel');
             if (!sel) return;
 
             try {
+                // Load fasilitator dari Firebase
                 if (!gCachedFasilitators) {
                     const snap = await db.ref('fasilitator').once('value');
                     gCachedFasilitators = snap.val() || {};
                 }
 
-                let options = '<option value="">-- Pilih Fasilitator Pendamping KK --</option>';
-                const fasilList = Object.values(gCachedFasilitators);
+                // Load data Fasda untuk rekomendasi (tidak menunggu jika sudah cache)
+                if (!gFasdaLoaded) {
+                    loadFasdaData(); // fire and forget, bisa lambat
+                }
 
+                const fasilList = Object.values(gCachedFasilitators);
+                let options = '<option value="">-- Pilih Fasilitator Pendamping KK --</option>';
                 fasilList.forEach(f => {
                     const fId = f.id || f.key;
                     const mapelSub = f.mapel_kombel || f.mapel || '';
@@ -2796,18 +3117,74 @@
                     const selected = (fId === kombel.fasil_id || f.nama === kombel.fasil_nama) ? 'selected' : '';
                     options += `<option value="${fId}" data-nama="${f.nama}" ${selected}>${f.nama} (${f.jabatan || 'Fasilitator'}${instansiSub}${mapelSub ? ' • ' + mapelSub : ''})</option>`;
                 });
-
                 sel.innerHTML = options;
 
+                // Badge status fasil
                 if (kombel.fasil_nama) {
                     if (badge) badge.innerHTML = `<span class="px-2.5 py-1 rounded-full font-bold bg-emerald-100 text-emerald-800 border border-emerald-200">✅ Ditugaskan: ${kombel.fasil_nama}</span>`;
                 } else {
                     if (badge) badge.innerHTML = `<span class="px-2.5 py-1 rounded-full font-bold bg-amber-100 text-amber-800 border border-amber-200">⚠️ Belum Ada Fasilitator</span>`;
                 }
+
+                // Panel Rekomendasi Fasda di bawah dropdown
+                if (rekPanel) {
+                    const rekomendasi = getTopRekomendasi(kombel, 5);
+                    if (rekomendasi.length > 0) {
+                        const rekRows = rekomendasi.map(f => {
+                            const { label, cls } = getLabelSkor(f.skor);
+                            return `<button onclick="pilihFasdaDariModal('${f.nama.replace(/'/g, "\\'")}')" 
+                                class="flex items-center justify-between w-full px-3 py-2 rounded-xl border border-slate-200 hover:border-violet-400 hover:bg-violet-50 transition-all text-left gap-2 group">
+                                <div>
+                                    <div class="font-bold text-sm text-slate-800 group-hover:text-violet-800">${f.nama}</div>
+                                    <div class="text-[11px] text-slate-500">${f.jabatan || ''} • ${f.kab_penugasan_raw || f.kab_penugasan} • ${f.mapel}</div>
+                                </div>
+                                <div class="flex items-center gap-1.5 flex-shrink-0">
+                                    <span class="text-[10px] px-1.5 py-0.5 rounded border font-bold ${cls}">${label}</span>
+                                    <span class="text-[10px] bg-violet-100 text-violet-800 px-1.5 py-0.5 rounded font-black">Skor: ${f.skor}</span>
+                                </div>
+                            </button>`;
+                        }).join('');
+
+                        rekPanel.innerHTML = `
+                        <div class="mt-3 p-3 rounded-xl bg-violet-50 border border-violet-200">
+                            <div class="text-xs font-black text-violet-700 mb-2 flex items-center gap-1.5">
+                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.347.347a3.001 3.001 0 01-2.474 1.298H9.5a3.001 3.001 0 01-2.474-1.298l-.347-.347z"/></svg>
+                                Rekomendasi Fasda (klik untuk assign langsung):
+                            </div>
+                            <div class="space-y-1.5">${rekRows}</div>
+                        </div>`;
+                        rekPanel.classList.remove('hidden');
+                    } else {
+                        rekPanel.innerHTML = '';
+                        rekPanel.classList.add('hidden');
+                    }
+                }
+
             } catch(e) {
                 console.error("Gagal memuat list fasilitator:", e);
             }
         }
+
+        async function pilihFasdaDariModal(namaFasda) {
+            if (!gCurrentModalKombelId || !namaFasda) return;
+            try {
+                await db.ref(`master_kombel/${gCurrentModalKombelId}`).update({ fasil_nama: namaFasda, fasil_id: null });
+                if (gAllKombels[gCurrentModalKombelId]) gAllKombels[gCurrentModalKombelId].fasil_nama = namaFasda;
+
+                const badge = document.getElementById('statusFasilTerpilihBadge');
+                if (badge) badge.innerHTML = `<span class="px-2.5 py-1 rounded-full font-bold bg-emerald-100 text-emerald-800 border border-emerald-200">✅ Ditugaskan: ${namaFasda}</span>`;
+
+                const rekPanel = document.getElementById('modalRekomendasiPanel');
+                if (rekPanel) rekPanel.classList.add('hidden');
+
+                renderKombelTable();
+                showToast(`✅ ${namaFasda.split(',')[0]} berhasil dipilih sebagai fasilitator!`, 'emerald');
+            } catch(e) {
+                console.error('Gagal pilih fasda:', e);
+                showToast('❌ Gagal menyimpan penugasan', 'rose');
+            }
+        }
+
 
         async function simpanPenugasanFasilKombel() {
             if (!gCurrentModalKombelId) return;
