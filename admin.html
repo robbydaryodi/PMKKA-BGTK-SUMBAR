@@ -2734,6 +2734,12 @@
             return { label: '📚 Mapel Sama', cls: 'bg-violet-100 text-violet-800 border-violet-300' };
         }
 
+        function isKombelMemenuhiRekomendasi(kombel) {
+            if (!gFasdaData || !gFasdaData.length) return false;
+            // Kombel memenuhi kategori jika cocok Kab/Kota & Mapel (skor >= 18) atau FKK1 match
+            return gFasdaData.some(f => hitungSkorRekomendasi(kombel, f) >= 18);
+        }
+
         function toggleModeRekomendasi() {
             gModeRekomendasi = !gModeRekomendasi;
             const btn = document.getElementById('btnModeRekomendasi');
@@ -2742,10 +2748,10 @@
             if (gModeRekomendasi) {
                 btn.className = 'flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-black border border-violet-600 bg-violet-600 text-white transition-all shadow-sm';
                 if (label) label.textContent = '✨ Mode Rekomendasi ON';
-                // Auto-filter ke sasaran saja saat mode rekomendasi aktif
+                // Reset filter status ke ALL agar semua Kombel/KK yang memenuhi kategori Kab+Mapel dari 1.804 data muncul
                 const statusEl = document.getElementById('filterStatusSasaran');
-                if (statusEl) statusEl.value = 'SASARAN';
-                // Load Fasda data jika belum
+                if (statusEl) statusEl.value = 'ALL';
+                // Load Fasda data jika belum, lalu trigger filter
                 loadFasdaData().then(() => filterKombelData());
             } else {
                 btn.className = 'flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-black border border-violet-300 bg-white text-violet-700 hover:bg-violet-50 transition-all shadow-sm';
@@ -2755,8 +2761,8 @@
         }
 
         function buildFasilRekomendasiColHtml(kombel) {
-            // Mode non-rekomendasi atau bukan sasaran: tampilan biasa
-            if (!gModeRekomendasi || !kombel.is_sasaran) {
+            // Mode non-rekomendasi: tampilan biasa berdasarkan status sasaran & fasil
+            if (!gModeRekomendasi) {
                 if (kombel.fasil_nama) {
                     return `<button onclick="openKelolaKombelModal('${kombel.id}')" title="Klik untuk mengubah penugasan fasilitator" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-black bg-purple-100 hover:bg-purple-200 text-purple-900 border border-purple-300 transition-all shadow-2xs hover:scale-105">
                         <span>🤝 ${kombel.fasil_nama}</span>
@@ -2772,26 +2778,24 @@
                 return `<span class="text-slate-300 text-xs">-</span>`;
             }
 
-            // Mode rekomendasi ON + sasaran:
+            // Mode rekomendasi ON: Tampilkan rekomendasi Fasda untuk Kombel/KK ini (baik sasaran maupun belum)
             if (kombel.fasil_nama) {
-                // Sudah ada fasil terpilih
                 return `<div class="flex flex-col gap-1">
                     <button onclick="openKelolaKombelModal('${kombel.id}')" class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-black bg-purple-100 text-purple-900 border border-purple-300 hover:bg-purple-200">
-                        🤝 ${kombel.fasil_nama} <span class="text-[10px] bg-purple-200 px-1 rounded">✓ Ubah</span>
+                        🤝 ${kombel.fasil_nama} <span class="text-[10px] bg-purple-200 px-1 rounded">✓ Ditugaskan</span>
                     </button>
                 </div>`;
             }
 
-            // Belum ada fasil → tampilkan rekomendasi
             const rekomendasi = getTopRekomendasi(kombel, 3);
             if (!rekomendasi.length) {
                 return `<div class="text-[11px] text-slate-400 italic">Belum ada rekomendasi</div>`;
             }
 
-            const rekHtml = rekomendasi.map((f, idx) => {
+            const rekHtml = rekomendasi.map((f) => {
                 const { label, cls } = getLabelSkor(f.skor);
                 return `<div class="flex items-center gap-1.5 mb-1">
-                    <button onclick="quickAssignFasda('${kombel.id}', '${f.nama.replace(/'/g, "\\'")}')" title="Assign ${f.nama} langsung" class="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg text-[11px] font-extrabold bg-violet-600 hover:bg-violet-700 text-white transition-colors">
+                    <button onclick="quickAssignFasda('${kombel.id}', '${f.nama.replace(/'/g, "\\'")}')" title="Assign ${f.nama} dan jadikan sasaran" class="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg text-[11px] font-extrabold bg-violet-600 hover:bg-violet-700 text-white transition-colors shadow-2xs">
                         ⚡ ${f.nama.split(',')[0]}
                     </button>
                     <span class="text-[9px] px-1.5 py-0.5 rounded border font-bold ${cls}">${label}</span>
@@ -2800,20 +2804,32 @@
 
             return `<div class="text-[10px] text-violet-600 font-extrabold mb-1 flex items-center gap-1">
                 <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.347.347a3.001 3.001 0 01-2.474 1.298H9.5a3.001 3.001 0 01-2.474-1.298l-.347-.347z"/></svg>
-                Rekomendasi:
+                Rekomendasi Fasda:
             </div>${rekHtml}
             <button onclick="openKelolaKombelModal('${kombel.id}')" class="text-[10px] text-slate-500 hover:text-indigo-600 hover:underline">+ Pilih manual ↗</button>`;
         }
 
         async function quickAssignFasda(kombelId, namafasda) {
             if (!kombelId || !namafasda) return;
-            const konfirm = confirm(`Assign ${namafasda} sebagai fasilitator untuk kombel ini?`);
+            const kombel = gAllKombels[kombelId];
+            const isTarget = kombel && kombel.is_sasaran;
+            const confirmMsg = isTarget
+                ? `Assign ${namafasda} sebagai fasilitator untuk kombel ini?`
+                : `Jadikan kombel ini Sasaran PMKKA & assign ${namafasda}?`;
+            const konfirm = confirm(confirmMsg);
             if (!konfirm) return;
             try {
-                await db.ref(`master_kombel/${kombelId}`).update({ fasil_nama: namafasda, fasil_id: null });
-                if (gAllKombels[kombelId]) gAllKombels[kombelId].fasil_nama = namafasda;
-                renderKombelTable();
-                showToast(`✅ ${namafasda.split(',')[0]} berhasil diassign!`, 'emerald');
+                await db.ref(`master_kombel/${kombelId}`).update({
+                    fasil_nama: namafasda,
+                    fasil_id: null,
+                    is_sasaran: true
+                });
+                if (gAllKombels[kombelId]) {
+                    gAllKombels[kombelId].fasil_nama = namafasda;
+                    gAllKombels[kombelId].is_sasaran = true;
+                }
+                filterKombelData();
+                showToast(`✅ ${namafasda.split(',')[0]} berhasil ditugaskan & sasaran diperbarui!`, 'emerald');
             } catch(e) {
                 console.error('Gagal assign fasda:', e);
                 showToast('❌ Gagal menyimpan penugasan', 'rose');
@@ -2941,17 +2957,26 @@
             const kabFilter = document.getElementById('filterKabKombel')?.value || 'ALL';
             const statusFilter = document.getElementById('filterStatusSasaran')?.value || 'ALL';
             const list = Object.values(gAllKombels);
+
             gFilteredKombels = list.filter(k => {
                 const matchSearch = !search || (k.nama_kombel && k.nama_kombel.toLowerCase().includes(search)) || (k.nama_ketua && k.nama_ketua.toLowerCase().includes(search)) || (k.instansi && k.instansi.toLowerCase().includes(search)) || (k.kecamatan && k.kecamatan.toLowerCase().includes(search));
                 const matchKab = kabFilter === 'ALL' || k.kab_kota === kabFilter;
                 const matchStatus = statusFilter === 'ALL' || (statusFilter === 'SASARAN' && k.is_sasaran) || (statusFilter === 'NON_SASARAN' && !k.is_sasaran);
-                return matchSearch && matchKab && matchStatus;
+                const matchRekomendasi = !gModeRekomendasi || isKombelMemenuhiRekomendasi(k);
+                return matchSearch && matchKab && matchStatus && matchRekomendasi;
             });
+
             const sasaranCount = list.filter(k => k.is_sasaran).length;
             const totalEl = document.getElementById('statKombelTotal');
             const sasaranEl = document.getElementById('statKombelSasaran');
             if (totalEl) totalEl.textContent = list.length.toLocaleString('id-ID');
-            if (sasaranEl) sasaranEl.textContent = `${sasaranCount} / 54`;
+
+            if (gModeRekomendasi) {
+                if (sasaranEl) sasaranEl.textContent = `${gFilteredKombels.length} Rekomendasi`;
+            } else {
+                if (sasaranEl) sasaranEl.textContent = `${sasaranCount} / 54`;
+            }
+
             gKombelPage = 1;
             renderKombelTable();
         }
