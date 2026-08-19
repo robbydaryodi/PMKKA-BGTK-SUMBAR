@@ -211,7 +211,10 @@
         const SUPER_ADMIN_EMAILS = [
             'mastersumbar1@gmail.com',
             'irawati.2308@gmail.com',
-            'irawati@kemendikdasmen.go.id'
+            'irawati@kemendikdasmen.go.id',
+            'rosariaayu8@gmail.com',
+            'rosariaayu5@gmail.com',
+            'rosa.ria@kemendikdasmen.go.id'
         ];
 
         const ADMIN_FKK_MAPPING = {
@@ -296,7 +299,10 @@
 
                 if (SUPER_ADMIN_EMAILS.includes(userEmail)) {
                     sessionStorage.setItem('admin_bgtk_email', userEmail);
-                    sessionStorage.setItem('admin_bgtk_nama', userEmail.includes('irawati') ? 'IRAWATI, S.Pd, M.Pd.' : 'Super Admin Utama');
+                    let nama = 'Super Admin Utama';
+                    if (userEmail.includes('irawati')) nama = 'IRAWATI, S.Pd, M.Pd.';
+                    else if (userEmail.includes('rosa')) nama = 'ROSA RIA AYU, S.Pd.';
+                    sessionStorage.setItem('admin_bgtk_nama', nama);
                     sessionStorage.setItem('admin_bgtk_role', 'Super Admin');
                     window.location.href = 'admin.html';
                     return;

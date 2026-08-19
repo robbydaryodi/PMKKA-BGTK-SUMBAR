@@ -1744,7 +1744,10 @@
         const SUPER_ADMIN_EMAILS = [
             'mastersumbar1@gmail.com',
             'irawati.2308@gmail.com',
-            'irawati@kemendikdasmen.go.id'
+            'irawati@kemendikdasmen.go.id',
+            'rosariaayu8@gmail.com',
+            'rosariaayu5@gmail.com',
+            'rosa.ria@kemendikdasmen.go.id'
         ];
 
         async function checkAndApplyUserRole(email) {
@@ -1761,7 +1764,13 @@
             // 1. Check Super Admin first (Akses Penuh 100%)
             if (SUPER_ADMIN_EMAILS.includes(cleanEmail)) {
                 userRole = 'Super Admin';
-                gAdminNama = (cleanEmail.includes('irawati')) ? 'IRAWATI, S.Pd, M.Pd.' : 'Super Admin Utama';
+                if (cleanEmail.includes('irawati')) {
+                    gAdminNama = 'IRAWATI, S.Pd, M.Pd.';
+                } else if (cleanEmail.includes('rosa')) {
+                    gAdminNama = 'ROSA RIA AYU, S.Pd.';
+                } else {
+                    gAdminNama = 'Super Admin Utama';
+                }
                 gAssignedFasilIds = null;
                 gAssignedFasilNames = null;
                 permissions = {
