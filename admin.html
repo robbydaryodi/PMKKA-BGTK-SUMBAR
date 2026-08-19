@@ -665,7 +665,13 @@
                         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                             <div>
                                 <span class="inline-block px-3 py-1 bg-white/20 backdrop-blur-md rounded-full text-xs font-bold text-purple-100 uppercase tracking-wider mb-2">BGTK Sumatera Barat</span>
-                                <h1 class="text-2xl font-black">Data Master Komunitas Belajar (Kombel)</h1>
+                                <div class="flex items-center gap-3">
+                                    <h1 class="text-2xl font-black">Data Master Komunitas Belajar (Kombel)</h1>
+                                    <span id="liveIndicatorKombel" style="display:none" class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-emerald-500/20 border border-emerald-400/40 rounded-full text-[11px] font-black text-emerald-300 backdrop-blur-sm" title="Data terhubung real-time — perubahan dari semua pengguna langsung terlihat">
+                                        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse inline-block"></span>
+                                        LIVE
+                                    </span>
+                                </div>
                                 <p class="text-sm text-purple-200 mt-1">Kelola 1.804 Komunitas Belajar &amp; pilih 54 Kombel Sasaran Pendampingan PMKKA.</p>
                             </div>
                         </div>
@@ -2919,13 +2925,49 @@
             {no:41,admin:'Ayuk',nama:'Animar, M. Pd.',jabatan:'Pengawas',mapel:'Bahasa Indonesia SMA',kab_penugasan:'Kota Sawahlunto',fkk1:''},
         ];
 
-        async function loadKombelData() {
-            try {
-                const snap = await db.ref('master_kombel').once('value');
+        let gKombelRealtimeRef = null; // Referensi listener agar bisa di-detach nanti
+
+        function loadKombelData() {
+            // Gunakan .on('value') bukan .once() agar real-time:
+            // setiap perubahan dari user lain langsung ter-push ke semua browser
+            if (gKombelRealtimeRef) return; // Sudah ada listener aktif, skip
+
+            const indikator = document.getElementById('liveIndicatorKombel');
+
+            gKombelRealtimeRef = db.ref('master_kombel');
+            gKombelRealtimeRef.on('value', (snap) => {
+                const prevCount = Object.keys(gAllKombels).length;
                 gAllKombels = snap.val() || {};
+                const currCount = Object.keys(gAllKombels).length;
+
                 populateKabKombelDropdown();
                 filterKombelData();
-            } catch(e) { console.error("Gagal load master_kombel", e); }
+
+                // Tampilkan indikator live setelah update pertama
+                if (indikator) {
+                    indikator.style.display = 'inline-flex';
+                    // Flash animasi singkat saat ada update dari user lain
+                    if (prevCount > 0) {
+                        indikator.style.background = 'rgba(16,185,129,0.35)';
+                        setTimeout(() => { indikator.style.background = ''; }, 2000);
+                    }
+                }
+            }, (err) => {
+                console.error("Gagal load master_kombel (realtime):", err);
+                // Fallback ke once jika listener gagal
+                db.ref('master_kombel').once('value').then(snap => {
+                    gAllKombels = snap.val() || {};
+                    populateKabKombelDropdown();
+                    filterKombelData();
+                });
+            });
+        }
+
+        function stopKombelRealtimeListener() {
+            if (gKombelRealtimeRef) {
+                gKombelRealtimeRef.off('value');
+                gKombelRealtimeRef = null;
+            }
         }
 
 
