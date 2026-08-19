@@ -1781,11 +1781,11 @@
             } 
             // 2. Check Admin FKK mapping (9 personil pegawai BGTK)
             else if (ADMIN_FKK_MAPPING[cleanEmail]) {
-                userRole = 'Admin FKK';
+                userRole = 'Admin Program';
                 gAdminNama = ADMIN_FKK_MAPPING[cleanEmail].adminNama;
                 permissions = {
                     dashboard: true, master_pegawai: false, master_kombel: true,
-                    fasilitator: true, jadwal_kunjungan: false, setting_jadwal: false,
+                    fasilitator: true, jadwal_kunjungan: true, setting_jadwal: true,
                     persuratan: false, access_management: false
                 };
             } 
@@ -1813,20 +1813,12 @@
             gCurrentLoggedPermissions = permissions;
             applyRolePermissionsToUI(userRole, permissions);
 
-            // Auto-route initial view based on role
-            if (userRole === 'Admin FKK') {
-                selectWorkspaceTrack('fkk');
-            } else if (userRole === 'Admin Sekolah Model') {
-                selectWorkspaceTrack('sekolah_model');
-            } else {
-                selectWorkspaceTrack('dashboard');
-            }
+            // Auto-route initial view to dashboard
+            selectWorkspaceTrack('dashboard');
         }
 
         function applyRolePermissionsToUI(userRole, permissions) {
             const isSuperAdmin = (userRole === 'Super Admin');
-            const isAdminFKK = (userRole === 'Admin FKK');
-            const isAdminSekolahModel = (userRole === 'Admin Sekolah Model');
             const p = permissions || {};
 
             const groupFKK = document.getElementById('sidebarGroupFKK');
@@ -1843,95 +1835,49 @@
             const brandSub = document.getElementById('adminBrandSubtitle');
             const userRoleBadge = document.getElementById('adminUserRoleBadge');
 
-            if (isAdminFKK) {
-                // Strict isolation for Admin FKK
-                if (groupFKK) groupFKK.classList.remove('hidden');
-                if (groupSekolahModel) groupSekolahModel.classList.add('hidden');
-                if (groupInternal) groupInternal.classList.add('hidden');
-                if (btnModeAkses) btnModeAkses.classList.add('hidden');
+            // Tampilkan grup menu FKK dan Sekolah Model untuk semua Admin Program
+            if (groupFKK) groupFKK.classList.remove('hidden');
+            if (groupSekolahModel) groupSekolahModel.classList.remove('hidden');
 
-                if (tabSekolah) tabSekolah.classList.add('hidden');
-                if (tabMaster) tabMaster.classList.add('hidden');
-                if (tabFKK) tabFKK.classList.remove('hidden');
-                if (tabDash) tabDash.classList.remove('hidden');
+            if (groupInternal) {
+                if (p.master_pegawai || p.access_management || p.setting_jadwal || isSuperAdmin) groupInternal.classList.remove('hidden');
+                else groupInternal.classList.add('hidden');
+            }
+            if (btnModeAkses) {
+                if (p.access_management || isSuperAdmin) btnModeAkses.classList.remove('hidden');
+                else btnModeAkses.classList.add('hidden');
+            }
 
-                if (brandSub) {
-                    brandSub.textContent = gAdminNama ? `Admin FKK (${gAdminNama.split(',')[0]})` : 'Admin FKK (PMKKA KK)';
-                    brandSub.className = 'text-[10px] font-bold text-amber-700 block mt-0.5';
-                }
-                if (userRoleBadge) {
-                    userRoleBadge.innerHTML = `⭐ Admin FKK (54 Sasaran)`;
-                    userRoleBadge.className = 'text-[10px] font-black text-amber-900 bg-amber-100 px-2 py-0.5 rounded-md border border-amber-300 inline-block mt-0.5';
-                }
-            } else if (isAdminSekolahModel) {
-                // Strict isolation for Admin Sekolah Model
-                if (groupFKK) groupFKK.classList.add('hidden');
-                if (groupSekolahModel) groupSekolahModel.classList.remove('hidden');
-                if (groupInternal) groupInternal.classList.add('hidden');
-                if (btnModeAkses) btnModeAkses.classList.add('hidden');
+            // Top Workspace Tabs - Sekolah Model & FKK selalu aktif & dapat diakses
+            if (tabSekolah) tabSekolah.classList.remove('hidden');
+            if (tabFKK) tabFKK.classList.remove('hidden');
+            if (tabDash) tabDash.classList.remove('hidden');
+            if (tabMaster) {
+                if (isSuperAdmin || p.access_management || p.master_pegawai) tabMaster.classList.remove('hidden');
+                else tabMaster.classList.add('hidden');
+            }
 
-                if (tabFKK) tabFKK.classList.add('hidden');
-                if (tabMaster) tabMaster.classList.add('hidden');
-                if (tabSekolah) tabSekolah.classList.remove('hidden');
-                if (tabDash) tabDash.classList.remove('hidden');
+            // Expand submenus otomatis agar mudah digunakan
+            const smFasil = document.getElementById('submenuFasil');
+            if (smFasil) smFasil.classList.remove('hidden');
+            const iconFasil = document.getElementById('icon_submenuFasil');
+            if (iconFasil) iconFasil.classList.add('rotate-180');
 
-                // Automatically expand submenus for Admin Sekolah Model
-                const smFasil = document.getElementById('submenuFasil');
-                if (smFasil) smFasil.classList.remove('hidden');
-                const iconFasil = document.getElementById('icon_submenuFasil');
-                if (iconFasil) iconFasil.classList.add('rotate-180');
+            const smSekolah = document.getElementById('submenuSekolah');
+            if (smSekolah) smSekolah.classList.remove('hidden');
+            const iconSekolah = document.getElementById('icon_submenuSekolah');
+            if (iconSekolah) iconSekolah.classList.add('rotate-180');
 
-                const smSekolah = document.getElementById('submenuSekolah');
-                if (smSekolah) smSekolah.classList.remove('hidden');
-                const iconSekolah = document.getElementById('icon_submenuSekolah');
-                if (iconSekolah) iconSekolah.classList.add('rotate-180');
-
-                if (brandSub) {
-                    brandSub.textContent = gAdminNama ? `Admin Pendamping (${gAdminNama.split(',')[0]})` : 'Admin Sekolah Model';
-                    brandSub.className = 'text-[10px] font-bold text-teal-700 block mt-0.5';
-                }
-                if (userRoleBadge) {
-                    const fasilSub = gAssignedFasilNames ? `<span class="block text-[9px] font-medium text-teal-700 mt-0.5">Fasil: ${gAssignedFasilNames.join(', ')}</span>` : '';
-                    userRoleBadge.innerHTML = `🏫 Admin Sekolah Model ${fasilSub}`;
-                    userRoleBadge.className = 'text-[10px] font-black text-teal-800 bg-teal-100 px-2 py-1 rounded-md border border-teal-300 inline-block mt-0.5';
-                }
-            } else {
-                // Super Admin / Pegawai BGTK
-                if (groupFKK) {
-                    if (p.master_kombel || isSuperAdmin) groupFKK.classList.remove('hidden');
-                    else groupFKK.classList.add('hidden');
-                }
-                if (groupSekolahModel) {
-                    if (p.fasilitator || p.jadwal_kunjungan || isSuperAdmin) groupSekolahModel.classList.remove('hidden');
-                    else groupSekolahModel.classList.add('hidden');
-                }
-                if (groupInternal) {
-                    if (p.master_pegawai || p.access_management || p.setting_jadwal || isSuperAdmin) groupInternal.classList.remove('hidden');
-                    else groupInternal.classList.add('hidden');
-                }
-                if (btnModeAkses) {
-                    if (p.access_management || isSuperAdmin) btnModeAkses.classList.remove('hidden');
-                    else btnModeAkses.classList.add('hidden');
-                }
-
-                if (tabSekolah) tabSekolah.classList.remove('hidden');
-                if (tabFKK) tabFKK.classList.remove('hidden');
-                if (tabDash) tabDash.classList.remove('hidden');
-                if (tabMaster) {
-                    if (isSuperAdmin || p.access_management || p.master_pegawai) tabMaster.classList.remove('hidden');
-                    else tabMaster.classList.add('hidden');
-                }
-
-                if (brandSub) {
-                    brandSub.textContent = isSuperAdmin ? 'Super Admin Program' : 'Admin Pegawai BGTK';
-                    brandSub.className = isSuperAdmin ? 'text-[10px] font-bold text-purple-700 block mt-0.5' : 'text-[10px] font-bold text-emerald-700 block mt-0.5';
-                }
-                if (userRoleBadge) {
-                    userRoleBadge.textContent = isSuperAdmin ? '👑 Super Admin' : (userRole || 'Admin Pegawai');
-                    userRoleBadge.className = isSuperAdmin 
-                        ? 'text-[10px] font-black text-purple-800 bg-purple-100 px-2 py-0.5 rounded-md border border-purple-300 inline-block mt-0.5'
-                        : 'text-[10px] font-extrabold text-indigo-800 bg-indigo-100 px-2 py-0.5 rounded-md border border-indigo-200 inline-block mt-0.5';
-                }
+            if (brandSub) {
+                const labelNama = gAdminNama ? gAdminNama.split(',')[0] : userRole;
+                brandSub.textContent = `Admin Program (${labelNama})`;
+                brandSub.className = 'text-[10px] font-bold text-purple-700 block mt-0.5';
+            }
+            if (userRoleBadge) {
+                userRoleBadge.innerHTML = isSuperAdmin ? `👑 Super Admin` : `⭐ Admin Program (Sekolah Model & FKK)`;
+                userRoleBadge.className = isSuperAdmin 
+                    ? 'text-[10px] font-black text-purple-800 bg-purple-100 px-2 py-0.5 rounded-md border border-purple-300 inline-block mt-0.5'
+                    : 'text-[10px] font-black text-indigo-900 bg-indigo-100 px-2 py-0.5 rounded-md border border-indigo-300 inline-block mt-0.5';
             }
         }
 
