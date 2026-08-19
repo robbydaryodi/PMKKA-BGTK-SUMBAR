@@ -228,35 +228,31 @@
             <div class="bg-white border-b border-slate-200/90 px-4 md:px-8 py-3 shadow-2xs flex-shrink-0">
                 <div class="flex flex-wrap items-center justify-between gap-3">
                     <div class="flex items-center gap-2 overflow-x-auto custom-sidebar-scroll py-0.5" id="topWorkspaceSelectorContainer">
-                        <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest mr-1">PILIH PROGRAM:</span>
+                        <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest mr-1">TAHAPAN WORKFLOW:</span>
                         
-                        <!-- TAB 1: SEKOLAH MODEL -->
-                        <button onclick="selectWorkspaceTrack('sekolah_model')" id="tabWorkspaceSekolahModel" class="workspace-track-tab px-3.5 py-1.5 rounded-xl text-xs font-black transition-all flex items-center gap-2 border border-slate-200 text-slate-700 hover:bg-teal-50 hover:text-teal-900">
-                            <span class="w-2.5 h-2.5 rounded-full bg-teal-500 flex-shrink-0"></span>
-                            <span>🏫 1. SEKOLAH MODEL (25 SASARAN)</span>
+                        <!-- TAHAP 1: PEMILIHAN KOMBEL -->
+                        <button onclick="switchTahapanWorkflow('tahap1')" id="tabTahap1" class="tahap-workflow-tab px-3 py-1.5 rounded-xl text-xs font-black transition-all flex items-center gap-1.5 border border-purple-300 bg-purple-600 text-white shadow-xs">
+                            <span>🔍 1. Pemilihan Kombel</span>
                         </button>
 
-                        <!-- TAB 2: PMKKA KK (FKK) -->
-                        <button onclick="selectWorkspaceTrack('fkk')" id="tabWorkspaceFKK" class="workspace-track-tab px-3.5 py-1.5 rounded-xl text-xs font-black transition-all flex items-center gap-2 border border-slate-200 text-slate-700 hover:bg-amber-50 hover:text-amber-900">
-                            <span class="w-2.5 h-2.5 rounded-full bg-amber-500 flex-shrink-0"></span>
-                            <span>⭐ 2. PMKKA KK / FKK (54 SASARAN)</span>
+                        <!-- TAHAP 2: PENUGASAN FASIL & ADMIN -->
+                        <button onclick="switchTahapanWorkflow('tahap2')" id="tabTahap2" class="tahap-workflow-tab px-3 py-1.5 rounded-xl text-xs font-black transition-all flex items-center gap-1.5 border border-slate-200 text-slate-700 hover:bg-purple-50 bg-white">
+                            <span>🤝 2. Penugasan Fasil &amp; Admin</span>
                         </button>
 
-                        <!-- TAB 3: MONITORING TERPADU -->
-                        <button onclick="selectWorkspaceTrack('dashboard')" id="tabWorkspaceDashboard" class="workspace-track-tab px-3.5 py-1.5 rounded-xl text-xs font-black transition-all flex items-center gap-2 border border-purple-600 bg-purple-600 text-white shadow-sm">
-                            <span class="w-2.5 h-2.5 rounded-full bg-white flex-shrink-0"></span>
-                            <span>👑 3. MONITORING TERPADU</span>
+                        <!-- TAHAP 3: KONFIRMASI KK -->
+                        <button onclick="switchTahapanWorkflow('tahap3')" id="tabTahap3" class="tahap-workflow-tab px-3 py-1.5 rounded-xl text-xs font-black transition-all flex items-center gap-1.5 border border-slate-200 text-slate-700 hover:bg-purple-50 bg-white">
+                            <span>✅ 3. Konfirmasi KK / Kombel</span>
                         </button>
 
-                        <!-- TAB 4: MASTER & ADMIN -->
-                        <button onclick="selectWorkspaceTrack('master')" id="tabWorkspaceMaster" class="workspace-track-tab px-3.5 py-1.5 rounded-xl text-xs font-black transition-all flex items-center gap-2 border border-slate-200 text-slate-700 hover:bg-emerald-50 hover:text-emerald-900">
-                            <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 flex-shrink-0"></span>
-                            <span>⚙️ 4. DATA MASTER &amp; ADMIN</span>
+                        <!-- TAHAP 4: EXPORT CSV LMS ADMIN -->
+                        <button onclick="switchTahapanWorkflow('tahap4')" id="tabTahap4" class="tahap-workflow-tab px-3 py-1.5 rounded-xl text-xs font-black transition-all flex items-center gap-1.5 border border-slate-200 text-slate-700 hover:bg-purple-50 bg-white">
+                            <span>📥 4. Export CSV LMS Admin</span>
                         </button>
                     </div>
                     <div id="activeWorkspacePill" class="hidden sm:flex items-center gap-1.5 text-xs font-extrabold text-slate-500">
                         <span>Status:</span>
-                        <span id="activeWorkspacePillText" class="px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-800 border border-slate-200 font-black">👑 Monitoring Terpadu</span>
+                        <span id="activeWorkspacePillText" class="px-2.5 py-0.5 rounded-full bg-purple-100 text-purple-900 border border-purple-200 font-black">Tahap 1: Pemilihan Kombel</span>
                     </div>
                 </div>
             </div>
@@ -1306,12 +1302,22 @@
                                     <option value="">-- Pilih Admin Pengampu BGTK --</option>
                                 </select>
                             </div>
-                            <div class="flex items-end">
-                                <button onclick="simpanPenugasanFasilKombel()" class="w-full sm:w-auto px-5 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-xl text-xs font-bold transition shadow-sm flex items-center justify-center gap-1.5 flex-shrink-0">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-                                    <span>Simpan Fasil &amp; Admin</span>
-                                </button>
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2 border-t border-slate-100">
+                            <div>
+                                <label class="block text-[11px] font-bold text-slate-600 mb-1">👤 Nama Ketua Kombel:</label>
+                                <input type="text" id="modalInputNamaKetua" placeholder="Nama Ketua Kombel" class="w-full border border-slate-300 rounded-xl px-3.5 py-2 text-xs font-semibold text-slate-800 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-purple-500 outline-none">
                             </div>
+                            <div>
+                                <label class="block text-[11px] font-bold text-slate-600 mb-1">✉️ Email Belajar.id Ketua:</label>
+                                <input type="email" id="modalInputEmailKetua" placeholder="contoh: nama@guru.sd.belajar.id" class="w-full border border-slate-300 rounded-xl px-3.5 py-2 text-xs font-semibold text-slate-800 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-purple-500 outline-none">
+                            </div>
+                        </div>
+                        <div class="flex justify-end pt-1">
+                            <button onclick="simpanPenugasanFasilKombel()" class="w-full sm:w-auto px-6 py-2.5 bg-purple-600 hover:bg-purple-700 text-white rounded-xl text-xs font-bold transition shadow-sm flex items-center justify-center gap-1.5 flex-shrink-0">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                                <span>Simpan Penugasan &amp; Akun Ketua</span>
+                            </button>
                         </div>
                     </div>
                     <!-- Panel Rekomendasi Fasda dari Google Sheets -->
@@ -1433,6 +1439,63 @@
                     💡 Data peserta yang tersimpan siap digunakan untuk plotting kelas PMKKA.
                 </div>
                 <button onclick="closeKelolaKombelModal()" class="px-6 py-2 bg-slate-800 hover:bg-slate-900 text-white rounded-xl text-xs font-bold shadow-sm transition">Tutup</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL EXPORT LMS ADMIN & RINGKASAN KONFIRMASI -->
+    <div id="modalExportLMSAdmin" class="hidden fixed inset-0 z-[125] bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl shadow-2xl w-full max-w-4xl overflow-hidden fade-in border border-slate-100 flex flex-col max-h-[90vh]">
+            <div class="px-6 py-4 bg-gradient-to-r from-emerald-800 to-teal-900 text-white flex justify-between items-center flex-shrink-0">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-2xl bg-white/10 flex items-center justify-center text-xl">✅</div>
+                    <div>
+                        <h3 class="font-black text-base text-amber-300" id="modalExportLMSKombelTitle">Detail Konfirmasi &amp; Export LMS</h3>
+                        <p class="text-xs text-emerald-200">Format CSV Siap Impor ke LMS Admin BGTK</p>
+                    </div>
+                </div>
+                <button onclick="document.getElementById('modalExportLMSAdmin').classList.add('hidden')" class="text-white/70 hover:text-white p-2 rounded-full hover:bg-white/10 transition">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                </button>
+            </div>
+            
+            <div class="p-6 overflow-y-auto space-y-4 flex-1">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 bg-emerald-50/60 border border-emerald-200 rounded-2xl p-4 text-xs">
+                    <div>
+                        <span class="text-emerald-700 font-medium">Tanggal Submit Konfirmasi:</span>
+                        <div class="font-bold text-emerald-950 text-sm mt-0.5" id="modalExportLMSTgl">-</div>
+                    </div>
+                    <div>
+                        <span class="text-emerald-700 font-medium">Jumlah Peserta Disetujui:</span>
+                        <div class="font-black text-emerald-900 text-sm mt-0.5" id="modalExportLMSJumlah">-</div>
+                    </div>
+                </div>
+
+                <div class="border border-slate-200 rounded-2xl overflow-hidden shadow-2xs">
+                    <div class="overflow-x-auto max-h-72">
+                        <table class="w-full text-left text-xs whitespace-nowrap">
+                            <thead class="bg-slate-100 text-slate-700 font-extrabold border-b border-slate-200 sticky top-0">
+                                <tr>
+                                    <th class="px-3 py-2 text-center w-10">No</th>
+                                    <th class="px-3 py-2">Nama Lengkap Peserta</th>
+                                    <th class="px-3 py-2">NIK</th>
+                                    <th class="px-3 py-2">Sekolah / Instansi</th>
+                                    <th class="px-3 py-2">NPSN</th>
+                                    <th class="px-3 py-2">Email</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tableExportLMSBody" class="divide-y divide-slate-100"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="px-6 py-4 bg-slate-50 border-t border-slate-100 flex justify-between items-center flex-shrink-0">
+                <button onclick="document.getElementById('modalExportLMSAdmin').classList.add('hidden')" class="px-4 py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-xl text-xs font-bold transition">Tutup</button>
+                <button onclick="exportLMSAdminCSV()" class="px-6 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-black transition shadow-md shadow-emerald-200 flex items-center gap-2">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                    <span>📥 Export CSV Format LMS Admin</span>
+                </button>
             </div>
         </div>
     </div>
@@ -2933,6 +2996,7 @@
 
                 populateKabKombelDropdown();
                 populateMapelKombelDropdown();
+                checkAdminRoleAccess();
                 filterKombelData();
 
                 // Tampilkan indikator live setelah update pertama
@@ -3071,6 +3135,18 @@
                     </button>`;
                 }
 
+                // Status Konfirmasi Column
+                let konfirmasiColHtml = `<span class="text-xs text-slate-400 font-medium">⏳ Belum Konfirmasi</span>`;
+                if (k.konfirmasi && k.konfirmasi.is_konfirmasi) {
+                    const totalConf = k.konfirmasi.total_konfirmasi || 0;
+                    const totalImp = k.konfirmasi.total_peserta_impor || (k.peserta ? Object.keys(k.peserta).length : 0);
+                    konfirmasiColHtml = `
+                    <button onclick="openModalExportLMSAdmin('${k.id}')" title="Klik untuk lihat detail konfirmasi & export CSV LMS" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-black bg-emerald-100 hover:bg-emerald-200 text-emerald-900 border border-emerald-300 transition-all shadow-2xs hover:scale-105 cursor-pointer">
+                        <span>✅ Disetujui (${totalConf}/${totalImp})</span>
+                        <span class="text-[10px] bg-emerald-200 text-emerald-950 px-1.5 py-0.5 rounded font-black">CSV 📥</span>
+                    </button>`;
+                }
+
                 // Row highlight: mode rekomendasi + belum ada fasil = highlight violet
                 let rowClass = 'hover:bg-slate-50 transition-colors';
                 if (isSasaran) {
@@ -3079,7 +3155,10 @@
                 }
 
                 const badgeSasaran = isSasaran 
-                    ? `<button onclick="openKelolaKombelModal('${k.id}')" title="Klik untuk Kelola Fasilitator & Peserta" class="px-2.5 py-1 rounded-full text-xs font-black bg-amber-100 hover:bg-amber-200 text-amber-900 border border-amber-300 transition-all shadow-2xs hover:scale-105 inline-flex items-center gap-1 cursor-pointer"><span>⭐ 54 Sasaran KK</span></button>` 
+                    ? `<div class="flex flex-col items-center gap-1">
+                        <button onclick="openKelolaKombelModal('${k.id}')" title="Klik untuk Kelola Fasilitator & Peserta" class="px-2.5 py-1 rounded-full text-xs font-black bg-amber-100 hover:bg-amber-200 text-amber-900 border border-amber-300 transition-all shadow-2xs hover:scale-105 inline-flex items-center gap-1 cursor-pointer"><span>⭐ 54 Sasaran KK</span></button>
+                        ${konfirmasiColHtml}
+                       </div>` 
                     : `<span class="px-2.5 py-1 rounded-full text-xs font-medium bg-slate-100 text-slate-500">Bukan Sasaran</span>`;
 
                 const btnActions = isSasaran
@@ -3151,6 +3230,12 @@
             document.getElementById('modalKombelKabBadge').textContent = kombel.kab_kota || 'Sumatera Barat';
             document.getElementById('modalKombelKecDesa').textContent = `${kombel.kecamatan || '-'} • ${kombel.desa_kelurahan || '-'}`;
             document.getElementById('modalKombelKetuaKontak').textContent = `Ketua: ${kombel.nama_ketua || '-'} (${kombel.email || kombel.no_hp || '-'})`;
+
+            // Populate Form Ketua & Email Belajar.id
+            const inputNamaKetua = document.getElementById('modalInputNamaKetua');
+            const inputEmailKetua = document.getElementById('modalInputEmailKetua');
+            if (inputNamaKetua) inputNamaKetua.value = kombel.nama_ketua || '';
+            if (inputEmailKetua) inputEmailKetua.value = kombel.email || kombel.email_ketua || '';
 
             // Reset upload preview
             cancelUploadPreview();
@@ -3309,6 +3394,8 @@
             if (!gCurrentModalKombelId) return;
             const selFasil = document.getElementById('modalSelectFasilKombel');
             const selAdmin = document.getElementById('modalSelectAdminKombel');
+            const inputNamaKetua = (document.getElementById('modalInputNamaKetua')?.value || '').trim();
+            const inputEmailKetua = (document.getElementById('modalInputEmailKetua')?.value || '').trim();
 
             const fasilId = selFasil?.value || null;
             const fasilNama = selFasil?.options[selFasil.selectedIndex]?.getAttribute('data-nama') || '';
@@ -3325,6 +3412,13 @@
                 if (adminNama) {
                     payload.admin_nama = adminNama;
                 }
+                if (inputNamaKetua) {
+                    payload.nama_ketua = inputNamaKetua;
+                }
+                if (inputEmailKetua) {
+                    payload.email = inputEmailKetua;
+                    payload.email_ketua = inputEmailKetua;
+                }
 
                 await db.ref(`master_kombel/${gCurrentModalKombelId}`).update(payload);
 
@@ -3338,10 +3432,151 @@
                 }
 
                 filterKombelData();
-                showToast("✅ Berhasil menyimpan Fasilitator & Admin Pengampu!", "emerald");
+                showToast("✅ Berhasil menyimpan Fasilitator, Admin & Data Akun Ketua!", "emerald");
             } catch(e) {
                 console.error("Gagal menyimpan penugasan:", e);
                 showToast("❌ Gagal menyimpan penugasan", "rose");
+            }
+        }
+
+        // ==========================================
+        // EXPORT LMS ADMIN & KONFIRMASI KOMBELS
+        // ==========================================
+        let gCurrentExportKombelId = null;
+
+        function openModalExportLMSAdmin(kombelId) {
+            const kombel = gAllKombels[kombelId];
+            if (!kombel || !kombel.konfirmasi) return;
+
+            const konfirmasi = kombel.konfirmasi;
+            const pesertaConfirmed = konfirmasi.peserta_konfirmasi || [];
+
+            document.getElementById('modalExportLMSKombelTitle').textContent = kombel.nama_kombel;
+            document.getElementById('modalExportLMSTgl').textContent = konfirmasi.tgl_konfirmasi || '-';
+            document.getElementById('modalExportLMSJumlah').textContent = `${pesertaConfirmed.length} / ${konfirmasi.total_peserta_impor || pesertaConfirmed.length} Peserta Disetujui`;
+
+            const tbody = document.getElementById('tableExportLMSBody');
+            if (pesertaConfirmed.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" class="px-4 py-8 text-center text-slate-400">Belum ada peserta yang disetujui.</td></tr>`;
+            } else {
+                tbody.innerHTML = pesertaConfirmed.map((p, i) => `
+                    <tr class="hover:bg-slate-50">
+                        <td class="px-3 py-2 text-center text-slate-400 font-bold">${i + 1}</td>
+                        <td class="px-3 py-2 font-bold text-slate-800">${p.nama || p.nama_lengkap || '-'}</td>
+                        <td class="px-3 py-2 font-mono text-slate-600">${p.nik || '-'}</td>
+                        <td class="px-3 py-2 text-slate-700">${p.sekolah || p.instansi || '-'}</td>
+                        <td class="px-3 py-2 font-mono text-slate-500">${p.npsn || '-'}</td>
+                        <td class="px-3 py-2 text-slate-600">${p.email || '-'}</td>
+                    </tr>
+                `).join('');
+            }
+
+            gCurrentExportKombelId = kombelId;
+            document.getElementById('modalExportLMSAdmin').classList.remove('hidden');
+        }
+
+        function exportLMSAdminCSV() {
+            if (!gCurrentExportKombelId) return;
+            const kombel = gAllKombels[gCurrentExportKombelId];
+            if (!kombel || !kombel.konfirmasi) return;
+
+            const peserta = kombel.konfirmasi.peserta_konfirmasi || [];
+            if (peserta.length === 0) {
+                showToast("⚠️ Tidak ada peserta terkonfirmasi untuk di-export.", false);
+                return;
+            }
+
+            let csvContent = "\uFEFF"; // UTF-8 BOM
+            csvContent += "No,Nama Lengkap,NIK,Email,No HP,Sekolah/Instansi,NPSN,Jabatan,Kab/Kota,Status Konfirmasi\n";
+
+            peserta.forEach((p, idx) => {
+                const row = [
+                    idx + 1,
+                    `"${(p.nama || p.nama_lengkap || '').replace(/"/g, '""')}"`,
+                    `"${p.nik || ''}"`,
+                    `"${p.email || ''}"`,
+                    `"${p.no_hp || p.telepon || ''}"`,
+                    `"${(p.sekolah || p.instansi || '').replace(/"/g, '""')}"`,
+                    `"${p.npsn || ''}"`,
+                    `"${p.jabatan || p.role || ''}"`,
+                    `"${kombel.kab_kota || ''}"`,
+                    `"Disetujui Ketua"`
+                ];
+                csvContent += row.join(",") + "\n";
+            });
+
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement("a");
+            const filename = `LMS_Admin_Format_${(kombel.nama_kombel || 'Kombel').replace(/[^a-zA-Z0-9]/g, '_')}_${Date.now()}.csv`;
+
+            link.href = URL.createObjectURL(blob);
+            link.download = filename;
+            link.click();
+            showToast(`📥 CSV LMS Admin (${peserta.length} Peserta) berhasil diunduh!`, 'emerald');
+        }
+
+        // ==========================================
+        // TAHAPAN WORKFLOW & HAK AKSES ROLE ADMIN
+        // ==========================================
+        let gCurrentTahapWorkflow = 'tahap1';
+
+        function switchTahapanWorkflow(tahap) {
+            gCurrentTahapWorkflow = tahap;
+
+            const labels = {
+                'tahap1': 'Tahap 1: Pemilihan Kombel',
+                'tahap2': 'Tahap 2: Penugasan Fasil & Admin',
+                'tahap3': 'Tahap 3: Konfirmasi KK / Kombel',
+                'tahap4': 'Tahap 4: Export CSV LMS Admin'
+            };
+
+            const pillText = document.getElementById('activeWorkspacePillText');
+            if (pillText) pillText.textContent = labels[tahap] || 'Workflow Active';
+
+            ['tahap1', 'tahap2', 'tahap3', 'tahap4'].forEach(t => {
+                const btn = document.getElementById('tab' + t.charAt(0).toUpperCase() + t.slice(1));
+                if (!btn) return;
+                if (t === tahap) {
+                    btn.className = "tahap-workflow-tab px-3 py-1.5 rounded-xl text-xs font-black transition-all flex items-center gap-1.5 border border-purple-300 bg-purple-600 text-white shadow-xs";
+                } else {
+                    btn.className = "tahap-workflow-tab px-3 py-1.5 rounded-xl text-xs font-black transition-all flex items-center gap-1.5 border border-slate-200 text-slate-700 hover:bg-purple-50 bg-white";
+                }
+            });
+
+            switchAdminView('modeKombel');
+            const statusFilterEl = document.getElementById('filterStatusSasaran');
+
+            if (tahap === 'tahap1') {
+                if (gModeRekomendasi) toggleModeRekomendasi();
+                if (statusFilterEl) statusFilterEl.value = 'ALL';
+            } else if (tahap === 'tahap2') {
+                if (!gModeRekomendasi) toggleModeRekomendasi();
+                if (statusFilterEl) statusFilterEl.value = 'SASARAN';
+            } else if (tahap === 'tahap3') {
+                if (statusFilterEl) statusFilterEl.value = 'SASARAN';
+            } else if (tahap === 'tahap4') {
+                if (statusFilterEl) statusFilterEl.value = 'SASARAN';
+            }
+
+            filterKombelData();
+        }
+
+        function checkAdminRoleAccess() {
+            const userEmail = (sessionStorage.getItem('admin_bgtk_email') || '').toLowerCase().trim();
+            const userNama = (sessionStorage.getItem('admin_bgtk_nama') || '').toLowerCase().trim();
+
+            const isMaster = userEmail === 'mastersumbar1@gmail.com';
+            const isRosaRiaAyu = userEmail.includes('rosariaayu') || userNama.includes('rosa ria ayu');
+
+            const canAccessSekolahModel = isMaster || isRosaRiaAyu;
+
+            const menuSekolahModel = document.getElementById('menuSekolahModelGroup');
+            if (menuSekolahModel) {
+                if (canAccessSekolahModel) {
+                    menuSekolahModel.classList.remove('hidden');
+                } else {
+                    menuSekolahModel.classList.add('hidden');
+                }
             }
         }
 
