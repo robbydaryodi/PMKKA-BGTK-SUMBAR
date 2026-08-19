@@ -706,13 +706,14 @@
                                         <th class="px-4 py-3.5">Nama Kelompok Kerja / Kombel</th>
                                         <th class="px-4 py-3.5">Kab / Kota &amp; Kec</th>
                                         <th class="px-4 py-3.5 text-center bg-purple-50/70 text-purple-900 border-x border-purple-100">Fasilitator Pendamping (FKK)</th>
+                                        <th class="px-4 py-3.5 text-center bg-indigo-50/70 text-indigo-900 border-r border-indigo-100">Admin BGTK (Pengampu)</th>
                                         <th class="px-4 py-3.5">Ketua &amp; Kontak</th>
                                         <th class="px-4 py-3.5 text-center">Peserta</th>
                                         <th class="px-4 py-3.5 text-center">Status</th>
                                         <th class="px-4 py-3.5 text-center">Aksi &amp; Import</th>
                                     </tr>
                                 </thead>
-                                <tbody id="tableKombelBody" class="divide-y divide-slate-100"><tr><td colspan="8" class="px-6 py-12 text-center text-slate-400"><div class="spinner mx-auto mb-2"></div>Memuat data Komunitas Belajar...</td></tr></tbody>
+                                <tbody id="tableKombelBody" class="divide-y divide-slate-100"><tr><td colspan="9" class="px-6 py-12 text-center text-slate-400"><div class="spinner mx-auto mb-2"></div>Memuat data Komunitas Belajar...</td></tr></tbody>
                             </table>
                         </div>
                         <div class="p-4 bg-slate-50 border-t border-slate-200 flex flex-col sm:flex-row justify-between items-center gap-3 text-xs text-slate-500" id="kombelPagination"></div>
@@ -1291,16 +1292,27 @@
                         </div>
                         <div id="statusFasilTerpilihBadge" class="text-xs"></div>
                     </div>
-                    <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 pt-2">
-                        <div class="flex-1">
-                            <select id="modalSelectFasilKombel" class="w-full border border-slate-300 rounded-xl px-4 py-2.5 text-sm font-semibold text-slate-800 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-purple-500 focus:outline-none">
-                                <option value="">-- Pilih Fasilitator Pendamping KK --</option>
-                            </select>
+                    <div class="space-y-3 pt-2">
+                        <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+                            <div class="flex-1">
+                                <label class="block text-[11px] font-bold text-slate-600 mb-1">🤝 Fasilitator Pendamping (FKK):</label>
+                                <select id="modalSelectFasilKombel" class="w-full border border-slate-300 rounded-xl px-4 py-2 text-sm font-semibold text-slate-800 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-purple-500 focus:outline-none">
+                                    <option value="">-- Pilih Fasilitator Pendamping KK --</option>
+                                </select>
+                            </div>
+                            <div class="flex-1">
+                                <label class="block text-[11px] font-bold text-slate-600 mb-1">👤 Admin BGTK (Pengampu Kelas):</label>
+                                <select id="modalSelectAdminKombel" class="w-full border border-slate-300 rounded-xl px-4 py-2 text-sm font-semibold text-slate-800 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                                    <option value="">-- Pilih Admin Pengampu BGTK --</option>
+                                </select>
+                            </div>
+                            <div class="flex items-end">
+                                <button onclick="simpanPenugasanFasilKombel()" class="w-full sm:w-auto px-5 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-xl text-xs font-bold transition shadow-sm flex items-center justify-center gap-1.5 flex-shrink-0">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                                    <span>Simpan Fasil &amp; Admin</span>
+                                </button>
+                            </div>
                         </div>
-                        <button onclick="simpanPenugasanFasilKombel()" class="px-5 py-2.5 bg-purple-600 hover:bg-purple-700 text-white rounded-xl text-xs font-bold transition shadow-sm flex items-center justify-center gap-1.5 flex-shrink-0">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-                            <span>Simpan Fasilitator</span>
-                        </button>
                     </div>
                     <!-- Panel Rekomendasi Fasda dari Google Sheets -->
                     <div id="modalRekomendasiPanel" class="hidden"></div>
@@ -2813,23 +2825,31 @@
             if (!kombelId || !namafasda) return;
             const kombel = gAllKombels[kombelId];
             const isTarget = kombel && kombel.is_sasaran;
+
+            const assignedAdmin = (kombel && kombel.admin_nama) 
+                ? kombel.admin_nama 
+                : (gAdminNama || sessionStorage.getItem('admin_bgtk_nama') || 'Admin BGTK');
+
             const confirmMsg = isTarget
-                ? `Assign ${namafasda} sebagai fasilitator untuk kombel ini?`
-                : `Jadikan kombel ini Sasaran PMKKA & assign ${namafasda}?`;
+                ? `Assign ${namafasda.split(',')[0]} sebagai Fasilitator (Admin Pengampu: ${assignedAdmin.split(',')[0]})?`
+                : `Jadikan kombel ini Sasaran PMKKA & assign ${namafasda.split(',')[0]} (Admin: ${assignedAdmin.split(',')[0]})?`;
+
             const konfirm = confirm(confirmMsg);
             if (!konfirm) return;
             try {
                 await db.ref(`master_kombel/${kombelId}`).update({
                     fasil_nama: namafasda,
                     fasil_id: null,
+                    admin_nama: assignedAdmin,
                     is_sasaran: true
                 });
                 if (gAllKombels[kombelId]) {
                     gAllKombels[kombelId].fasil_nama = namafasda;
+                    gAllKombels[kombelId].admin_nama = assignedAdmin;
                     gAllKombels[kombelId].is_sasaran = true;
                 }
                 filterKombelData();
-                showToast(`✅ ${namafasda.split(',')[0]} berhasil ditugaskan & sasaran diperbarui!`, 'emerald');
+                showToast(`✅ ${namafasda.split(',')[0]} (Fasda) & ${assignedAdmin.split(',')[0]} (Admin) ditugaskan!`, 'emerald');
             } catch(e) {
                 console.error('Gagal assign fasda:', e);
                 showToast('❌ Gagal menyimpan penugasan', 'rose');
@@ -3036,6 +3056,21 @@
                 // Fasilitator Column — menggunakan fungsi rekomendasi terpadu
                 const fasilColHtml = buildFasilRekomendasiColHtml(k);
 
+                // Admin BGTK Column
+                let adminColHtml = `<span class="text-slate-300 text-xs">-</span>`;
+                if (k.admin_nama) {
+                    adminColHtml = `
+                    <button onclick="openKelolaKombelModal('${k.id}')" title="Klik untuk mengubah Admin Pengampu" class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl text-xs font-black bg-indigo-100 hover:bg-indigo-200 text-indigo-900 border border-indigo-300 transition-all shadow-2xs hover:scale-105">
+                        <span>👤 ${k.admin_nama.split(',')[0]}</span>
+                        <span class="text-[10px] bg-indigo-200 text-indigo-950 px-1 rounded font-extrabold">Ubah ✏️</span>
+                    </button>`;
+                } else if (isSasaran) {
+                    adminColHtml = `
+                    <button onclick="openKelolaKombelModal('${k.id}')" title="Klik untuk menentukan Admin Pengampu BGTK" class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl text-xs font-bold bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-300 transition-all shadow-2xs hover:scale-105">
+                        <span>👤 + Assign Admin</span>
+                    </button>`;
+                }
+
                 // Row highlight: mode rekomendasi + belum ada fasil = highlight violet
                 let rowClass = 'hover:bg-slate-50 transition-colors';
                 if (isSasaran) {
@@ -3073,6 +3108,7 @@
                         <div class="text-[11px] text-slate-500">${k.kecamatan || ''} ${k.desa_kelurahan ? '• ' + k.desa_kelurahan : ''}</div>
                     </td>
                     <td class="px-3 py-2.5 ${gModeRekomendasi && isSasaran && !k.fasil_nama ? 'bg-violet-50/60 border-x border-violet-200' : 'bg-purple-50/20 border-x border-purple-100/50'}">${fasilColHtml}</td>
+                    <td class="px-3 py-2.5 bg-indigo-50/20 border-r border-indigo-100/50 text-center">${adminColHtml}</td>
                     <td class="px-4 py-3">
                         <div class="font-semibold text-slate-800 text-xs">${k.nama_ketua || '-'}</div>
                         <div class="text-[11px] text-slate-500">${k.email || k.no_hp || '-'}</div>
@@ -3119,7 +3155,7 @@
             // Reset upload preview
             cancelUploadPreview();
 
-            // Populate Fasilitator selector
+            // Populate Fasilitator & Admin selector
             await populateModalFasilSelect(kombel);
 
             // Render existing registered participants
@@ -3136,11 +3172,35 @@
 
         async function populateModalFasilSelect(kombel) {
             const sel = document.getElementById('modalSelectFasilKombel');
+            const selAdmin = document.getElementById('modalSelectAdminKombel');
             const badge = document.getElementById('statusFasilTerpilihBadge');
             const rekPanel = document.getElementById('modalRekomendasiPanel');
             if (!sel) return;
 
             try {
+                // Populate Admin Dropdown
+                if (selAdmin) {
+                    const ADMIN_LIST = [
+                        "LEINDRAWATI MEGAHAYU, S.P.",
+                        "ABI RAFDHI, S.Kom.",
+                        "ANDRI ALPHONSO, S.AP.",
+                        "DESI PERMATA SARI, A.Md.",
+                        "LISA ANGGRAINI, S.Pd.",
+                        "SITI OKTOVANI, S.I.P.",
+                        "ROSA RIA AYU, S.Pd.",
+                        "AFLIDARNETI, S.Sos.",
+                        "RISTITA HUMAIROH, S.Kom.",
+                        "IRAWATI, S.Pd, M.Pd."
+                    ];
+                    let adminOpt = '<option value="">-- Pilih Admin Pengampu BGTK --</option>';
+                    const currentAdmin = kombel.admin_nama || gAdminNama || sessionStorage.getItem('admin_bgtk_nama') || '';
+                    ADMIN_LIST.forEach(adm => {
+                        const selected = (adm === kombel.admin_nama || (!kombel.admin_nama && adm === currentAdmin)) ? 'selected' : '';
+                        adminOpt += `<option value="${adm}" ${selected}>${adm}</option>`;
+                    });
+                    selAdmin.innerHTML = adminOpt;
+                }
+
                 // Load fasilitator dari Firebase
                 if (!gCachedFasilitators) {
                     const snap = await db.ref('fasilitator').once('value');
@@ -3163,11 +3223,15 @@
                 });
                 sel.innerHTML = options;
 
-                // Badge status fasil
-                if (kombel.fasil_nama) {
-                    if (badge) badge.innerHTML = `<span class="px-2.5 py-1 rounded-full font-bold bg-emerald-100 text-emerald-800 border border-emerald-200">✅ Ditugaskan: ${kombel.fasil_nama}</span>`;
-                } else {
-                    if (badge) badge.innerHTML = `<span class="px-2.5 py-1 rounded-full font-bold bg-amber-100 text-amber-800 border border-amber-200">⚠️ Belum Ada Fasilitator</span>`;
+                // Badge status fasil & admin
+                const fasilText = kombel.fasil_nama ? `Fasil: ${kombel.fasil_nama}` : 'Fasil: -';
+                const adminText = kombel.admin_nama ? `Admin: ${kombel.admin_nama.split(',')[0]}` : 'Admin: -';
+                if (badge) {
+                    if (kombel.fasil_nama || kombel.admin_nama) {
+                        badge.innerHTML = `<span class="px-2.5 py-1 rounded-full font-bold bg-emerald-100 text-emerald-800 border border-emerald-200">✅ ${fasilText} | ${adminText}</span>`;
+                    } else {
+                        badge.innerHTML = `<span class="px-2.5 py-1 rounded-full font-bold bg-amber-100 text-amber-800 border border-amber-200">⚠️ Belum Ada Fasil &amp; Admin</span>`;
+                    }
                 }
 
                 // Panel Rekomendasi Fasda di bawah dropdown
@@ -3211,53 +3275,73 @@
 
         async function pilihFasdaDariModal(namaFasda) {
             if (!gCurrentModalKombelId || !namaFasda) return;
+            const selAdmin = document.getElementById('modalSelectAdminKombel');
+            const selectedAdmin = selAdmin?.value || gAdminNama || sessionStorage.getItem('admin_bgtk_nama') || '';
+
             try {
-                await db.ref(`master_kombel/${gCurrentModalKombelId}`).update({ fasil_nama: namaFasda, fasil_id: null });
-                if (gAllKombels[gCurrentModalKombelId]) gAllKombels[gCurrentModalKombelId].fasil_nama = namaFasda;
+                await db.ref(`master_kombel/${gCurrentModalKombelId}`).update({
+                    fasil_nama: namaFasda,
+                    fasil_id: null,
+                    admin_nama: selectedAdmin || null,
+                    is_sasaran: true
+                });
+                if (gAllKombels[gCurrentModalKombelId]) {
+                    gAllKombels[gCurrentModalKombelId].fasil_nama = namaFasda;
+                    gAllKombels[gCurrentModalKombelId].admin_nama = selectedAdmin;
+                    gAllKombels[gCurrentModalKombelId].is_sasaran = true;
+                }
 
                 const badge = document.getElementById('statusFasilTerpilihBadge');
-                if (badge) badge.innerHTML = `<span class="px-2.5 py-1 rounded-full font-bold bg-emerald-100 text-emerald-800 border border-emerald-200">✅ Ditugaskan: ${namaFasda}</span>`;
+                if (badge) badge.innerHTML = `<span class="px-2.5 py-1 rounded-full font-bold bg-emerald-100 text-emerald-800 border border-emerald-200">✅ Fasil: ${namaFasda} | Admin: ${selectedAdmin.split(',')[0]}</span>`;
 
                 const rekPanel = document.getElementById('modalRekomendasiPanel');
                 if (rekPanel) rekPanel.classList.add('hidden');
 
-                renderKombelTable();
-                showToast(`✅ ${namaFasda.split(',')[0]} berhasil dipilih sebagai fasilitator!`, 'emerald');
+                filterKombelData();
+                showToast(`✅ ${namaFasda.split(',')[0]} (Fasda) & ${selectedAdmin.split(',')[0]} (Admin) dipilih!`, 'emerald');
             } catch(e) {
                 console.error('Gagal pilih fasda:', e);
                 showToast('❌ Gagal menyimpan penugasan', 'rose');
             }
         }
 
-
         async function simpanPenugasanFasilKombel() {
             if (!gCurrentModalKombelId) return;
-            const sel = document.getElementById('modalSelectFasilKombel');
-            const fasilId = sel.value;
-            const fasilNama = sel.options[sel.selectedIndex]?.getAttribute('data-nama') || '';
+            const selFasil = document.getElementById('modalSelectFasilKombel');
+            const selAdmin = document.getElementById('modalSelectAdminKombel');
+
+            const fasilId = selFasil?.value || null;
+            const fasilNama = selFasil?.options[selFasil.selectedIndex]?.getAttribute('data-nama') || '';
+            const adminNama = selAdmin?.value || gAdminNama || sessionStorage.getItem('admin_bgtk_nama') || '';
 
             try {
-                await db.ref(`master_kombel/${gCurrentModalKombelId}`).update({
-                    fasil_id: fasilId || null,
-                    fasil_nama: fasilNama || null
-                });
+                const payload = {
+                    is_sasaran: true
+                };
+                if (fasilNama) {
+                    payload.fasil_nama = fasilNama;
+                    payload.fasil_id = fasilId;
+                }
+                if (adminNama) {
+                    payload.admin_nama = adminNama;
+                }
+
+                await db.ref(`master_kombel/${gCurrentModalKombelId}`).update(payload);
 
                 if (gAllKombels[gCurrentModalKombelId]) {
-                    gAllKombels[gCurrentModalKombelId].fasil_id = fasilId || null;
-                    gAllKombels[gCurrentModalKombelId].fasil_nama = fasilNama || null;
+                    Object.assign(gAllKombels[gCurrentModalKombelId], payload);
                 }
 
                 const badge = document.getElementById('statusFasilTerpilihBadge');
-                if (fasilNama) {
-                    if (badge) badge.innerHTML = `<span class="px-2.5 py-1 rounded-full font-bold bg-emerald-100 text-emerald-800 border border-emerald-200">✅ Ditugaskan: ${fasilNama}</span>`;
-                } else {
-                    if (badge) badge.innerHTML = `<span class="px-2.5 py-1 rounded-full font-bold bg-amber-100 text-amber-800 border border-amber-200">⚠️ Belum Ada Fasilitator</span>`;
+                if (fasilNama || adminNama) {
+                    if (badge) badge.innerHTML = `<span class="px-2.5 py-1 rounded-full font-bold bg-emerald-100 text-emerald-800 border border-emerald-200">✅ Fasil: ${fasilNama || '-'} | Admin: ${adminNama ? adminNama.split(',')[0] : '-'}</span>`;
                 }
 
-                renderKombelTable();
-                alert("✅ Berhasil menyimpan penugasan fasilitator untuk kelompok kerja ini!");
+                filterKombelData();
+                showToast("✅ Berhasil menyimpan Fasilitator & Admin Pengampu!", "emerald");
             } catch(e) {
-                alert("Gagal menyimpan penugasan: " + e.message);
+                console.error("Gagal menyimpan penugasan:", e);
+                showToast("❌ Gagal menyimpan penugasan", "rose");
             }
         }
 
