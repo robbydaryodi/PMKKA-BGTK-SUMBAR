@@ -670,6 +670,10 @@
                                 </div>
                                 <p class="text-sm text-purple-200 mt-1">Kelola 1.804 Komunitas Belajar &amp; pilih 54 Kombel Sasaran Pendampingan PMKKA.</p>
                             </div>
+                            <button onclick="loadKombelData(true)" class="bg-white/10 hover:bg-white/20 text-white px-4 py-2 rounded-xl text-xs font-bold transition-colors flex items-center gap-2 border border-white/20 shadow-xs cursor-pointer">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+                                <span>Refresh Data</span>
+                            </button>
                         </div>
                         <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-6 pt-6 border-t border-white/10">
                             <div class="bg-white/10 backdrop-blur-sm rounded-xl p-4"><div class="text-xs text-purple-200 uppercase font-semibold">Total Komunitas Belajar</div><div class="text-2xl font-black mt-1" id="statKombelTotal">1.804</div></div>
@@ -3088,47 +3092,89 @@
 
         let gKombelRealtimeRef = null; // Referensi listener agar bisa di-detach nanti
 
-        function loadKombelData() {
-            // Gunakan .on('value') bukan .once() agar real-time:
-            // setiap perubahan dari user lain langsung ter-push ke semua browser
-            if (gKombelRealtimeRef) return; // Sudah ada listener aktif, skip
+        function loadKombelData(forceReload = false) {
+            if (forceReload && gKombelRealtimeRef) {
+                try { gKombelRealtimeRef.off('value'); } catch(e){}
+                gKombelRealtimeRef = null;
+            }
+
+            if (gKombelRealtimeRef && Object.keys(gAllKombels).length > 0) {
+                filterKombelData();
+                return;
+            }
 
             const indikator = document.getElementById('liveIndicatorKombel');
+            const body = document.getElementById('tableKombelBody');
 
-            gKombelRealtimeRef = db.ref('master_kombel');
-            gKombelRealtimeRef.on('value', (snap) => {
-                const prevCount = Object.keys(gAllKombels).length;
-                gAllKombels = snap.val() || {};
-                const currCount = Object.keys(gAllKombels).length;
-
-                populateKabKombelDropdown();
-                populateMapelKombelDropdown();
-                populateFasilKombelDropdown();
-                populateAdminKombelDropdown();
-                checkAdminRoleAccess();
-                filterKombelData();
-
-                // Tampilkan indikator live setelah update pertama
-                if (indikator) {
-                    indikator.style.display = 'inline-flex';
-                    // Flash animasi singkat saat ada update dari user lain
-                    if (prevCount > 0) {
-                        indikator.style.background = 'rgba(16,185,129,0.35)';
-                        setTimeout(() => { indikator.style.background = ''; }, 2000);
+            // Timer Fallback REST API 2.5 detik jika WebSocket pending/lambat
+            const fallbackTimer = setTimeout(async () => {
+                if (Object.keys(gAllKombels).length === 0) {
+                    console.warn("Realtime WebSocket lambat/pending, mencoba REST API fallback...");
+                    try {
+                        const res = await fetch("https://sekolah-model-2026-default-rtdb.asia-southeast1.firebasedatabase.app/master_kombel.json");
+                        if (res.ok) {
+                            const data = await res.json();
+                            if (data && Object.keys(data).length > 0) {
+                                gAllKombels = data;
+                                populateKabKombelDropdown();
+                                populateMapelKombelDropdown();
+                                populateFasilKombelDropdown();
+                                populateAdminKombelDropdown();
+                                checkAdminRoleAccess();
+                                filterKombelData();
+                            }
+                        }
+                    } catch(e) {
+                        console.error("REST API fallback error:", e);
                     }
                 }
-            }, (err) => {
-                console.error("Gagal load master_kombel (realtime):", err);
-                // Fallback ke once jika listener gagal
-                db.ref('master_kombel').once('value').then(snap => {
-                    gAllKombels = snap.val() || {};
-                    populateKabKombelDropdown();
-                    populateMapelKombelDropdown();
-                    populateFasilKombelDropdown();
-                    populateAdminKombelDropdown();
-                    filterKombelData();
+            }, 2500);
+
+            if (!gKombelRealtimeRef) {
+                gKombelRealtimeRef = db.ref('master_kombel');
+                gKombelRealtimeRef.on('value', (snap) => {
+                    clearTimeout(fallbackTimer);
+                    try {
+                        const prevCount = Object.keys(gAllKombels).length;
+                        gAllKombels = snap.val() || {};
+
+                        populateKabKombelDropdown();
+                        populateMapelKombelDropdown();
+                        populateFasilKombelDropdown();
+                        populateAdminKombelDropdown();
+                        checkAdminRoleAccess();
+                        filterKombelData();
+
+                        if (indikator) {
+                            indikator.style.display = 'inline-flex';
+                            if (prevCount > 0) {
+                                indikator.style.background = 'rgba(16,185,129,0.35)';
+                                setTimeout(() => { indikator.style.background = ''; }, 2000);
+                            }
+                        }
+                    } catch(e) {
+                        console.error("Error processing Kombel snapshot:", e);
+                        filterKombelData();
+                    }
+                }, (err) => {
+                    console.error("Gagal load master_kombel (realtime):", err);
+                    clearTimeout(fallbackTimer);
+                    fetch("https://sekolah-model-2026-default-rtdb.asia-southeast1.firebasedatabase.app/master_kombel.json")
+                        .then(r => r.json())
+                        .then(data => {
+                            gAllKombels = data || {};
+                            populateKabKombelDropdown();
+                            populateMapelKombelDropdown();
+                            populateFasilKombelDropdown();
+                            populateAdminKombelDropdown();
+                            filterKombelData();
+                        })
+                        .catch(e => {
+                            console.error("Gagal REST fallback:", e);
+                            if (body) body.innerHTML = `<tr><td colspan="9" class="px-6 py-12 text-center text-rose-500">Gagal memuat data Kombel. Silakan klik tombol Refresh.</td></tr>`;
+                        });
                 });
-            });
+            }
         }
 
         function stopKombelRealtimeListener() {
