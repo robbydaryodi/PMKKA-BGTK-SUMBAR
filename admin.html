@@ -250,7 +250,7 @@
                         <div>
                             <span class="inline-block px-3 py-1 bg-purple-100 text-purple-800 rounded-full text-xs font-black uppercase tracking-wider mb-2">BGTK PROVINSI SUMATERA BARAT</span>
                             <h2 class="text-2xl font-black text-slate-900">Pusat Monitoring &amp; Ruang Kerja Terpadu</h2>
-                            <p class="text-sm text-slate-500 mt-1">Pemisahan 2 program kerja utama: <strong>25 Sekolah Model</strong> (Pasca Pelatihan) &amp; <strong>54 Kelompok Kerja PMKKA</strong> (Penugasan &amp; Plotting).</p>
+                            <p class="text-sm text-slate-500 mt-1">Pemantauan Terpadu Pelaksanaan Program Sekolah Model &amp; PMKKA Reguler BGTK Sumatera Barat.</p>
                         </div>
                         <button onclick="loadDashboardUtamaData()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-4 py-2 rounded-xl text-xs font-bold transition-colors flex items-center gap-2">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
@@ -280,14 +280,14 @@
                                         <div class="text-[9px] text-teal-300">Sekolah Model</div>
                                     </div>
                                     <div class="bg-white/10 rounded-xl p-3 text-center">
-                                        <div class="text-[10px] text-teal-200 uppercase font-bold">Kunjungan</div>
-                                        <div class="text-xl font-black mt-0.5" id="dash_kunjungan_count">0</div>
-                                        <div class="text-[9px] text-teal-300">Laporan Masuk</div>
+                                        <div class="text-[10px] text-teal-200 uppercase font-bold">Terjadwalkan</div>
+                                        <div class="text-xl font-black mt-0.5 text-teal-200" id="dash_sekolah_scheduled_val">0%</div>
+                                        <div class="text-[9px] text-teal-300" id="dash_sekolah_scheduled_sub">Jadwal Kunjungan</div>
                                     </div>
                                     <div class="bg-white/10 rounded-xl p-3 text-center">
-                                        <div class="text-[10px] text-teal-200 uppercase font-bold">Pendamping</div>
-                                        <div class="text-xl font-black mt-0.5 text-emerald-300">100%</div>
-                                        <div class="text-[9px] text-teal-300">Terplotting</div>
+                                        <div class="text-[10px] text-teal-200 uppercase font-bold">Pelaporan Hasil</div>
+                                        <div class="text-xl font-black mt-0.5 text-emerald-300" id="dash_kunjungan_count">0</div>
+                                        <div class="text-[9px] text-teal-300" id="dash_sekolah_report_sub">Laporan Masuk</div>
                                     </div>
                                 </div>
                             </div>
@@ -295,8 +295,8 @@
                                 <button onclick="switchAdminView('modeStatusSekolah')" class="flex-1 px-4 py-2.5 bg-teal-500 hover:bg-teal-400 text-slate-950 font-black rounded-xl text-xs transition-colors text-center shadow-md">
                                     Buka Status &amp; Baseline ↗
                                 </button>
-                                <button onclick="switchAdminView('mode5')" class="px-4 py-2.5 bg-white/10 hover:bg-white/20 text-white font-bold rounded-xl text-xs transition-colors border border-white/20">
-                                    Pilih Pendamping
+                                <button onclick="switchAdminView('mode7')" class="px-4 py-2.5 bg-white/10 hover:bg-white/20 text-white font-bold rounded-xl text-xs transition-colors border border-white/20">
+                                    Jadwal Kunjungan
                                 </button>
                             </div>
                         </div>
@@ -318,7 +318,7 @@
                                     <div class="bg-white/10 rounded-xl p-3 text-center">
                                         <div class="text-[10px] text-amber-200 uppercase font-bold">Target KK</div>
                                         <div class="text-xl font-black mt-0.5" id="dash_kombel_plotted_val">0 / 54</div>
-                                        <div class="text-[9px] text-amber-300">Sasaran Terpilih</div>
+                                        <div class="text-[9px] text-amber-300">Pemilihan KK</div>
                                     </div>
                                     <div class="bg-white/10 rounded-xl p-3 text-center">
                                         <div class="text-[10px] text-amber-200 uppercase font-bold">Total Kombel</div>
@@ -326,9 +326,9 @@
                                         <div class="text-[9px] text-amber-300">19 Kab / Kota</div>
                                     </div>
                                     <div class="bg-white/10 rounded-xl p-3 text-center">
-                                        <div class="text-[10px] text-amber-200 uppercase font-bold">Fasilitator</div>
-                                        <div class="text-xl font-black mt-0.5 text-amber-300" id="dash_total_fasil_val">0</div>
-                                        <div class="text-[9px] text-amber-300">Fasil BGTK</div>
+                                        <div class="text-[10px] text-amber-200 uppercase font-bold">Aktor Terplotting</div>
+                                        <div class="text-xl font-black mt-0.5 text-amber-300" id="dash_kombel_aktor_val">0 / 54</div>
+                                        <div class="text-[9px] text-amber-300" id="dash_kombel_aktor_sub">Fasil, Admin &amp; Peserta</div>
                                     </div>
                                 </div>
                             </div>
@@ -2576,43 +2576,90 @@
                 if (singleEl) singleEl.textContent = `Single: ${singleFasilCount}`;
 
                 const targetKombels = kombelList.filter(k => k.is_sasaran);
-                const totalTargetKombels = targetKombels.length || 54;
-                let plottedKombelCount = 0;
+                const totalTargetKombels = targetKombels.length;
+
+                // Hitung Kombel yang Aktor Terplotting Lengkap (Fasil + Admin + Peserta Import / Konfirmasi)
+                let meLengkapAktorCount = 0;
                 targetKombels.forEach(tk => {
                     const matchedFasil = fasilList.find(f => f.fkk_1 && (f.fkk_1.toLowerCase().includes(tk.nama_kombel.toLowerCase()) || tk.nama_kombel.toLowerCase().includes(f.fkk_1.toLowerCase())));
-                    tk.assignedFasil = matchedFasil ? matchedFasil.nama : null;
-                    if (tk.assignedFasil) plottedKombelCount++;
+                    tk.assignedFasil = tk.fasil_nama || (matchedFasil ? matchedFasil.nama : null);
+
+                    const hasFasil = !!tk.assignedFasil;
+                    const hasAdmin = !!tk.admin_nama;
+                    const pesertaList = tk.peserta ? (Array.isArray(tk.peserta) ? tk.peserta : Object.values(tk.peserta)) : [];
+                    const hasPeserta = pesertaList.length > 0 || (tk.konfirmasi && tk.konfirmasi.is_konfirmasi) || (tk.jumlah_anggota && tk.jumlah_anggota > 0);
+
+                    if (hasFasil && hasAdmin && hasPeserta) {
+                        meLengkapAktorCount++;
+                    }
                 });
-                const kombelPct = Math.round((plottedKombelCount / totalTargetKombels) * 100);
+
                 const kombelValEl = document.getElementById('dash_kombel_plotted_val');
-                if (kombelValEl) kombelValEl.textContent = `${plottedKombelCount} / ${totalTargetKombels}`;
-                const kombelSubEl = document.getElementById('dash_kombel_plotted_sub');
-                if (kombelSubEl) kombelSubEl.textContent = `${kombelPct}% Sasaran Ter-plotting`;
-                const kombelBarEl = document.getElementById('dash_kombel_bar');
-                if (kombelBarEl) kombelBarEl.style.width = `${kombelPct}%`;
+                if (kombelValEl) kombelValEl.textContent = `${totalTargetKombels} / 54`;
+
+                const kombelAktorValEl = document.getElementById('dash_kombel_aktor_val');
+                if (kombelAktorValEl) kombelAktorValEl.textContent = `${meLengkapAktorCount} / ${totalTargetKombels || 54}`;
+
+                const kombelAktorSubEl = document.getElementById('dash_kombel_aktor_sub');
+                const pctAktor = totalTargetKombels > 0 ? Math.round((meLengkapAktorCount / totalTargetKombels) * 100) : 0;
+                if (kombelAktorSubEl) kombelAktorSubEl.textContent = `${pctAktor}% Plotting Lengkap`;
+
                 const tbodyKombel = document.getElementById('tableDashKombelBody');
                 if (tbodyKombel) {
                     tbodyKombel.innerHTML = targetKombels.length === 0
                         ? `<tr><td colspan="4" class="px-4 py-6 text-center text-slate-400">Belum ada Kombel yang ditandai Sasaran PMKKA.</td></tr>`
                         : targetKombels.map(k => {
-                            const badge = k.assignedFasil
-                                ? `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800">✅ Ter-plotting</span>`
-                                : `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-800">⚠️ Belum</span>`;
+                            const hasF = !!k.assignedFasil;
+                            const hasA = !!k.admin_nama;
+                            const pList = k.peserta ? (Array.isArray(k.peserta) ? k.peserta : Object.values(k.peserta)) : [];
+                            const hasP = pList.length > 0 || (k.konfirmasi && k.konfirmasi.is_konfirmasi) || (k.jumlah_anggota && k.jumlah_anggota > 0);
+                            
+                            const isLengkap = hasF && hasA && hasP;
+                            const badge = isLengkap
+                                ? `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800">✅ Aktor Lengkap</span>`
+                                : (hasF || hasA ? `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-indigo-100 text-indigo-800">⏳ Parsial</span>` : `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-800">⚠️ Belum</span>`);
+
                             return `<tr class="hover:bg-slate-50 transition-colors"><td class="px-4 py-2.5 font-bold text-slate-800 text-xs">${k.nama_kombel}</td><td class="px-4 py-2.5 text-slate-600 text-[11px]">${k.kab_kota || '-'}</td><td class="px-4 py-2.5 font-semibold text-purple-700 text-xs">${k.assignedFasil || '-'}</td><td class="px-4 py-2.5 text-center">${badge}</td></tr>`;
                         }).join('');
                 }
 
+                // --- 2. PROGRAM 1 (SEKOLAH MODEL) ---
                 const assignedSchoolNpsns = new Set();
                 Object.values(assigns).forEach(npsnArr => { if (Array.isArray(npsnArr)) npsnArr.forEach(n => assignedSchoolNpsns.add(n)); });
                 const totalSekolahModel = guruList.length || 25;
                 const plottedSekolahCount = assignedSchoolNpsns.size;
-                const sekolahPct = Math.round((plottedSekolahCount / totalSekolahModel) * 100);
+
                 const sekolahValEl = document.getElementById('dash_sekolah_plotted_val');
                 if (sekolahValEl) sekolahValEl.textContent = `${plottedSekolahCount} / ${totalSekolahModel}`;
-                const sekolahSubEl = document.getElementById('dash_sekolah_plotted_sub');
-                if (sekolahSubEl) sekolahSubEl.textContent = `${sekolahPct}% Sekolah Diberi Pendamping`;
-                const sekolahBarEl = document.getElementById('dash_sekolah_bar');
-                if (sekolahBarEl) sekolahBarEl.style.width = `${sekolahPct}%`;
+
+                // Hitung Progress Penjadwalan & Pelaporan Kunjungan Sekolah Model
+                let totalTargetKunjungan = totalSekolahModel * 3; // 3 tahap pendampingan
+                let scheduledKunjunganCount = 0;
+                let reportKunjunganCount = 0;
+
+                for (const npsn in jadwals) {
+                    for (const kunKey in jadwals[npsn]) {
+                        const kItem = jadwals[npsn][kunKey];
+                        if (kItem) {
+                            if (kItem.tanggal || kItem.tgl || kItem.status) scheduledKunjunganCount++;
+                            if (kItem.status === 'Selesai' || kItem.laporan_masuk || kItem.foto || kItem.dokumen) reportKunjunganCount++;
+                        }
+                    }
+                }
+
+                const scheduledPct = Math.round((scheduledKunjunganCount / (totalTargetKunjungan || 75)) * 100);
+                const reportPct = Math.round((reportKunjunganCount / (totalTargetKunjungan || 75)) * 100);
+
+                const scheduledValEl = document.getElementById('dash_sekolah_scheduled_val');
+                if (scheduledValEl) scheduledValEl.textContent = `${scheduledPct}%`;
+                const scheduledSubEl = document.getElementById('dash_sekolah_scheduled_sub');
+                if (scheduledSubEl) scheduledSubEl.textContent = `${scheduledKunjunganCount}/${totalTargetKunjungan} Terjadwal`;
+
+                const kunjunganEl = document.getElementById('dash_kunjungan_count');
+                if (kunjunganEl) kunjunganEl.textContent = `${reportKunjunganCount}`;
+                const reportSubEl = document.getElementById('dash_sekolah_report_sub');
+                if (reportSubEl) reportSubEl.textContent = `${reportPct}% Laporan Masuk`;
+
                 const tbodySekolah = document.getElementById('tableDashSekolahBody');
                 if (tbodySekolah) {
                     tbodySekolah.innerHTML = guruList.map(g => {
@@ -2625,18 +2672,8 @@
                             ? `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800">✅ Ter-plotting</span>`
                             : `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-800">⚠️ Belum</span>`;
                         return `<tr class="hover:bg-slate-50 transition-colors"><td class="px-4 py-2.5 font-bold text-slate-800 text-xs">${g.nama_sekolah}</td><td class="px-4 py-2.5 text-slate-600 text-[11px]">${g.kab_kota}</td><td class="px-4 py-2.5 font-semibold text-indigo-700 text-xs">${fasilName}</td><td class="px-4 py-2.5 text-center">${badge}</td></tr>`;
-
                     }).join('');
                 }
-
-                let totalKunjunganCount = 0;
-                for (const npsn in jadwals) {
-                    for (const kunKey in jadwals[npsn]) {
-                        if (jadwals[npsn][kunKey] && (jadwals[npsn][kunKey].tanggal || jadwals[npsn][kunKey].status)) totalKunjunganCount++;
-                    }
-                }
-                const kunjunganEl = document.getElementById('dash_kunjungan_count');
-                if (kunjunganEl) kunjunganEl.textContent = totalKunjunganCount;
             } catch(e) { console.error("Gagal loadDashboardUtamaData", e); }
         }
 
