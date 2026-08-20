@@ -687,15 +687,15 @@
                             <table class="w-full text-left text-sm whitespace-nowrap">
                                 <thead class="bg-slate-100/90 text-slate-700 font-extrabold border-b border-slate-200 text-xs">
                                     <tr>
-                                        <th class="px-3 py-3.5 text-center w-10">No</th>
-                                        <th class="px-4 py-3.5 text-center bg-amber-100/70 text-amber-950 border-r border-amber-200">Aksi &amp; Penugasan</th>
-                                        <th class="px-4 py-3.5">Nama Kelompok Kerja / Kombel</th>
-                                        <th class="px-4 py-3.5">Kab / Kota &amp; Kec</th>
-                                        <th class="px-4 py-3.5 text-center bg-purple-50/70 text-purple-900 border-x border-purple-100">Fasilitator Pendamping (FKK)</th>
-                                        <th class="px-4 py-3.5 text-center bg-indigo-50/70 text-indigo-900 border-r border-indigo-100">Admin BGTK (Pengampu)</th>
-                                        <th class="px-4 py-3.5">Ketua &amp; Kontak</th>
-                                        <th class="px-4 py-3.5 text-center">Peserta</th>
-                                        <th class="px-4 py-3.5 text-center">Status Konfirmasi</th>
+                                        <th class="px-2 py-3.5 text-center w-10">No</th>
+                                        <th class="px-3 py-3.5 text-center bg-amber-100/70 text-amber-950 border-r border-amber-200 w-36">Aksi &amp; Penugasan</th>
+                                        <th class="px-3.5 py-3.5 w-[260px] max-w-[260px]">Nama Kelompok Kerja / Kombel</th>
+                                        <th class="px-3.5 py-3.5 w-[160px] max-w-[160px]">Kab / Kota &amp; Kec</th>
+                                        <th class="px-3.5 py-3.5 text-center bg-purple-50/70 text-purple-900 border-x border-purple-100 w-[220px]">Fasilitator Pendamping (FKK)</th>
+                                        <th class="px-3.5 py-3.5 text-center bg-indigo-50/70 text-indigo-900 border-r border-indigo-100 w-[160px]">Admin BGTK (Pengampu)</th>
+                                        <th class="px-3.5 py-3.5 w-[170px] max-w-[170px]">Ketua &amp; Kontak</th>
+                                        <th class="px-3 py-3.5 text-center w-24">Peserta</th>
+                                        <th class="px-3 py-3.5 text-center w-40">Status Konfirmasi</th>
                                     </tr>
                                 </thead>
                                 <tbody id="tableKombelBody" class="divide-y divide-slate-100"><tr><td colspan="9" class="px-6 py-12 text-center text-slate-400"><div class="spinner mx-auto mb-2"></div>Memuat data Komunitas Belajar...</td></tr></tbody>
@@ -3307,25 +3307,25 @@
 
                 return `
                 <tr class="${rowClass}">
-                    <td class="px-3 py-3 text-center text-slate-400 text-xs font-bold">${start + i + 1}</td>
-                    <td class="px-3 py-3 text-center bg-amber-50/40 border-r border-amber-200/60">${btnActions}</td>
-                    <td class="px-4 py-3">
-                        <div class="font-bold text-slate-800 text-sm whitespace-normal max-w-xs">${k.nama_kombel}</div>
-                        <div class="text-xs text-slate-500 mt-0.5">${k.jenjang || ''} ${k.instansi ? '• ' + k.instansi : ''}</div>
+                    <td class="px-2 py-3 text-center text-slate-400 text-xs font-bold w-10">${start + i + 1}</td>
+                    <td class="px-3 py-3 text-center bg-amber-50/40 border-r border-amber-200/60 w-36">${btnActions}</td>
+                    <td class="px-3.5 py-3 w-[260px] max-w-[260px] whitespace-normal">
+                        <div class="font-bold text-slate-800 text-xs sm:text-sm leading-snug break-words">${k.nama_kombel}</div>
+                        <div class="text-[11px] text-slate-500 mt-0.5 break-words">${k.jenjang || ''} ${k.instansi ? '• ' + k.instansi : ''}</div>
                         ${smBadgeHtml}
                     </td>
-                    <td class="px-4 py-3">
-                        <div class="font-semibold text-slate-700 text-xs">${k.kab_kota || '-'}</div>
-                        <div class="text-[11px] text-slate-500">${k.kecamatan || ''} ${k.desa_kelurahan ? '• ' + k.desa_kelurahan : ''}</div>
+                    <td class="px-3.5 py-3 w-[160px] max-w-[160px] whitespace-normal">
+                        <div class="font-semibold text-slate-700 text-xs break-words">${k.kab_kota || '-'}</div>
+                        <div class="text-[11px] text-slate-500 break-words">${k.kecamatan || ''} ${k.desa_kelurahan ? '• ' + k.desa_kelurahan : ''}</div>
                     </td>
-                    <td class="px-3 py-2.5 ${gModeRekomendasi && isSasaran && !k.fasil_nama ? 'bg-violet-50/60 border-x border-violet-200' : 'bg-purple-50/20 border-x border-purple-100/50'}">${fasilColHtml}</td>
-                    <td class="px-3 py-2.5 bg-indigo-50/20 border-r border-indigo-100/50 text-center">${adminColHtml}</td>
-                    <td class="px-4 py-3">
-                        <div class="font-semibold text-slate-800 text-xs">${k.nama_ketua || '-'}</div>
-                        <div class="text-[11px] text-slate-500">${k.email || k.no_hp || '-'}</div>
+                    <td class="px-3 py-2.5 w-[220px] ${gModeRekomendasi && isSasaran && !k.fasil_nama ? 'bg-violet-50/60 border-x border-violet-200' : 'bg-purple-50/20 border-x border-purple-100/50'}">${fasilColHtml}</td>
+                    <td class="px-3 py-2.5 bg-indigo-50/20 border-r border-indigo-100/50 text-center w-[160px]">${adminColHtml}</td>
+                    <td class="px-3.5 py-3 w-[170px] max-w-[170px] whitespace-normal">
+                        <div class="font-semibold text-slate-800 text-xs truncate max-w-[160px]">${k.nama_ketua || '-'}</div>
+                        <div class="text-[11px] text-slate-500 truncate max-w-[160px]">${k.email || k.no_hp || '-'}</div>
                     </td>
-                    <td class="px-4 py-3 text-center">${anggotaHtml}</td>
-                    <td class="px-4 py-3 text-center">${badgeSasaran}</td>
+                    <td class="px-3 py-3 text-center w-24">${anggotaHtml}</td>
+                    <td class="px-3 py-3 text-center w-40">${badgeSasaran}</td>
                 </tr>`;
             }).join('');
             const totalPages = Math.ceil(gFilteredKombels.length / gKombelPerPage);
