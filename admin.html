@@ -1071,15 +1071,21 @@
                 <!-- MODAL DETAIL STATUS SEKOLAH MODEL -->
                 <div id="modalDetailStatusSekolah" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 hidden flex items-center justify-center p-4">
                     <div class="bg-white rounded-3xl max-w-4xl w-full max-h-[90vh] flex flex-col shadow-2xl overflow-hidden border border-slate-100">
-                        <div class="p-6 bg-slate-900 text-white flex justify-between items-center flex-shrink-0">
+                        <div class="p-6 bg-slate-900 text-white flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 flex-shrink-0">
                             <div>
                                 <span class="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-indigo-500/30 text-indigo-200 uppercase tracking-wider mb-1 inline-block">Rapor Baseline Sekolah Model</span>
                                 <h3 class="text-xl font-bold" id="modalStatusSchoolTitle">Nama Sekolah</h3>
                                 <p class="text-xs text-slate-400 mt-0.5" id="modalStatusSchoolSub">NPSN: - | Kab/Kota: -</p>
                             </div>
-                            <button onclick="closeModalDetailStatusSekolah()" class="text-slate-400 hover:text-white p-2 rounded-xl hover:bg-white/10 transition-colors">
-                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
-                            </button>
+                            <div class="flex items-center gap-2">
+                                <button onclick="downloadPDFRaporBaselineCurrent()" title="Unduh Rapor PDF Resmi" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-black transition-all flex items-center gap-1.5 shadow-md hover:scale-105 cursor-pointer">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                                    <span>📥 Unduh PDF Rapor</span>
+                                </button>
+                                <button onclick="closeModalDetailStatusSekolah()" class="text-slate-400 hover:text-white p-2 rounded-xl hover:bg-white/10 transition-colors">
+                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                                </button>
+                            </div>
                         </div>
                         <div class="p-6 overflow-y-auto space-y-6 flex-1 text-sm bg-slate-50/50" id="modalStatusSchoolContent">
                             <!-- Populated dynamically -->
@@ -5618,7 +5624,12 @@
                     <td class="px-4 py-3"><div class="font-bold ${isFasilSet ? 'text-slate-900' : 'text-amber-600 font-medium'}">${s.fasilName}</div></td>
                     <td class="px-4 py-3 text-center"><span class="px-2.5 py-1 rounded-full text-xs ${badgePM}">${s.pm?.kategori || '-'} (${s.pm?.skor || '-'})</span></td>
                     <td class="px-4 py-3 text-center"><span class="px-2.5 py-1 rounded-full text-xs ${badgeKKA}">${s.kka?.kategori || '-'} (${s.kka?.skor || '-'})</span></td>
-                    <td class="px-4 py-3 text-center"><button onclick="openModalDetailStatusSekolah('${s.npsn}')" class="bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 px-3 py-1 rounded-xl text-xs font-bold transition-colors flex items-center gap-1 mx-auto">📊 Detail Rapor</button></td>
+                    <td class="px-4 py-3 text-center">
+                        <div class="flex items-center justify-center gap-1.5">
+                            <button onclick="openModalDetailStatusSekolah('${s.npsn}')" class="bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 px-2.5 py-1 rounded-xl text-xs font-bold transition-colors flex items-center gap-1 cursor-pointer">📊 Detail Rapor</button>
+                            <button onclick="downloadPDFRaporBaseline('${s.npsn}')" title="Unduh PDF Rapor Baseline" class="bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 px-2.5 py-1 rounded-xl text-xs font-bold transition-colors flex items-center gap-1 cursor-pointer">📥 PDF</button>
+                        </div>
+                    </td>
                 </tr>`;
             });
             
@@ -5629,7 +5640,10 @@
 
         function changeStatusSekolahPage(p) { gStatusPage = p; renderStatusSekolahTable(gFilteredStatusRows); }
 
+        let gCurrentDetailStatusNpsn = null;
+
         function openModalDetailStatusSekolah(npsn) {
+            gCurrentDetailStatusNpsn = npsn;
             const s = gStatusSekolahRaw[npsn];
             if (!s) return alert("Data sekolah tidak ditemukan.");
             
@@ -5720,6 +5734,189 @@
 
         function closeModalDetailStatusSekolah() {
             document.getElementById('modalDetailStatusSekolah').classList.add('hidden');
+        }
+
+        function downloadPDFRaporBaselineCurrent() {
+            if (gCurrentDetailStatusNpsn) {
+                downloadPDFRaporBaseline(gCurrentDetailStatusNpsn);
+            }
+        }
+
+        function downloadPDFRaporBaseline(npsn) {
+            const s = gStatusSekolahRaw[npsn];
+            if (!s) return alert("Data sekolah tidak ditemukan.");
+
+            const printWin = window.open('', '_blank', 'width=950,height=900');
+            if (!printWin) return alert("Pop-up blocker aktif. Harap izinkan pop-up browser untuk mengunduh PDF.");
+
+            let pmTableRows = '';
+            for (const k in s.pm?.sub_indikator || {}) {
+                const val = s.pm.sub_indikator[k];
+                const displayKey = k.replace(/_/g, '.');
+                const meta = gRubrikCatalogMap.pm ? gRubrikCatalogMap.pm[k] : null;
+                const isNA = val === '#N/A';
+                const valStyle = isNA ? 'color:#94a3b8;font-style:italic;' : 'color:#3730a3;font-weight:bold;';
+
+                pmTableRows += `
+                <tr>
+                    <td style="padding:6px 8px;border:1px solid #cbd5e1;text-align:center;font-weight:bold;font-family:monospace;">${displayKey}</td>
+                    <td style="padding:6px 8px;border:1px solid #cbd5e1;font-weight:bold;">${meta ? meta.nama : 'Sub-Indikator ' + displayKey}</td>
+                    <td style="padding:6px 8px;border:1px solid #cbd5e1;font-size:10px;color:#64748b;">${meta ? (meta.domain + ' &rsaquo; ' + meta.sub_domain) : '-'}</td>
+                    <td style="padding:6px 8px;border:1px solid #cbd5e1;text-align:center;${valStyle}">${val}</td>
+                </tr>`;
+            }
+
+            let kkaTableRows = '';
+            for (const k in s.kka?.sub_indikator || {}) {
+                const val = s.kka.sub_indikator[k];
+                const displayKey = k.replace(/_/g, '.');
+                const meta = gRubrikCatalogMap.kka ? gRubrikCatalogMap.kka[k] : null;
+                const isNA = val === '#N/A';
+                const valStyle = isNA ? 'color:#94a3b8;font-style:italic;' : 'color:#6b21a8;font-weight:bold;';
+
+                kkaTableRows += `
+                <tr>
+                    <td style="padding:6px 8px;border:1px solid #cbd5e1;text-align:center;font-weight:bold;font-family:monospace;">${displayKey}</td>
+                    <td style="padding:6px 8px;border:1px solid #cbd5e1;font-weight:bold;">${meta ? meta.nama : 'Sub-Indikator ' + displayKey}</td>
+                    <td style="padding:6px 8px;border:1px solid #cbd5e1;font-size:10px;color:#64748b;">${meta ? (meta.domain + ' &rsaquo; ' + meta.sub_domain) : '-'}</td>
+                    <td style="padding:6px 8px;border:1px solid #cbd5e1;text-align:center;${valStyle}">${val}</td>
+                </tr>`;
+            }
+
+            const todayDate = new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
+
+            const htmlContent = `
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <meta charset="utf-8">
+                <title>Rapor Baseline PM-KKA - ${s.nama_sekolah}</title>
+                <style>
+                    @page { size: A4 portrait; margin: 12mm 15mm; }
+                    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-size: 11px; color: #0f172a; margin: 0; padding: 0; background: #fff; }
+                    .header { text-align: center; border-bottom: 2.5px solid #0f172a; padding-bottom: 10px; margin-bottom: 16px; }
+                    .header .instansi { font-size: 12px; font-weight: 800; text-transform: uppercase; color: #475569; letter-spacing: 0.5px; }
+                    .header .balai { font-size: 15px; font-weight: 900; text-transform: uppercase; color: #0f172a; margin: 2px 0; }
+                    .header .judul { font-size: 13px; font-weight: 800; text-transform: uppercase; color: #4f46e5; margin-top: 4px; }
+                    
+                    .info-box { width: 100%; border-collapse: collapse; margin-bottom: 16px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; }
+                    .info-box td { padding: 6px 10px; font-size: 11px; vertical-align: top; }
+                    
+                    .summary-container { display: table; width: 100%; margin-bottom: 16px; table-layout: fixed; }
+                    .summary-card { display: table-cell; width: 48%; padding: 12px; border-radius: 8px; border: 1px solid #cbd5e1; background: #f8fafc; vertical-align: top; }
+                    .summary-card-pm { border-top: 4px solid #4f46e5; }
+                    .summary-card-kka { border-top: 4px solid #9333ea; }
+                    
+                    .card-title { font-size: 11px; font-weight: 800; text-transform: uppercase; color: #334155; margin-bottom: 4px; }
+                    .card-score { font-size: 22px; font-weight: 900; color: #0f172a; margin: 4px 0; }
+                    .badge { display: inline-block; padding: 2px 8px; font-size: 10px; font-weight: 800; border-radius: 12px; }
+                    .badge-pm { background: #e0e7ff; color: #3730a3; border: 1px solid #c7d2fe; }
+                    .badge-kka { background: #f3e8ff; color: #6b21a8; border: 1px solid #e9d5ff; }
+                    .card-resp { font-size: 10px; color: #64748b; margin-top: 6px; }
+                    
+                    .sec-title { font-size: 12px; font-weight: 900; color: #0f172a; border-left: 4px solid #4f46e5; padding-left: 8px; margin: 18px 0 8px 0; text-transform: uppercase; }
+                    
+                    table.table-detail { width: 100%; border-collapse: collapse; margin-bottom: 16px; font-size: 10.5px; }
+                    table.table-detail th { background: #f1f5f9; padding: 7px 8px; border: 1px solid #cbd5e1; font-weight: 800; text-transform: uppercase; font-size: 9.5px; color: #334155; }
+                    table.table-detail td { padding: 6px 8px; border: 1px solid #cbd5e1; }
+                    
+                    .footer { margin-top: 24px; text-align: right; font-size: 10px; color: #64748b; border-top: 1px solid #e2e8f0; padding-top: 8px; }
+                    @media print {
+                        body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+                    }
+                </style>
+            </head>
+            <body>
+                <div class="header">
+                    <div class="instansi">Kementerian Pendidikan Dasar dan Menengah</div>
+                    <div class="balai">Balai Guru Penggerak / Balai GTK Provinsi Sumatera Barat</div>
+                    <div class="judul">Rapor Evaluasi Baseline Program Sekolah Model 2026</div>
+                </div>
+
+                <table class="info-box">
+                    <tr>
+                        <td width="15%"><strong>Nama Sekolah</strong></td>
+                        <td width="35%">: <strong>${s.nama_sekolah}</strong></td>
+                        <td width="18%"><strong>Kabupaten / Kota</strong></td>
+                        <td width="32%">: ${s.kab_kota}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>NPSN</strong></td>
+                        <td>: ${s.npsn}</td>
+                        <td><strong>Status Sekolah</strong></td>
+                        <td>: ${s.status_sekolah || 'Negeri'}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Jenjang</strong></td>
+                        <td>: ${s.jenjang}</td>
+                        <td><strong>Fasilitator Pendamping</strong></td>
+                        <td>: ${s.fasilName || '-'}</td>
+                    </tr>
+                </table>
+
+                <div class="summary-container">
+                    <div class="summary-card summary-card-pm">
+                        <div class="card-title">Pembelajaran Mendalam (PM)</div>
+                        <div class="card-score">${s.pm?.skor || '-'}</div>
+                        <span class="badge badge-pm">Kategori: ${s.pm?.kategori || '-'}</span>
+                        <div class="card-resp">Responden: Murid (${s.pm?.murid || '-'}), Guru (${s.pm?.guru || '-'}), Kepsek (${s.pm?.kepsek || '-'})</div>
+                    </div>
+                    <div style="display:table-cell;width:4%;"></div>
+                    <div class="summary-card summary-card-kka">
+                        <div class="card-title">Koding &amp; Kecerdasan Artifisial (KKA)</div>
+                        <div class="card-score">${s.kka?.skor || '-'}</div>
+                        <span class="badge badge-kka">Kategori: ${s.kka?.kategori || '-'}</span>
+                        <div class="card-resp">Responden: Guru (${s.kka?.guru || '-'}), Kepsek (${s.kka?.kepsek || '-'})</div>
+                    </div>
+                </div>
+
+                <div class="sec-title">1. Rincian Sub-Indikator Pembelajaran Mendalam (PM)</div>
+                <table class="table-detail">
+                    <thead>
+                        <tr>
+                            <th width="10%" style="text-align:center;">Kode</th>
+                            <th width="50%">Indikator Evaluasi</th>
+                            <th width="28%">Domain / Sub-Domain</th>
+                            <th width="12%" style="text-align:center;">Skor</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${pmTableRows || '<tr><td colspan="4" style="text-align:center;color:#94a3b8;">Tidak ada rincian data PM</td></tr>'}
+                    </tbody>
+                </table>
+
+                <div class="sec-title">2. Rincian Sub-Indikator Koding &amp; Kecerdasan Artifisial (KKA)</div>
+                <table class="table-detail">
+                    <thead>
+                        <tr>
+                            <th width="10%" style="text-align:center;">Kode</th>
+                            <th width="50%">Indikator Evaluasi</th>
+                            <th width="28%">Domain / Sub-Domain</th>
+                            <th width="12%" style="text-align:center;">Skor</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${kkaTableRows || '<tr><td colspan="4" style="text-align:center;color:#94a3b8;">Tidak ada rincian data KKA</td></tr>'}
+                    </tbody>
+                </table>
+
+                <div class="footer">
+                    Dokumen Rapor Evaluasi Baseline Resmi • Dicetak otomatis pada ${todayDate} oleh BGTK Sumatera Barat
+                </div>
+
+                <script>
+                    window.onload = function() {
+                        setTimeout(function() {
+                            window.print();
+                        }, 500);
+                    };
+                <\/script>
+            </body>
+            </html>`;
+
+            printWin.document.open();
+            printWin.document.write(htmlContent);
+            printWin.document.close();
         }
 
         // ==========================================
