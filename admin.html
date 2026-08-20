@@ -3338,9 +3338,38 @@
 
         async function toggleSasaranKombel(id, isSasaran) {
             try {
-                await db.ref(`master_kombel/${id}/is_sasaran`).set(isSasaran);
-                if (gAllKombels[id]) gAllKombels[id].is_sasaran = isSasaran;
+                if (!isSasaran) {
+                    const kombel = gAllKombels[id];
+                    const fasilNama = kombel ? kombel.fasil_nama : null;
+                    const adminNama = kombel ? kombel.admin_nama : null;
+                    
+                    let msg = "Batalkan status sasaran untuk Komunitas Belajar ini?";
+                    if (fasilNama || adminNama) {
+                        msg += `\n\n⚠️ Penugasan Fasilitator (${fasilNama || '-'}) dan Admin (${adminNama ? adminNama.split(',')[0] : '-'}) yang sudah ada juga akan otomatis dibatalkan & dihapus.`;
+                    }
+                    if (!confirm(msg)) return;
+
+                    await db.ref(`master_kombel/${id}`).update({
+                        is_sasaran: false,
+                        fasil_nama: null,
+                        fasil_id: null,
+                        admin_nama: null
+                    });
+
+                    if (gAllKombels[id]) {
+                        gAllKombels[id].is_sasaran = false;
+                        gAllKombels[id].fasil_nama = null;
+                        gAllKombels[id].fasil_id = null;
+                        gAllKombels[id].admin_nama = null;
+                    }
+                    showToast("⚠️ Status sasaran & penugasan Fasilitator/Admin berhasil dibatalkan.", "rose");
+                } else {
+                    await db.ref(`master_kombel/${id}/is_sasaran`).set(true);
+                    if (gAllKombels[id]) gAllKombels[id].is_sasaran = true;
+                    showToast("⭐ Komunitas Belajar ditandai sebagai sasaran!", "emerald");
+                }
                 filterKombelData();
+                loadDashboardUtamaData();
             } catch(e) { alert("Gagal mengupdate status: " + e.message); }
         }
 
