@@ -666,11 +666,13 @@
                             <input type="text" id="searchKombel" onkeyup="filterKombelData()" placeholder="Cari Nama Kombel, Ketua, Instansi..." class="w-full pl-10 pr-4 py-2 border border-slate-300 rounded-xl text-sm focus:ring-purple-500 focus:border-purple-500">
                             <svg class="w-4 h-4 text-slate-400 absolute left-3.5 top-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
                         </div>
-                        <div class="flex flex-wrap items-center gap-3 w-full md:w-auto">
-                            <select id="filterKabKombel" onchange="filterKombelData()" class="border-slate-300 rounded-xl text-sm px-3 py-2 bg-slate-50"><option value="ALL">Semua Kab / Kota (19)</option></select>
+                        <div class="flex flex-wrap items-center gap-2.5 w-full md:w-auto">
+                            <select id="filterKabKombel" onchange="filterKombelData()" class="border-slate-300 rounded-xl text-sm px-3 py-2 bg-slate-50 font-medium text-slate-800"><option value="ALL">Semua Kab / Kota (19)</option></select>
                             <select id="filterMapelKombel" onchange="filterKombelData()" class="border-slate-300 rounded-xl text-sm px-3 py-2 bg-slate-50 font-semibold text-slate-700"><option value="ALL">Semua Mapel / Bidang (20)</option></select>
+                            <select id="filterFasilKombel" onchange="filterKombelData()" class="border-purple-200 rounded-xl text-sm px-3 py-2 bg-purple-50/70 font-semibold text-purple-900"><option value="ALL">🤝 Semua Fasilitator</option></select>
+                            <select id="filterAdminKombel" onchange="filterKombelData()" class="border-indigo-200 rounded-xl text-sm px-3 py-2 bg-indigo-50/70 font-semibold text-indigo-900"><option value="ALL">👤 Semua Admin BGTK</option></select>
                             <select id="filterStatusSasaran" onchange="filterKombelData()" class="border-slate-300 rounded-xl text-sm px-3 py-2 bg-slate-50 font-semibold text-slate-700">
-                                <option value="ALL">Semua Data (1.804)</option>
+                                <option value="ALL">Semua Status / Sasaran</option>
                                 <option value="SASARAN">⭐ Hanya 54 Sasaran PMKKA</option>
                                 <option value="PLOTTING_LENGKAP">✅ Plotting Selesai (Lengkap)</option>
                                 <option value="REKOMENDASI_SM">🏫 Rekomendasi Sekolah Model (100 KK)</option>
@@ -3079,6 +3081,8 @@
 
                 populateKabKombelDropdown();
                 populateMapelKombelDropdown();
+                populateFasilKombelDropdown();
+                populateAdminKombelDropdown();
                 checkAdminRoleAccess();
                 filterKombelData();
 
@@ -3098,6 +3102,8 @@
                     gAllKombels = snap.val() || {};
                     populateKabKombelDropdown();
                     populateMapelKombelDropdown();
+                    populateFasilKombelDropdown();
+                    populateAdminKombelDropdown();
                     filterKombelData();
                 });
             });
@@ -3155,6 +3161,63 @@
             }
         }
 
+        function populateFasilKombelDropdown() {
+            const sel = document.getElementById('filterFasilKombel');
+            if (!sel) return;
+            const currentVal = sel.value || 'ALL';
+
+            const fasilSet = new Set();
+            Object.values(gAllKombels).forEach(k => {
+                if (k.fasil_nama) fasilSet.add(k.fasil_nama.trim());
+            });
+            if (typeof gDaftarFasdaFixed !== 'undefined' && Array.isArray(gDaftarFasdaFixed)) {
+                gDaftarFasdaFixed.forEach(f => { if (f.nama) fasilSet.add(f.nama.trim()); });
+            }
+
+            let options = '<option value="ALL">🤝 Semua Fasilitator</option>';
+            options += '<option value="UNASSIGNED">❌ Belum Ada Fasilitator</option>';
+            Array.from(fasilSet).sort().forEach(fasil => {
+                const selected = (fasil === currentVal) ? 'selected' : '';
+                options += `<option value="${fasil}" ${selected}>🤝 ${fasil}</option>`;
+            });
+            sel.innerHTML = options;
+            if (currentVal && Array.from(sel.options).some(o => o.value === currentVal)) {
+                sel.value = currentVal;
+            }
+        }
+
+        function populateAdminKombelDropdown() {
+            const sel = document.getElementById('filterAdminKombel');
+            if (!sel) return;
+            const currentVal = sel.value || 'ALL';
+
+            const adminSet = new Set();
+            Object.values(gAllKombels).forEach(k => {
+                if (k.admin_nama) {
+                    const cleanAdmin = k.admin_nama.split(',')[0].trim();
+                    if (cleanAdmin) adminSet.add(cleanAdmin);
+                }
+            });
+
+            // Default dual-program admins
+            const defaultAdmins = [
+                'Rosa Ria Ayu', 'Siti Oktovani', 'Aflidarneti', 
+                'Ristita Humairoh', 'Lisa Anggraini', 'Irawati'
+            ];
+            defaultAdmins.forEach(a => adminSet.add(a));
+
+            let options = '<option value="ALL">👤 Semua Admin BGTK</option>';
+            options += '<option value="UNASSIGNED">❌ Belum Ada Admin</option>';
+            Array.from(adminSet).sort().forEach(admin => {
+                const selected = (admin === currentVal) ? 'selected' : '';
+                options += `<option value="${admin}" ${selected}>👤 ${admin}</option>`;
+            });
+            sel.innerHTML = options;
+            if (currentVal && Array.from(sel.options).some(o => o.value === currentVal)) {
+                sel.value = currentVal;
+            }
+        }
+
         function isKombelPlottingLengkap(k) {
             if (!k.is_sasaran) return false;
             const hasFasil = !!k.fasil_nama;
@@ -3168,6 +3231,8 @@
             const search = (document.getElementById('searchKombel')?.value || '').toLowerCase().trim();
             const kabFilter = document.getElementById('filterKabKombel')?.value || 'ALL';
             const mapelFilter = document.getElementById('filterMapelKombel')?.value || 'ALL';
+            const fasilFilter = document.getElementById('filterFasilKombel')?.value || 'ALL';
+            const adminFilter = document.getElementById('filterAdminKombel')?.value || 'ALL';
             const statusFilter = document.getElementById('filterStatusSasaran')?.value || 'ALL';
             const list = Object.values(gAllKombels);
 
@@ -3175,13 +3240,19 @@
                 const matchSearch = !search || (k.nama_kombel && k.nama_kombel.toLowerCase().includes(search)) || (k.nama_ketua && k.nama_ketua.toLowerCase().includes(search)) || (k.instansi && k.instansi.toLowerCase().includes(search)) || (k.kecamatan && k.kecamatan.toLowerCase().includes(search));
                 const matchKab = kabFilter === 'ALL' || k.kab_kota === kabFilter;
                 const matchMapel = mapelFilter === 'ALL' || cocokanMapel(k.nama_kombel, k.jenjang, mapelFilter);
+                const matchFasil = fasilFilter === 'ALL' || 
+                    (fasilFilter === 'UNASSIGNED' && !k.fasil_nama) || 
+                    (k.fasil_nama && k.fasil_nama.toLowerCase().includes(fasilFilter.toLowerCase()));
+                const matchAdmin = adminFilter === 'ALL' || 
+                    (adminFilter === 'UNASSIGNED' && !k.admin_nama) || 
+                    (k.admin_nama && k.admin_nama.toLowerCase().includes(adminFilter.toLowerCase()));
                 const matchStatus = statusFilter === 'ALL' || 
                     (statusFilter === 'SASARAN' && k.is_sasaran) || 
                     (statusFilter === 'PLOTTING_LENGKAP' && isKombelPlottingLengkap(k)) ||
                     (statusFilter === 'NON_SASARAN' && !k.is_sasaran) ||
                     (statusFilter === 'REKOMENDASI_SM' && (k.is_rekomendasi_sekolah_model || (k.sekolah_model_participant_count && k.sekolah_model_participant_count > 0)));
                 const matchRekomendasi = !gModeRekomendasi || isKombelMemenuhiRekomendasi(k);
-                return matchSearch && matchKab && matchMapel && matchStatus && matchRekomendasi;
+                return matchSearch && matchKab && matchMapel && matchFasil && matchAdmin && matchStatus && matchRekomendasi;
             });
 
             const sasaranList = list.filter(k => k.is_sasaran);
