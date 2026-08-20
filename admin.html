@@ -3298,8 +3298,8 @@
                     : `<button onclick="toggleSasaranKombel('${k.id}', true)" class="px-3 py-1.5 rounded-xl text-xs font-bold bg-amber-50 text-amber-900 hover:bg-amber-100 transition-colors border border-amber-300">⭐ Tandai Sasaran</button>`;
 
                 const anggotaHtml = hasImportedPeserta
-                    ? `<button onclick="openKelolaKombelModal('${k.id}')" class="px-2.5 py-0.5 rounded-full text-xs font-extrabold bg-emerald-100 text-emerald-800 border border-emerald-200 shadow-2xs hover:scale-105 transition-transform">${pesertaCount} Peserta</button>`
-                    : `<span class="text-xs font-bold text-slate-600">${pesertaCount}</span>`;
+                    ? `<button onclick="openKelolaKombelModal('${k.id}')" title="Klik untuk kelola &amp; lihat peserta" class="px-2.5 py-0.5 rounded-full text-xs font-extrabold bg-emerald-100 text-emerald-800 border border-emerald-200 shadow-2xs hover:scale-105 transition-transform cursor-pointer">${pesertaCount} Peserta</button>`
+                    : `<button onclick="openKelolaKombelModal('${k.id}')" title="Klik untuk impor data peserta CSV" class="px-2.5 py-0.5 rounded-full text-xs font-bold text-slate-600 bg-slate-100 hover:bg-slate-200 transition-colors cursor-pointer">${pesertaCount} Peserta</button>`;
 
                 const smBadgeHtml = (k.is_rekomendasi_sekolah_model || (k.sekolah_model_participant_count && k.sekolah_model_participant_count > 0))
                     ? `<div class="mt-1"><span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-black bg-teal-100 text-teal-900 border border-teal-300/80 shadow-2xs">🏫 Rekomendasi Sekolah Model (${k.sekolah_model_participant_count || 1} Peserta SM)</span></div>`
@@ -3310,7 +3310,9 @@
                     <td class="px-2 py-3 text-center text-slate-400 text-xs font-bold w-10">${start + i + 1}</td>
                     <td class="px-3 py-3 text-center bg-amber-50/40 border-r border-amber-200/60 w-36">${btnActions}</td>
                     <td class="px-3.5 py-3 w-[260px] max-w-[260px] whitespace-normal">
-                        <div class="font-bold text-slate-800 text-xs sm:text-sm leading-snug break-words">${k.nama_kombel}</div>
+                        <button onclick="openKelolaKombelModal('${k.id}')" title="Klik untuk Kelola &amp; CSV Peserta" class="text-left w-full group focus:outline-none cursor-pointer">
+                            <div class="font-bold text-slate-900 group-hover:text-indigo-600 group-hover:underline text-xs sm:text-sm leading-snug break-words transition-colors">${k.nama_kombel}</div>
+                        </button>
                         <div class="text-[11px] text-slate-500 mt-0.5 break-words">${k.jenjang || ''} ${k.instansi ? '• ' + k.instansi : ''}</div>
                         ${smBadgeHtml}
                     </td>
