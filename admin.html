@@ -790,6 +790,9 @@
                                 <button onclick="salinPresensiDariDetailModal()" title="Salin Link Presensi Online Langsung" class="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl shadow-xs transition flex items-center gap-1.5">
                                     <span>📋 Salin Link Absen</span>
                                 </button>
+                                <button onclick="focusFormEditJadwalInModal()" title="Ubah Tanggal &amp; Jam Kunjungan dari Admin" class="px-3.5 py-2 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xs rounded-xl shadow-xs transition flex items-center gap-1.5 cursor-pointer">
+                                    <span>✏️ Ubah Jadwal</span>
+                                </button>
                                 <button onclick="closeModalDetailHasilPendampingan()" class="text-slate-400 hover:text-white p-2 rounded-xl hover:bg-white/10 transition-colors">
                                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
                                 </button>
@@ -6276,16 +6279,41 @@
                             </div>
                         </div>
 
-                        <!-- Card 2: Pengaturan Google Meet & Link Rekaman -->
-                        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-2xs space-y-3">
+                        <!-- Card 2: Pengaturan Tanggal, Waktu & Media Kunjungan -->
+                        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-2xs space-y-4">
                             <div class="flex justify-between items-center border-b border-slate-100 pb-2.5">
                                 <div class="flex items-center gap-2">
-                                    <span class="text-base">📹</span>
-                                    <span class="text-xs font-extrabold text-slate-900 uppercase">Tautan Pertemuan Online &amp; Rekaman (Admin / Fasilitator)</span>
+                                    <span class="text-base">📅</span>
+                                    <span class="text-xs font-extrabold text-slate-900 uppercase">Pengaturan Tanggal, Waktu &amp; Media Kunjungan (Admin / Fasilitator)</span>
                                 </div>
-                                <span class="text-[11px] text-slate-400 italic">Opsional untuk kunjungan Daring</span>
+                                <span class="text-[11px] text-indigo-600 font-bold">Akses Ubah Admin &amp; Fasilitator</span>
                             </div>
 
+                            <!-- Row 1: Tanggal, Waktu & Status Kunjungan -->
+                            <div class="grid grid-cols-1 md:grid-cols-4 gap-3 bg-amber-50/60 p-3.5 rounded-xl border border-amber-200/80">
+                                <div>
+                                    <label class="block text-[11px] font-bold text-amber-900 mb-1">Tanggal Kunjungan <span class="text-rose-600">*</span></label>
+                                    <input type="date" id="detailModalInputTanggal" value="${jData.tanggal || ''}" class="w-full border-amber-300 rounded-xl px-3 py-2 border text-xs font-bold text-slate-800 focus:ring-amber-500 focus:border-amber-500 bg-white">
+                                </div>
+                                <div>
+                                    <label class="block text-[11px] font-bold text-amber-900 mb-1">Jam Mulai</label>
+                                    <input type="time" id="detailModalInputJamMulai" value="${jData.jam_mulai || '08:00'}" class="w-full border-amber-300 rounded-xl px-3 py-2 border text-xs font-bold text-slate-800 focus:ring-amber-500 focus:border-amber-500 bg-white">
+                                </div>
+                                <div>
+                                    <label class="block text-[11px] font-bold text-amber-900 mb-1">Jam Selesai</label>
+                                    <input type="time" id="detailModalInputJamSelesai" value="${jData.jam_selesai || '12:00'}" class="w-full border-amber-300 rounded-xl px-3 py-2 border text-xs font-bold text-slate-800 focus:ring-amber-500 focus:border-amber-500 bg-white">
+                                </div>
+                                <div>
+                                    <label class="block text-[11px] font-bold text-amber-900 mb-1">Status Pelaksanaan</label>
+                                    <select id="detailModalInputStatus" class="w-full border-amber-300 rounded-xl px-3 py-2 border text-xs font-bold text-slate-800 focus:ring-amber-500 focus:border-amber-500 bg-white">
+                                        <option value="Terjadwal" ${jData.status === 'Terjadwal' || !jData.status ? 'selected' : ''}>📅 Terjadwal</option>
+                                        <option value="Selesai" ${jData.status === 'Selesai' ? 'selected' : ''}>✅ Selesai</option>
+                                        <option value="Direncanakan" ${jData.status === 'Direncanakan' ? 'selected' : ''}>⏳ Direncanakan</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- Row 2: Metode Kunjungan, GMeet & Rekaman -->
                             <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
                                 <div>
                                     <label class="block text-[11px] font-bold text-slate-600 mb-1">Metode Kunjungan</label>
@@ -6313,8 +6341,8 @@
                             </div>
 
                             <div class="flex justify-end pt-1">
-                                <button onclick="simpanLinkMeetDariDetailModal()" id="btnSimpanLinkDetailModal" class="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow-xs">
-                                    <span>💾 Simpan Perubahan Link Pertemuan</span>
+                                <button onclick="simpanLinkMeetDariDetailModal()" id="btnSimpanLinkDetailModal" class="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-black transition flex items-center gap-1.5 shadow-md shadow-indigo-200 cursor-pointer">
+                                    <span>💾 Simpan Perubahan Jadwal &amp; Tautan Pertemuan</span>
                                 </button>
                             </div>
                         </div>
@@ -6397,6 +6425,11 @@
         async function simpanLinkMeetDariDetailModal() {
             if (!gCurrentHasilDetail) return;
             const { npsn, kunjunganNum } = gCurrentHasilDetail;
+
+            const tgl = (document.getElementById('detailModalInputTanggal')?.value || '').trim();
+            const jamMulai = (document.getElementById('detailModalInputJamMulai')?.value || '').trim();
+            const jamSelesai = (document.getElementById('detailModalInputJamSelesai')?.value || '').trim();
+            const status = document.getElementById('detailModalInputStatus')?.value || 'Terjadwal';
             const tipe = document.getElementById('detailModalInputTipe')?.value || 'Luring';
             const gmeet = (document.getElementById('detailModalInputGMeet')?.value || '').trim();
             const rekaman = (document.getElementById('detailModalInputRekaman')?.value || '').trim();
@@ -6405,20 +6438,24 @@
             if (btn) { btn.disabled = true; btn.innerHTML = 'Menyimpan...'; }
 
             try {
-                await db.ref(`jadwal_kunjungan/${npsn}/kunjungan_${kunjunganNum}`).update({
+                const updatePayload = {
                     tipe_kunjungan: tipe,
                     link_gmeet: gmeet,
                     link_rekaman_gmeet: rekaman,
+                    status: status,
                     timestamp: Date.now()
-                });
+                };
+                if (tgl) updatePayload.tanggal = tgl;
+                if (jamMulai) updatePayload.jam_mulai = jamMulai;
+                if (jamSelesai) updatePayload.jam_selesai = jamSelesai;
+
+                await db.ref(`jadwal_kunjungan/${npsn}/kunjungan_${kunjunganNum}`).update(updatePayload);
 
                 if (gCurrentHasilDetail.jData) {
-                    gCurrentHasilDetail.jData.tipe_kunjungan = tipe;
-                    gCurrentHasilDetail.jData.link_gmeet = gmeet;
-                    gCurrentHasilDetail.jData.link_rekaman_gmeet = rekaman;
+                    Object.assign(gCurrentHasilDetail.jData, updatePayload);
                 }
 
-                // Update Header Badge
+                // Update Header Badges & Subtext
                 const tipeBadge = document.getElementById('modalHasilTipeBadge');
                 if (tipeBadge) {
                     tipeBadge.textContent = tipe === 'Daring' ? '🌐 Daring' : '🏫 Luring';
@@ -6427,13 +6464,39 @@
                         : 'px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/40 text-emerald-100 border border-emerald-400/30';
                 }
 
-                if (btn) { btn.disabled = false; btn.innerHTML = '<span>💾 Simpan Perubahan Link Pertemuan</span>'; }
-                alert("✅ Link Google Meet dan Rekaman berhasil disimpan!");
+                const statusBadge = document.getElementById('modalHasilStatusBadge');
+                if (statusBadge) {
+                    statusBadge.textContent = status === 'Selesai' ? '✓ Selesai' : (status === 'Terjadwal' ? '📅 Terjadwal' : '⏳ Direncanakan');
+                    statusBadge.className = status === 'Selesai' 
+                        ? 'px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/30 text-emerald-200'
+                        : 'px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/30 text-amber-200';
+                }
+
+                const subEl = document.getElementById('modalHasilSub');
+                if (subEl) {
+                    const { npsn, kabKota, fasilNama } = gCurrentHasilDetail;
+                    const jamStr = (jamMulai && jamSelesai) ? ` (${jamMulai} - ${jamSelesai} WIB)` : '';
+                    subEl.textContent = `NPSN: ${npsn} | Wilayah: ${kabKota} | Fasilitator: ${fasilNama} | Tanggal: ${tgl || '-'}${jamStr}`;
+                }
+
+                if (btn) { btn.disabled = false; btn.innerHTML = '<span>💾 Simpan Perubahan Jadwal &amp; Tautan Pertemuan</span>'; }
+                alert("✅ Jadwal kunjungan & link pertemuan berhasil diperbarui!");
                 loadJadwalFasilData();
             } catch(e) {
-                if (btn) { btn.disabled = false; btn.innerHTML = '<span>💾 Simpan Perubahan Link Pertemuan</span>'; }
-                alert("❌ Gagal menyimpan link: " + e.message);
+                if (btn) { btn.disabled = false; btn.innerHTML = '<span>💾 Simpan Perubahan Jadwal &amp; Tautan Pertemuan</span>'; }
+                alert("❌ Gagal menyimpan jadwal: " + e.message);
             }
+        }
+
+        function focusFormEditJadwalInModal() {
+            switchHasilPendampinganTab('hadir');
+            setTimeout(() => {
+                const inputTgl = document.getElementById('detailModalInputTanggal');
+                if (inputTgl) {
+                    inputTgl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    inputTgl.focus();
+                }
+            }, 100);
         }
 
         function bukaMeetDariDetailModal() {
