@@ -562,6 +562,10 @@
                                 <p class="text-xs text-slate-500 mt-0.5">Status realtime seluruh tahap pendampingan per fasilitator &amp; sekolah binaan.</p>
                             </div>
                             <div class="flex flex-wrap items-center gap-2">
+                                <button onclick="openModalTambahJadwalFasilAdmin()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all shadow-sm flex items-center gap-1.5 cursor-pointer">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                                    <span>➕ Jadwalkan Kunjungan untuk Fasilitator</span>
+                                </button>
                                 <select id="filterMatriksFasilScope" onchange="renderMode4Matriks()" class="px-3 py-1.5 bg-white border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 focus:outline-none">
                                     <option value="ALL">🌐 Semua Fasilitator</option>
                                 </select>
@@ -1129,6 +1133,112 @@
                         <div id="modalRaporPreviewAdminBody" class="p-4 sm:p-8 overflow-y-auto flex-1 bg-white">
                             <!-- Rapor HTML output renders here -->
                         </div>
+                    </div>
+                </div>
+
+                <!-- ================= MODAL JADWALKAN KUNJUNGAN UNTUK FASILITATOR (ADMIN BANTU FASIL) ================= -->
+                <div id="modalJadwalkanFasilAdmin" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto">
+                    <div class="bg-white rounded-3xl shadow-2xl w-full max-w-lg overflow-hidden fade-in border border-slate-100">
+                        <!-- Modal Header -->
+                        <div class="p-6 bg-gradient-to-r from-indigo-600 via-indigo-700 to-purple-800 text-white flex justify-between items-center">
+                            <div class="flex items-center gap-3">
+                                <div class="p-2.5 bg-white/20 rounded-xl backdrop-blur-md">
+                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                                </div>
+                                <div>
+                                    <h3 class="font-extrabold text-base text-white">Jadwalkan Kunjungan untuk Fasilitator</h3>
+                                    <p class="text-xs text-indigo-200">Admin membantu menjadwalkan kunjungan fasilitator binaan</p>
+                                </div>
+                            </div>
+                            <button onclick="closeModalJadwalkanFasilAdmin()" class="text-indigo-200 hover:text-white p-2 rounded-xl hover:bg-white/10 transition-colors cursor-pointer">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                            </button>
+                        </div>
+
+                        <!-- Modal Form -->
+                        <form onsubmit="simpanJadwalFasilOlehAdmin(event)" class="p-6 space-y-4 text-xs">
+                            <!-- Fasilitator Selector -->
+                            <div>
+                                <label class="block font-bold text-slate-700 mb-1">Pilih Fasilitator Pendamping <span class="text-rose-500">*</span></label>
+                                <select id="adminInputFasilId" onchange="onAdminSelectFasilChange()" required class="w-full border-slate-300 rounded-xl text-xs px-3.5 py-2.5 bg-slate-50 font-bold text-slate-800 focus:ring-indigo-500 focus:border-indigo-500">
+                                    <!-- Populated dynamically -->
+                                </select>
+                            </div>
+
+                            <!-- Sekolah Binaan Selector -->
+                            <div>
+                                <label class="block font-bold text-slate-700 mb-1">Pilih Sekolah Binaan <span class="text-rose-500">*</span></label>
+                                <select id="adminInputSekolahNpsn" required class="w-full border-slate-300 rounded-xl text-xs px-3.5 py-2.5 bg-slate-50 font-bold text-slate-800 focus:ring-indigo-500 focus:border-indigo-500">
+                                    <!-- Populated based on selected fasil -->
+                                </select>
+                            </div>
+
+                            <!-- Tahap Kunjungan -->
+                            <div class="grid grid-cols-2 gap-3">
+                                <div>
+                                    <label class="block font-bold text-slate-700 mb-1">Tahap Kunjungan <span class="text-rose-500">*</span></label>
+                                    <select id="adminInputKunjunganNum" required class="w-full border-slate-300 rounded-xl text-xs px-3.5 py-2.5 bg-slate-50 font-bold text-slate-800 focus:ring-indigo-500 focus:border-indigo-500">
+                                        <option value="1">Kunjungan 1 (PI-1 / Baseline)</option>
+                                        <option value="2">Kunjungan 2 (PI-2)</option>
+                                        <option value="3">Kunjungan 3 (PI-3)</option>
+                                        <option value="4">Kunjungan 4 (PI-4)</option>
+                                        <option value="5">Kunjungan 5 (PI-5)</option>
+                                        <option value="6">Kunjungan 6 (PI-6 / Evaluasi Akhir)</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block font-bold text-slate-700 mb-1">Moda Pertemuan <span class="text-rose-500">*</span></label>
+                                    <select id="adminInputModa" onchange="toggleAdminModaGMeet()" required class="w-full border-slate-300 rounded-xl text-xs px-3.5 py-2.5 bg-slate-50 font-bold text-slate-800 focus:ring-indigo-500 focus:border-indigo-500">
+                                        <option value="Luring">Luring (Tatap Muka)</option>
+                                        <option value="Daring">Daring (Online Google Meet)</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- Tanggal & Jam -->
+                            <div>
+                                <label class="block font-bold text-slate-700 mb-1">Tanggal Kunjungan <span class="text-rose-500">*</span></label>
+                                <input type="date" id="adminInputTanggal" required class="w-full border-slate-300 rounded-xl text-xs px-3.5 py-2.5 bg-slate-50 font-bold text-slate-800 focus:ring-indigo-500 focus:border-indigo-500">
+                            </div>
+
+                            <div class="grid grid-cols-2 gap-3">
+                                <div>
+                                    <label class="block font-bold text-slate-700 mb-1">Jam Mulai</label>
+                                    <input type="time" id="adminInputJamMulai" value="08:00" class="w-full border-slate-300 rounded-xl text-xs px-3.5 py-2 bg-slate-50 font-mono">
+                                </div>
+                                <div>
+                                    <label class="block font-bold text-slate-700 mb-1">Jam Selesai</label>
+                                    <input type="time" id="adminInputJamSelesai" value="12:00" class="w-full border-slate-300 rounded-xl text-xs px-3.5 py-2 bg-slate-50 font-mono">
+                                </div>
+                            </div>
+
+                            <!-- Link GMeet (if Daring) -->
+                            <div id="adminGMeetBox" class="hidden space-y-3 p-3.5 bg-indigo-50/70 rounded-2xl border border-indigo-100">
+                                <div>
+                                    <label class="block font-bold text-indigo-950 mb-1">Link Google Meet (Daring)</label>
+                                    <input type="url" id="adminInputGMeet" placeholder="https://meet.google.com/xyz-abc-def" class="w-full border-indigo-200 rounded-xl text-xs px-3.5 py-2 bg-white text-indigo-900 font-mono">
+                                </div>
+                                <div>
+                                    <label class="block font-bold text-indigo-950 mb-1">Link Rekaman GMeet (Opsional)</label>
+                                    <input type="url" id="adminInputRekaman" placeholder="https://drive.google.com/file/d/..." class="w-full border-indigo-200 rounded-xl text-xs px-3.5 py-2 bg-white text-indigo-900 font-mono">
+                                </div>
+                            </div>
+
+                            <!-- Catatan / Agenda -->
+                            <div>
+                                <label class="block font-bold text-slate-700 mb-1">Agenda / Catatan Pendampingan</label>
+                                <textarea id="adminInputCatatan" rows="2" placeholder="Tuliskan agenda atau catatan pendampingan..." class="w-full border-slate-300 rounded-xl text-xs p-3 bg-slate-50 text-slate-800"></textarea>
+                            </div>
+
+                            <!-- Footer Buttons -->
+                            <div class="pt-3 border-t border-slate-100 flex justify-end gap-2">
+                                <button type="button" onclick="closeModalJadwalkanFasilAdmin()" class="px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl font-bold cursor-pointer transition-colors">Batal</button>
+                                <button type="submit" class="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-bold cursor-pointer transition-all shadow-md flex items-center gap-1.5">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                                    <span>Simpan Jadwal Kunjungan</span>
+                                </button>
+                            </div>
+                        </form>
                     </div>
                 </div>
 
@@ -1845,6 +1955,26 @@
             "ristita.humairoh@kemendikdasmen.go.id": { adminNama: "RISTITA HUMAIROH, S.Kom.", nip: "199711232025212030" }
         };
 
+        const ADMIN_FASIL_MAPPING = {
+            // Lisa Anggraini -> Surya Marlina
+            "lisaanggrainiica17@gmail.com": ["Surya Marlina, M.Pd"],
+            "lisa.anggraini@kemendikdasmen.go.id": ["Surya Marlina, M.Pd"],
+            "lisaanggraini15@dikbud.belajar.id": ["Surya Marlina, M.Pd"],
+            // Siti Oktovani -> Irawati & Silvi Hevria
+            "vanisitioktovani@gmail.com": ["Irawati, S.Pd., M.Pd", "Silvi Hevria, M.Pd"],
+            "siti.oktovani@kemendikdasmen.go.id": ["Irawati, S.Pd., M.Pd", "Silvi Hevria, M.Pd"],
+            // Rosa Ria Ayu -> Subriyeni & Elsis
+            "rosariaayu8@gmail.com": ["Subriyeni, M.Pd", "Elsis, M.Pd"],
+            "rosariaayu5@gmail.com": ["Subriyeni, M.Pd", "Elsis, M.Pd"],
+            "rosa.ria@kemendikdasmen.go.id": ["Subriyeni, M.Pd", "Elsis, M.Pd"],
+            // Aflidarneti -> Fourindra & Iryasman
+            "aflidarneti12@gmail.com": ["Fourindra, M.Pd", "Iryasman, M.Pd"],
+            "aflidarneti@kemendikdasmen.go.id": ["Fourindra, M.Pd", "Iryasman, M.Pd"],
+            // Ristita -> Riza & Pitria
+            "ristitahumairoh71@dikbud.belajar.id": ["Riza, M.Pd", "Pitria, M.Pd"],
+            "ristita.humairoh@kemendikdasmen.go.id": ["Riza, M.Pd", "Pitria, M.Pd"]
+        };
+
         let gAssignedFasilIds = null;
         let gAssignedFasilNames = null;
         let gAdminNama = null;
@@ -1910,6 +2040,23 @@
             else if (ADMIN_FKK_MAPPING[cleanEmail]) {
                 userRole = 'Admin Program';
                 gAdminNama = ADMIN_FKK_MAPPING[cleanEmail].adminNama;
+                
+                const assignedNames = ADMIN_FASIL_MAPPING[cleanEmail] || null;
+                gAssignedFasilNames = assignedNames;
+                if (assignedNames && assignedNames.length > 0) {
+                    try {
+                        const fasilSnap = await db.ref('fasilitator').once('value');
+                        const fasils = fasilSnap.val() || {};
+                        gAssignedFasilIds = [];
+                        for (const fId in fasils) {
+                            const fNama = (fasils[fId].nama || '').trim();
+                            if (assignedNames.some(name => fNama.toLowerCase().includes(name.split(',')[0].toLowerCase()))) {
+                                gAssignedFasilIds.push(fId);
+                            }
+                        }
+                    } catch(e) { console.warn("Gagal get fasil IDs", e); }
+                }
+
                 permissions = {
                     dashboard: true, master_pegawai: false, master_kombel: true,
                     fasilitator: true, jadwal_kunjungan: true, setting_jadwal: true,
@@ -6458,6 +6605,174 @@
             } catch(err) {
                 console.error("Gagal hapusJadwalMatrix", err);
                 alert("Gagal menghapus jadwal: " + err.message);
+            }
+        }
+
+        // ==========================================
+        // ADMIN SCHEDULING ON BEHALF OF FASILITATOR
+        // ==========================================
+        let gGlobalFasilsMap = {};
+        let gGlobalAssignsMap = {};
+        let gGlobalGurusMap = {};
+
+        async function openModalTambahJadwalFasilAdmin() {
+            try {
+                const [fasilSnap, assignSnap, guruSnap] = await Promise.all([
+                    db.ref('fasilitator').once('value'),
+                    db.ref('fasilitator_sekolah').once('value'),
+                    db.ref('master_guru').once('value')
+                ]);
+
+                const fasils = fasilSnap.val() || {};
+                const assigns = assignSnap.val() || {};
+                const gurus = guruSnap.val() || {};
+
+                gGlobalFasilsMap = fasils;
+                gGlobalAssignsMap = assigns;
+                gGlobalGurusMap = gurus;
+
+                const fasilSelect = document.getElementById('adminInputFasilId');
+                if (!fasilSelect) return;
+
+                fasilSelect.innerHTML = '';
+
+                let allowedFasilIds = gAssignedFasilIds;
+                let fasilList = [];
+
+                for (const fId in fasils) {
+                    const f = fasils[fId];
+                    const progs = f.programs || (f.program_kombel ? ['kombel'] : ['sekolah_model']);
+                    if (!progs.includes('sekolah_model')) continue;
+
+                    if (allowedFasilIds && allowedFasilIds.length > 0) {
+                        if (!allowedFasilIds.includes(fId)) continue;
+                    }
+                    fasilList.push({ id: fId, nama: f.nama || fId });
+                }
+
+                if (fasilList.length === 0) {
+                    for (const fId in fasils) {
+                        const f = fasils[fId];
+                        const progs = f.programs || (f.program_kombel ? ['kombel'] : ['sekolah_model']);
+                        if (progs.includes('sekolah_model')) {
+                            fasilList.push({ id: fId, nama: f.nama || fId });
+                        }
+                    }
+                }
+
+                fasilList.sort((a, b) => a.nama.localeCompare(b.nama));
+                fasilList.forEach(f => {
+                    const opt = document.createElement('option');
+                    opt.value = f.id;
+                    opt.textContent = f.nama;
+                    fasilSelect.appendChild(opt);
+                });
+
+                onAdminSelectFasilChange();
+                document.getElementById('modalJadwalkanFasilAdmin').classList.remove('hidden');
+            } catch(e) {
+                console.error("Gagal openModalTambahJadwalFasilAdmin", e);
+                alert("Gagal memuat data fasilitator.");
+            }
+        }
+
+        function onAdminSelectFasilChange() {
+            const fId = document.getElementById('adminInputFasilId')?.value;
+            const sekolahSelect = document.getElementById('adminInputSekolahNpsn');
+            if (!sekolahSelect) return;
+
+            sekolahSelect.innerHTML = '';
+            const myNpsns = gGlobalAssignsMap[fId] || [];
+
+            if (myNpsns.length === 0) {
+                const opt = document.createElement('option');
+                opt.value = '';
+                opt.textContent = 'Belum ada sekolah binaan yang ditugaskan';
+                sekolahSelect.appendChild(opt);
+                return;
+            }
+
+            myNpsns.forEach(npsn => {
+                const guruGroup = gGlobalGurusMap[npsn] || {};
+                const firstGuru = Object.values(guruGroup)[0] || {};
+                const namaSekolah = firstGuru.asal_sekolah || `Sekolah ${npsn}`;
+                const kabKota = firstGuru.kode_kabupaten || '-';
+
+                const opt = document.createElement('option');
+                opt.value = npsn;
+                opt.textContent = `${namaSekolah} (${npsn} - ${kabKota})`;
+                sekolahSelect.appendChild(opt);
+            });
+        }
+
+        function toggleAdminModaGMeet() {
+            const moda = document.getElementById('adminInputModa')?.value;
+            const box = document.getElementById('adminGMeetBox');
+            if (box) {
+                if (moda === 'Daring') box.classList.remove('hidden');
+                else box.classList.add('hidden');
+            }
+        }
+
+        function closeModalJadwalkanFasilAdmin() {
+            document.getElementById('modalJadwalkanFasilAdmin').classList.add('hidden');
+        }
+
+        async function simpanJadwalFasilOlehAdmin(e) {
+            if (e) e.preventDefault();
+            const fasilId = document.getElementById('adminInputFasilId').value;
+            const npsn = document.getElementById('adminInputSekolahNpsn').value;
+            const kNum = document.getElementById('adminInputKunjunganNum').value;
+            const tanggal = document.getElementById('adminInputTanggal').value;
+            const jam_mulai = document.getElementById('adminInputJamMulai')?.value || '08:00';
+            const jam_selesai = document.getElementById('adminInputJamSelesai')?.value || '12:00';
+            const tipe_kunjungan = document.getElementById('adminInputModa')?.value || 'Luring';
+            const link_gmeet = (document.getElementById('adminInputGMeet')?.value || '').trim();
+            const link_rekaman_gmeet = (document.getElementById('adminInputRekaman')?.value || '').trim();
+            const catatan = (document.getElementById('adminInputCatatan')?.value || '').trim();
+
+            if (!fasilId) return alert("Pilih fasilitator terlebih dahulu.");
+            if (!npsn) return alert("Fasilitator terpilih belum memiliki sekolah binaan.");
+            if (!tanggal) return alert("Pilih tanggal pelaksanaan kunjungan.");
+
+            try {
+                const snap = await db.ref(`jadwal_kunjungan/${npsn}/kunjungan_${kNum}`).once('value');
+                const existing = snap.val() || {};
+
+                const fasilObj = gGlobalFasilsMap[fasilId] || {};
+                const guruGroup = gGlobalGurusMap[npsn] || {};
+                const firstGuru = Object.values(guruGroup)[0] || {};
+                const namaSekolah = firstGuru.asal_sekolah || `Sekolah ${npsn}`;
+
+                const updateObj = {
+                    ...existing,
+                    npsn: npsn,
+                    nama_sekolah: namaSekolah,
+                    fasil_id: fasilId,
+                    fasil_name: fasilObj.nama || 'Fasilitator',
+                    tanggal: tanggal,
+                    jam_mulai: jam_mulai,
+                    jam_selesai: jam_selesai,
+                    waktu: `${jam_mulai} - ${jam_selesai} WIB`,
+                    tipe_kunjungan: tipe_kunjungan,
+                    link_gmeet: link_gmeet || existing.link_gmeet || '',
+                    link_rekaman_gmeet: link_rekaman_gmeet || existing.link_rekaman_gmeet || '',
+                    status: existing.status || 'Direncanakan',
+                    catatan_pelaksanaan_tet: catatan || existing.catatan_pelaksanaan_tet || 'Dijadwalkan oleh Admin',
+                    created_by: gAdminNama || 'Admin BGTK',
+                    timestamp: Date.now()
+                };
+
+                await db.ref(`jadwal_kunjungan/${npsn}/kunjungan_${kNum}`).update(updateObj);
+
+                closeModalJadwalkanFasilAdmin();
+                alert(`Jadwal Kunjungan ${kNum} untuk ${fasilObj.nama} (${namaSekolah}) berhasil disimpan!`);
+
+                renderMode4Matriks();
+                loadJadwalFasilData();
+            } catch(err) {
+                console.error("Gagal simpanJadwalFasilOlehAdmin", err);
+                alert("Gagal menyimpan jadwal: " + err.message);
             }
         }
 
