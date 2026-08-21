@@ -1094,6 +1094,41 @@
                         <div class="p-6 overflow-y-auto space-y-6 flex-1 text-sm bg-slate-50/50" id="modalStatusSchoolContent">
                             <!-- Populated dynamically -->
                         </div>
+                </div>
+
+                <!-- MODAL PREVIEW & DOWNLOAD RAPOR BASELINE ADMIN -->
+                <div id="modalRaporPreviewAdmin" class="hidden fixed inset-0 z-50 bg-slate-900/70 backdrop-blur-sm flex items-center justify-center p-2 sm:p-4 overflow-y-auto">
+                    <div class="bg-white rounded-3xl shadow-2xl w-full max-w-4xl max-h-[92vh] flex flex-col overflow-hidden fade-in border border-slate-200">
+                        <!-- Modal Header Toolbar -->
+                        <div class="p-4 bg-slate-900 text-white flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 border-b border-slate-800 flex-shrink-0">
+                            <div class="flex items-center gap-3">
+                                <div class="p-2 bg-indigo-600/30 rounded-xl border border-indigo-500/30">
+                                    <svg class="w-5 h-5 text-indigo-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                                </div>
+                                <div>
+                                    <h3 class="font-extrabold text-sm sm:text-base text-white" id="modalRaporPreviewAdminTitle">Rapor Evaluasi Baseline</h3>
+                                    <p class="text-[11px] text-slate-400" id="modalRaporPreviewAdminSub">Pratinjau &amp; Cetak PDF Resmi</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-2 w-full sm:w-auto justify-end flex-wrap">
+                                <button onclick="printRaporFromModalAdmin()" class="px-3.5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-bold transition-all shadow-sm flex items-center gap-1.5 cursor-pointer">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
+                                    <span>🖨️ Cetak / Simpan PDF</span>
+                                </button>
+                                <button onclick="downloadRaporHTMLFromModalAdmin()" class="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold transition-all shadow-sm flex items-center gap-1.5 cursor-pointer">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                                    <span>📥 Unduh File</span>
+                                </button>
+                                <button onclick="closeModalRaporPreviewAdmin()" class="p-2 text-slate-400 hover:text-white rounded-xl hover:bg-white/10 transition-colors">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Modal Content Preview Area -->
+                        <div id="modalRaporPreviewAdminBody" class="p-4 sm:p-8 overflow-y-auto flex-1 bg-white">
+                            <!-- Rapor HTML output renders here -->
+                        </div>
                     </div>
                 </div>
 
@@ -5788,181 +5823,82 @@
             }
         }
 
+        let gAdminRaporFullHTML = '';
+        let gAdminRaporFilename = 'Rapor_Baseline';
+
+        function closeModalRaporPreviewAdmin() {
+            document.getElementById('modalRaporPreviewAdmin').classList.add('hidden');
+        }
+
+        function downloadRaporHTMLFromModalAdmin() {
+            if (!gAdminRaporFullHTML) return alert("Belum ada data rapor.");
+            const blob = new Blob([gAdminRaporFullHTML], { type: 'text/html;charset=utf-8' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = (gAdminRaporFilename || 'Rapor_Baseline').replace(/\s+/g, '_') + '.html';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        function printRaporFromModalAdmin() {
+            if (!gAdminRaporFullHTML) return alert("Belum ada data rapor.");
+            const printWin = window.open('', '_blank', 'width=950,height=900');
+            if (!printWin) {
+                alert("Pop-up blocker terdeteksi. Silakan gunakan tombol Unduh File untuk menyimpan dokumen.");
+                return;
+            }
+            printWin.document.open();
+            printWin.document.write(gAdminRaporFullHTML);
+            printWin.document.close();
+        }
+
         function downloadPDFRaporBaseline(npsn) {
             const s = gStatusSekolahRaw[npsn];
             if (!s) return alert("Data sekolah tidak ditemukan.");
 
-            const printWin = window.open('', '_blank', 'width=950,height=900');
-            if (!printWin) return alert("Pop-up blocker aktif. Harap izinkan pop-up browser untuk mengunduh PDF.");
-
-            let pmTableRows = '';
-            for (const k in s.pm?.sub_indikator || {}) {
-                const val = s.pm.sub_indikator[k];
-                const displayKey = k.replace(/_/g, '.');
-                const meta = gRubrikCatalogMap.pm ? gRubrikCatalogMap.pm[k] : null;
-                const isNA = val === '#N/A';
-                const valStyle = isNA ? 'color:#94a3b8;font-style:italic;' : 'color:#3730a3;font-weight:bold;';
-
-                pmTableRows += `
-                <tr>
-                    <td style="padding:6px 8px;border:1px solid #cbd5e1;text-align:center;font-weight:bold;font-family:monospace;">${displayKey}</td>
-                    <td style="padding:6px 8px;border:1px solid #cbd5e1;font-weight:bold;">${meta ? meta.nama : 'Sub-Indikator ' + displayKey}</td>
-                    <td style="padding:6px 8px;border:1px solid #cbd5e1;font-size:10px;color:#64748b;">${meta ? (meta.domain + ' &rsaquo; ' + meta.sub_domain) : '-'}</td>
-                    <td style="padding:6px 8px;border:1px solid #cbd5e1;text-align:center;${valStyle}">${val}</td>
-                </tr>`;
-            }
-
-            let kkaTableRows = '';
-            for (const k in s.kka?.sub_indikator || {}) {
-                const val = s.kka.sub_indikator[k];
-                const displayKey = k.replace(/_/g, '.');
-                const meta = gRubrikCatalogMap.kka ? gRubrikCatalogMap.kka[k] : null;
-                const isNA = val === '#N/A';
-                const valStyle = isNA ? 'color:#94a3b8;font-style:italic;' : 'color:#6b21a8;font-weight:bold;';
-
-                kkaTableRows += `
-                <tr>
-                    <td style="padding:6px 8px;border:1px solid #cbd5e1;text-align:center;font-weight:bold;font-family:monospace;">${displayKey}</td>
-                    <td style="padding:6px 8px;border:1px solid #cbd5e1;font-weight:bold;">${meta ? meta.nama : 'Sub-Indikator ' + displayKey}</td>
-                    <td style="padding:6px 8px;border:1px solid #cbd5e1;font-size:10px;color:#64748b;">${meta ? (meta.domain + ' &rsaquo; ' + meta.sub_domain) : '-'}</td>
-                    <td style="padding:6px 8px;border:1px solid #cbd5e1;text-align:center;${valStyle}">${val}</td>
-                </tr>`;
-            }
-
-            const todayDate = new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
-
-            const htmlContent = `
+            const htmlUnit = generateSingleRaporHTMLAdmin(s);
+            gAdminRaporFilename = `Rapor_Baseline_${s.nama_sekolah}`;
+            gAdminRaporFullHTML = `
             <!DOCTYPE html>
             <html>
             <head>
                 <meta charset="utf-8">
                 <title>Rapor Baseline PM-KKA - ${s.nama_sekolah}</title>
-                <style>
-                    @page { size: A4 portrait; margin: 12mm 15mm; }
-                    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-size: 11px; color: #0f172a; margin: 0; padding: 0; background: #fff; }
-                    .header { text-align: center; border-bottom: 2.5px solid #0f172a; padding-bottom: 10px; margin-bottom: 16px; }
-                    .header .instansi { font-size: 12px; font-weight: 800; text-transform: uppercase; color: #475569; letter-spacing: 0.5px; }
-                    .header .balai { font-size: 15px; font-weight: 900; text-transform: uppercase; color: #0f172a; margin: 2px 0; }
-                    .header .judul { font-size: 13px; font-weight: 800; text-transform: uppercase; color: #4f46e5; margin-top: 4px; }
-                    
-                    .info-box { width: 100%; border-collapse: collapse; margin-bottom: 16px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; }
-                    .info-box td { padding: 6px 10px; font-size: 11px; vertical-align: top; }
-                    
-                    .summary-container { display: table; width: 100%; margin-bottom: 16px; table-layout: fixed; }
-                    .summary-card { display: table-cell; width: 48%; padding: 12px; border-radius: 8px; border: 1px solid #cbd5e1; background: #f8fafc; vertical-align: top; }
-                    .summary-card-pm { border-top: 4px solid #4f46e5; }
-                    .summary-card-kka { border-top: 4px solid #9333ea; }
-                    
-                    .card-title { font-size: 11px; font-weight: 800; text-transform: uppercase; color: #334155; margin-bottom: 4px; }
-                    .card-score { font-size: 22px; font-weight: 900; color: #0f172a; margin: 4px 0; }
-                    .badge { display: inline-block; padding: 2px 8px; font-size: 10px; font-weight: 800; border-radius: 12px; }
-                    .badge-pm { background: #e0e7ff; color: #3730a3; border: 1px solid #c7d2fe; }
-                    .badge-kka { background: #f3e8ff; color: #6b21a8; border: 1px solid #e9d5ff; }
-                    .card-resp { font-size: 10px; color: #64748b; margin-top: 6px; }
-                    
-                    .sec-title { font-size: 12px; font-weight: 900; color: #0f172a; border-left: 4px solid #4f46e5; padding-left: 8px; margin: 18px 0 8px 0; text-transform: uppercase; }
-                    
-                    table.table-detail { width: 100%; border-collapse: collapse; margin-bottom: 16px; font-size: 10.5px; }
-                    table.table-detail th { background: #f1f5f9; padding: 7px 8px; border: 1px solid #cbd5e1; font-weight: 800; text-transform: uppercase; font-size: 9.5px; color: #334155; }
-                    table.table-detail td { padding: 6px 8px; border: 1px solid #cbd5e1; }
-                    
-                    .footer { margin-top: 24px; text-align: right; font-size: 10px; color: #64748b; border-top: 1px solid #e2e8f0; padding-top: 8px; }
-                    @media print {
-                        body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-                    }
-                </style>
+                ${getRaporPrintStylesAdmin()}
             </head>
             <body>
-                <div class="header">
-                    <div class="instansi">Kementerian Pendidikan Dasar dan Menengah</div>
-                    <div class="balai">Balai Guru Penggerak / Balai GTK Provinsi Sumatera Barat</div>
-                    <div class="judul">Rapor Evaluasi Baseline Program Sekolah Model 2026</div>
-                </div>
-
-                <table class="info-box">
-                    <tr>
-                        <td width="15%"><strong>Nama Sekolah</strong></td>
-                        <td width="35%">: <strong>${s.nama_sekolah}</strong></td>
-                        <td width="18%"><strong>Kabupaten / Kota</strong></td>
-                        <td width="32%">: ${s.kab_kota}</td>
-                    </tr>
-                    <tr>
-                        <td><strong>NPSN</strong></td>
-                        <td>: ${s.npsn}</td>
-                        <td><strong>Status Sekolah</strong></td>
-                        <td>: ${s.status_sekolah || 'Negeri'}</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Jenjang</strong></td>
-                        <td>: ${s.jenjang}</td>
-                        <td><strong>Fasilitator Pendamping</strong></td>
-                        <td>: ${s.fasilName || '-'}</td>
-                    </tr>
-                </table>
-
-                <div class="summary-container">
-                    <div class="summary-card summary-card-pm">
-                        <div class="card-title">Pembelajaran Mendalam (PM)</div>
-                        <div class="card-score">${s.pm?.skor || '-'}</div>
-                        <span class="badge badge-pm">Kategori: ${s.pm?.kategori || '-'}</span>
-                        <div class="card-resp">Responden: Murid (${s.pm?.murid || '-'}), Guru (${s.pm?.guru || '-'}), Kepsek (${s.pm?.kepsek || '-'})</div>
-                    </div>
-                    <div style="display:table-cell;width:4%;"></div>
-                    <div class="summary-card summary-card-kka">
-                        <div class="card-title">Koding &amp; Kecerdasan Artifisial (KKA)</div>
-                        <div class="card-score">${s.kka?.skor || '-'}</div>
-                        <span class="badge badge-kka">Kategori: ${s.kka?.kategori || '-'}</span>
-                        <div class="card-resp">Responden: Guru (${s.kka?.guru || '-'}), Kepsek (${s.kka?.kepsek || '-'})</div>
+                <div class="no-print" style="position:sticky;top:0;background:#1e293b;color:#fff;padding:10px 16px;display:flex;justify-content:space-between;align-items:center;z-index:9999;box-shadow:0 2px 10px rgba(0,0,0,0.2);">
+                    <div style="font-weight:bold;font-size:13px;">📄 Rapor Baseline PM &amp; KKA — ${s.nama_sekolah}</div>
+                    <div style="display:flex;gap:8px;">
+                        <button onclick="window.print()" style="background:#4f46e5;color:#fff;border:none;padding:6px 14px;border-radius:6px;font-weight:bold;cursor:pointer;font-size:12px;">🖨️ Cetak / Simpan PDF</button>
+                        <button onclick="window.close()" style="background:#475569;color:#fff;border:none;padding:6px 12px;border-radius:6px;font-weight:bold;cursor:pointer;font-size:12px;">Tutup</button>
                     </div>
                 </div>
-
-                <div class="sec-title">1. Rincian Sub-Indikator Pembelajaran Mendalam (PM)</div>
-                <table class="table-detail">
-                    <thead>
-                        <tr>
-                            <th width="10%" style="text-align:center;">Kode</th>
-                            <th width="50%">Indikator Evaluasi</th>
-                            <th width="28%">Domain / Sub-Domain</th>
-                            <th width="12%" style="text-align:center;">Skor</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        ${pmTableRows || '<tr><td colspan="4" style="text-align:center;color:#94a3b8;">Tidak ada rincian data PM</td></tr>'}
-                    </tbody>
-                </table>
-
-                <div class="sec-title">2. Rincian Sub-Indikator Koding &amp; Kecerdasan Artifisial (KKA)</div>
-                <table class="table-detail">
-                    <thead>
-                        <tr>
-                            <th width="10%" style="text-align:center;">Kode</th>
-                            <th width="50%">Indikator Evaluasi</th>
-                            <th width="28%">Domain / Sub-Domain</th>
-                            <th width="12%" style="text-align:center;">Skor</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        ${kkaTableRows || '<tr><td colspan="4" style="text-align:center;color:#94a3b8;">Tidak ada rincian data KKA</td></tr>'}
-                    </tbody>
-                </table>
-
-                <div class="footer">
-                    Dokumen Rapor Evaluasi Baseline Resmi • Dicetak otomatis pada ${todayDate} oleh BGTK Sumatera Barat
+                <div style="padding: 16px 20px;">
+                    ${htmlUnit}
                 </div>
-
                 <script>
                     window.onload = function() {
-                        setTimeout(function() {
-                            window.print();
-                        }, 500);
+                        setTimeout(function() { window.print(); }, 500);
                     };
                 <\/script>
             </body>
             </html>`;
 
-            printWin.document.open();
-            printWin.document.write(htmlContent);
-            printWin.document.close();
+            document.getElementById('modalRaporPreviewAdminTitle').textContent = `Rapor Baseline — ${s.nama_sekolah}`;
+            document.getElementById('modalRaporPreviewAdminSub').textContent = `NPSN: ${s.npsn} | Kab/Kota: ${s.kab_kota}`;
+            document.getElementById('modalRaporPreviewAdminBody').innerHTML = htmlUnit;
+            document.getElementById('modalRaporPreviewAdmin').classList.remove('hidden');
+
+            try {
+                const printWin = window.open('', '_blank', 'width=950,height=900');
+                if (printWin) {
+                    printWin.document.open();
+                    printWin.document.write(gAdminRaporFullHTML);
+                    printWin.document.close();
+                }
+            } catch(e) {}
         }
 
         function downloadAllRaporBaselineAdmin() {
@@ -5970,9 +5906,6 @@
             if (!rows || rows.length === 0) {
                 return alert("Tidak ada data status baseline sekolah untuk diunduh.");
             }
-
-            const printWin = window.open('', '_blank', 'width=950,height=900');
-            if (!printWin) return alert("Pop-up blocker aktif. Harap izinkan pop-up browser untuk mengunduh Rapor PDF.");
 
             const todayDate = new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
 
@@ -5998,7 +5931,8 @@
                 </div>`;
             });
 
-            const fullContent = `
+            gAdminRaporFilename = `Rapor_Keseluruhan_Baseline_${rows.length}_Sekolah`;
+            gAdminRaporFullHTML = `
             <!DOCTYPE html>
             <html>
             <head>
@@ -6014,16 +5948,13 @@
                         <button onclick="window.close()" style="background:#475569;color:#fff;border:none;padding:6px 12px;border-radius:6px;font-weight:bold;cursor:pointer;font-size:12px;">Tutup</button>
                     </div>
                 </div>
-
                 <div style="padding: 20px;">
-                    <!-- COVER & REKAPITULASI -->
                     <div class="header" style="border-bottom:3px double #0f172a;padding-bottom:12px;margin-bottom:20px;">
                         <div class="instansi">Kementerian Pendidikan Dasar dan Menengah</div>
                         <div class="balai">Balai Guru Penggerak / Balai GTK Provinsi Sumatera Barat</div>
                         <div class="judul" style="font-size:15px;margin-top:6px;">REKAPITULASI RAPOR EVALUASI BASELINE SEKOLAH MODEL 2026</div>
                         <div style="font-size:11px;color:#475569;margin-top:4px;font-weight:600;">Program Pendampingan Pengawasan &amp; Konsultatif Komunitas Belajar (PM-KKA)</div>
                     </div>
-
                     <table class="info-box" style="margin-bottom:20px;">
                         <tr>
                             <td width="20%"><strong>Total Sekolah Model</strong></td>
@@ -6038,7 +5969,6 @@
                             <td>: Admin BGTK Sumbar</td>
                         </tr>
                     </table>
-
                     <div style="font-size:12px;font-weight:900;color:#0f172a;margin-bottom:8px;text-transform:uppercase;border-left:4px solid #4f46e5;padding-left:8px;">
                         Tabel Ringkasan Status Baseline Sekolah Model
                     </div>
@@ -6059,14 +5989,11 @@
                             ${summaryTableRows}
                         </tbody>
                     </table>
-
                     <div style="font-size:10px;color:#64748b;text-align:right;border-top:1px solid #e2e8f0;padding-top:8px;">
                         Lampiran: Lembar Rapor Detail Per-Sekolah (Halaman Berikutnya)
                     </div>
-
                     ${schoolsContent}
                 </div>
-
                 <script>
                     window.onload = function() {
                         setTimeout(function() { window.print(); }, 600);
@@ -6075,9 +6002,53 @@
             </body>
             </html>`;
 
-            printWin.document.open();
-            printWin.document.write(fullContent);
-            printWin.document.close();
+            const modalBodyHTML = `
+                <div class="header" style="border-bottom:3px double #0f172a;padding-bottom:12px;margin-bottom:20px;">
+                    <div class="instansi text-center font-bold text-slate-500 uppercase text-xs">Kementerian Pendidikan Dasar dan Menengah</div>
+                    <div class="balai text-center font-black text-slate-900 uppercase text-base">Balai Guru Penggerak / Balai GTK Provinsi Sumatera Barat</div>
+                    <div class="judul text-center font-black text-indigo-700 uppercase text-sm mt-1">REKAPITULASI RAPOR EVALUASI BASELINE SEKOLAH MODEL</div>
+                </div>
+
+                <table class="w-full text-xs border-collapse bg-slate-50 rounded-xl mb-6">
+                    <tr>
+                        <td class="p-2 border border-slate-200"><strong>Penyusun</strong>: Admin BGTK Sumbar</td>
+                        <td class="p-2 border border-slate-200"><strong>Total Sekolah Model</strong>: ${rows.length} Sekolah</td>
+                    </tr>
+                </table>
+
+                <div class="text-xs font-black text-slate-900 uppercase mb-2 border-l-4 border-indigo-600 pl-2">Tabel Ringkasan Status Baseline</div>
+                <table class="w-full text-xs border-collapse border border-slate-200 mb-6">
+                    <thead class="bg-slate-100 font-bold">
+                        <tr>
+                            <th class="p-2 border border-slate-200 text-center">No</th>
+                            <th class="p-2 border border-slate-200 text-left">Nama Sekolah</th>
+                            <th class="p-2 border border-slate-200 text-center">NPSN</th>
+                            <th class="p-2 border border-slate-200 text-left">Kab/Kota</th>
+                            <th class="p-2 border border-slate-200 text-left">Fasilitator</th>
+                            <th class="p-2 border border-slate-200 text-center">PM</th>
+                            <th class="p-2 border border-slate-200 text-center">KKA</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${summaryTableRows}
+                    </tbody>
+                </table>
+                ${schoolsContent}
+            `;
+
+            document.getElementById('modalRaporPreviewAdminTitle').textContent = `Rapor Keseluruhan (${rows.length} Sekolah Model)`;
+            document.getElementById('modalRaporPreviewAdminSub').textContent = `Penyusun: Admin BGTK Sumbar | Tanggal: ${todayDate}`;
+            document.getElementById('modalRaporPreviewAdminBody').innerHTML = modalBodyHTML;
+            document.getElementById('modalRaporPreviewAdmin').classList.remove('hidden');
+
+            try {
+                const printWin = window.open('', '_blank', 'width=950,height=900');
+                if (printWin) {
+                    printWin.document.open();
+                    printWin.document.write(gAdminRaporFullHTML);
+                    printWin.document.close();
+                }
+            } catch(e) {}
         }
 
         function getRaporPrintStylesAdmin() {

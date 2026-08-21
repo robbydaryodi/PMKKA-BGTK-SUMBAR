@@ -336,6 +336,42 @@
             </div>
         </div>
     </div>
+
+    <!-- ================= MODAL PREVIEW & DOWNLOAD RAPOR BASELINE ================= -->
+    <div id="modalRaporPreview" class="hidden fixed inset-0 z-50 bg-slate-900/70 backdrop-blur-sm flex items-center justify-center p-2 sm:p-4 overflow-y-auto">
+        <div class="bg-white rounded-3xl shadow-2xl w-full max-w-4xl max-h-[92vh] flex flex-col overflow-hidden fade-in border border-slate-200">
+            <!-- Modal Header Toolbar -->
+            <div class="p-4 bg-slate-900 text-white flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 border-b border-slate-800 flex-shrink-0">
+                <div class="flex items-center gap-3">
+                    <div class="p-2 bg-indigo-600/30 rounded-xl border border-indigo-500/30">
+                        <svg class="w-5 h-5 text-indigo-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                    </div>
+                    <div>
+                        <h3 class="font-extrabold text-sm sm:text-base text-white" id="modalRaporPreviewTitle">Rapor Evaluasi Baseline</h3>
+                        <p class="text-[11px] text-slate-400" id="modalRaporPreviewSub">Pratinjau &amp; Cetak PDF Resmi</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2 w-full sm:w-auto justify-end flex-wrap">
+                    <button onclick="printRaporFromModal()" class="px-3.5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-bold transition-all shadow-sm flex items-center gap-1.5 cursor-pointer">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
+                        <span>🖨️ Cetak / Simpan PDF</span>
+                    </button>
+                    <button onclick="downloadRaporHTMLFromModal()" class="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold transition-all shadow-sm flex items-center gap-1.5 cursor-pointer">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                        <span>📥 Unduh File</span>
+                    </button>
+                    <button onclick="closeModalRaporPreview()" class="p-2 text-slate-400 hover:text-white rounded-xl hover:bg-white/10 transition-colors">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Modal Content Preview Area -->
+            <div id="modalRaporPreviewBody" class="p-4 sm:p-8 overflow-y-auto flex-1 bg-white">
+                <!-- Rapor HTML output renders here -->
+            </div>
+        </div>
+    </div>
     
 
     <!-- ================= MODAL JADWALKAN KUNJUNGAN DARI KALENDER ================= -->
@@ -1240,17 +1276,45 @@
         }
 
         // ================= RAPOR BASELINE PRINT / DOWNLOAD LOGIC =================
+        let gCurrentRaporFullHTML = '';
+        let gCurrentRaporFilename = 'Rapor_Baseline';
+
+        function closeModalRaporPreview() {
+            document.getElementById('modalRaporPreview').classList.add('hidden');
+        }
+
+        function downloadRaporHTMLFromModal() {
+            if (!gCurrentRaporFullHTML) return alert("Belum ada data rapor.");
+            const blob = new Blob([gCurrentRaporFullHTML], { type: 'text/html;charset=utf-8' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = (gCurrentRaporFilename || 'Rapor_Baseline').replace(/\s+/g, '_') + '.html';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        function printRaporFromModal() {
+            if (!gCurrentRaporFullHTML) return alert("Belum ada data rapor.");
+            const printWin = window.open('', '_blank', 'width=950,height=900');
+            if (!printWin) {
+                alert("Pop-up blocker terdeteksi. Silakan gunakan tombol Unduh File untuk menyimpan dokumen.");
+                return;
+            }
+            printWin.document.open();
+            printWin.document.write(gCurrentRaporFullHTML);
+            printWin.document.close();
+        }
+
         function downloadPDFRaporBaseline(npsn) {
             const s = globalStatusSekolahData[npsn];
             if (!s) return alert("Data status baseline sekolah tidak ditemukan.");
 
             const fasilName = (currentFasilData && currentFasilData.nama) ? currentFasilData.nama : 'Fasilitator BGTK';
-            const printWin = window.open('', '_blank', 'width=950,height=900');
-            if (!printWin) return alert("Pop-up blocker aktif. Harap izinkan pop-up browser untuk mengunduh Rapor PDF.");
-
             const schoolHtml = generateSingleRaporHTMLFasil(s, fasilName);
 
-            const fullContent = `
+            gCurrentRaporFilename = `Rapor_Baseline_${s.nama_sekolah}`;
+            gCurrentRaporFullHTML = `
             <!DOCTYPE html>
             <html>
             <head>
@@ -1277,9 +1341,19 @@
             </body>
             </html>`;
 
-            printWin.document.open();
-            printWin.document.write(fullContent);
-            printWin.document.close();
+            document.getElementById('modalRaporPreviewTitle').textContent = `Rapor Baseline — ${s.nama_sekolah}`;
+            document.getElementById('modalRaporPreviewSub').textContent = `NPSN: ${s.npsn} | Kab/Kota: ${s.kab_kota} | Pendamping: ${fasilName}`;
+            document.getElementById('modalRaporPreviewBody').innerHTML = schoolHtml;
+            document.getElementById('modalRaporPreview').classList.remove('hidden');
+
+            try {
+                const printWin = window.open('', '_blank', 'width=950,height=900');
+                if (printWin) {
+                    printWin.document.open();
+                    printWin.document.write(gCurrentRaporFullHTML);
+                    printWin.document.close();
+                }
+            } catch(e) {}
         }
 
         function downloadAllRaporBaselineFasil() {
@@ -1293,9 +1367,6 @@
             }
 
             const fasilName = (currentFasilData && currentFasilData.nama) ? currentFasilData.nama : 'Fasilitator BGTK';
-            const printWin = window.open('', '_blank', 'width=950,height=900');
-            if (!printWin) return alert("Pop-up blocker aktif. Harap izinkan pop-up browser untuk mengunduh Rapor PDF.");
-
             const todayDate = new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
 
             let summaryTableRows = '';
@@ -1322,7 +1393,8 @@
                 </div>`;
             });
 
-            const fullContent = `
+            gCurrentRaporFilename = `Rapor_Keseluruhan_Baseline_${fasilName}`;
+            gCurrentRaporFullHTML = `
             <!DOCTYPE html>
             <html>
             <head>
@@ -1399,9 +1471,52 @@
             </body>
             </html>`;
 
-            printWin.document.open();
-            printWin.document.write(fullContent);
-            printWin.document.close();
+            const modalBodyHTML = `
+                <div class="header" style="border-bottom:3px double #0f172a;padding-bottom:12px;margin-bottom:20px;">
+                    <div class="instansi text-center font-bold text-slate-500 uppercase text-xs">Kementerian Pendidikan Dasar dan Menengah</div>
+                    <div class="balai text-center font-black text-slate-900 uppercase text-base">Balai Guru Penggerak / Balai GTK Provinsi Sumatera Barat</div>
+                    <div class="judul text-center font-black text-indigo-700 uppercase text-sm mt-1">REKAPITULASI RAPOR EVALUASI BASELINE SEKOLAH BINAAN</div>
+                </div>
+
+                <table class="w-full text-xs border-collapse bg-slate-50 rounded-xl mb-6">
+                    <tr>
+                        <td class="p-2 border border-slate-200"><strong>Fasilitator Pendamping</strong>: ${fasilName}</td>
+                        <td class="p-2 border border-slate-200"><strong>Total Sekolah Binaan</strong>: ${schoolsToExport.length} Sekolah</td>
+                    </tr>
+                </table>
+
+                <div class="text-xs font-black text-slate-900 uppercase mb-2 border-l-4 border-indigo-600 pl-2">Tabel Ringkasan Status Baseline</div>
+                <table class="w-full text-xs border-collapse border border-slate-200 mb-6">
+                    <thead class="bg-slate-100 font-bold">
+                        <tr>
+                            <th class="p-2 border border-slate-200 text-center">No</th>
+                            <th class="p-2 border border-slate-200 text-left">Nama Sekolah</th>
+                            <th class="p-2 border border-slate-200 text-center">NPSN</th>
+                            <th class="p-2 border border-slate-200 text-left">Kab/Kota</th>
+                            <th class="p-2 border border-slate-200 text-center">Status PM</th>
+                            <th class="p-2 border border-slate-200 text-center">Status KKA</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${summaryTableRows}
+                    </tbody>
+                </table>
+                ${schoolsContent}
+            `;
+
+            document.getElementById('modalRaporPreviewTitle').textContent = `Rapor Keseluruhan (${schoolsToExport.length} Sekolah Binaan)`;
+            document.getElementById('modalRaporPreviewSub').textContent = `Fasilitator: ${fasilName} | Tanggal: ${todayDate}`;
+            document.getElementById('modalRaporPreviewBody').innerHTML = modalBodyHTML;
+            document.getElementById('modalRaporPreview').classList.remove('hidden');
+
+            try {
+                const printWin = window.open('', '_blank', 'width=950,height=900');
+                if (printWin) {
+                    printWin.document.open();
+                    printWin.document.write(gCurrentRaporFullHTML);
+                    printWin.document.close();
+                }
+            } catch(e) {}
         }
 
         function getRaporPrintStylesFasil() {
