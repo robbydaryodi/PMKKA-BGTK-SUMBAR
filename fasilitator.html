@@ -320,10 +320,16 @@
                     <h2 class="text-xl font-extrabold">Status Baseline Sekolah Binaan Anda</h2>
                     <p class="text-xs text-indigo-200 mt-1">Data evaluasi awal Pembelajaran Mendalam (PM) &amp; Koding-Kecerdasan Artifisial (KKA) untuk sekolah yang Anda dampingi.</p>
                 </div>
-                <button onclick="openModalKamusRubrik()" class="bg-white/10 hover:bg-white/20 text-white border border-white/20 px-4 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center gap-2 flex-shrink-0">
-                    <svg class="w-4 h-4 text-amber-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
-                    <span>📖 Kamus Rubrik Baseline</span>
-                </button>
+                <div class="flex flex-wrap items-center gap-2">
+                    <button onclick="downloadAllRaporBaselineFasil()" class="bg-indigo-600 hover:bg-indigo-700 text-white border border-indigo-500/30 px-4 py-2.5 rounded-xl text-xs font-bold transition-all shadow-md flex items-center gap-2 flex-shrink-0 cursor-pointer">
+                        <svg class="w-4 h-4 text-indigo-100" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 01-2-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                        <span>📥 Download Rapor Keseluruhan</span>
+                    </button>
+                    <button onclick="openModalKamusRubrik()" class="bg-white/10 hover:bg-white/20 text-white border border-white/20 px-4 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center gap-2 flex-shrink-0 cursor-pointer">
+                        <svg class="w-4 h-4 text-amber-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
+                        <span>📖 Kamus Rubrik Baseline</span>
+                    </button>
+                </div>
             </div>
             <div id="fasilStatusListContainer" class="space-y-6">
                 <!-- Populated dynamically per assigned school -->
@@ -1172,9 +1178,13 @@
                                 <h3 class="text-xl font-bold text-slate-900">${s.nama_sekolah}</h3>
                                 <p class="text-xs text-slate-400 mt-0.5">NPSN: ${s.npsn} | Pelaksana KKA: <strong class="text-slate-700">${s.status_pelaksana_kka}</strong> | Pemilihan: <strong class="text-slate-700">${s.status_pemilihan}</strong></p>
                             </div>
-                            <div class="flex flex-wrap gap-2">
+                            <div class="flex flex-wrap items-center gap-2">
                                 <span class="px-3.5 py-1.5 rounded-full text-xs font-black ${badgePM}">PM: ${s.pm?.kategori || '-'} (${s.pm?.skor || '-'})</span>
                                 <span class="px-3.5 py-1.5 rounded-full text-xs font-black ${badgeKKA}">KKA: ${s.kka?.kategori || '-'} (${s.kka?.skor || '-'})</span>
+                                <button onclick="downloadPDFRaporBaseline('${s.npsn}')" class="px-3.5 py-1.5 rounded-xl text-xs font-extrabold bg-indigo-600 hover:bg-indigo-700 text-white transition-all shadow-xs flex items-center gap-1.5 cursor-pointer ml-1">
+                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 01-2-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                                    <span>Download Rapor</span>
+                                </button>
                             </div>
                         </div>
 
@@ -1227,6 +1237,334 @@
             });
 
             container.innerHTML = html;
+        }
+
+        // ================= RAPOR BASELINE PRINT / DOWNLOAD LOGIC =================
+        function downloadPDFRaporBaseline(npsn) {
+            const s = globalStatusSekolahData[npsn];
+            if (!s) return alert("Data status baseline sekolah tidak ditemukan.");
+
+            const fasilName = (currentFasilData && currentFasilData.nama) ? currentFasilData.nama : 'Fasilitator BGTK';
+            const printWin = window.open('', '_blank', 'width=950,height=900');
+            if (!printWin) return alert("Pop-up blocker aktif. Harap izinkan pop-up browser untuk mengunduh Rapor PDF.");
+
+            const schoolHtml = generateSingleRaporHTMLFasil(s, fasilName);
+
+            const fullContent = `
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <meta charset="utf-8">
+                <title>Rapor Baseline PM-KKA - ${s.nama_sekolah}</title>
+                ${getRaporPrintStylesFasil()}
+            </head>
+            <body>
+                <div class="no-print" style="position:sticky;top:0;background:#1e293b;color:#fff;padding:10px 16px;display:flex;justify-content:space-between;align-items:center;z-index:9999;box-shadow:0 2px 10px rgba(0,0,0,0.2);">
+                    <div style="font-weight:bold;font-size:13px;">📄 Rapor Baseline PM &amp; KKA — ${s.nama_sekolah}</div>
+                    <div style="display:flex;gap:8px;">
+                        <button onclick="window.print()" style="background:#4f46e5;color:#fff;border:none;padding:6px 14px;border-radius:6px;font-weight:bold;cursor:pointer;font-size:12px;">🖨️ Cetak / Simpan PDF</button>
+                        <button onclick="window.close()" style="background:#475569;color:#fff;border:none;padding:6px 12px;border-radius:6px;font-weight:bold;cursor:pointer;font-size:12px;">Tutup</button>
+                    </div>
+                </div>
+                <div style="padding: 16px 20px;">
+                    ${schoolHtml}
+                </div>
+                <script>
+                    window.onload = function() {
+                        setTimeout(function() { window.print(); }, 500);
+                    };
+                <\/script>
+            </body>
+            </html>`;
+
+            printWin.document.open();
+            printWin.document.write(fullContent);
+            printWin.document.close();
+        }
+
+        function downloadAllRaporBaselineFasil() {
+            if (!myAssignedSchools || myAssignedSchools.length === 0) {
+                return alert("Belum ada sekolah binaan yang ditugaskan.");
+            }
+
+            let schoolsToExport = myAssignedSchools;
+            if (currentFilterSchool !== 'ALL') {
+                schoolsToExport = myAssignedSchools.filter(n => n === currentFilterSchool);
+            }
+
+            const fasilName = (currentFasilData && currentFasilData.nama) ? currentFasilData.nama : 'Fasilitator BGTK';
+            const printWin = window.open('', '_blank', 'width=950,height=900');
+            if (!printWin) return alert("Pop-up blocker aktif. Harap izinkan pop-up browser untuk mengunduh Rapor PDF.");
+
+            const todayDate = new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
+
+            let summaryTableRows = '';
+            let schoolsContent = '';
+
+            schoolsToExport.forEach((npsn, idx) => {
+                const s = globalStatusSekolahData[npsn];
+                if (!s) return;
+
+                summaryTableRows += `
+                <tr>
+                    <td style="text-align:center;font-weight:bold;padding:6px 8px;border:1px solid #cbd5e1;">${idx + 1}</td>
+                    <td style="font-weight:bold;padding:6px 8px;border:1px solid #cbd5e1;">${s.nama_sekolah}</td>
+                    <td style="text-align:center;font-family:monospace;padding:6px 8px;border:1px solid #cbd5e1;">${s.npsn}</td>
+                    <td style="padding:6px 8px;border:1px solid #cbd5e1;">${s.kab_kota}</td>
+                    <td style="text-align:center;padding:6px 8px;border:1px solid #cbd5e1;">${s.jenjang}</td>
+                    <td style="text-align:center;font-weight:bold;color:#3730a3;padding:6px 8px;border:1px solid #cbd5e1;">${s.pm?.kategori || '-'} (${s.pm?.skor || '-'})</td>
+                    <td style="text-align:center;font-weight:bold;color:#6b21a8;padding:6px 8px;border:1px solid #cbd5e1;">${s.kka?.kategori || '-'} (${s.kka?.skor || '-'})</td>
+                </tr>`;
+
+                schoolsContent += `
+                <div class="page-break" style="page-break-before: always; padding-top: 15px;">
+                    ${generateSingleRaporHTMLFasil(s, fasilName)}
+                </div>`;
+            });
+
+            const fullContent = `
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <meta charset="utf-8">
+                <title>Rapor Keseluruhan Baseline Sekolah Binaan - ${fasilName}</title>
+                ${getRaporPrintStylesFasil()}
+            </head>
+            <body>
+                <div class="no-print" style="position:sticky;top:0;background:#1e293b;color:#fff;padding:10px 16px;display:flex;justify-content:space-between;align-items:center;z-index:9999;box-shadow:0 2px 10px rgba(0,0,0,0.2);">
+                    <div style="font-weight:bold;font-size:13px;">📊 Rapor Keseluruhan Status Baseline (${schoolsToExport.length} Sekolah Binaan)</div>
+                    <div style="display:flex;gap:8px;">
+                        <button onclick="window.print()" style="background:#4f46e5;color:#fff;border:none;padding:6px 14px;border-radius:6px;font-weight:bold;cursor:pointer;font-size:12px;">🖨️ Cetak / Simpan PDF</button>
+                        <button onclick="window.close()" style="background:#475569;color:#fff;border:none;padding:6px 12px;border-radius:6px;font-weight:bold;cursor:pointer;font-size:12px;">Tutup</button>
+                    </div>
+                </div>
+
+                <div style="padding: 20px;">
+                    <!-- COVER & REKAPITULASI -->
+                    <div class="header" style="border-bottom:3px double #0f172a;padding-bottom:12px;margin-bottom:20px;">
+                        <div class="instansi">Kementerian Pendidikan Dasar dan Menengah</div>
+                        <div class="balai">Balai Guru Penggerak / Balai GTK Provinsi Sumatera Barat</div>
+                        <div class="judul" style="font-size:15px;margin-top:6px;">REKAPITULASI RAPOR EVALUASI BASELINE SEKOLAH BINAAN</div>
+                        <div style="font-size:11px;color:#475569;margin-top:4px;font-weight:600;">Program Pendampingan Pengawasan &amp; Konsultatif Komunitas Belajar (PM-KKA) 2026</div>
+                    </div>
+
+                    <table class="info-box" style="margin-bottom:20px;">
+                        <tr>
+                            <td width="20%"><strong>Fasilitator Pendamping</strong></td>
+                            <td width="35%">: <strong>${fasilName}</strong></td>
+                            <td width="20%"><strong>Tanggal Dokumen</strong></td>
+                            <td width="25%">: ${todayDate}</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Total Sekolah Binaan</strong></td>
+                            <td>: <strong>${schoolsToExport.length} Sekolah</strong></td>
+                            <td><strong>Wilayah Binaan</strong></td>
+                            <td>: Sumatera Barat</td>
+                        </tr>
+                    </table>
+
+                    <div style="font-size:12px;font-weight:900;color:#0f172a;margin-bottom:8px;text-transform:uppercase;border-left:4px solid #4f46e5;padding-left:8px;">
+                        Tabel Ringkasan Status Baseline Sekolah Binaan
+                    </div>
+                    <table class="table-detail" style="margin-bottom:30px;">
+                        <thead>
+                            <tr>
+                                <th width="5%" style="text-align:center;">No</th>
+                                <th width="35%">Nama Sekolah Binaan</th>
+                                <th width="15%" style="text-align:center;">NPSN</th>
+                                <th width="20%">Kabupaten / Kota</th>
+                                <th width="9%" style="text-align:center;">Jenjang</th>
+                                <th width="16%" style="text-align:center;">Status PM</th>
+                                <th width="16%" style="text-align:center;">Status KKA</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${summaryTableRows}
+                        </tbody>
+                    </table>
+
+                    <div style="font-size:10px;color:#64748b;text-align:right;border-top:1px solid #e2e8f0;padding-top:8px;">
+                        Lampiran: Lembar Rapor Detail Per-Sekolah Binaan (Halaman Berikutnya)
+                    </div>
+
+                    <!-- RINCIAN DETAILS PER SEKOLAH -->
+                    ${schoolsContent}
+                </div>
+
+                <script>
+                    window.onload = function() {
+                        setTimeout(function() { window.print(); }, 600);
+                    };
+                <\/script>
+            </body>
+            </html>`;
+
+            printWin.document.open();
+            printWin.document.write(fullContent);
+            printWin.document.close();
+        }
+
+        function getRaporPrintStylesFasil() {
+            return `
+            <style>
+                @page { size: A4 portrait; margin: 12mm 15mm; }
+                body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-size: 11px; color: #0f172a; margin: 0; padding: 0; background: #fff; }
+                .header { text-align: center; border-bottom: 2.5px solid #0f172a; padding-bottom: 10px; margin-bottom: 16px; }
+                .header .instansi { font-size: 11px; font-weight: 800; text-transform: uppercase; color: #475569; letter-spacing: 0.5px; }
+                .header .balai { font-size: 14px; font-weight: 900; text-transform: uppercase; color: #0f172a; margin: 2px 0; }
+                .header .judul { font-size: 12px; font-weight: 800; text-transform: uppercase; color: #4f46e5; margin-top: 4px; }
+                
+                .info-box { width: 100%; border-collapse: collapse; margin-bottom: 16px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; }
+                .info-box td { padding: 5px 9px; font-size: 10.5px; vertical-align: top; }
+                
+                .summary-container { display: table; width: 100%; margin-bottom: 16px; table-layout: fixed; }
+                .summary-card { display: table-cell; width: 48%; padding: 10px 12px; border-radius: 8px; border: 1px solid #cbd5e1; background: #f8fafc; vertical-align: top; }
+                .summary-card-pm { border-top: 4px solid #4f46e5; }
+                .summary-card-kka { border-top: 4px solid #9333ea; }
+                
+                .card-title { font-size: 10.5px; font-weight: 800; text-transform: uppercase; color: #334155; margin-bottom: 3px; }
+                .card-score { font-size: 20px; font-weight: 900; color: #0f172a; margin: 3px 0; }
+                .badge { display: inline-block; padding: 2px 8px; font-size: 9.5px; font-weight: 800; border-radius: 12px; }
+                .badge-pm { background: #e0e7ff; color: #3730a3; border: 1px solid #c7d2fe; }
+                .badge-kka { background: #f3e8ff; color: #6b21a8; border: 1px solid #e9d5ff; }
+                .card-resp { font-size: 9.5px; color: #64748b; margin-top: 5px; }
+                
+                .sec-title { font-size: 11.5px; font-weight: 900; color: #0f172a; border-left: 4px solid #4f46e5; padding-left: 8px; margin: 16px 0 8px 0; text-transform: uppercase; }
+                
+                table.table-detail { width: 100%; border-collapse: collapse; margin-bottom: 16px; font-size: 10px; }
+                table.table-detail th { background: #f1f5f9; padding: 6px 8px; border: 1px solid #cbd5e1; font-weight: 800; text-transform: uppercase; font-size: 9px; color: #334155; }
+                table.table-detail td { padding: 5px 8px; border: 1px solid #cbd5e1; }
+                
+                .footer { margin-top: 20px; text-align: right; font-size: 9.5px; color: #64748b; border-top: 1px solid #e2e8f0; padding-top: 6px; }
+                @media print {
+                    .no-print { display: none !important; }
+                    body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+                }
+            </style>`;
+        }
+
+        function generateSingleRaporHTMLFasil(s, fasilName) {
+            let pmTableRows = '';
+            for (const k in s.pm?.sub_indikator || {}) {
+                const val = s.pm.sub_indikator[k];
+                const displayKey = k.replace(/_/g, '.');
+                const meta = gRubrikCatalogMap.pm ? gRubrikCatalogMap.pm[k] : null;
+                const isNA = val === '#N/A';
+                const valStyle = isNA ? 'color:#94a3b8;font-style:italic;' : 'color:#3730a3;font-weight:bold;';
+
+                pmTableRows += `
+                <tr>
+                    <td style="padding:5px 8px;border:1px solid #cbd5e1;text-align:center;font-weight:bold;font-family:monospace;">${displayKey}</td>
+                    <td style="padding:5px 8px;border:1px solid #cbd5e1;font-weight:bold;">${meta ? meta.nama : 'Sub-Indikator ' + displayKey}</td>
+                    <td style="padding:5px 8px;border:1px solid #cbd5e1;font-size:9.5px;color:#64748b;">${meta ? (meta.domain + ' &rsaquo; ' + meta.sub_domain) : '-'}</td>
+                    <td style="padding:5px 8px;border:1px solid #cbd5e1;text-align:center;${valStyle}">${val}</td>
+                </tr>`;
+            }
+
+            let kkaTableRows = '';
+            for (const k in s.kka?.sub_indikator || {}) {
+                const val = s.kka.sub_indikator[k];
+                const displayKey = k.replace(/_/g, '.');
+                const meta = gRubrikCatalogMap.kka ? gRubrikCatalogMap.kka[k] : null;
+                const isNA = val === '#N/A';
+                const valStyle = isNA ? 'color:#94a3b8;font-style:italic;' : 'color:#6b21a8;font-weight:bold;';
+
+                kkaTableRows += `
+                <tr>
+                    <td style="padding:5px 8px;border:1px solid #cbd5e1;text-align:center;font-weight:bold;font-family:monospace;">${displayKey}</td>
+                    <td style="padding:5px 8px;border:1px solid #cbd5e1;font-weight:bold;">${meta ? meta.nama : 'Sub-Indikator ' + displayKey}</td>
+                    <td style="padding:5px 8px;border:1px solid #cbd5e1;font-size:9.5px;color:#64748b;">${meta ? (meta.domain + ' &rsaquo; ' + meta.sub_domain) : '-'}</td>
+                    <td style="padding:5px 8px;border:1px solid #cbd5e1;text-align:center;${valStyle}">${val}</td>
+                </tr>`;
+            }
+
+            const todayDate = new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
+
+            return `
+            <div class="rapor-card-unit">
+                <div class="header">
+                    <div class="instansi">Kementerian Pendidikan Dasar dan Menengah</div>
+                    <div class="balai">Balai Guru Penggerak / Balai GTK Provinsi Sumatera Barat</div>
+                    <div class="judul">Rapor Evaluasi Baseline Program Sekolah Model 2026</div>
+                </div>
+
+                <table class="info-box">
+                    <tr>
+                        <td width="16%"><strong>Nama Sekolah</strong></td>
+                        <td width="34%">: <strong>${s.nama_sekolah}</strong></td>
+                        <td width="18%"><strong>Kabupaten / Kota</strong></td>
+                        <td width="32%">: ${s.kab_kota}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>NPSN</strong></td>
+                        <td>: ${s.npsn}</td>
+                        <td><strong>Status Sekolah</strong></td>
+                        <td>: ${s.status_sekolah || 'Negeri'}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Jenjang</strong></td>
+                        <td>: ${s.jenjang}</td>
+                        <td><strong>Fasilitator Pendamping</strong></td>
+                        <td>: ${fasilName || s.fasilName || '-'}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Pelaksana KKA</strong></td>
+                        <td>: ${s.status_pelaksana_kka || '-'}</td>
+                        <td><strong>Status Pemilihan</strong></td>
+                        <td>: ${s.status_pemilihan || '-'}</td>
+                    </tr>
+                </table>
+
+                <div class="summary-container">
+                    <div class="summary-card summary-card-pm">
+                        <div class="card-title">Pembelajaran Mendalam (PM)</div>
+                        <div class="card-score">${s.pm?.skor || '-'}</div>
+                        <span class="badge badge-pm">Kategori: ${s.pm?.kategori || '-'}</span>
+                        <div class="card-resp">Responden: Murid (${s.pm?.murid || '-'}), Guru (${s.pm?.guru || '-'}), Kepsek (${s.pm?.kepsek || '-'})</div>
+                    </div>
+                    <div style="display:table-cell;width:4%;"></div>
+                    <div class="summary-card summary-card-kka">
+                        <div class="card-title">Koding &amp; Kecerdasan Artifisial (KKA)</div>
+                        <div class="card-score">${s.kka?.skor || '-'}</div>
+                        <span class="badge badge-kka">Kategori: ${s.kka?.kategori || '-'}</span>
+                        <div class="card-resp">Responden: Guru (${s.kka?.guru || '-'}), Kepsek (${s.kka?.kepsek || '-'})</div>
+                    </div>
+                </div>
+
+                <div class="sec-title">1. Rincian Sub-Indikator Pembelajaran Mendalam (PM)</div>
+                <table class="table-detail">
+                    <thead>
+                        <tr>
+                            <th width="10%" style="text-align:center;">Kode</th>
+                            <th width="50%">Indikator Evaluasi</th>
+                            <th width="28%">Domain / Sub-Domain</th>
+                            <th width="12%" style="text-align:center;">Skor</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${pmTableRows || '<tr><td colspan="4" style="text-align:center;color:#94a3b8;">Tidak ada rincian data PM</td></tr>'}
+                    </tbody>
+                </table>
+
+                <div class="sec-title">2. Rincian Sub-Indikator Koding &amp; Kecerdasan Artifisial (KKA)</div>
+                <table class="table-detail">
+                    <thead>
+                        <tr>
+                            <th width="10%" style="text-align:center;">Kode</th>
+                            <th width="50%">Indikator Evaluasi</th>
+                            <th width="28%">Domain / Sub-Domain</th>
+                            <th width="12%" style="text-align:center;">Skor</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${kkaTableRows || '<tr><td colspan="4" style="text-align:center;color:#94a3b8;">Tidak ada rincian data KKA</td></tr>'}
+                    </tbody>
+                </table>
+
+                <div class="footer">
+                    Dokumen Rapor Evaluasi Baseline Resmi • Dicetak otomatis pada ${todayDate} oleh BGTK Sumatera Barat
+                </div>
+            </div>`;
         }
 
         // ================= CALENDAR ENGINE =================
