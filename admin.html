@@ -1474,7 +1474,7 @@
                                 <input type="email" id="modalInputEmailAdmin" placeholder="contoh: admin@bgtk.sumbar.go.id" class="w-full border border-slate-300 rounded-xl px-3.5 py-2 text-xs font-semibold text-indigo-900 bg-indigo-50/50 focus:bg-white focus:ring-2 focus:ring-indigo-500 outline-none">
                             </div>
                         </div>
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1">
                             <div>
                                 <label class="block text-[11px] font-bold text-slate-600 mb-1">👤 Nama Ketua Kombel:</label>
                                 <input type="text" id="modalInputNamaKetua" placeholder="Nama Ketua Kombel" class="w-full border border-slate-300 rounded-xl px-3.5 py-2 text-xs font-semibold text-slate-800 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-purple-500 outline-none">
@@ -1482,6 +1482,10 @@
                             <div>
                                 <label class="block text-[11px] font-bold text-slate-600 mb-1">✉️ Email Belajar.id Ketua:</label>
                                 <input type="email" id="modalInputEmailKetua" placeholder="contoh: nama@guru.sd.belajar.id" class="w-full border border-slate-300 rounded-xl px-3.5 py-2 text-xs font-semibold text-slate-800 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-purple-500 outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-bold text-slate-600 mb-1">📱 No. WhatsApp / HP Ketua:</label>
+                                <input type="tel" id="modalInputHpKetua" placeholder="contoh: 081234567890" class="w-full border border-slate-300 rounded-xl px-3.5 py-2 text-xs font-semibold text-emerald-900 bg-emerald-50/50 focus:bg-white focus:ring-2 focus:ring-emerald-500 outline-none">
                             </div>
                         </div>
                         <div class="flex justify-end pt-1">
@@ -3767,13 +3771,16 @@
             document.getElementById('modalKombelJenjangBadge').textContent = kombel.jenjang || 'Semua Jenjang';
             document.getElementById('modalKombelKabBadge').textContent = kombel.kab_kota || 'Sumatera Barat';
             document.getElementById('modalKombelKecDesa').textContent = `${kombel.kecamatan || '-'} • ${kombel.desa_kelurahan || '-'}`;
-            document.getElementById('modalKombelKetuaKontak').textContent = `Ketua: ${kombel.nama_ketua || '-'} (${kombel.email || kombel.no_hp || '-'})`;
+            const noHpKetua = kombel.no_hp || kombel.kontak || kombel.no_wa || '-';
+            document.getElementById('modalKombelKetuaKontak').textContent = `Ketua: ${kombel.nama_ketua || '-'} • HP/WA: ${noHpKetua} • (${kombel.email || kombel.email_ketua || '-'})`;
 
-            // Populate Form Ketua & Email Belajar.id
+            // Populate Form Ketua, Email Belajar.id & Kontak WA
             const inputNamaKetua = document.getElementById('modalInputNamaKetua');
             const inputEmailKetua = document.getElementById('modalInputEmailKetua');
+            const inputHpKetua = document.getElementById('modalInputHpKetua');
             if (inputNamaKetua) inputNamaKetua.value = kombel.nama_ketua || '';
             if (inputEmailKetua) inputEmailKetua.value = kombel.email || kombel.email_ketua || '';
+            if (inputHpKetua) inputHpKetua.value = kombel.no_hp || kombel.kontak || kombel.no_wa || '';
 
             // Reset upload preview
             cancelUploadPreview();
@@ -3948,6 +3955,7 @@
             const selAdmin = document.getElementById('modalSelectAdminKombel');
             const inputNamaKetua = (document.getElementById('modalInputNamaKetua')?.value || '').trim();
             const inputEmailKetua = (document.getElementById('modalInputEmailKetua')?.value || '').trim();
+            const inputHpKetua = (document.getElementById('modalInputHpKetua')?.value || '').trim();
             const inputEmailFasil = (document.getElementById('modalInputEmailFasil')?.value || '').trim();
             const inputEmailAdmin = (document.getElementById('modalInputEmailAdmin')?.value || '').trim();
 
@@ -3978,6 +3986,10 @@
                 if (inputEmailKetua) {
                     payload.email = inputEmailKetua;
                     payload.email_ketua = inputEmailKetua;
+                }
+                if (inputHpKetua) {
+                    payload.no_hp = inputHpKetua;
+                    payload.kontak = inputHpKetua;
                 }
 
                 await db.ref(`master_kombel/${gCurrentModalKombelId}`).update(payload);
