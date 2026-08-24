@@ -1466,6 +1466,16 @@
                         </div>
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2 border-t border-slate-100">
                             <div>
+                                <label class="block text-[11px] font-bold text-slate-600 mb-1">✉️ Email Fasilitator Pendamping (Role: instruktur):</label>
+                                <input type="email" id="modalInputEmailFasil" placeholder="contoh: fasil@bgtk.sumbar.go.id" class="w-full border border-slate-300 rounded-xl px-3.5 py-2 text-xs font-semibold text-purple-900 bg-purple-50/50 focus:bg-white focus:ring-2 focus:ring-purple-500 outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-bold text-slate-600 mb-1">✉️ Email Admin BGTK (Role: admin kelas):</label>
+                                <input type="email" id="modalInputEmailAdmin" placeholder="contoh: admin@bgtk.sumbar.go.id" class="w-full border border-slate-300 rounded-xl px-3.5 py-2 text-xs font-semibold text-indigo-900 bg-indigo-50/50 focus:bg-white focus:ring-2 focus:ring-indigo-500 outline-none">
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+                            <div>
                                 <label class="block text-[11px] font-bold text-slate-600 mb-1">👤 Nama Ketua Kombel:</label>
                                 <input type="text" id="modalInputNamaKetua" placeholder="Nama Ketua Kombel" class="w-full border border-slate-300 rounded-xl px-3.5 py-2 text-xs font-semibold text-slate-800 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-purple-500 outline-none">
                             </div>
@@ -1475,14 +1485,49 @@
                             </div>
                         </div>
                         <div class="flex justify-end pt-1">
-                            <button onclick="simpanPenugasanFasilKombel()" class="w-full sm:w-auto px-6 py-2.5 bg-purple-600 hover:bg-purple-700 text-white rounded-xl text-xs font-bold transition shadow-sm flex items-center justify-center gap-1.5 flex-shrink-0">
+                            <button onclick="simpanPenugasanFasilKombel()" class="w-full sm:w-auto px-6 py-2.5 bg-purple-600 hover:bg-purple-700 text-white rounded-xl text-xs font-bold transition shadow-sm flex items-center justify-center gap-1.5 flex-shrink-0 cursor-pointer">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-                                <span>Simpan Penugasan &amp; Akun Ketua</span>
+                                <span>Simpan Penugasan &amp; Akun Email Aktor</span>
                             </button>
                         </div>
                     </div>
                     <!-- Panel Rekomendasi Fasda dari Google Sheets -->
                     <div id="modalRekomendasiPanel" class="hidden"></div>
+                </div>
+
+                <!-- SECTION 1.5: PENGGABUNGAN KOMBEL MENJADI 1 KELAS -->
+                <div class="bg-white rounded-2xl p-5 border border-indigo-100 shadow-2xs space-y-3">
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 border-b border-slate-100 pb-3">
+                        <div class="flex items-center gap-2">
+                            <div class="w-8 h-8 rounded-xl bg-indigo-100 text-indigo-700 flex items-center justify-center font-bold text-sm">🔗</div>
+                            <div>
+                                <h3 class="font-bold text-slate-800 text-sm">Penggabungan Kombel ke Kelas Ini (Kuota 54 Kelas)</h3>
+                                <p class="text-[11px] text-slate-500">Gabungkan peserta dari Kombel sasaran lain ke dalam 1 kelas LMS yang sama.</p>
+                            </div>
+                        </div>
+                        <div id="modalMergedBadgeCount" class="text-xs font-bold text-indigo-700 bg-indigo-50 px-3 py-1 rounded-full border border-indigo-200">
+                            0 Kombel Terintegrasi
+                        </div>
+                    </div>
+
+                    <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+                        <div class="flex-1">
+                            <label class="block text-[11px] font-bold text-slate-600 mb-1">🔗 Pilih Kombel Lain untuk Digabungkan:</label>
+                            <select id="modalSelectKombelToMerge" class="w-full border border-slate-300 rounded-xl px-3.5 py-2 text-xs font-semibold text-slate-800 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-indigo-500 outline-none">
+                                <option value="">-- Pilih Kombel Sasaran untuk Digabung --</option>
+                            </select>
+                        </div>
+                        <div class="flex items-end">
+                            <button type="button" onclick="tambahGabunganKombel()" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-bold transition shadow-xs flex items-center gap-1.5 cursor-pointer">
+                                <span>➕ Gabungkan Kombel</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- List Kombel Tergabung -->
+                    <div id="modalMergedKombelList" class="space-y-2 pt-1">
+                        <!-- Rendered dynamically -->
+                    </div>
                 </div>
 
                 <!-- SECTION 2: IMPORT DATA PESERTA VIA CSV (FORMAT 1) -->
@@ -1558,18 +1603,17 @@
                     <div class="space-y-3">
                         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
                             <div class="flex items-center gap-2">
-                                <h4 class="font-bold text-slate-800 text-xs uppercase tracking-wider">Daftar Peserta Terdaftar di Database</h4>
-                                <span id="modalActivePesertaCountBadge" class="px-2 py-0.5 rounded-full text-xs font-black bg-purple-100 text-purple-800 border border-purple-200">0 Peserta</span>
+                                <h4 class="font-bold text-slate-800 text-xs uppercase tracking-wider">Daftar Peserta Kelas &amp; Seleksi LMS</h4>
+                                <span id="modalActivePesertaCountBadge" class="px-2.5 py-0.5 rounded-full text-xs font-black bg-purple-100 text-purple-800 border border-purple-200">0 / 0 Terpilih</span>
                             </div>
-                            <div class="flex items-center gap-2">
-                                <button onclick="exportActivePesertaKombelCSV()" id="btnExportPesertaCSV" class="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-300 rounded-lg text-xs font-bold transition flex items-center gap-1">
-                                    <svg class="w-3.5 h-3.5 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
-                                    <span>Export CSV</span>
+                            <div class="flex flex-wrap items-center gap-2">
+                                <button onclick="toggleAllPesertaSelection(true)" title="Centang Semua Peserta" class="px-2.5 py-1.5 bg-purple-50 hover:bg-purple-100 text-purple-700 border border-purple-200 rounded-lg text-xs font-bold transition">☑️ Centang Semua</button>
+                                <button onclick="toggleAllPesertaSelection(false)" title="Batal Centang Semua" class="px-2.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-600 border border-slate-200 rounded-lg text-xs font-bold transition">⬜ Batal Centang</button>
+                                <button onclick="downloadCSVLMSAdminCurrent()" id="btnExportPesertaCSV" class="px-3.5 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-extrabold transition shadow-2xs flex items-center gap-1.5 cursor-pointer">
+                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                                    <span>📥 Download CSV LMS Admin</span>
                                 </button>
-                                <button onclick="hapusSemuaPesertaKombel()" id="btnHapusSemuaPeserta" class="px-3 py-1.5 bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 rounded-lg text-xs font-bold transition flex items-center gap-1">
-                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
-                                    <span>Hapus Semua</span>
-                                </button>
+                                <button onclick="hapusSemuaPesertaKombel()" id="btnHapusSemuaPeserta" class="px-2 py-1.5 bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 rounded-lg text-xs font-bold transition flex items-center gap-1">❌ Hapus Semua</button>
                             </div>
                         </div>
 
@@ -1577,16 +1621,17 @@
                             <table class="w-full text-left text-xs whitespace-nowrap">
                                 <thead class="bg-slate-50 text-slate-500 sticky top-0 border-b border-slate-200 font-bold">
                                     <tr>
+                                        <th class="px-3 py-2 text-center w-8">Pilih</th>
                                         <th class="px-3 py-2 text-center w-8">No</th>
                                         <th class="px-3 py-2">Nama Anggota</th>
                                         <th class="px-3 py-2">Sekolah / NPSN</th>
                                         <th class="px-3 py-2">Akun Belajar ID</th>
-                                        <th class="px-3 py-2 text-center">Peran</th>
-                                        <th class="px-3 py-2 text-center">Aksi</th>
+                                        <th class="px-3 py-2 text-center">Role LMS</th>
+                                        <th class="px-3 py-2 text-center">Status</th>
                                     </tr>
                                 </thead>
                                 <tbody id="modalTableActivePesertaBody" class="divide-y divide-slate-100">
-                                    <tr><td colspan="6" class="px-4 py-8 text-center text-slate-400">Belum ada data peserta yang diimpor untuk kelompok kerja ini.</td></tr>
+                                    <tr><td colspan="7" class="px-4 py-8 text-center text-slate-400">Belum ada data peserta yang diimpor untuk kelompok kerja ini.</td></tr>
                                 </tbody>
                             </table>
                         </div>
@@ -3733,8 +3778,12 @@
             // Reset upload preview
             cancelUploadPreview();
 
-            // Populate Fasilitator & Admin selector
+            // Populate Fasilitator & Admin selector & prefill emails
             await populateModalFasilSelect(kombel);
+
+            // Populate & render Kombel Merging section
+            populateMergeKombelDropdown(kombel);
+            renderMergedKombelSection(kombel);
 
             // Render existing registered participants
             renderActivePesertaTable(kombel);
@@ -3800,6 +3849,16 @@
                     options += `<option value="${fId}" data-nama="${f.nama}" ${selected}>${f.nama} (${f.jabatan || 'Fasilitator'}${instansiSub}${mapelSub ? ' • ' + mapelSub : ''})</option>`;
                 });
                 sel.innerHTML = options;
+
+                // Prefill Email Fasil & Admin
+                const inputFasilEmail = document.getElementById('modalInputEmailFasil');
+                const inputAdminEmail = document.getElementById('modalInputEmailAdmin');
+                if (inputFasilEmail) {
+                    inputFasilEmail.value = kombel.fasil_email || getFasilEmailFromCache(kombel.fasil_id, kombel.fasil_nama) || '';
+                }
+                if (inputAdminEmail) {
+                    inputAdminEmail.value = kombel.admin_email || getAdminEmailFromCache(kombel.admin_nama) || '';
+                }
 
                 // Badge status fasil & admin
                 const fasilText = kombel.fasil_nama ? `Fasil: ${kombel.fasil_nama}` : 'Fasil: -';
@@ -3889,6 +3948,8 @@
             const selAdmin = document.getElementById('modalSelectAdminKombel');
             const inputNamaKetua = (document.getElementById('modalInputNamaKetua')?.value || '').trim();
             const inputEmailKetua = (document.getElementById('modalInputEmailKetua')?.value || '').trim();
+            const inputEmailFasil = (document.getElementById('modalInputEmailFasil')?.value || '').trim();
+            const inputEmailAdmin = (document.getElementById('modalInputEmailAdmin')?.value || '').trim();
 
             const fasilId = selFasil?.value || null;
             const fasilNama = selFasil?.options[selFasil.selectedIndex]?.getAttribute('data-nama') || '';
@@ -3902,8 +3963,14 @@
                     payload.fasil_nama = fasilNama;
                     payload.fasil_id = fasilId;
                 }
+                if (inputEmailFasil) {
+                    payload.fasil_email = inputEmailFasil;
+                }
                 if (adminNama) {
                     payload.admin_nama = adminNama;
+                }
+                if (inputEmailAdmin) {
+                    payload.admin_email = inputEmailAdmin;
                 }
                 if (inputNamaKetua) {
                     payload.nama_ketua = inputNamaKetua;
@@ -3915,6 +3982,14 @@
 
                 await db.ref(`master_kombel/${gCurrentModalKombelId}`).update(payload);
 
+                // Save email to cache & database for reuse
+                if (fasilId && inputEmailFasil) {
+                    db.ref(`fasilitator/${fasilId}`).update({ email: inputEmailFasil }).catch(() => {});
+                    if (gCachedFasilitators && gCachedFasilitators[fasilId]) {
+                        gCachedFasilitators[fasilId].email = inputEmailFasil;
+                    }
+                }
+
                 if (gAllKombels[gCurrentModalKombelId]) {
                     Object.assign(gAllKombels[gCurrentModalKombelId], payload);
                 }
@@ -3925,10 +4000,339 @@
                 }
 
                 filterKombelData();
-                showToast("✅ Berhasil menyimpan Fasilitator, Admin & Data Akun Ketua!", "emerald");
+                showToast("✅ Berhasil menyimpan Fasilitator, Admin & Email Aktor Kelas!", "emerald");
             } catch(e) {
                 console.error("Gagal menyimpan penugasan:", e);
                 showToast("❌ Gagal menyimpan penugasan", "rose");
+            }
+        }
+
+        function getFasilEmailFromCache(fasilId, fasilNama) {
+            if (fasilId && gCachedFasilitators && gCachedFasilitators[fasilId] && gCachedFasilitators[fasilId].email) {
+                return gCachedFasilitators[fasilId].email;
+            }
+            if (fasilNama && gCachedFasilitators) {
+                const found = Object.values(gCachedFasilitators).find(f => f.nama && f.nama.toLowerCase().includes(fasilNama.toLowerCase()));
+                if (found && found.email) return found.email;
+            }
+            return '';
+        }
+
+        function getAdminEmailFromCache(adminNama) {
+            if (!adminNama) return '';
+            const cleanAdmin = adminNama.split(',')[0].trim().toLowerCase();
+            if (cleanAdmin.includes('rosa')) return 'rosa.ria@bgtk.sumbar.go.id';
+            if (cleanAdmin.includes('vani') || cleanAdmin.includes('siti')) return 'siti.oktovani@bgtk.sumbar.go.id';
+            if (cleanAdmin.includes('aflidarneti')) return 'aflidarneti@bgtk.sumbar.go.id';
+            if (cleanAdmin.includes('ristita')) return 'ristita.humairoh@bgtk.sumbar.go.id';
+            if (cleanAdmin.includes('lisa')) return 'lisa.anggraini@bgtk.sumbar.go.id';
+            if (cleanAdmin.includes('irawati')) return 'irawati@bgtk.sumbar.go.id';
+            return '';
+        }
+
+        function getCombinedPesertaForKombel(kombelId) {
+            const kombel = gAllKombels[kombelId];
+            if (!kombel) return [];
+
+            let list = [];
+            const mainPeserta = kombel.peserta ? (Array.isArray(kombel.peserta) ? kombel.peserta : Object.values(kombel.peserta)) : [];
+            mainPeserta.forEach(p => {
+                list.push({ ...p, source_kombel_id: kombelId, source_kombel_nama: kombel.nama_kombel });
+            });
+
+            if (Array.isArray(kombel.merged_kombel_ids)) {
+                kombel.merged_kombel_ids.forEach(mId => {
+                    const mKombel = gAllKombels[mId];
+                    if (mKombel) {
+                        const mPeserta = mKombel.peserta ? (Array.isArray(mKombel.peserta) ? mKombel.peserta : Object.values(mKombel.peserta)) : [];
+                        mPeserta.forEach(p => {
+                            list.push({ ...p, source_kombel_id: mId, source_kombel_nama: mKombel.nama_kombel });
+                        });
+                    }
+                });
+            }
+
+            return list;
+        }
+
+        function populateMergeKombelDropdown(kombel) {
+            const sel = document.getElementById('modalSelectKombelToMerge');
+            if (!sel) return;
+
+            let options = '<option value="">-- Pilih Kombel Sasaran untuk Digabung --</option>';
+            const kombelId = kombel.id;
+            const kab = kombel.kab_kota;
+
+            const available = Object.values(gAllKombels).filter(k => {
+                return k.is_sasaran && k.id !== kombelId && !k.merged_into_kombel_id && (!k.merged_kombel_ids || k.merged_kombel_ids.length === 0);
+            });
+
+            available.sort((a, b) => {
+                if (a.kab_kota === kab && b.kab_kota !== kab) return -1;
+                if (a.kab_kota !== kab && b.kab_kota === kab) return 1;
+                return (a.nama_kombel || '').localeCompare(b.nama_kombel || '');
+            });
+
+            available.forEach(k => {
+                const sameKabTag = (k.kab_kota === kab) ? '📍 (Satu Kab/Kota)' : `(${k.kab_kota})`;
+                const pCount = k.peserta ? (Array.isArray(k.peserta) ? k.peserta.length : Object.keys(k.peserta).length) : (k.jumlah_anggota || 0);
+                options += `<option value="${k.id}">🔗 ${k.nama_kombel} ${sameKabTag} - ${pCount} Peserta</option>`;
+            });
+
+            sel.innerHTML = options;
+        }
+
+        function renderMergedKombelSection(kombel) {
+            const container = document.getElementById('modalMergedKombelList');
+            const badge = document.getElementById('modalMergedBadgeCount');
+            if (!container) return;
+
+            const mergedIds = kombel.merged_kombel_ids || [];
+            if (badge) badge.textContent = `${mergedIds.length} Kombel Terintegrasi`;
+
+            if (mergedIds.length === 0) {
+                container.innerHTML = `<div class="text-[11px] text-slate-400 italic">Belum ada Kombel lain yang digabungkan ke kelas ini.</div>`;
+                return;
+            }
+
+            let html = '';
+            mergedIds.forEach(mId => {
+                const mKombel = gAllKombels[mId];
+                if (!mKombel) return;
+                const pCount = mKombel.peserta ? (Array.isArray(mKombel.peserta) ? mKombel.peserta.length : Object.keys(mKombel.peserta).length) : (mKombel.jumlah_anggota || 0);
+
+                html += `
+                <div class="flex items-center justify-between p-2.5 bg-indigo-50/70 border border-indigo-200 rounded-xl text-xs">
+                    <div class="flex items-center gap-2">
+                        <span class="px-2 py-0.5 rounded font-black text-[10px] bg-indigo-200 text-indigo-900">Gabungan</span>
+                        <span class="font-bold text-slate-800">${mKombel.nama_kombel}</span>
+                        <span class="text-[11px] text-slate-500">(${mKombel.kab_kota || '-'} • ${pCount} Peserta)</span>
+                    </div>
+                    <button onclick="lepasGabungKombel('${mId}')" title="Lepas Penggabungan" class="px-2 py-1 bg-rose-100 hover:bg-rose-200 text-rose-800 rounded-lg font-bold text-[11px] transition">❌ Lepas</button>
+                </div>`;
+            });
+
+            container.innerHTML = html;
+        }
+
+        async function tambahGabunganKombel() {
+            if (!gCurrentModalKombelId) return;
+            const mainKombel = gAllKombels[gCurrentModalKombelId];
+            const sel = document.getElementById('modalSelectKombelToMerge');
+            const targetKombelId = sel ? sel.value : null;
+
+            if (!targetKombelId) return alert("Pilih Kombel yang akan digabungkan.");
+            if (targetKombelId === gCurrentModalKombelId) return alert("Tidak dapat menggabungkan Kombel ke dirinya sendiri.");
+
+            const targetKombel = gAllKombels[targetKombelId];
+            if (!targetKombel) return;
+
+            let mergedIds = mainKombel.merged_kombel_ids || [];
+            if (mergedIds.includes(targetKombelId)) return alert("Kombel ini sudah digabungkan sebelumnya.");
+
+            mergedIds.push(targetKombelId);
+
+            try {
+                await Promise.all([
+                    db.ref(`master_kombel/${gCurrentModalKombelId}`).update({ merged_kombel_ids: mergedIds }),
+                    db.ref(`master_kombel/${targetKombelId}`).update({ merged_into_kombel_id: gCurrentModalKombelId })
+                ]);
+
+                if (gAllKombels[gCurrentModalKombelId]) gAllKombels[gCurrentModalKombelId].merged_kombel_ids = mergedIds;
+                if (gAllKombels[targetKombelId]) gAllKombels[targetKombelId].merged_into_kombel_id = gCurrentModalKombelId;
+
+                showToast(`🔗 Kombel "${targetKombel.nama_kombel}" berhasil digabungkan!`, 'emerald');
+                populateMergeKombelDropdown(gAllKombels[gCurrentModalKombelId]);
+                renderMergedKombelSection(gAllKombels[gCurrentModalKombelId]);
+                renderActivePesertaTable(gAllKombels[gCurrentModalKombelId]);
+                filterKombelData();
+            } catch(e) {
+                console.error("Gagal gabung kombel:", e);
+                alert("Gagal menggabungkan kombel: " + e.message);
+            }
+        }
+
+        async function lepasGabungKombel(targetKombelId) {
+            if (!gCurrentModalKombelId) return;
+            const mainKombel = gAllKombels[gCurrentModalKombelId];
+            if (!mainKombel || !mainKombel.merged_kombel_ids) return;
+
+            const mergedIds = mainKombel.merged_kombel_ids.filter(id => id !== targetKombelId);
+
+            try {
+                await Promise.all([
+                    db.ref(`master_kombel/${gCurrentModalKombelId}`).update({ merged_kombel_ids: mergedIds }),
+                    db.ref(`master_kombel/${targetKombelId}`).update({ merged_into_kombel_id: null })
+                ]);
+
+                if (gAllKombels[gCurrentModalKombelId]) gAllKombels[gCurrentModalKombelId].merged_kombel_ids = mergedIds;
+                if (gAllKombels[targetKombelId]) gAllKombels[targetKombelId].merged_into_kombel_id = null;
+
+                showToast("ℹ️ Penggabungan Kombel berhasil dilepas.", "indigo");
+                populateMergeKombelDropdown(gAllKombels[gCurrentModalKombelId]);
+                renderMergedKombelSection(gAllKombels[gCurrentModalKombelId]);
+                renderActivePesertaTable(gAllKombels[gCurrentModalKombelId]);
+                filterKombelData();
+            } catch(e) {
+                console.error("Gagal lepas gabung kombel:", e);
+                alert("Gagal melepas penggabungan kombel: " + e.message);
+            }
+        }
+
+        function renderActivePesertaTable(kombel) {
+            const tbody = document.getElementById('modalTableActivePesertaBody');
+            const badgeCount = document.getElementById('modalActivePesertaCountBadge');
+            if (!tbody) return;
+
+            const kombelId = kombel.id || gCurrentModalKombelId;
+            const allPeserta = getCombinedPesertaForKombel(kombelId);
+
+            let selectedIndices = kombel.selected_peserta_indices;
+            if (!Array.isArray(selectedIndices)) {
+                // Default: ALL participants checked (<35 and >=35 as user specified, but editable)
+                selectedIndices = allPeserta.map((_, idx) => idx);
+                kombel.selected_peserta_indices = selectedIndices;
+            }
+
+            if (badgeCount) badgeCount.textContent = `${selectedIndices.length} / ${allPeserta.length} Peserta Terpilih`;
+
+            if (allPeserta.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="7" class="px-4 py-8 text-center text-slate-400">Belum ada data peserta untuk kelas/kombel ini. Silakan impor CSV peserta di atas.</td></tr>`;
+                return;
+            }
+
+            let html = '';
+            allPeserta.forEach((p, idx) => {
+                const isChecked = selectedIndices.includes(idx);
+                const sourceBadge = p.source_kombel_id !== kombelId 
+                    ? `<span class="text-[9px] px-1.5 py-0.5 rounded font-bold bg-indigo-100 text-indigo-800 border border-indigo-200">Gabungan: ${p.source_kombel_nama}</span>` 
+                    : '';
+
+                html += `
+                <tr class="hover:bg-slate-50 transition-colors ${isChecked ? 'bg-purple-50/20' : 'opacity-60'}">
+                    <td class="px-3 py-2 text-center">
+                        <input type="checkbox" onchange="togglePesertaSelection(${idx})" ${isChecked ? 'checked' : ''} class="w-4 h-4 text-purple-600 rounded focus:ring-purple-500 cursor-pointer">
+                    </td>
+                    <td class="px-3 py-2 text-center text-slate-400 font-bold">${idx + 1}</td>
+                    <td class="px-3 py-2 font-bold text-slate-800">
+                        ${p.nama || p.nama_lengkap || p.nama_anggota || '-'}
+                        ${sourceBadge ? '<div class="mt-0.5">' + sourceBadge + '</div>' : ''}
+                    </td>
+                    <td class="px-3 py-2 text-slate-700">${p.sekolah || p.instansi || '-'} <span class="text-[10px] text-slate-400 font-mono">(${p.npsn || '-'})</span></td>
+                    <td class="px-3 py-2 font-mono text-slate-600">${p.email || p.email_belajar_id || p.email_login || '-'}</td>
+                    <td class="px-3 py-2 text-center font-mono text-xs font-bold text-purple-700">murid</td>
+                    <td class="px-3 py-2 text-center">
+                        ${isChecked ? '<span class="text-[10px] px-2 py-0.5 rounded font-black bg-emerald-100 text-emerald-800 border border-emerald-200">✓ Terpilih</span>' : '<span class="text-[10px] px-2 py-0.5 rounded font-bold bg-slate-100 text-slate-400">Dilewati</span>'}
+                    </td>
+                </tr>`;
+            });
+
+            tbody.innerHTML = html;
+        }
+
+        async function togglePesertaSelection(idx) {
+            if (!gCurrentModalKombelId) return;
+            const kombel = gAllKombels[gCurrentModalKombelId];
+            if (!kombel) return;
+
+            const allPeserta = getCombinedPesertaForKombel(gCurrentModalKombelId);
+            let selectedIndices = kombel.selected_peserta_indices;
+            if (!Array.isArray(selectedIndices)) {
+                selectedIndices = allPeserta.map((_, i) => i);
+            }
+
+            if (selectedIndices.includes(idx)) {
+                selectedIndices = selectedIndices.filter(i => i !== idx);
+            } else {
+                selectedIndices.push(idx);
+            }
+
+            kombel.selected_peserta_indices = selectedIndices;
+            renderActivePesertaTable(kombel);
+            db.ref(`master_kombel/${gCurrentModalKombelId}`).update({ selected_peserta_indices: selectedIndices }).catch(() => {});
+        }
+
+        async function toggleAllPesertaSelection(checkAll) {
+            if (!gCurrentModalKombelId) return;
+            const kombel = gAllKombels[gCurrentModalKombelId];
+            if (!kombel) return;
+
+            const allPeserta = getCombinedPesertaForKombel(gCurrentModalKombelId);
+            let selectedIndices = checkAll ? allPeserta.map((_, i) => i) : [];
+
+            kombel.selected_peserta_indices = selectedIndices;
+            renderActivePesertaTable(kombel);
+            db.ref(`master_kombel/${gCurrentModalKombelId}`).update({ selected_peserta_indices: selectedIndices }).catch(() => {});
+        }
+
+        function formatCSVRow(name, email, role) {
+            const cleanName = (name || '').toString().replace(/"/g, '""').trim();
+            const cleanEmail = (email || '').toString().replace(/"/g, '""').trim();
+            const cleanRole = (role || '').toString().replace(/"/g, '""').trim();
+
+            const cols = [
+                `"${cleanName}"`,
+                `"${cleanEmail}"`,
+                '', '', '', '', '', '', '', '', '', '', '',
+                `"${cleanRole}"`
+            ];
+            return cols.join(',');
+        }
+
+        function downloadCSVLMSAdmin(kombelId) {
+            const kombel = gAllKombels[kombelId];
+            if (!kombel) {
+                showToast("⚠️ Data Kombel tidak ditemukan.", "rose");
+                return;
+            }
+
+            const fasilNama = kombel.fasil_nama || 'Fasilitator';
+            const fasilEmail = kombel.fasil_email || getFasilEmailFromCache(kombel.fasil_id, fasilNama) || '';
+
+            const adminNama = kombel.admin_nama ? kombel.admin_nama.split(',')[0] : 'Admin BGTK';
+            const adminEmail = kombel.admin_email || getAdminEmailFromCache(adminNama) || '';
+
+            const allPeserta = getCombinedPesertaForKombel(kombelId);
+            const selectedIndices = kombel.selected_peserta_indices;
+
+            let selectedPeserta = [];
+            if (Array.isArray(selectedIndices) && selectedIndices.length > 0) {
+                selectedPeserta = allPeserta.filter((_, idx) => selectedIndices.includes(idx));
+            } else {
+                selectedPeserta = allPeserta;
+            }
+
+            let csvContent = "\uFEFF"; // UTF-8 BOM
+            csvContent += "name,email,jenjang,kode_provinsi,kode_kabupaten,kode_kecamatan,mata_pelajaran,jenis_ptk,nuptk,npsn,ptk_id_simpkb,tanggal_lahir,no_hp,role\n";
+
+            // Row 1: Fasilitator (instruktur)
+            csvContent += formatCSVRow(fasilNama, fasilEmail, 'instruktur') + "\n";
+
+            // Row 2: Admin BGTK (admin kelas)
+            csvContent += formatCSVRow(adminNama, adminEmail, 'admin kelas') + "\n";
+
+            // Rows: Selected Peserta (murid)
+            selectedPeserta.forEach(p => {
+                const pNama = p.nama || p.nama_lengkap || p.nama_anggota || '';
+                const pEmail = p.email || p.email_belajar_id || p.email_login || '';
+                csvContent += formatCSVRow(pNama, pEmail, 'murid') + "\n";
+            });
+
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement("a");
+            const safeKombelName = (kombel.nama_kombel || 'Kombel').replace(/[^a-zA-Z0-9]/g, '_');
+            const safeKab = (kombel.kab_kota || 'Sumbar').replace(/[^a-zA-Z0-9]/g, '_');
+            const filename = `LMS_Kelas_${safeKombelName}_${safeKab}.csv`;
+
+            link.href = URL.createObjectURL(blob);
+            link.download = filename;
+            link.click();
+            showToast(`📥 CSV Kelas "${kombel.nama_kombel}" (${selectedPeserta.length + 2} Aktor) berhasil diunduh!`, 'emerald');
+        }
+
+        function downloadCSVLMSAdminCurrent() {
+            if (gCurrentModalKombelId) {
+                downloadCSVLMSAdmin(gCurrentModalKombelId);
             }
         }
 
@@ -3939,33 +4343,8 @@
 
         function openModalExportLMSAdmin(kombelId) {
             const kombel = gAllKombels[kombelId];
-            if (!kombel || !kombel.konfirmasi) return;
-
-            const konfirmasi = kombel.konfirmasi;
-            const pesertaConfirmed = konfirmasi.peserta_konfirmasi || [];
-
-            document.getElementById('modalExportLMSKombelTitle').textContent = kombel.nama_kombel;
-            document.getElementById('modalExportLMSTgl').textContent = konfirmasi.tgl_konfirmasi || '-';
-            document.getElementById('modalExportLMSJumlah').textContent = `${pesertaConfirmed.length} / ${konfirmasi.total_peserta_impor || pesertaConfirmed.length} Peserta Disetujui`;
-
-            const tbody = document.getElementById('tableExportLMSBody');
-            if (pesertaConfirmed.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="6" class="px-4 py-8 text-center text-slate-400">Belum ada peserta yang disetujui.</td></tr>`;
-            } else {
-                tbody.innerHTML = pesertaConfirmed.map((p, i) => `
-                    <tr class="hover:bg-slate-50">
-                        <td class="px-3 py-2 text-center text-slate-400 font-bold">${i + 1}</td>
-                        <td class="px-3 py-2 font-bold text-slate-800">${p.nama || p.nama_lengkap || '-'}</td>
-                        <td class="px-3 py-2 font-mono text-slate-600">${p.nik || '-'}</td>
-                        <td class="px-3 py-2 text-slate-700">${p.sekolah || p.instansi || '-'}</td>
-                        <td class="px-3 py-2 font-mono text-slate-500">${p.npsn || '-'}</td>
-                        <td class="px-3 py-2 text-slate-600">${p.email || '-'}</td>
-                    </tr>
-                `).join('');
-            }
-
-            gCurrentExportKombelId = kombelId;
-            document.getElementById('modalExportLMSAdmin').classList.remove('hidden');
+            if (!kombel) return;
+            downloadCSVLMSAdmin(kombelId);
         }
 
         function exportLMSAdminCSV() {
