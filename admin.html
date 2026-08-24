@@ -4685,51 +4685,6 @@
             }
         }
 
-        function renderActivePesertaTable(kombel) {
-            const tbody = document.getElementById('modalTableActivePesertaBody');
-            const badge = document.getElementById('modalActivePesertaCountBadge');
-            if (!tbody) return;
-
-            const rawPeserta = kombel.peserta || [];
-            const pesertaList = Array.isArray(rawPeserta) ? rawPeserta : Object.values(rawPeserta);
-
-            if (badge) badge.textContent = `${pesertaList.length} Peserta`;
-
-            if (pesertaList.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="6" class="px-4 py-8 text-center text-slate-400">Belum ada data peserta yang diimpor untuk kelompok kerja ini. Silakan pilih file CSV di atas.</td></tr>`;
-                return;
-            }
-
-            tbody.innerHTML = pesertaList.map((p, idx) => {
-                const isSm = p.is_sekolah_model || p.is_sm;
-                const smBadge = isSm 
-                    ? `<span class="inline-block px-1.5 py-0.5 ml-1.5 rounded text-[10px] font-black bg-teal-100 text-teal-900 border border-teal-300">🏫 Sekolah Model</span>` 
-                    : '';
-
-                return `
-                <tr class="hover:bg-slate-50 transition-colors ${isSm ? 'bg-teal-50/40 font-medium' : ''}">
-                    <td class="px-3 py-2.5 text-center text-slate-400 font-bold">${idx + 1}</td>
-                    <td class="px-3 py-2.5 font-bold text-slate-800">
-                        ${p.nama_anggota || p.nama || '-'}
-                        ${smBadge}
-                    </td>
-                    <td class="px-3 py-2.5">
-                        <div class="font-medium text-slate-700">${p.sekolah || '-'}</div>
-                        <div class="text-[10px] text-slate-400 font-mono">NPSN: ${p.npsn || '-'}</div>
-                    </td>
-                    <td class="px-3 py-2.5 font-mono text-xs text-indigo-700 font-semibold">${p.email || '-'}</td>
-                    <td class="px-3 py-2.5 text-center">
-                        <span class="px-2 py-0.5 rounded-md text-[10px] font-bold ${ (p.peran || p.role || '').toLowerCase() === 'ketua' ? 'bg-purple-100 text-purple-800' : 'bg-slate-100 text-slate-600'}">${p.peran || p.role || 'Anggota'}</span>
-                    </td>
-                    <td class="px-3 py-2.5 text-center">
-                        <button onclick="hapusPesertaKombel(${idx})" title="Hapus Peserta" class="text-rose-500 hover:text-rose-700 p-1 hover:bg-rose-50 rounded transition-colors">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
-                        </button>
-                    </td>
-                </tr>`;
-            }).join('');
-        }
-
         async function hapusPesertaKombel(idx) {
             if (!gCurrentModalKombelId || !gAllKombels[gCurrentModalKombelId]) return;
             const kombel = gAllKombels[gCurrentModalKombelId];
