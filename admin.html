@@ -1249,12 +1249,12 @@
                             <div>
                                 <span class="inline-block px-3 py-1 bg-white/20 backdrop-blur-md rounded-full text-xs font-bold text-emerald-100 uppercase tracking-wider mb-2">Balai GTK Provinsi Sumatera Barat</span>
                                 <h1 class="text-2xl font-black">Data Master Pegawai Internal</h1>
-                                <p class="text-sm text-emerald-200 mt-1">Kelola data resmi Aparatur Sipil Negara &amp; P3K Balai GTK Sumatera Barat.</p>
+                                <p class="text-sm text-emerald-200 mt-1">Kelola 57 data resmi Aparatur Sipil Negara &amp; P3K Balai GTK Sumatera Barat.</p>
                             </div>
                         </div>
                         <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-6 pt-6 border-t border-white/10">
-                            <div class="bg-white/10 backdrop-blur-sm rounded-xl p-4"><div class="text-xs text-emerald-200 uppercase font-semibold">Total Pegawai</div><div class="text-2xl font-black mt-1" id="statPegawaiTotal">0</div></div>
-                            <div class="bg-white/10 backdrop-blur-sm rounded-xl p-4"><div class="text-xs text-emerald-200 uppercase font-semibold">Widyaiswara / PTP / Fungsional</div><div class="text-2xl font-black mt-1" id="statPegawaiFungsional">0</div></div>
+                            <div class="bg-white/10 backdrop-blur-sm rounded-xl p-4"><div class="text-xs text-emerald-200 uppercase font-semibold">Total Pegawai</div><div class="text-2xl font-black mt-1" id="statPegawaiTotal">57</div></div>
+                            <div class="bg-white/10 backdrop-blur-sm rounded-xl p-4"><div class="text-xs text-emerald-200 uppercase font-semibold">Widyaiswara / PTP / Fungsional</div><div class="text-2xl font-black mt-1" id="statPegawaiFungsional">28</div></div>
                             <div class="bg-white/10 backdrop-blur-sm rounded-xl p-4"><div class="text-xs text-emerald-200 uppercase font-semibold">Satuan Kerja</div><div class="text-2xl font-black mt-1">Balai GTK Sumbar</div></div>
                         </div>
                     </div>
@@ -4767,7 +4767,7 @@
         }
 
         // ==========================================
-        // MASTER PEGAWAI LOGIC (KOSONG BY DEFAULT)
+        // MASTER PEGAWAI (57) LOGIC
         // ==========================================
         let gAllPegawai = {}, gFilteredPegawai = [];
 
@@ -4776,11 +4776,7 @@
                 const snap = await db.ref('master_pegawai').once('value');
                 gAllPegawai = snap.val() || {};
                 filterPegawaiData();
-            } catch(e) { 
-                console.error("Gagal load master_pegawai", e); 
-                gAllPegawai = {};
-                filterPegawaiData();
-            }
+            } catch(e) { console.error("Gagal load master_pegawai", e); }
         }
 
         function filterPegawaiData() {
@@ -4799,7 +4795,7 @@
             const body = document.getElementById('tablePegawaiBody');
             const paginationEl = document.getElementById('pegawaiPagination');
             if (!body) return;
-            if (gFilteredPegawai.length === 0) { body.innerHTML = `<tr><td colspan="7" class="px-6 py-12 text-center text-slate-400">Belum ada data pegawai yang terdaftar. (Kosong)</td></tr>`; if (paginationEl) paginationEl.innerHTML = ''; return; }
+            if (gFilteredPegawai.length === 0) { body.innerHTML = `<tr><td colspan="7" class="px-6 py-12 text-center text-slate-400">Tidak ada pegawai yang sesuai kata kunci.</td></tr>`; if (paginationEl) paginationEl.innerHTML = ''; return; }
             const start = (gPegawaiPage - 1) * PER_PAGE;
             const pageItems = gFilteredPegawai.slice(start, start + PER_PAGE);
             body.innerHTML = pageItems.map((p, i) => {
