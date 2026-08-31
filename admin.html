@@ -3615,6 +3615,35 @@
             filterKombelData();
         }
 
+        function cleanPhoneForExport(val) {
+            if (!val || val === '-' || val === 'null' || val === 'undefined') return '-';
+            let str = String(val).trim();
+
+            // Convert scientific notation (e.g. "8,24E+10", "6,29E+12", "8.14e+10") to full digit string
+            if (/e\+?/i.test(str)) {
+                try {
+                    let normalized = str.replace(',', '.');
+                    let num = Number(normalized);
+                    if (!isNaN(num)) {
+                        str = BigInt(Math.round(num)).toString();
+                    }
+                } catch (e) {
+                    str = str.replace(/[^0-9]/g, '');
+                }
+            }
+
+            let digits = str.replace(/[^0-9]/g, '');
+            if (!digits) return '-';
+
+            if (digits.startsWith('628')) {
+                digits = '08' + digits.slice(3);
+            } else if (digits.startsWith('8') && digits.length >= 9) {
+                digits = '0' + digits;
+            }
+
+            return digits;
+        }
+
         function exportKombelDataCSV() {
             if (!gFilteredKombels || gFilteredKombels.length === 0) {
                 showToast("⚠️ Tidak ada data Komunitas Belajar yang dapat diekspor.", "rose");
@@ -3647,6 +3676,19 @@
                 return `"${str}"`;
             };
 
+            const escapeCSVTextCell = (val) => {
+                if (val === null || val === undefined || val === '') return '""';
+                const str = String(val).replace(/"/g, '""').trim();
+                if (str === '-') return '"-"';
+
+                // Force Excel formula text format ="08123456789" for phone numbers
+                // so Excel preserves leading zero & NEVER converts to scientific notation (8,24E+10)
+                if (/^\d{8,}$/.test(str)) {
+                    return `"=""${str}"""`;
+                }
+                return `"${str}"`;
+            };
+
             let csvRows = [];
             csvRows.push(headers.map(escapeCSV).join(','));
 
@@ -3671,27 +3713,30 @@
                     statusPlotting = "Plotting Sebagian";
                 }
 
+                const rawHp = k.no_hp || k.kontak || k.no_wa || '-';
+                const cleanHp = cleanPhoneForExport(rawHp);
+
                 const row = [
-                    idx + 1,
-                    k.nama_kombel || '-',
-                    k.jenjang || '-',
-                    k.kab_kota || '-',
-                    k.kecamatan || '-',
-                    k.desa_kelurahan || '-',
-                    k.nama_sekolah || k.instansi || '-',
-                    k.nama_ketua || '-',
-                    k.email || k.email_ketua || '-',
-                    k.no_hp || k.kontak || k.no_wa || '-',
-                    fasilNama,
-                    fasilEmail,
-                    adminNama,
-                    adminEmail,
-                    pCount,
-                    isSasaran,
-                    statusPlotting
+                    escapeCSV(idx + 1),
+                    escapeCSV(k.nama_kombel || '-'),
+                    escapeCSV(k.jenjang || '-'),
+                    escapeCSV(k.kab_kota || '-'),
+                    escapeCSV(k.kecamatan || '-'),
+                    escapeCSV(k.desa_kelurahan || '-'),
+                    escapeCSV(k.nama_sekolah || k.instansi || '-'),
+                    escapeCSV(k.nama_ketua || '-'),
+                    escapeCSV(k.email || k.email_ketua || '-'),
+                    escapeCSVTextCell(cleanHp),
+                    escapeCSV(fasilNama),
+                    escapeCSV(fasilEmail),
+                    escapeCSV(adminNama),
+                    escapeCSV(adminEmail),
+                    escapeCSV(pCount),
+                    escapeCSV(isSasaran),
+                    escapeCSV(statusPlotting)
                 ];
 
-                csvRows.push(row.map(escapeCSV).join(','));
+                csvRows.push(row.join(','));
             });
 
             // Client-side Browser Generation
