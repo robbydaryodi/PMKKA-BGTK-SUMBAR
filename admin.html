@@ -670,16 +670,10 @@
                                     </span>
                                 </div>
                             </div>
-                            <div class="flex items-center gap-2">
-                                <button onclick="exportKombelDataCSV()" title="Ekspor data Komunitas Belajar (semua / hasil filter saat ini) ke Spreadsheet" class="bg-emerald-500 hover:bg-emerald-600 text-white px-4 py-2 rounded-xl text-xs font-black transition-all flex items-center gap-2 border border-emerald-400 shadow-md cursor-pointer hover:scale-105">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
-                                    <span>📥 Export Spreadsheet</span>
-                                </button>
-                                <button onclick="loadKombelData(true)" class="bg-white/10 hover:bg-white/20 text-white px-4 py-2 rounded-xl text-xs font-bold transition-colors flex items-center gap-2 border border-white/20 shadow-xs cursor-pointer">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
-                                    <span>Refresh Data</span>
-                                </button>
-                            </div>
+                            <button onclick="loadKombelData(true)" class="bg-white/10 hover:bg-white/20 text-white px-4 py-2 rounded-xl text-xs font-bold transition-colors flex items-center gap-2 border border-white/20 shadow-xs cursor-pointer">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+                                <span>Refresh Data</span>
+                            </button>
                         </div>
                         <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-6 pt-6 border-t border-white/10">
                             <div class="bg-white/10 backdrop-blur-sm rounded-xl p-4"><div class="text-xs text-purple-200 uppercase font-semibold">Total Komunitas Belajar</div><div class="text-2xl font-black mt-1" id="statKombelTotal">1.804</div></div>
@@ -687,16 +681,20 @@
                             <button onclick="filterKombelByPlottingLengkap()" title="Klik untuk melihat Kombel yang sudah selesai plotting lengkap (Fasil + Admin + Peserta)" class="bg-emerald-500/20 backdrop-blur-sm border border-emerald-300/30 rounded-xl p-4 text-left hover:bg-emerald-500/35 transition-all hover:scale-[1.02] cursor-pointer w-full group"><div class="text-xs text-emerald-200 uppercase font-semibold group-hover:text-emerald-100">Plotting Selesai (Lengkap) <span class="text-[10px] normal-case font-normal opacity-70">(klik untuk filter)</span></div><div class="text-2xl font-black text-emerald-300 mt-1 group-hover:text-emerald-100" id="statKombelPlottingLengkap">0 / 54 Selesai</div><div class="text-[10px] text-emerald-200/80 mt-0.5 font-medium group-hover:text-emerald-100" id="statKombelPlottingProgress">Progress Selesai: 0% (Fasil, Admin &amp; Peserta)</div></button>
                         </div>
                     </div>
-                    <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-4 mb-6 flex flex-col md:flex-row gap-4 justify-between items-center">
-                        <div class="relative w-full md:w-80">
-                            <input type="text" id="searchKombel" onkeyup="filterKombelData()" placeholder="Cari Nama Kombel, Ketua, Instansi..." class="w-full pl-10 pr-4 py-2 border border-slate-300 rounded-xl text-sm focus:ring-purple-500 focus:border-purple-500">
-                            <svg class="w-4 h-4 text-slate-400 absolute left-3.5 top-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                    <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-4 mb-6 space-y-3">
+                        <div class="flex flex-col lg:flex-row gap-3 justify-between items-stretch lg:items-center">
+                            <div class="relative w-full lg:w-80">
+                                <input type="text" id="searchKombel" onkeyup="filterKombelData()" placeholder="Cari Nama Kombel, Ketua, Instansi..." class="w-full pl-10 pr-4 py-2 border border-slate-300 rounded-xl text-sm focus:ring-purple-500 focus:border-purple-500">
+                                <svg class="w-4 h-4 text-slate-400 absolute left-3.5 top-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                            </div>
+                            <div class="flex flex-wrap items-center gap-2.5">
+                                <select id="filterKabKombel" onchange="filterKombelData()" class="border-slate-300 rounded-xl text-sm px-3 py-2 bg-slate-50 font-medium text-slate-800"><option value="ALL">Semua Kab / Kota (19)</option></select>
+                                <select id="filterMapelKombel" onchange="filterKombelData()" class="border-slate-300 rounded-xl text-sm px-3 py-2 bg-slate-50 font-semibold text-slate-700"><option value="ALL">Semua Mapel / Bidang (20)</option></select>
+                                <select id="filterFasilKombel" onchange="filterKombelData()" class="border-purple-200 rounded-xl text-sm px-3 py-2 bg-purple-50/70 font-semibold text-purple-900"><option value="ALL">🤝 Semua Fasilitator</option></select>
+                                <select id="filterAdminKombel" onchange="filterKombelData()" class="border-indigo-200 rounded-xl text-sm px-3 py-2 bg-indigo-50/70 font-semibold text-indigo-900"><option value="ALL">👤 Semua Admin BGTK</option></select>
+                            </div>
                         </div>
-                        <div class="flex flex-wrap items-center gap-2.5 w-full md:w-auto">
-                            <select id="filterKabKombel" onchange="filterKombelData()" class="border-slate-300 rounded-xl text-sm px-3 py-2 bg-slate-50 font-medium text-slate-800"><option value="ALL">Semua Kab / Kota (19)</option></select>
-                            <select id="filterMapelKombel" onchange="filterKombelData()" class="border-slate-300 rounded-xl text-sm px-3 py-2 bg-slate-50 font-semibold text-slate-700"><option value="ALL">Semua Mapel / Bidang (20)</option></select>
-                            <select id="filterFasilKombel" onchange="filterKombelData()" class="border-purple-200 rounded-xl text-sm px-3 py-2 bg-purple-50/70 font-semibold text-purple-900"><option value="ALL">🤝 Semua Fasilitator</option></select>
-                            <select id="filterAdminKombel" onchange="filterKombelData()" class="border-indigo-200 rounded-xl text-sm px-3 py-2 bg-indigo-50/70 font-semibold text-indigo-900"><option value="ALL">👤 Semua Admin BGTK</option></select>
+                        <div class="flex flex-wrap items-center gap-2.5 pt-2 border-t border-slate-100/80">
                             <select id="filterStatusSasaran" onchange="filterKombelData()" class="border-slate-300 rounded-xl text-sm px-3 py-2 bg-slate-50 font-semibold text-slate-700">
                                 <option value="ALL">Semua Status / Sasaran</option>
                                 <option value="SASARAN">⭐ Hanya 54 Sasaran PMKKA</option>
@@ -704,7 +702,7 @@
                                 <option value="REKOMENDASI_SM">🏫 Rekomendasi Sekolah Model (100 KK)</option>
                                 <option value="NON_SASARAN">Belum Terpilih</option>
                             </select>
-                            <button onclick="exportKombelDataCSV()" title="Ekspor data Komunitas Belajar (semua / hasil filter saat ini) ke Spreadsheet" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-xs rounded-xl transition-all shadow-2xs flex items-center gap-1.5 cursor-pointer ml-auto sm:ml-0 flex-shrink-0">
+                            <button onclick="exportKombelDataCSV()" title="Ekspor data Komunitas Belajar (semua / hasil filter saat ini) ke Spreadsheet" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-xs rounded-xl transition-all shadow-2xs flex items-center gap-1.5 cursor-pointer">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
                                 <span>📥 Export Spreadsheet</span>
                             </button>
