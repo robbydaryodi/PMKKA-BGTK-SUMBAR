@@ -3623,21 +3623,13 @@
             if (!val || val === '-' || val === 'null' || val === 'undefined') return '-';
             let str = String(val).trim();
 
-            // Convert scientific notation (e.g. "8,24E+10", "6,29E+12", "8.14e+10") to full digit string
+            // Format ilmiah eksponensial (seperti "8,24E+10" / "6,29E+12") dari impor lama sudah kehilangan digit presisi belakang
             if (/e\+?/i.test(str)) {
-                try {
-                    let normalized = str.replace(',', '.');
-                    let num = Number(normalized);
-                    if (!isNaN(num)) {
-                        str = BigInt(Math.round(num)).toString();
-                    }
-                } catch (e) {
-                    str = str.replace(/[^0-9]/g, '');
-                }
+                return '-';
             }
 
             let digits = str.replace(/[^0-9]/g, '');
-            if (!digits) return '-';
+            if (!digits || digits.length < 7) return '-';
 
             if (digits.startsWith('628')) {
                 digits = '08' + digits.slice(3);
@@ -3927,7 +3919,9 @@
             document.getElementById('modalKombelJenjangBadge').textContent = kombel.jenjang || 'Semua Jenjang';
             document.getElementById('modalKombelKabBadge').textContent = kombel.kab_kota || 'Sumatera Barat';
             document.getElementById('modalKombelKecDesa').textContent = `${kombel.kecamatan || '-'} • ${kombel.desa_kelurahan || '-'}`;
-            const noHpKetua = kombel.no_hp || kombel.kontak || kombel.no_wa || '-';
+            const rawHp = kombel.no_hp || kombel.kontak || kombel.no_wa || '';
+            const isExpo = /e\+?/i.test(rawHp);
+            const noHpKetua = isExpo ? '-' : (rawHp || '-');
             document.getElementById('modalKombelKetuaKontak').textContent = `Ketua: ${kombel.nama_ketua || '-'} • HP/WA: ${noHpKetua} • (${kombel.email || kombel.email_ketua || '-'})`;
 
             // Populate Form Ketua, Email Belajar.id & Kontak WA
@@ -3936,7 +3930,7 @@
             const inputHpKetua = document.getElementById('modalInputHpKetua');
             if (inputNamaKetua) inputNamaKetua.value = kombel.nama_ketua || '';
             if (inputEmailKetua) inputEmailKetua.value = kombel.email || kombel.email_ketua || '';
-            if (inputHpKetua) inputHpKetua.value = kombel.no_hp || kombel.kontak || kombel.no_wa || '';
+            if (inputHpKetua) inputHpKetua.value = isExpo ? '' : rawHp;
 
             // Reset upload preview
             cancelUploadPreview();
