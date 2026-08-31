@@ -2013,7 +2013,9 @@
             "ristitahumairoh71@dikbud.belajar.id": { adminNama: "RISTITA HUMAIROH, S.Kom.", nip: "199711232025212030" },
             "ristita.humairoh@kemendikdasmen.go.id": { adminNama: "RISTITA HUMAIROH, S.Kom.", nip: "199711232025212030" },
             // 10. Bima Azee
-            "bimaazee@gmail.com": { adminNama: "BIMA AZEE", nip: "-" }
+            "bimaazee@gmail.com": { adminNama: "BIMA AZEE", nip: "-" },
+            // 11. Fauzia Tresia
+            "fauziaatresia35@gmail.com": { adminNama: "FAUZIA TRESIA", nip: "-" }
         };
 
         const ADMIN_FASIL_MAPPING = {
@@ -3979,7 +3981,8 @@
                         "AFLIDARNETI, S.Sos.",
                         "RISTITA HUMAIROH, S.Kom.",
                         "IRAWATI, S.Pd, M.Pd.",
-                        "BIMA AZEE"
+                        "BIMA AZEE",
+                        "FAUZIA TRESIA"
                     ];
                     let adminOpt = '<option value="">-- Pilih Admin Pengampu BGTK --</option>';
                     const currentAdmin = kombel.admin_nama || gAdminNama || sessionStorage.getItem('admin_bgtk_nama') || '';
@@ -4195,6 +4198,7 @@
             if (cleanAdmin.includes('lisa')) return 'lisa.anggraini@bgtk.sumbar.go.id';
             if (cleanAdmin.includes('irawati')) return 'irawati@bgtk.sumbar.go.id';
             if (cleanAdmin.includes('bima')) return 'bimaazee@gmail.com';
+            if (cleanAdmin.includes('fauzia') || cleanAdmin.includes('tresia')) return 'fauziaatresia35@gmail.com';
             return '';
         }
 
