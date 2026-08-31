@@ -698,6 +698,10 @@
                                 <option value="REKOMENDASI_SM">🏫 Rekomendasi Sekolah Model (100 KK)</option>
                                 <option value="NON_SASARAN">Belum Terpilih</option>
                             </select>
+                            <button onclick="exportKombelDataCSV()" title="Ekspor data Komunitas Belajar (semua / hasil filter saat ini) ke Spreadsheet" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-xs rounded-xl transition-all shadow-2xs flex items-center gap-1.5 cursor-pointer ml-auto sm:ml-0 flex-shrink-0">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                                <span>📥 Export Spreadsheet</span>
+                            </button>
                         </div>
                     </div>
                     <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
@@ -3603,6 +3607,103 @@
                 if (tblArea) tblArea.closest('.bg-white')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
             }
             filterKombelData();
+        }
+
+        function exportKombelDataCSV() {
+            if (!gFilteredKombels || gFilteredKombels.length === 0) {
+                showToast("⚠️ Tidak ada data Komunitas Belajar yang dapat diekspor.", "rose");
+                return;
+            }
+
+            const headers = [
+                "No",
+                "Nama Kelompok Kerja / Kombel",
+                "Jenjang",
+                "Kabupaten / Kota",
+                "Kecamatan",
+                "Desa / Kelurahan",
+                "Sekolah / Instansi Induk",
+                "Nama Ketua Kombel",
+                "Email Ketua Kombel",
+                "No HP / WA Ketua",
+                "Fasilitator Pendamping (FKK)",
+                "Email Fasilitator",
+                "Admin BGTK (Pengampu)",
+                "Email Admin BGTK",
+                "Jumlah Peserta Terdaftar",
+                "Status Sasaran PMKKA",
+                "Status Plotting / Konfirmasi"
+            ];
+
+            const escapeCSV = (val) => {
+                if (val === null || val === undefined) return '""';
+                const str = String(val).replace(/"/g, '""').trim();
+                return `"${str}"`;
+            };
+
+            let csvRows = [];
+            csvRows.push(headers.map(escapeCSV).join(','));
+
+            gFilteredKombels.forEach((k, idx) => {
+                const pesertaList = k.peserta ? (Array.isArray(k.peserta) ? k.peserta : Object.values(k.peserta)) : [];
+                const pCount = pesertaList.length > 0 ? pesertaList.length : (k.jumlah_anggota || 0);
+
+                const fasilNama = k.fasil_nama || '-';
+                const fasilEmail = k.fasil_email || (typeof getFasilEmailFromCache === 'function' ? getFasilEmailFromCache(k.fasil_id, fasilNama) : '') || '-';
+
+                const adminNama = k.admin_nama ? k.admin_nama.split(',')[0] : '-';
+                const adminEmail = k.admin_email || (typeof getAdminEmailFromCache === 'function' ? getAdminEmailFromCache(adminNama) : '') || '-';
+
+                const isSasaran = k.is_sasaran ? "Ya (Sasaran PMKKA)" : "Tidak";
+
+                let statusPlotting = "Belum Di-plotting";
+                if (k.konfirmasi && k.konfirmasi.is_konfirmasi) {
+                    statusPlotting = "Disetujui / Selesai (LMS)";
+                } else if (k.fasil_nama && k.admin_nama && pCount > 0) {
+                    statusPlotting = "Plotting Lengkap";
+                } else if (k.fasil_nama || k.admin_nama) {
+                    statusPlotting = "Plotting Sebagian";
+                }
+
+                const row = [
+                    idx + 1,
+                    k.nama_kombel || '-',
+                    k.jenjang || '-',
+                    k.kab_kota || '-',
+                    k.kecamatan || '-',
+                    k.desa_kelurahan || '-',
+                    k.nama_sekolah || k.instansi || '-',
+                    k.nama_ketua || '-',
+                    k.email || k.email_ketua || '-',
+                    k.no_hp || k.kontak || k.no_wa || '-',
+                    fasilNama,
+                    fasilEmail,
+                    adminNama,
+                    adminEmail,
+                    pCount,
+                    isSasaran,
+                    statusPlotting
+                ];
+
+                csvRows.push(row.map(escapeCSV).join(','));
+            });
+
+            // Client-side Browser Generation
+            const csvContent = "\uFEFF" + csvRows.join("\n");
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement("a");
+            const searchVal = (document.getElementById('searchKombel')?.value || '').trim();
+            const filterKab = document.getElementById('filterKabKombel')?.value || 'ALL';
+            const filterDesc = (searchVal || filterKab !== 'ALL') ? 'Terfilter' : 'Semua';
+            const filename = `Data_Master_Kombel_${filterDesc}_${new Date().toISOString().slice(0, 10)}.csv`;
+
+            link.href = URL.createObjectURL(blob);
+            link.download = filename;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+
+            showToast(`📥 Spreadsheet (${gFilteredKombels.length.toLocaleString('id-ID')} Data Kombel) berhasil dibuat langsung di perangkat Anda!`, 'emerald');
         }
 
         function renderKombelTable() {
