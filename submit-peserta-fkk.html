@@ -1,0 +1,823 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Submit Peserta FKK – PM-KKA BGTK Sumatera Barat 2026</title>
+    <meta name="description" content="Portal Ketua KK untuk memilih dan mengajukan peserta yang akan mengikuti program PM-KKA BGTK Sumatera Barat.">
+    <link rel="icon" type="image/jpeg" href="./favicon.jpg" />
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    colors: { primary: '#7c3aed', secondary: '#0f172a' }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body { background: linear-gradient(135deg, #f5f3ff 0%, #ede9fe 50%, #e0e7ff 100%); min-height: 100vh; }
+        .glass-card { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.6); }
+        .spinner { border: 3px solid rgba(124, 58, 237, 0.2); border-left-color: #7c3aed; border-radius: 50%; width: 22px; height: 22px; animation: spin 1s linear infinite; }
+        @keyframes spin { 0%{transform:rotate(0deg)} 100%{transform:rotate(360deg)} }
+        .fade-in { animation: fadeIn 0.35s ease-out forwards; }
+        @keyframes fadeIn { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
+        .row-warning { background: rgba(254,243,199,0.7); }
+        .row-sm { background: rgba(204,251,241,0.4); }
+        tr.row-warning:hover { background: rgba(254,243,199,0.95) !important; }
+        tr.row-sm:hover { background: rgba(204,251,241,0.8) !important; }
+    </style>
+
+    <!-- Firebase v10+ Compat CDN -->
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+</head>
+<body class="text-slate-800 antialiased font-sans">
+
+    <!-- ============================
+         NAVBAR
+         ============================ -->
+    <nav class="bg-white/90 backdrop-blur-md border-b border-violet-100 sticky top-0 z-40 shadow-sm">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6">
+            <div class="flex justify-between h-16 items-center">
+                <a href="index.html" class="flex items-center gap-3 hover:opacity-80 transition-opacity">
+                    <img src="./logo.png" alt="Logo BGTK" class="h-10 w-auto object-contain">
+                    <div class="border-l-2 border-slate-200 pl-3 ml-1">
+                        <span class="font-black text-slate-800 text-sm sm:text-base block leading-none">PM-KKA BGTK Sumbar</span>
+                        <span class="text-[11px] text-violet-600 font-semibold mt-0.5 block">Portal Pemilihan Peserta KK</span>
+                    </div>
+                </a>
+                <a href="index.html" class="text-xs font-bold text-slate-500 hover:text-slate-800 flex items-center gap-1 transition-colors">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+                    Beranda
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ============================
+         MAIN CONTENT
+         ============================ -->
+    <main class="max-w-5xl mx-auto px-4 py-8 sm:py-12">
+
+        <!-- ============================
+             TAHAP 1: PILIH KK
+             ============================ -->
+        <div id="sectionStep1" class="fade-in">
+            <!-- Hero -->
+            <div class="text-center mb-8">
+                <div class="inline-flex items-center gap-2 px-4 py-1.5 bg-violet-100 text-violet-800 rounded-full text-xs font-black uppercase tracking-wider mb-3">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                    Portal Ketua Kelompok Kerja
+                </div>
+                <h1 class="text-3xl sm:text-4xl font-black text-slate-900 tracking-tight mb-2">Submit Peserta FKK</h1>
+                <p class="text-slate-500 text-sm sm:text-base max-w-xl mx-auto">Pilih Kelompok Kerja (KK) Anda, kemudian tentukan siapa saja peserta yang akan mengikuti program PM-KKA.</p>
+            </div>
+
+            <!-- Card Pilih KK -->
+            <div class="glass-card rounded-3xl shadow-xl p-6 sm:p-8 space-y-6">
+                <div class="border-b border-slate-100 pb-5">
+                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-violet-100 text-violet-800 text-xs font-black mb-2">
+                        Langkah 1 dari 2
+                    </div>
+                    <h2 class="text-xl font-black text-slate-900">Pilih Kelompok Kerja (KK) Anda</h2>
+                    <p class="text-slate-500 text-xs mt-1">Daftar KK yang menjadi sasaran program PM-KKA BGTK Sumatera Barat 2026.</p>
+                </div>
+
+                <!-- Dropdown KK -->
+                <div>
+                    <label class="block text-xs font-extrabold uppercase tracking-wider text-slate-700 mb-2">
+                        Nama Kelompok Kerja / Komunitas Belajar:
+                    </label>
+                    <div class="relative">
+                        <select id="selectKK" onchange="onKKSelected()" class="w-full border-2 border-slate-200 rounded-2xl px-4 py-3.5 pr-10 text-sm font-semibold text-slate-800 bg-white focus:bg-white focus:border-violet-500 focus:ring-4 focus:ring-violet-100 outline-none transition-all appearance-none">
+                            <option value="">-- Memuat daftar Kelompok Kerja... --</option>
+                        </select>
+                        <div class="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-slate-400">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Info KK Terpilih -->
+                <div id="infoKKCard" class="hidden fade-in">
+                    <div class="bg-violet-50 border border-violet-200 rounded-2xl p-4 space-y-3">
+                        <div class="flex items-start gap-3">
+                            <div class="w-10 h-10 bg-violet-100 text-violet-700 rounded-xl flex items-center justify-center flex-shrink-0 font-black text-lg">KK</div>
+                            <div class="flex-1 min-w-0">
+                                <div class="font-black text-slate-900 text-sm leading-snug" id="infoKKNama">-</div>
+                                <div class="text-violet-700 text-xs font-semibold mt-0.5" id="infoKKWilayah">-</div>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 pt-1 border-t border-violet-200">
+                            <div class="bg-white rounded-xl p-2.5 text-center">
+                                <div class="text-xs text-slate-500 font-medium">Ketua</div>
+                                <div class="font-bold text-slate-800 text-xs mt-0.5 truncate" id="infoKKKetua">-</div>
+                            </div>
+                            <div class="bg-white rounded-xl p-2.5 text-center">
+                                <div class="text-xs text-slate-500 font-medium">Jumlah Anggota</div>
+                                <div class="font-black text-violet-700 text-lg leading-tight" id="infoKKJumlah">-</div>
+                            </div>
+                            <div class="bg-white rounded-xl p-2.5 text-center" id="infoKKSMBox">
+                                <div class="text-xs text-slate-500 font-medium">Peserta SM</div>
+                                <div class="font-black text-teal-600 text-lg leading-tight flex items-center justify-center gap-1">
+                                    <div class="spinner w-4 h-4 border-2 border-teal-200 border-l-teal-600" id="spinnerSMCount"></div>
+                                    <span id="infoKKSMCount" class="hidden">-</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tombol Lihat Peserta -->
+                <div id="btnLihatPesertaWrap" class="hidden">
+                    <button onclick="goToStep2()" class="w-full py-4 bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-700 hover:to-indigo-700 text-white rounded-2xl font-black text-sm shadow-lg shadow-violet-200 hover:shadow-xl transition-all flex items-center justify-center gap-2 active:scale-[0.99]">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                        <span>Lihat Daftar Peserta</span>
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                    </button>
+                </div>
+
+                <!-- Loading state -->
+                <div id="step1Loading" class="hidden text-center py-6">
+                    <div class="flex items-center justify-center gap-3 text-violet-700 font-bold text-sm">
+                        <div class="spinner"></div>
+                        <span>Memuat data Kelompok Kerja...</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Info box -->
+            <div class="mt-6 bg-white/70 rounded-2xl p-4 border border-violet-100 text-xs text-slate-500 flex items-start gap-3">
+                <svg class="w-5 h-5 text-violet-400 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                <div>
+                    <span class="font-bold text-slate-700">Petunjuk:</span> Halaman ini digunakan oleh <strong>Ketua Kelompok Kerja (KK)</strong> untuk memilih peserta yang akan mengikuti program PM-KKA. Pilih KK Anda dari dropdown di atas, lalu centang peserta yang akan diikutsertakan. Peserta dari Sekolah Model (<span class="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[10px] font-black bg-teal-100 text-teal-800 border border-teal-300">🏫 SM</span>) akan ditandai secara otomatis.
+                </div>
+            </div>
+        </div>
+
+        <!-- ============================
+             TAHAP 2: CHECKLIST PESERTA
+             ============================ -->
+        <div id="sectionStep2" class="hidden fade-in space-y-5">
+
+            <!-- Header KK Aktif -->
+            <div class="glass-card rounded-3xl shadow-xl p-5 sm:p-6">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 bg-violet-600 text-white rounded-2xl flex items-center justify-center font-black text-sm shadow-lg shadow-violet-200 flex-shrink-0">KK</div>
+                        <div>
+                            <div class="text-xs bg-emerald-100 text-emerald-800 border border-emerald-200 px-2.5 py-0.5 rounded-full font-black inline-flex items-center gap-1 mb-1">
+                                <span class="w-1.5 h-1.5 bg-emerald-500 rounded-full inline-block"></span> KK Terpilih
+                            </div>
+                            <h2 class="font-black text-slate-900 text-base sm:text-lg leading-snug" id="step2KKTitle">-</h2>
+                            <p class="text-xs text-slate-500 font-medium mt-0.5" id="step2KKSub">-</p>
+                        </div>
+                    </div>
+                    <button onclick="goToStep1()" class="text-xs font-bold text-slate-500 hover:text-slate-800 bg-slate-100 hover:bg-slate-200 px-3 py-2 rounded-xl transition flex items-center gap-1.5 flex-shrink-0">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+                        Ganti KK
+                    </button>
+                </div>
+            </div>
+
+            <!-- Banner Warning Data Tidak Lengkap -->
+            <div id="warningBannerInkomplid" class="hidden glass-card rounded-2xl p-4 border-2 border-amber-300 bg-amber-50/90 shadow-md fade-in">
+                <div class="flex items-start gap-3">
+                    <div class="w-8 h-8 bg-amber-100 text-amber-600 rounded-xl flex items-center justify-center flex-shrink-0 text-lg">⚠️</div>
+                    <div class="flex-1">
+                        <div class="font-black text-amber-900 text-sm">Terdapat Peserta dengan Data Tidak Lengkap</div>
+                        <p class="text-amber-800 text-xs mt-1">
+                            <span id="warningInkomplidCount" class="font-black">0</span> peserta belum memiliki data lengkap (nama, email, atau instansi kosong). 
+                            <strong>Tombol Submit dikunci</strong> hingga Admin BGTK melengkapi data tersebut. Hubungi Admin untuk perbaikan data.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Toolbar -->
+            <div class="glass-card rounded-2xl p-4 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                <div class="flex items-center gap-3 flex-wrap">
+                    <div class="text-sm font-black text-slate-700">
+                        <span id="countChecked" class="text-violet-700 text-xl">0</span>
+                        <span class="text-slate-500 font-medium"> / </span>
+                        <span id="countTotal" class="text-slate-700">0</span>
+                        <span class="text-slate-500 font-medium text-xs ml-1">Peserta Dipilih</span>
+                    </div>
+                    <div class="flex items-center gap-1.5 text-xs">
+                        <span class="inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-teal-100 text-teal-800 border border-teal-200 font-bold">
+                            🏫 <span id="countSM">0</span> SM
+                        </span>
+                        <span class="inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-amber-100 text-amber-800 border border-amber-200 font-bold">
+                            ⚠️ <span id="countWarning">0</span> Tidak Lengkap
+                        </span>
+                    </div>
+                </div>
+                <div class="flex gap-2">
+                    <button onclick="toggleCheckAll()" id="btnToggleAll" class="px-4 py-2 bg-violet-100 hover:bg-violet-200 text-violet-800 font-black rounded-xl text-xs transition flex items-center gap-1.5">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                        <span id="btnToggleAllText">Centang Semua</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Tabel Peserta -->
+            <div class="glass-card rounded-3xl shadow-xl overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-xs">
+                        <thead class="bg-slate-900 text-white">
+                            <tr>
+                                <th class="px-4 py-3.5 text-center w-12 font-black">✓</th>
+                                <th class="px-4 py-3.5 text-center w-10 font-black">No</th>
+                                <th class="px-4 py-3.5 font-black">Nama Peserta</th>
+                                <th class="px-4 py-3.5 font-black">Sekolah / Instansi</th>
+                                <th class="px-4 py-3.5 font-black">Email</th>
+                                <th class="px-4 py-3.5 text-center font-black">Status Data</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tableBody" class="divide-y divide-slate-100">
+                            <!-- Populated by JS -->
+                        </tbody>
+                    </table>
+                </div>
+                <div class="px-5 py-3.5 bg-slate-50 border-t border-slate-200 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 text-xs text-slate-600 font-bold">
+                    <div>Total Peserta: <strong id="footerTotal">0</strong></div>
+                    <div class="flex gap-3">
+                        <span class="flex items-center gap-1"><span class="w-3 h-3 bg-teal-100 border border-teal-300 rounded inline-block"></span> Peserta Sekolah Model (SM)</span>
+                        <span class="flex items-center gap-1"><span class="w-3 h-3 bg-amber-100 border border-amber-300 rounded inline-block"></span> Data Tidak Lengkap</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Submit Button Area -->
+            <div class="glass-card rounded-3xl shadow-xl p-6 space-y-4">
+                <!-- Submit locked warning -->
+                <div id="submitLockedInfo" class="hidden p-3.5 rounded-2xl bg-rose-50 border border-rose-200 text-rose-700 text-xs font-semibold flex items-center gap-2">
+                    <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+                    <span>Submit dikunci karena masih ada peserta dengan data tidak lengkap. Hubungi Admin BGTK untuk melengkapi data.</span>
+                </div>
+
+                <!-- Submit button -->
+                <button id="btnSubmit" onclick="submitPeserta()" disabled
+                    class="w-full py-4 rounded-2xl font-black text-base transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed bg-emerald-600 hover:bg-emerald-700 text-white shadow-lg shadow-emerald-200 hover:shadow-xl active:scale-[0.99]">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                    <span>SUBMIT PESERTA TERPILIH</span>
+                </button>
+
+                <!-- Loading submit -->
+                <div id="submitLoading" class="hidden flex items-center justify-center gap-3 py-2 text-emerald-700 font-bold text-sm">
+                    <div class="spinner border-emerald-200 border-l-emerald-600"></div>
+                    <span>Menyimpan data ke server...</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- ============================
+             TAHAP 3: SUKSES
+             ============================ -->
+        <div id="sectionStep3" class="hidden fade-in">
+            <div class="glass-card rounded-3xl shadow-2xl p-8 sm:p-12 text-center space-y-6 max-w-xl mx-auto">
+                <div class="w-24 h-24 bg-emerald-100 rounded-full border-4 border-emerald-200 flex items-center justify-center text-5xl mx-auto shadow-lg">✅</div>
+                <div>
+                    <span class="text-xs bg-emerald-100 text-emerald-800 font-black px-3 py-1 rounded-full border border-emerald-200">Submit Berhasil Diterima</span>
+                    <h2 class="text-2xl font-black text-slate-900 mt-3" id="succKKTitle">-</h2>
+                    <p class="text-slate-500 text-sm mt-2 max-w-sm mx-auto">Data peserta yang Anda pilih telah berhasil tersimpan dan dikirim ke Admin BGTK Sumatera Barat.</p>
+                </div>
+
+                <div class="bg-slate-50 rounded-2xl p-5 border border-slate-200 text-left text-xs space-y-3">
+                    <div class="flex justify-between">
+                        <span class="text-slate-500 font-medium">Tanggal Submit:</span>
+                        <strong class="text-slate-800" id="succTgl">-</strong>
+                    </div>
+                    <div class="border-t border-slate-200 pt-3 flex justify-between">
+                        <span class="text-slate-500 font-medium">Peserta Dipilih:</span>
+                        <strong class="text-emerald-700 text-sm" id="succJumlah">-</strong>
+                    </div>
+                    <div class="border-t border-slate-200 pt-3 flex justify-between">
+                        <span class="text-slate-500 font-medium">Peserta Sekolah Model:</span>
+                        <strong class="text-teal-700" id="succSM">-</strong>
+                    </div>
+                    <div class="border-t border-slate-200 pt-3 flex justify-between">
+                        <span class="text-slate-500 font-medium">Ketua KK:</span>
+                        <strong class="text-slate-800" id="succKetua">-</strong>
+                    </div>
+                </div>
+
+                <button onclick="window.location.reload()" class="w-full py-3 bg-slate-900 hover:bg-slate-800 text-white rounded-xl font-bold text-sm transition shadow-sm">
+                    Selesai &amp; Mulai Lagi
+                </button>
+                <a href="index.html" class="block text-xs font-semibold text-slate-500 hover:text-slate-700 transition">
+                    ← Kembali ke Beranda
+                </a>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- ============================
+         TOAST NOTIFICATION
+         ============================ -->
+    <div id="toast" class="fixed bottom-6 right-4 z-50 hidden transition-all duration-300 max-w-xs">
+        <div id="toastBox" class="px-5 py-3 rounded-2xl shadow-2xl font-bold text-sm text-white flex items-center gap-2"></div>
+    </div>
+
+    <!-- ============================
+         JAVASCRIPT
+         ============================ -->
+    <script>
+        // ==========================================
+        // FIREBASE CONFIG & INIT
+        // ==========================================
+        const firebaseConfig = {
+            apiKey: "AIzaSyCAMKzhVnGGUxdVKAWeoPXYTAZvPSq6yKY",
+            authDomain: "sekolah-model-2026.firebaseapp.com",
+            databaseURL: "https://sekolah-model-2026-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "sekolah-model-2026",
+            storageBucket: "sekolah-model-2026.firebasestorage.app",
+            messagingSenderId: "1014570073770",
+            appId: "1:1014570073770:web:770e7e6cef2a52a3825ad3"
+        };
+
+        if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+
+        // ==========================================
+        // STATE
+        // ==========================================
+        let gKKList = [];           // Semua KK sasaran dari Firebase
+        let gSelectedKK = null;     // KK yang dipilih
+        let gAllPeserta = [];       // Daftar peserta KK terpilih (dengan flags)
+        let gSMNpsnSet = new Set(); // Set NPSN yang ada di status_sekolah_model
+
+        // ==========================================
+        // INIT
+        // ==========================================
+        document.addEventListener('DOMContentLoaded', async () => {
+            showStep1Loading(true);
+            try {
+                await Promise.all([
+                    loadKKList(),
+                    preloadSMData()
+                ]);
+            } catch(e) {
+                console.error("Init error:", e);
+                showToast("❌ Gagal memuat data awal. Silakan refresh halaman.", false);
+            }
+            showStep1Loading(false);
+        });
+
+        // ==========================================
+        // LOAD DATA KELOMPOK KERJA (KK)
+        // ==========================================
+        async function loadKKList() {
+            const sel = document.getElementById('selectKK');
+            try {
+                const snap = await db.ref('master_kombel').once('value');
+                const val = snap.val() || {};
+
+                // Filter hanya yang is_sasaran == true dan belum merged ke lain
+                gKKList = Object.values(val).filter(k => k.is_sasaran && !k.merged_into_kombel_id);
+
+                if (gKKList.length === 0) {
+                    sel.innerHTML = '<option value="">-- Belum ada KK Sasaran yang terdaftar --</option>';
+                    return;
+                }
+
+                // Gabungkan peserta dari merged_kombel_ids
+                const allKombelMap = val; // Butuh full map untuk lookup merged
+                gKKList.forEach(k => {
+                    k._allKombelRef = allKombelMap; // simpan ref untuk nanti
+                });
+
+                // Sort by nama
+                gKKList.sort((a, b) => (a.nama_kombel || '').localeCompare(b.nama_kombel || ''));
+
+                let opts = '<option value="">-- Pilih Kelompok Kerja / KK Anda --</option>';
+                gKKList.forEach((k, i) => {
+                    opts += `<option value="${i}">${k.nama_kombel} (${k.kab_kota || '-'})</option>`;
+                });
+                sel.innerHTML = opts;
+
+            } catch(e) {
+                console.error("Gagal load KK:", e);
+                sel.innerHTML = '<option value="">Gagal memuat. Refresh halaman.</option>';
+                throw e;
+            }
+        }
+
+        // ==========================================
+        // PRE-LOAD DAFTAR NPSN SEKOLAH MODEL
+        // ==========================================
+        async function preloadSMData() {
+            try {
+                const snap = await db.ref('status_sekolah_model').once('value');
+                const val = snap.val() || {};
+                gSMNpsnSet = new Set(Object.keys(val));
+                console.log(`✅ Loaded ${gSMNpsnSet.size} NPSN Sekolah Model`);
+            } catch(e) {
+                console.warn("Gagal load status_sekolah_model:", e);
+                // Lanjut tanpa data SM, peserta tidak akan di-detect sebagai SM
+            }
+        }
+
+        // ==========================================
+        // EVENT: KK DIPILIH
+        // ==========================================
+        function onKKSelected() {
+            const idx = document.getElementById('selectKK').value;
+            const infoCard = document.getElementById('infoKKCard');
+            const btnWrap = document.getElementById('btnLihatPesertaWrap');
+
+            if (idx === '' || idx === null || idx === undefined) {
+                infoCard.classList.add('hidden');
+                btnWrap.classList.add('hidden');
+                gSelectedKK = null;
+                return;
+            }
+
+            gSelectedKK = gKKList[parseInt(idx)];
+            if (!gSelectedKK) return;
+
+            // Tampilkan info card
+            document.getElementById('infoKKNama').textContent = gSelectedKK.nama_kombel || '-';
+            document.getElementById('infoKKWilayah').textContent = `${gSelectedKK.kab_kota || '-'} • ${gSelectedKK.kecamatan || '-'}`;
+            document.getElementById('infoKKKetua').textContent = gSelectedKK.nama_ketua || 'Belum diisi';
+
+            // Hitung total peserta (termasuk merged)
+            const allP = getCombinedPeserta(gSelectedKK);
+            document.getElementById('infoKKJumlah').textContent = allP.length;
+
+            // Hitung SM (via NPSN)
+            const spinnerSM = document.getElementById('spinnerSMCount');
+            const spanSMCount = document.getElementById('infoKKSMCount');
+            spinnerSM.classList.remove('hidden');
+            spanSMCount.classList.add('hidden');
+
+            const smCount = allP.filter(p => isSMPeserta(p)).length;
+            spinnerSM.classList.add('hidden');
+            spanSMCount.textContent = smCount > 0 ? smCount : '0';
+            spanSMCount.classList.remove('hidden');
+
+            infoCard.classList.remove('hidden');
+            btnWrap.classList.remove('hidden');
+        }
+
+        // ==========================================
+        // NAVIGASI ANTAR STEP
+        // ==========================================
+        function goToStep2() {
+            if (!gSelectedKK) {
+                showToast("⚠️ Silakan pilih KK terlebih dahulu.", false);
+                return;
+            }
+
+            // Build daftar peserta dengan flags
+            const rawPeserta = getCombinedPeserta(gSelectedKK);
+            const totalPeserta = rawPeserta.length;
+
+            if (totalPeserta === 0) {
+                showToast("⚠️ KK ini belum memiliki data peserta. Hubungi Admin BGTK.", false);
+                return;
+            }
+
+            // Tandai SM dan kelengkapan data
+            gAllPeserta = rawPeserta.map(p => {
+                const isSM = isSMPeserta(p);
+                const isComplete = isPesertaComplete(p);
+
+                // Auto-check logic:
+                // ≤25: semua centang
+                // >25: hanya SM yang centang
+                let checked;
+                if (totalPeserta <= 25) {
+                    checked = true;
+                } else {
+                    checked = isSM; // hanya SM yang auto-centang
+                }
+
+                return { ...p, _isSM: isSM, _isComplete: isComplete, _checked: checked };
+            });
+
+            // Update header Step 2
+            document.getElementById('step2KKTitle').textContent = gSelectedKK.nama_kombel;
+            document.getElementById('step2KKSub').textContent =
+                `${gSelectedKK.kab_kota || '-'} • Ketua: ${gSelectedKK.nama_ketua || '-'} • ${totalPeserta} Peserta`;
+
+            // Show Step 2, hide Step 1
+            document.getElementById('sectionStep1').classList.add('hidden');
+            document.getElementById('sectionStep2').classList.remove('hidden');
+            document.getElementById('sectionStep2').classList.add('fade-in');
+
+            renderTable();
+        }
+
+        function goToStep1() {
+            document.getElementById('sectionStep2').classList.add('hidden');
+            document.getElementById('sectionStep1').classList.remove('hidden');
+            document.getElementById('sectionStep1').classList.add('fade-in');
+            gAllPeserta = [];
+        }
+
+        // ==========================================
+        // DETEKSI PESERTA SEKOLAH MODEL
+        // ==========================================
+        function isSMPeserta(p) {
+            const npsn = (p.npsn || '').toString().trim();
+            if (!npsn || npsn === '-') return false;
+            return gSMNpsnSet.has(npsn);
+        }
+
+        // ==========================================
+        // CEK KELENGKAPAN DATA PESERTA
+        // ==========================================
+        function isPesertaComplete(p) {
+            const nama = (p.nama_anggota || p.nama || p.nama_lengkap || '').trim();
+            const email = (p.email || p.email_belajar_id || '').trim();
+            const instansi = (p.sekolah || p.instansi || '').trim();
+            return nama !== '' && email !== '' && instansi !== '';
+        }
+
+        // ==========================================
+        // GABUNGKAN PESERTA (TERMASUK MERGED KK)
+        // ==========================================
+        function getCombinedPeserta(kk) {
+            let list = [];
+            const mainP = kk.peserta
+                ? (Array.isArray(kk.peserta) ? kk.peserta : Object.values(kk.peserta))
+                : [];
+            list = [...mainP];
+
+            // Tambahkan dari merged kombel jika ada
+            if (Array.isArray(kk.merged_kombel_ids) && kk._allKombelRef) {
+                kk.merged_kombel_ids.forEach(mId => {
+                    const mKK = kk._allKombelRef[mId];
+                    if (mKK) {
+                        const mP = mKK.peserta
+                            ? (Array.isArray(mKK.peserta) ? mKK.peserta : Object.values(mKK.peserta))
+                            : [];
+                        list = [...list, ...mP];
+                    }
+                });
+            }
+            return list;
+        }
+
+        // ==========================================
+        // RENDER TABEL PESERTA
+        // ==========================================
+        function renderTable() {
+            const tbody = document.getElementById('tableBody');
+            const total = gAllPeserta.length;
+            const countWarning = gAllPeserta.filter(p => !p._isComplete).length;
+            const countSM = gAllPeserta.filter(p => p._isSM).length;
+            const countChecked = gAllPeserta.filter(p => p._checked).length;
+
+            // Update counters
+            document.getElementById('countChecked').textContent = countChecked;
+            document.getElementById('countTotal').textContent = total;
+            document.getElementById('countSM').textContent = countSM;
+            document.getElementById('countWarning').textContent = countWarning;
+            document.getElementById('footerTotal').textContent = total;
+
+            // Toggle toggle-all button text
+            const btnTxt = document.getElementById('btnToggleAllText');
+            if (btnTxt) btnTxt.textContent = countChecked === total ? 'Hapus Semua Centang' : 'Centang Semua';
+
+            // Warning banner
+            const banner = document.getElementById('warningBannerInkomplid');
+            if (countWarning > 0) {
+                banner.classList.remove('hidden');
+                document.getElementById('warningInkomplidCount').textContent = countWarning;
+            } else {
+                banner.classList.add('hidden');
+            }
+
+            // Submit button state
+            const btnSubmit = document.getElementById('btnSubmit');
+            const submitLockedInfo = document.getElementById('submitLockedInfo');
+            if (countWarning > 0) {
+                btnSubmit.disabled = true;
+                submitLockedInfo.classList.remove('hidden');
+            } else {
+                btnSubmit.disabled = countChecked === 0;
+                submitLockedInfo.classList.add('hidden');
+            }
+
+            if (total === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" class="px-6 py-10 text-center text-slate-400 font-medium">Belum ada data peserta untuk KK ini. Silakan hubungi Admin BGTK.</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = gAllPeserta.map((p, idx) => {
+                const nama = p.nama_anggota || p.nama || p.nama_lengkap || '';
+                const sekolah = p.sekolah || p.instansi || '';
+                const email = p.email || p.email_belajar_id || '';
+                const role = p.role || 'Anggota';
+
+                const isSM = p._isSM;
+                const isComplete = p._isComplete;
+                const isChecked = p._checked;
+
+                // Row class
+                let rowClass = 'transition-colors hover:bg-slate-50';
+                if (!isComplete) rowClass = 'row-warning';
+                else if (isSM) rowClass = 'row-sm';
+
+                // SM badge
+                const smBadge = isSM
+                    ? `<span class="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[9px] font-black bg-teal-100 text-teal-800 border border-teal-300 ml-1.5">🏫 SM</span>`
+                    : '';
+
+                // Role badge
+                const roleClass = (role.toLowerCase() === 'ketua')
+                    ? 'bg-violet-100 text-violet-800 border-violet-200'
+                    : 'bg-slate-100 text-slate-600 border-slate-200';
+
+                // Status badge
+                const statusBadge = isComplete
+                    ? `<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg font-bold bg-emerald-100 text-emerald-800 border border-emerald-200">✅ Lengkap</span>`
+                    : `<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg font-bold bg-amber-100 text-amber-800 border border-amber-200">⚠️ Tidak Lengkap</span>`;
+
+                // Highlight missing fields
+                const namaDisplay = nama || `<span class="italic text-rose-500 font-bold">— Nama kosong —</span>`;
+                const emailDisplay = email || `<span class="italic text-rose-500 font-bold">— Email kosong —</span>`;
+                const sekolahDisplay = sekolah || `<span class="italic text-rose-500 font-bold">— Instansi kosong —</span>`;
+
+                return `
+                <tr class="${rowClass}">
+                    <td class="px-4 py-3.5 text-center">
+                        <input type="checkbox" 
+                            onchange="togglePeserta(${idx})" 
+                            ${isChecked ? 'checked' : ''} 
+                            class="w-5 h-5 rounded-lg text-violet-600 border-slate-300 focus:ring-violet-500 cursor-pointer transition"
+                            title="${!isComplete ? 'Data tidak lengkap — tidak dapat diubah dari sini' : ''}">
+                    </td>
+                    <td class="px-4 py-3.5 text-center text-slate-400 font-bold">${idx + 1}</td>
+                    <td class="px-4 py-3.5">
+                        <div class="font-bold text-slate-900 flex items-center flex-wrap gap-1">
+                            ${namaDisplay}${smBadge}
+                        </div>
+                        <div class="text-[10px] text-slate-400 mt-0.5">
+                            <span class="inline-block px-1.5 py-0.5 rounded border ${roleClass} font-bold">${role}</span>
+                        </div>
+                    </td>
+                    <td class="px-4 py-3.5 text-slate-700">
+                        <div class="font-medium">${sekolahDisplay}</div>
+                        ${p.npsn ? `<div class="text-[10px] text-slate-400 font-mono mt-0.5">NPSN: ${p.npsn}</div>` : ''}
+                    </td>
+                    <td class="px-4 py-3.5 text-slate-600 font-mono text-[11px]">${emailDisplay}</td>
+                    <td class="px-4 py-3.5 text-center whitespace-nowrap">${statusBadge}</td>
+                </tr>`;
+            }).join('');
+        }
+
+        // ==========================================
+        // TOGGLE CENTANG PESERTA
+        // ==========================================
+        function togglePeserta(idx) {
+            if (!gAllPeserta[idx]) return;
+
+            // Jika data tidak lengkap: tidak boleh diubah
+            if (!gAllPeserta[idx]._isComplete) {
+                showToast("⚠️ Data peserta ini tidak lengkap. Tidak dapat diubah.", false);
+                renderTable(); // revert checkbox state
+                return;
+            }
+
+            gAllPeserta[idx]._checked = !gAllPeserta[idx]._checked;
+            renderTable();
+        }
+
+        // ==========================================
+        // TOGGLE CENTANG SEMUA
+        // ==========================================
+        function toggleCheckAll() {
+            const countChecked = gAllPeserta.filter(p => p._checked).length;
+            const total = gAllPeserta.length;
+            const targetState = countChecked !== total;
+
+            // Hanya toggle peserta yang datanya lengkap
+            gAllPeserta.forEach(p => {
+                if (p._isComplete) {
+                    p._checked = targetState;
+                }
+                // Peserta tidak lengkap: biarkan state-nya
+            });
+            renderTable();
+        }
+
+        // ==========================================
+        // SUBMIT PESERTA
+        // ==========================================
+        async function submitPeserta() {
+            if (!gSelectedKK) return;
+
+            const pesertaTerpilih = gAllPeserta.filter(p => p._checked);
+            const countWarning = gAllPeserta.filter(p => !p._isComplete).length;
+
+            if (countWarning > 0) {
+                showToast("❌ Masih ada peserta dengan data tidak lengkap.", false);
+                return;
+            }
+
+            if (pesertaTerpilih.length === 0) {
+                showToast("⚠️ Pilih minimal 1 peserta sebelum submit.", false);
+                return;
+            }
+
+            const confirm = window.confirm(
+                `Submit ${pesertaTerpilih.length} dari ${gAllPeserta.length} peserta untuk KK "${gSelectedKK.nama_kombel}"?\n\nData ini akan dikirimkan ke Admin BGTK Sumatera Barat.`
+            );
+            if (!confirm) return;
+
+            // Show loading
+            document.getElementById('btnSubmit').classList.add('hidden');
+            document.getElementById('submitLoading').classList.remove('hidden');
+
+            const nowStr = new Date().toLocaleString('id-ID', { dateStyle: 'long', timeStyle: 'short' });
+            const countSM = pesertaTerpilih.filter(p => p._isSM).length;
+
+            // Clean peserta data (hapus private flags)
+            const cleanPeserta = pesertaTerpilih.map(p => {
+                const { _isSM, _isComplete, _checked, _allKombelRef, ...cleanP } = p;
+                return { ...cleanP, is_sm: _isSM };
+            });
+
+            const payload = {
+                is_submitted: true,
+                tgl_seleksi: nowStr,
+                total_dipilih: pesertaTerpilih.length,
+                total_peserta: gAllPeserta.length,
+                total_sm: countSM,
+                nama_kk: gSelectedKK.nama_kombel,
+                nama_ketua: gSelectedKK.nama_ketua || '-',
+                kab_kota: gSelectedKK.kab_kota || '-',
+                peserta_terpilih: cleanPeserta
+            };
+
+            try {
+                const kkId = gSelectedKK.id || gSelectedKK.slug || Object.keys(gKKList).find(
+                    k => gKKList[k] === gSelectedKK
+                );
+                await db.ref(`master_kombel/${kkId}/seleksi_peserta_fkk`).set(payload);
+
+                // Show success
+                goToStep3(nowStr, pesertaTerpilih.length, countSM);
+
+            } catch(e) {
+                console.error("Gagal submit:", e);
+                showToast("❌ Gagal menyimpan data: " + e.message, false);
+                document.getElementById('btnSubmit').classList.remove('hidden');
+                document.getElementById('submitLoading').classList.add('hidden');
+            }
+        }
+
+        // ==========================================
+        // GO TO STEP 3 (SUKSES)
+        // ==========================================
+        function goToStep3(tgl, jumlah, smCount) {
+            document.getElementById('sectionStep2').classList.add('hidden');
+            document.getElementById('sectionStep3').classList.remove('hidden');
+            document.getElementById('sectionStep3').classList.add('fade-in');
+
+            document.getElementById('succKKTitle').textContent = gSelectedKK.nama_kombel;
+            document.getElementById('succTgl').textContent = tgl;
+            document.getElementById('succJumlah').textContent = `${jumlah} / ${gAllPeserta.length} Peserta`;
+            document.getElementById('succSM').textContent = `${smCount} Peserta`;
+            document.getElementById('succKetua').textContent = gSelectedKK.nama_ketua || '-';
+        }
+
+        // ==========================================
+        // HELPERS
+        // ==========================================
+        function showStep1Loading(show) {
+            const el = document.getElementById('step1Loading');
+            if (el) {
+                if (show) el.classList.remove('hidden');
+                else el.classList.add('hidden');
+            }
+        }
+
+        function showToast(msg, isSuccess = true) {
+            const toast = document.getElementById('toast');
+            const box = document.getElementById('toastBox');
+            if (!toast || !box) return;
+            box.className = `px-5 py-3 rounded-2xl shadow-2xl font-bold text-sm text-white flex items-center gap-2 ${isSuccess ? 'bg-emerald-600' : 'bg-rose-600'}`;
+            box.innerHTML = msg;
+            toast.classList.remove('hidden');
+            setTimeout(() => toast.classList.add('hidden'), 4000);
+        }
+    </script>
+
+</body>
+</html>
