@@ -139,11 +139,20 @@
                     </div>
                 </div>
 
-                <!-- Tombol Lihat Peserta -->
+                <!-- Input Verifikasi Email Ketua -->
+                <div id="emailKetuaInputWrap" class="hidden space-y-2 fade-in">
+                    <label class="block text-xs font-extrabold uppercase tracking-wider text-slate-700">
+                        🔑 Verifikasi Email Ketua (belajar.id atau Email Terdaftar):
+                    </label>
+                    <input type="email" id="inputEmailKetua" placeholder="contoh: nama@guru.sd.belajar.id" class="w-full border-2 border-slate-200 rounded-2xl px-4 py-3.5 text-sm font-semibold text-slate-800 focus:bg-white focus:border-violet-600 focus:ring-4 focus:ring-violet-100 outline-none transition-all">
+                    <p class="text-[11px] text-slate-400">Masukkan alamat email <code class="bg-slate-100 text-violet-700 px-1.5 py-0.5 rounded font-mono font-bold">belajar.id</code> atau email Ketua KK yang terdaftar di BGTK.</p>
+                </div>
+
+                <!-- Tombol Verifikasi & Lihat Peserta -->
                 <div id="btnLihatPesertaWrap" class="hidden">
-                    <button onclick="goToStep2()" class="w-full py-4 bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-700 hover:to-indigo-700 text-white rounded-2xl font-black text-sm shadow-lg shadow-violet-200 hover:shadow-xl transition-all flex items-center justify-center gap-2 active:scale-[0.99]">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
-                        <span>Lihat Daftar Peserta</span>
+                    <button onclick="verifikasiDanKeStep2()" class="w-full py-4 bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-700 hover:to-indigo-700 text-white rounded-2xl font-black text-sm shadow-lg shadow-violet-200 hover:shadow-xl transition-all flex items-center justify-center gap-2 active:scale-[0.99]">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+                        <span>Verifikasi Email & Lihat Daftar Peserta</span>
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
                     </button>
                 </div>
@@ -361,6 +370,7 @@
         let gSelectedKK = null;     // KK yang dipilih
         let gAllPeserta = [];       // Daftar peserta KK terpilih (dengan flags)
         let gSMNpsnSet = new Set(); // Set NPSN yang ada di status_sekolah_model
+        let gVerifiedKetuaEmail = ''; // Email Ketua yang terverifikasi saat login
 
         // ==========================================
         // INIT
@@ -439,10 +449,12 @@
         function onKKSelected() {
             const idx = document.getElementById('selectKK').value;
             const infoCard = document.getElementById('infoKKCard');
+            const emailInputWrap = document.getElementById('emailKetuaInputWrap');
             const btnWrap = document.getElementById('btnLihatPesertaWrap');
 
             if (idx === '' || idx === null || idx === undefined) {
                 infoCard.classList.add('hidden');
+                if (emailInputWrap) emailInputWrap.classList.add('hidden');
                 btnWrap.classList.add('hidden');
                 gSelectedKK = null;
                 return;
@@ -472,7 +484,56 @@
             spanSMCount.classList.remove('hidden');
 
             infoCard.classList.remove('hidden');
+            if (emailInputWrap) emailInputWrap.classList.remove('hidden');
             btnWrap.classList.remove('hidden');
+        }
+
+        // ==========================================
+        // VERIFIKASI LOGIN EMAIL KETUA
+        // ==========================================
+        function verifikasiDanKeStep2() {
+            if (!gSelectedKK) {
+                showToast("⚠️ Silakan pilih KK terlebih dahulu.", false);
+                return;
+            }
+
+            const inputEmail = (document.getElementById('inputEmailKetua').value || '').trim().toLowerCase();
+            if (!inputEmail) {
+                showToast("⚠️ Silakan masukkan email belajar.id / email Ketua terdaftar.", false);
+                return;
+            }
+
+            const registeredEmail1 = (gSelectedKK.email || '').trim().toLowerCase();
+            const registeredEmail2 = (gSelectedKK.email_ketua || '').trim().toLowerCase();
+
+            // Cek juga email dari peserta yang menjabat sebagai Ketua
+            const rawPeserta = getCombinedPeserta(gSelectedKK);
+            const ketuaPesertaEmails = rawPeserta
+                .filter(p => (p.role || '').toLowerCase() === 'ketua' || (p.jabatan || '').toLowerCase() === 'ketua')
+                .map(p => (p.email || p.email_belajar_id || '').trim().toLowerCase())
+                .filter(e => e && e !== '-');
+
+            const superAdminEmails = [
+                'mastersumbar1@gmail.com',
+                'irawati.2308@gmail.com',
+                'irawati@kemendikdasmen.go.id',
+                'rosariaayu8@gmail.com'
+            ];
+
+            const isMatch = (
+                inputEmail === registeredEmail1 ||
+                inputEmail === registeredEmail2 ||
+                ketuaPesertaEmails.includes(inputEmail) ||
+                superAdminEmails.includes(inputEmail)
+            );
+
+            if (!isMatch) {
+                showToast(`❌ Email "${inputEmail}" tidak terdaftar sebagai Ketua pada KK ini.`, false);
+                return;
+            }
+
+            gVerifiedKetuaEmail = inputEmail;
+            goToStep2();
         }
 
         // ==========================================
@@ -514,7 +575,7 @@
             // Update header Step 2
             document.getElementById('step2KKTitle').textContent = gSelectedKK.nama_kombel;
             document.getElementById('step2KKSub').textContent =
-                `${gSelectedKK.kab_kota || '-'} • Ketua: ${gSelectedKK.nama_ketua || '-'} • ${totalPeserta} Peserta`;
+                `${gSelectedKK.kab_kota || '-'} • Ketua: ${gSelectedKK.nama_ketua || '-'} (${gVerifiedKetuaEmail || '-'}) • ${totalPeserta} Peserta`;
 
             // Show Step 2, hide Step 1
             document.getElementById('sectionStep1').classList.add('hidden');
@@ -792,6 +853,7 @@
                 nama_kk: gSelectedKK.nama_kombel,
                 nama_ketua: gSelectedKK.nama_ketua || '-',
                 kab_kota: gSelectedKK.kab_kota || '-',
+                submitted_by: gVerifiedKetuaEmail || gSelectedKK.email || 'Ketua KK',
                 peserta_terpilih: cleanPeserta
             };
 
