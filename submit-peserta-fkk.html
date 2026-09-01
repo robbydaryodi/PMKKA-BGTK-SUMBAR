@@ -513,6 +513,10 @@
                 .map(p => (p.email || p.email_belajar_id || '').trim().toLowerCase())
                 .filter(e => e && e !== '-');
 
+            const allPesertaEmails = rawPeserta
+                .map(p => (p.email || p.email_belajar_id || '').trim().toLowerCase())
+                .filter(e => e && e !== '-');
+
             const superAdminEmails = [
                 'mastersumbar1@gmail.com',
                 'irawati.2308@gmail.com',
@@ -520,12 +524,27 @@
                 'rosariaayu8@gmail.com'
             ];
 
-            const isMatch = (
-                inputEmail === registeredEmail1 ||
-                inputEmail === registeredEmail2 ||
-                ketuaPesertaEmails.includes(inputEmail) ||
-                superAdminEmails.includes(inputEmail)
-            );
+            const hasRegisteredKetuaEmail = (registeredEmail1 && registeredEmail1 !== '-') || 
+                                           (registeredEmail2 && registeredEmail2 !== '-') || 
+                                           (ketuaPesertaEmails.length > 0);
+
+            let isMatch = false;
+
+            if (hasRegisteredKetuaEmail) {
+                isMatch = (
+                    inputEmail === registeredEmail1 ||
+                    inputEmail === registeredEmail2 ||
+                    ketuaPesertaEmails.includes(inputEmail) ||
+                    superAdminEmails.includes(inputEmail)
+                );
+            } else {
+                // Jika email ketua pada master data belum terisi (-), izinkan jika email cocok dengan peserta KK atau email valid
+                isMatch = (
+                    allPesertaEmails.includes(inputEmail) ||
+                    superAdminEmails.includes(inputEmail) ||
+                    inputEmail.includes('@')
+                );
+            }
 
             if (!isMatch) {
                 showToast(`❌ Email "${inputEmail}" tidak terdaftar sebagai Ketua pada KK ini.`, false);
