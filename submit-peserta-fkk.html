@@ -195,11 +195,17 @@
             <div id="warningBannerInkomplid" class="hidden glass-card rounded-2xl p-4 border-2 border-amber-300 bg-amber-50/90 shadow-md fade-in">
                 <div class="flex items-start gap-3">
                     <div class="w-8 h-8 bg-amber-100 text-amber-600 rounded-xl flex items-center justify-center flex-shrink-0 text-lg">⚠️</div>
-                    <div class="flex-1">
-                        <div class="font-black text-amber-900 text-sm">Terdapat Peserta dengan Data Tidak Lengkap</div>
-                        <p class="text-amber-800 text-xs mt-1">
-                            <span id="warningInkomplidCount" class="font-black">0</span> peserta belum memiliki data lengkap (nama, email, atau instansi kosong). 
-                            <strong>Tombol Submit dikunci</strong> hingga Admin BGTK melengkapi data tersebut. Hubungi Admin untuk perbaikan data.
+                    <div class="flex-1 space-y-2">
+                        <div class="font-black text-amber-900 text-sm">
+                            <span id="warningInkomplidCount" class="font-black">0</span> Peserta dengan Data Tidak Lengkap (Nama / Email)
+                        </div>
+                        <p class="text-amber-800 text-xs leading-relaxed">
+                            Perbaikan data resmi <strong>tidak bisa dilakukan di aplikasi ini</strong>. 
+                            Peserta yang bersangkutan perlu memperbaiki datanya melalui 
+                            <strong class="underline">Sindara</strong> (Sistem Informasi Data GTK).
+                        </p>
+                        <p class="text-amber-700 text-xs leading-relaxed">
+                            💡 Anda tetap <strong>dapat melakukan submit</strong>. Gunakan kolom <em>Catatan Ketua</em> di baris peserta tersebut untuk memberikan keterangan tambahan — catatan ini akan terlihat oleh Admin BGTK.
                         </p>
                     </div>
                 </div>
@@ -261,12 +267,6 @@
 
             <!-- Submit Button Area -->
             <div class="glass-card rounded-3xl shadow-xl p-6 space-y-4">
-                <!-- Submit locked warning -->
-                <div id="submitLockedInfo" class="hidden p-3.5 rounded-2xl bg-rose-50 border border-rose-200 text-rose-700 text-xs font-semibold flex items-center gap-2">
-                    <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
-                    <span>Submit dikunci karena masih ada peserta dengan data tidak lengkap. Hubungi Admin BGTK untuk melengkapi data.</span>
-                </div>
-
                 <!-- Submit button -->
                 <button id="btnSubmit" onclick="submitPeserta()" disabled
                     class="w-full py-4 rounded-2xl font-black text-base transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed bg-emerald-600 hover:bg-emerald-700 text-white shadow-lg shadow-emerald-200 hover:shadow-xl active:scale-[0.99]">
@@ -312,6 +312,9 @@
                         <strong class="text-slate-800" id="succKetua">-</strong>
                     </div>
                 </div>
+
+                <!-- Info peserta tidak lengkap -->
+                <div id="succCatatanInfo" class="hidden text-xs text-amber-700 bg-amber-50 border border-amber-200 rounded-xl px-4 py-3 font-semibold"></div>
 
                 <button onclick="window.location.reload()" class="w-full py-3 bg-slate-900 hover:bg-slate-800 text-white rounded-xl font-bold text-sm transition shadow-sm">
                     Selesai &amp; Mulai Lagi
@@ -548,6 +551,16 @@
         }
 
         // ==========================================
+        // CEK KELENGKAPAN DATA PESERTA
+        // Hanya cek nama dan email — instansi dimaafkan
+        // ==========================================
+        function isPesertaComplete(p) {
+            const nama = (p.nama_anggota || p.nama || p.nama_lengkap || '').trim();
+            const email = (p.email || p.email_belajar_id || '').trim();
+            return nama !== '' && email !== '';
+        }
+
+        // ==========================================
         // GABUNGKAN PESERTA (TERMASUK MERGED KK)
         // ==========================================
         function getCombinedPeserta(kk) {
@@ -593,7 +606,7 @@
             const btnTxt = document.getElementById('btnToggleAllText');
             if (btnTxt) btnTxt.textContent = countChecked === total ? 'Hapus Semua Centang' : 'Centang Semua';
 
-            // Warning banner
+            // Warning banner — tampilkan jika ada data tidak lengkap, tapi TIDAK mengunci submit
             const banner = document.getElementById('warningBannerInkomplid');
             if (countWarning > 0) {
                 banner.classList.remove('hidden');
@@ -602,19 +615,12 @@
                 banner.classList.add('hidden');
             }
 
-            // Submit button state
+            // Submit button — hanya dikunci jika 0 peserta dipilih
             const btnSubmit = document.getElementById('btnSubmit');
-            const submitLockedInfo = document.getElementById('submitLockedInfo');
-            if (countWarning > 0) {
-                btnSubmit.disabled = true;
-                submitLockedInfo.classList.remove('hidden');
-            } else {
-                btnSubmit.disabled = countChecked === 0;
-                submitLockedInfo.classList.add('hidden');
-            }
+            btnSubmit.disabled = countChecked === 0;
 
             if (total === 0) {
-                tbody.innerHTML = `<tr><td colspan="6" class="px-6 py-10 text-center text-slate-400 font-medium">Belum ada data peserta untuk KK ini. Silakan hubungi Admin BGTK.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="7" class="px-6 py-10 text-center text-slate-400 font-medium">Belum ada data peserta untuk KK ini. Silakan hubungi Admin BGTK.</td></tr>`;
                 return;
             }
 
@@ -623,6 +629,7 @@
                 const sekolah = p.sekolah || p.instansi || '';
                 const email = p.email || p.email_belajar_id || '';
                 const role = p.role || 'Anggota';
+                const catatan = p._catatan || '';
 
                 const isSM = p._isSM;
                 const isComplete = p._isComplete;
@@ -646,54 +653,73 @@
                 // Status badge
                 const statusBadge = isComplete
                     ? `<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg font-bold bg-emerald-100 text-emerald-800 border border-emerald-200">✅ Lengkap</span>`
-                    : `<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg font-bold bg-amber-100 text-amber-800 border border-amber-200">⚠️ Tidak Lengkap</span>`;
+                    : `<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg font-bold bg-amber-100 text-amber-800 border border-amber-200">⚠️ Perlu Perbaiki di Sindara</span>`;
 
                 // Highlight missing fields
-                const namaDisplay = nama || `<span class="italic text-rose-500 font-bold">— Nama kosong —</span>`;
-                const emailDisplay = email || `<span class="italic text-rose-500 font-bold">— Email kosong —</span>`;
-                const sekolahDisplay = sekolah || `<span class="italic text-rose-500 font-bold">— Instansi kosong —</span>`;
+                const namaDisplay = nama
+                    ? `<span class="font-bold text-slate-900">${nama}</span>`
+                    : `<span class="italic text-rose-500 font-bold">— Nama kosong —</span>`;
+                const emailDisplay = email
+                    ? email
+                    : `<span class="italic text-rose-500 font-bold">— Email kosong —</span>`;
+
+                // Catatan input (hanya tampil jika data tidak lengkap)
+                const catatanRow = !isComplete ? `
+                <tr class="row-warning border-t-0">
+                    <td colspan="7" class="px-4 pb-3 pt-0">
+                        <div class="flex items-center gap-2 bg-amber-50 border border-amber-200 rounded-xl px-3 py-2">
+                            <span class="text-amber-700 text-[10px] font-black whitespace-nowrap">📝 Catatan Ketua:</span>
+                            <input type="text"
+                                value="${catatan.replace(/"/g, '&quot;')}"
+                                onchange="setCatatan(${idx}, this.value)"
+                                placeholder="Tulis keterangan untuk Admin BGTK (opsional)..."
+                                class="flex-1 text-xs text-slate-800 bg-transparent border-none outline-none placeholder-amber-400 font-medium">
+                        </div>
+                    </td>
+                </tr>` : '';
 
                 return `
                 <tr class="${rowClass}">
-                    <td class="px-4 py-3.5 text-center">
-                        <input type="checkbox" 
-                            onchange="togglePeserta(${idx})" 
-                            ${isChecked ? 'checked' : ''} 
-                            class="w-5 h-5 rounded-lg text-violet-600 border-slate-300 focus:ring-violet-500 cursor-pointer transition"
-                            title="${!isComplete ? 'Data tidak lengkap — tidak dapat diubah dari sini' : ''}">
+                    <td class="px-4 py-3 text-center">
+                        <input type="checkbox"
+                            onchange="togglePeserta(${idx})"
+                            ${isChecked ? 'checked' : ''}
+                            class="w-5 h-5 rounded-lg text-violet-600 border-slate-300 focus:ring-violet-500 cursor-pointer transition">
                     </td>
-                    <td class="px-4 py-3.5 text-center text-slate-400 font-bold">${idx + 1}</td>
-                    <td class="px-4 py-3.5">
-                        <div class="font-bold text-slate-900 flex items-center flex-wrap gap-1">
+                    <td class="px-4 py-3 text-center text-slate-400 font-bold">${idx + 1}</td>
+                    <td class="px-4 py-3">
+                        <div class="flex items-center flex-wrap gap-1">
                             ${namaDisplay}${smBadge}
                         </div>
                         <div class="text-[10px] text-slate-400 mt-0.5">
                             <span class="inline-block px-1.5 py-0.5 rounded border ${roleClass} font-bold">${role}</span>
                         </div>
                     </td>
-                    <td class="px-4 py-3.5 text-slate-700">
-                        <div class="font-medium">${sekolahDisplay}</div>
+                    <td class="px-4 py-3 text-slate-700">
+                        <div class="font-medium text-xs">${sekolah || '<span class="text-slate-400 italic text-[11px]">—</span>'}</div>
                         ${p.npsn ? `<div class="text-[10px] text-slate-400 font-mono mt-0.5">NPSN: ${p.npsn}</div>` : ''}
                     </td>
-                    <td class="px-4 py-3.5 text-slate-600 font-mono text-[11px]">${emailDisplay}</td>
-                    <td class="px-4 py-3.5 text-center whitespace-nowrap">${statusBadge}</td>
-                </tr>`;
+                    <td class="px-4 py-3 text-slate-600 font-mono text-[11px]">${emailDisplay}</td>
+                    <td class="px-4 py-3 text-center whitespace-nowrap">${statusBadge}</td>
+                </tr>${catatanRow}`;
             }).join('');
         }
 
         // ==========================================
+        // SIMPAN CATATAN KETUA PER PESERTA
+        // ==========================================
+        function setCatatan(idx, value) {
+            if (gAllPeserta[idx]) {
+                gAllPeserta[idx]._catatan = value.trim();
+            }
+        }
+
+        // ==========================================
         // TOGGLE CENTANG PESERTA
+        // Semua peserta bisa dicentang/uncentang terlepas dari kelengkapan data
         // ==========================================
         function togglePeserta(idx) {
             if (!gAllPeserta[idx]) return;
-
-            // Jika data tidak lengkap: tidak boleh diubah
-            if (!gAllPeserta[idx]._isComplete) {
-                showToast("⚠️ Data peserta ini tidak lengkap. Tidak dapat diubah.", false);
-                renderTable(); // revert checkbox state
-                return;
-            }
-
             gAllPeserta[idx]._checked = !gAllPeserta[idx]._checked;
             renderTable();
         }
@@ -705,14 +731,7 @@
             const countChecked = gAllPeserta.filter(p => p._checked).length;
             const total = gAllPeserta.length;
             const targetState = countChecked !== total;
-
-            // Hanya toggle peserta yang datanya lengkap
-            gAllPeserta.forEach(p => {
-                if (p._isComplete) {
-                    p._checked = targetState;
-                }
-                // Peserta tidak lengkap: biarkan state-nya
-            });
+            gAllPeserta.forEach(p => { p._checked = targetState; });
             renderTable();
         }
 
@@ -723,22 +742,21 @@
             if (!gSelectedKK) return;
 
             const pesertaTerpilih = gAllPeserta.filter(p => p._checked);
-            const countWarning = gAllPeserta.filter(p => !p._isComplete).length;
-
-            if (countWarning > 0) {
-                showToast("❌ Masih ada peserta dengan data tidak lengkap.", false);
-                return;
-            }
 
             if (pesertaTerpilih.length === 0) {
                 showToast("⚠️ Pilih minimal 1 peserta sebelum submit.", false);
                 return;
             }
 
-            const confirm = window.confirm(
-                `Submit ${pesertaTerpilih.length} dari ${gAllPeserta.length} peserta untuk KK "${gSelectedKK.nama_kombel}"?\n\nData ini akan dikirimkan ke Admin BGTK Sumatera Barat.`
+            const countWarning = gAllPeserta.filter(p => !p._isComplete).length;
+            const warningInfo = countWarning > 0
+                ? `\n\n⚠️ Catatan: ${countWarning} peserta memiliki data tidak lengkap. Data catatan ketua akan disertakan.`
+                : '';
+
+            const confirmed = window.confirm(
+                `Submit ${pesertaTerpilih.length} dari ${gAllPeserta.length} peserta untuk KK "${gSelectedKK.nama_kombel}"?\n\nData ini akan dikirimkan ke Admin BGTK Sumatera Barat.${warningInfo}`
             );
-            if (!confirm) return;
+            if (!confirmed) return;
 
             // Show loading
             document.getElementById('btnSubmit').classList.add('hidden');
@@ -747,11 +765,22 @@
             const nowStr = new Date().toLocaleString('id-ID', { dateStyle: 'long', timeStyle: 'short' });
             const countSM = pesertaTerpilih.filter(p => p._isSM).length;
 
-            // Clean peserta data (hapus private flags)
+            // Clean peserta data — hapus private flags, sertakan catatan jika ada
             const cleanPeserta = pesertaTerpilih.map(p => {
-                const { _isSM, _isComplete, _checked, _allKombelRef, ...cleanP } = p;
-                return { ...cleanP, is_sm: _isSM };
+                const { _isSM, _isComplete, _checked, _catatan, _allKombelRef, ...cleanP } = p;
+                const result = { ...cleanP, is_sm: _isSM, is_data_lengkap: _isComplete };
+                if (_catatan) result.catatan_ketua = _catatan;
+                return result;
             });
+
+            // Pisahkan peserta tidak lengkap untuk catatan admin
+            const pesertaTidakLengkap = gAllPeserta
+                .filter(p => !p._isComplete)
+                .map(p => ({
+                    nama: p.nama_anggota || p.nama || '—',
+                    email: p.email || '—',
+                    catatan_ketua: p._catatan || ''
+                }));
 
             const payload = {
                 is_submitted: true,
@@ -759,20 +788,22 @@
                 total_dipilih: pesertaTerpilih.length,
                 total_peserta: gAllPeserta.length,
                 total_sm: countSM,
+                total_data_tidak_lengkap: countWarning,
                 nama_kk: gSelectedKK.nama_kombel,
                 nama_ketua: gSelectedKK.nama_ketua || '-',
                 kab_kota: gSelectedKK.kab_kota || '-',
                 peserta_terpilih: cleanPeserta
             };
 
-            try {
-                const kkId = gSelectedKK.id || gSelectedKK.slug || Object.keys(gKKList).find(
-                    k => gKKList[k] === gSelectedKK
-                );
-                await db.ref(`master_kombel/${kkId}/seleksi_peserta_fkk`).set(payload);
+            // Simpan info peserta tidak lengkap jika ada
+            if (pesertaTidakLengkap.length > 0) {
+                payload.catatan_peserta_tidak_lengkap = pesertaTidakLengkap;
+            }
 
-                // Show success
-                goToStep3(nowStr, pesertaTerpilih.length, countSM);
+            try {
+                const kkId = gSelectedKK.id || gSelectedKK.slug;
+                await db.ref(`master_kombel/${kkId}/seleksi_peserta_fkk`).set(payload);
+                goToStep3(nowStr, pesertaTerpilih.length, countSM, countWarning);
 
             } catch(e) {
                 console.error("Gagal submit:", e);
@@ -785,7 +816,7 @@
         // ==========================================
         // GO TO STEP 3 (SUKSES)
         // ==========================================
-        function goToStep3(tgl, jumlah, smCount) {
+        function goToStep3(tgl, jumlah, smCount, countWarning) {
             document.getElementById('sectionStep2').classList.add('hidden');
             document.getElementById('sectionStep3').classList.remove('hidden');
             document.getElementById('sectionStep3').classList.add('fade-in');
@@ -795,6 +826,17 @@
             document.getElementById('succJumlah').textContent = `${jumlah} / ${gAllPeserta.length} Peserta`;
             document.getElementById('succSM').textContent = `${smCount} Peserta`;
             document.getElementById('succKetua').textContent = gSelectedKK.nama_ketua || '-';
+
+            // Tampilkan info catatan jika ada data tidak lengkap
+            const catatanInfo = document.getElementById('succCatatanInfo');
+            if (catatanInfo) {
+                if (countWarning > 0) {
+                    catatanInfo.classList.remove('hidden');
+                    catatanInfo.textContent = `⚠️ ${countWarning} peserta dengan data tidak lengkap — catatan diteruskan ke Admin BGTK.`;
+                } else {
+                    catatanInfo.classList.add('hidden');
+                }
+            }
         }
 
         // ==========================================
