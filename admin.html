@@ -1907,6 +1907,9 @@
                     Sistem Pengkelasan PMKKA Reguler BGTK Sumbar
                 </div>
                 <div class="flex items-center gap-2 w-full sm:w-auto">
+                    <button onclick="closeModalDetailSubmissionPeserta(); openKelolaKombelModal(gCurrentModalKombelId);" class="px-4 py-2 bg-amber-500 hover:bg-amber-600 text-slate-950 rounded-xl text-xs font-black transition shadow-sm flex items-center justify-center gap-1.5 cursor-pointer">
+                        <span>✏️ Perbaiki / Edit Peserta</span>
+                    </button>
                     <button id="btnDetailExportCSV" onclick="downloadCSVLMSAdminCurrent()" class="flex-1 sm:flex-initial px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-extrabold transition shadow-sm flex items-center justify-center gap-1.5 cursor-pointer">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
                         <span>Download CSV LMS Kelas Ini</span>
@@ -4564,12 +4567,17 @@
 
             let selectedIndices = kombel.selected_peserta_indices;
             if (!Array.isArray(selectedIndices)) {
-                // Default: ALL participants checked (<35 and >=35 as user specified, but editable)
-                selectedIndices = allPeserta.map((_, idx) => idx);
+                // Default: Max 35 participants
+                selectedIndices = allPeserta.slice(0, 35).map((_, idx) => idx);
                 kombel.selected_peserta_indices = selectedIndices;
             }
 
-            if (badgeCount) badgeCount.textContent = `${selectedIndices.length} / ${allPeserta.length} Peserta Terpilih`;
+            if (selectedIndices.length > 35) {
+                selectedIndices = selectedIndices.slice(0, 35);
+                kombel.selected_peserta_indices = selectedIndices;
+            }
+
+            if (badgeCount) badgeCount.textContent = `${selectedIndices.length} / 35 Peserta Terpilih (Maks 35)`;
 
             if (allPeserta.length === 0) {
                 tbody.innerHTML = `<tr><td colspan="7" class="px-4 py-8 text-center text-slate-400">Belum ada data peserta untuk kelas/kombel ini. Silakan impor CSV peserta di atas.</td></tr>`;
@@ -4613,12 +4621,16 @@
             const allPeserta = getCombinedPesertaForKombel(gCurrentModalKombelId);
             let selectedIndices = kombel.selected_peserta_indices;
             if (!Array.isArray(selectedIndices)) {
-                selectedIndices = allPeserta.map((_, i) => i);
+                selectedIndices = allPeserta.slice(0, 35).map((_, i) => i);
             }
 
             if (selectedIndices.includes(idx)) {
                 selectedIndices = selectedIndices.filter(i => i !== idx);
             } else {
+                if (selectedIndices.length >= 35) {
+                    showToast("⚠️ Batas maksimal peserta terpilih untuk kelas LMS adalah 35 orang.", "rose");
+                    return;
+                }
                 selectedIndices.push(idx);
             }
 
@@ -4633,7 +4645,11 @@
             if (!kombel) return;
 
             const allPeserta = getCombinedPesertaForKombel(gCurrentModalKombelId);
-            let selectedIndices = checkAll ? allPeserta.map((_, i) => i) : [];
+            let selectedIndices = checkAll ? allPeserta.slice(0, 35).map((_, i) => i) : [];
+
+            if (checkAll && allPeserta.length > 35) {
+                showToast("ℹ️ Mencentang 35 peserta pertama sesuai kuota maksimal 35 orang.", "indigo");
+            }
 
             kombel.selected_peserta_indices = selectedIndices;
             renderActivePesertaTable(kombel);
@@ -4880,8 +4896,11 @@
                 // Action buttons
                 const btnActions = `
                     <div class="flex items-center justify-center gap-1.5">
-                        <button onclick="openModalDetailSubmissionPeserta('${k.id}')" title="Klik untuk lihat rincian peserta terpilih &amp; aktor kelas" class="px-3 py-1.5 rounded-xl text-xs font-black bg-indigo-600 hover:bg-indigo-700 text-white transition-all shadow-2xs flex items-center gap-1 cursor-pointer hover:scale-105">
-                            <span>👁️ Lihat Peserta (${selectedPeserta.length})</span>
+                        <button onclick="openModalDetailSubmissionPeserta('${k.id}')" title="Klik untuk lihat rincian peserta terpilih &amp; aktor kelas" class="px-2.5 py-1.5 rounded-xl text-xs font-black bg-indigo-600 hover:bg-indigo-700 text-white transition-all shadow-2xs flex items-center gap-1 cursor-pointer hover:scale-105">
+                            <span>👁️ Lihat (${selectedPeserta.length})</span>
+                        </button>
+                        <button onclick="openKelolaKombelModal('${k.id}')" title="Perbaiki / Edit daftar peserta terpilih" class="px-2.5 py-1.5 rounded-xl text-xs font-black bg-amber-500 hover:bg-amber-600 text-slate-950 transition-all shadow-2xs flex items-center gap-1 cursor-pointer hover:scale-105">
+                            <span>✏️ Perbaiki</span>
                         </button>
                         <button onclick="downloadCSVLMSAdmin('${k.id}')" title="Download CSV LMS Kelas Ini" class="p-1.5 rounded-xl text-xs font-bold bg-emerald-100 text-emerald-900 hover:bg-emerald-200 border border-emerald-300 transition-colors cursor-pointer">
                             📥 CSV

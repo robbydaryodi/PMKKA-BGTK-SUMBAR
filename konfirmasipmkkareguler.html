@@ -63,10 +63,23 @@
                 </div>
 
                 <!-- Info detail Kombel terpilih -->
-                <div id="infoKombelSelected" class="hidden p-4 rounded-2xl bg-purple-50/70 border border-purple-200 text-xs space-y-1.5">
+                <div id="infoKombelSelected" class="hidden p-4 rounded-2xl bg-purple-50/70 border border-purple-200 text-xs space-y-2">
                     <div class="font-bold text-purple-900 text-sm" id="lblKombelNama">-</div>
                     <div class="text-purple-700" id="lblKombelWilayah">-</div>
                     <div class="text-purple-800 font-semibold" id="lblKombelKetua">-</div>
+                    <div id="statusAlreadyConfirmedBanner" class="hidden pt-2 border-t border-purple-200/80">
+                        <div class="p-3 bg-emerald-100/80 border border-emerald-300 rounded-xl text-emerald-950 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
+                            <div>
+                                <span class="font-black text-xs">✅ Sudah Dikonfirmasi</span>
+                                <p class="text-[11px] text-emerald-800" id="lblAlreadyConfDetail">Dikonfirmasi pada -</p>
+                            </div>
+                            <div class="flex items-center gap-1.5 w-full sm:w-auto">
+                                <button onclick="showChecklistStep()" class="px-3 py-1.5 bg-emerald-700 hover:bg-emerald-800 text-white rounded-lg font-black text-xs transition shadow-2xs">
+                                    ✏️ Perbaiki / Edit Konfirmasi
+                                </button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Email Input -->
@@ -104,11 +117,11 @@
             <!-- INTRUKSI & CENTANG ALL TOOLBAR -->
             <div class="bg-amber-50 border border-amber-200 rounded-2xl p-4 flex flex-col md:flex-row items-start md:items-center justify-between gap-3 text-amber-900">
                 <div class="text-xs space-y-0.5">
-                    <div class="font-bold text-sm text-amber-950">📋 Petunjuk Konfirmasi Peserta:</div>
-                    <p>Centang peserta yang dipastikan **mengikuti kegiatan PMKKA Reguler**. Gunakan tombol **Centang Semua** untuk memilih seluruh peserta sekaligus.</p>
+                    <div class="font-bold text-sm text-amber-950">📋 Petunjuk Konfirmasi Peserta (Maksimal 35 Peserta):</div>
+                    <p>Centang peserta yang dipastikan **mengikuti kegiatan PMKKA Reguler**. Kuota maksimal yang dapat dipilih adalah **35 peserta** per kelas LMS.</p>
                 </div>
                 <button onclick="toggleCentangSemuaPeserta()" id="btnToggleAll" class="px-4 py-2 bg-amber-400 hover:bg-amber-500 text-amber-950 font-black rounded-xl text-xs transition shadow-sm flex-shrink-0 flex items-center gap-1.5">
-                    <span>☑️ Centang Semua Peserta</span>
+                    <span>☑️ Centang 35 Pertama</span>
                 </button>
             </div>
 
@@ -133,7 +146,7 @@
                 </div>
                 <div class="p-4 bg-slate-50 border-t border-slate-200 flex justify-between items-center text-xs text-slate-600 font-bold">
                     <span>Total Peserta Impor: <strong id="cntTotalPeserta">0</strong></span>
-                    <span class="text-purple-700 bg-purple-100 border border-purple-200 px-3 py-1 rounded-full" id="cntTerpilihBadge">0 / 0 Peserta Tercentang</span>
+                    <span class="text-purple-700 bg-purple-100 border border-purple-200 px-3 py-1 rounded-full" id="cntTerpilihBadge">0 / 35 Peserta Tercentang (Maks 35)</span>
                 </div>
             </div>
 
@@ -141,7 +154,7 @@
             <div class="pt-4 border-t border-slate-100">
                 <button onclick="submitKonfirmasiPublic()" class="w-full py-4 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white rounded-2xl font-black text-base shadow-xl shadow-emerald-200 hover:shadow-2xl transition-all flex items-center justify-center gap-2">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-                    <span>SUBMIT KONFIRMASI KEIKUTSERTAAN</span>
+                    <span id="lblSubmitBtnText">SUBMIT / SIMPAN PERBAIKAN KONFIRMASI</span>
                 </button>
             </div>
         </div>
@@ -172,9 +185,14 @@
                 </div>
             </div>
 
-            <button onclick="window.location.reload()" class="px-6 py-3 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-xs font-bold transition shadow-sm">
-                Selesai &amp; Kembali
-            </button>
+            <div class="flex items-center justify-center gap-3">
+                <button onclick="showChecklistStep()" class="px-5 py-3 bg-amber-500 hover:bg-amber-600 text-slate-950 font-black rounded-xl text-xs transition shadow-sm flex items-center gap-1.5">
+                    ✏️ Perbaiki / Edit Konfirmasi Ini
+                </button>
+                <button onclick="window.location.reload()" class="px-6 py-3 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-xs font-bold transition shadow-sm">
+                    Selesai &amp; Kembali
+                </button>
+            </div>
         </div>
 
     </main>
@@ -190,6 +208,7 @@
         let gSelectedKombel = null;
         let gCurrentPesertaList = [];
         let gAllChecked = false;
+        const MAX_PESERTA_KUOTA = 35;
 
         document.addEventListener('DOMContentLoaded', () => {
             loadPublicKombelList();
@@ -224,7 +243,8 @@
 
                 let opt = '<option value="">-- Pilih Komunitas Belajar / KK Anda --</option>';
                 gPublicKombelList.forEach(k => {
-                    opt += `<option value="${k.id}">${k.nama_kombel} (${k.kab_kota || '-'})</option>`;
+                    const statusSub = (k.konfirmasi && k.konfirmasi.is_konfirmasi) ? ' [✅ Sudah Submit]' : '';
+                    opt += `<option value="${k.id}">${k.nama_kombel} (${k.kab_kota || '-'})${statusSub}</option>`;
                 });
                 sel.innerHTML = opt;
             } catch(e) {
@@ -236,6 +256,9 @@
         function onSelectKombelChange() {
             const id = document.getElementById('selectKombelPublic').value;
             const infoBox = document.getElementById('infoKombelSelected');
+            const confBanner = document.getElementById('statusAlreadyConfirmedBanner');
+            const confDetail = document.getElementById('lblAlreadyConfDetail');
+
             gSelectedKombel = gPublicKombelList.find(k => k.id === id) || null;
 
             if (gSelectedKombel) {
@@ -243,6 +266,13 @@
                 document.getElementById('lblKombelWilayah').textContent = `${gSelectedKombel.kab_kota || '-'} • ${gSelectedKombel.kecamatan || '-'}`;
                 document.getElementById('lblKombelKetua').textContent = `Ketua: ${gSelectedKombel.nama_ketua || '-'} (${gSelectedKombel.email || 'Email belum diisi'})`;
                 infoBox.classList.remove('hidden');
+
+                if (gSelectedKombel.konfirmasi && gSelectedKombel.konfirmasi.is_konfirmasi) {
+                    if (confDetail) confDetail.textContent = `Dikonfirmasi pada ${gSelectedKombel.konfirmasi.tgl_konfirmasi || '-'} (${gSelectedKombel.konfirmasi.total_konfirmasi || 0} Peserta Terpilih)`;
+                    if (confBanner) confBanner.classList.remove('hidden');
+                } else {
+                    if (confBanner) confBanner.classList.add('hidden');
+                }
             } else {
                 infoBox.classList.add('hidden');
             }
@@ -277,19 +307,42 @@
 
         function showChecklistStep() {
             document.getElementById('stepLoginSection').classList.add('hidden');
+            document.getElementById('stepSuccessSection').classList.add('hidden');
             document.getElementById('stepChecklistSection').classList.remove('hidden');
 
             document.getElementById('activeKombelTitle').textContent = gSelectedKombel.nama_kombel;
             document.getElementById('activeKetuaInfo').textContent = `Ketua: ${gSelectedKombel.nama_ketua || '-'} • Email: ${gSelectedKombel.email || '-'}`;
 
-            // Ambil daftar peserta
+            // Ambil daftar peserta & restore centang sebelumnya (maks 35)
             const rawPeserta = gSelectedKombel.peserta ? (Array.isArray(gSelectedKombel.peserta) ? gSelectedKombel.peserta : Object.values(gSelectedKombel.peserta)) : [];
-            gCurrentPesertaList = rawPeserta.map(p => ({
-                ...p,
-                checked: true // Default centang semua
-            }));
+            const prevSelectedIndices = gSelectedKombel.selected_peserta_indices;
 
-            gAllChecked = true;
+            let initialCheckedCount = 0;
+            gCurrentPesertaList = rawPeserta.map((p, idx) => {
+                let isChecked = false;
+                if (Array.isArray(prevSelectedIndices) && prevSelectedIndices.length > 0) {
+                    isChecked = prevSelectedIndices.includes(idx);
+                } else {
+                    isChecked = (idx < MAX_PESERTA_KUOTA); // Default 35 pertama
+                }
+                if (isChecked) initialCheckedCount++;
+                return {
+                    ...p,
+                    checked: isChecked
+                };
+            });
+
+            // If initial checked exceeds 35, trim to 35
+            if (initialCheckedCount > MAX_PESERTA_KUOTA) {
+                let count = 0;
+                gCurrentPesertaList.forEach(p => {
+                    if (p.checked) {
+                        count++;
+                        if (count > MAX_PESERTA_KUOTA) p.checked = false;
+                    }
+                });
+            }
+
             renderPublicPesertaTable();
         }
 
@@ -298,7 +351,7 @@
             if (gCurrentPesertaList.length === 0) {
                 body.innerHTML = `<tr><td colspan="6" class="px-6 py-8 text-center text-slate-400 font-medium">Belum ada data peserta yang diimpor oleh Admin BGTK untuk Kombel ini.</td></tr>`;
                 document.getElementById('cntTotalPeserta').textContent = '0';
-                document.getElementById('cntTerpilihBadge').textContent = '0 / 0 Peserta Tercentang';
+                document.getElementById('cntTerpilihBadge').textContent = '0 / 35 Peserta Tercentang';
                 return;
             }
 
@@ -329,27 +382,45 @@
             const total = gCurrentPesertaList.length;
             const checkedCount = gCurrentPesertaList.filter(p => p.checked).length;
             document.getElementById('cntTotalPeserta').textContent = total;
-            document.getElementById('cntTerpilihBadge').textContent = `${checkedCount} / ${total} Peserta Tercentang`;
+            document.getElementById('cntTerpilihBadge').textContent = `${checkedCount} / ${MAX_PESERTA_KUOTA} Peserta Tercentang (Maks 35)`;
 
             const btnToggleAll = document.getElementById('btnToggleAll');
             if (btnToggleAll) {
-                btnToggleAll.innerHTML = checkedCount === total 
+                btnToggleAll.innerHTML = checkedCount > 0 
                     ? `<span>☒ Hapus Semua Centang</span>` 
-                    : `<span>☑️ Centang Semua Peserta</span>`;
+                    : `<span>☑️ Centang 35 Pertama</span>`;
             }
         }
 
         function toggleSinglePeserta(idx) {
-            if (gCurrentPesertaList[idx]) {
-                gCurrentPesertaList[idx].checked = !gCurrentPesertaList[idx].checked;
-                renderPublicPesertaTable();
+            if (!gCurrentPesertaList[idx]) return;
+            const currentCheckedCount = gCurrentPesertaList.filter(p => p.checked).length;
+
+            if (!gCurrentPesertaList[idx].checked && currentCheckedCount >= MAX_PESERTA_KUOTA) {
+                showToast("⚠️ Batas maksimal peserta terpilih untuk kelas LMS adalah 35 orang.", false);
+                return;
             }
+
+            gCurrentPesertaList[idx].checked = !gCurrentPesertaList[idx].checked;
+            renderPublicPesertaTable();
         }
 
         function toggleCentangSemuaPeserta() {
             const checkedCount = gCurrentPesertaList.filter(p => p.checked).length;
-            const targetState = checkedCount !== gCurrentPesertaList.length;
-            gCurrentPesertaList.forEach(p => p.checked = targetState);
+
+            if (checkedCount > 0) {
+                gCurrentPesertaList.forEach(p => p.checked = false);
+                showToast("Semua centang dibatalkan.", true);
+            } else {
+                gCurrentPesertaList.forEach((p, idx) => {
+                    p.checked = (idx < MAX_PESERTA_KUOTA);
+                });
+                if (gCurrentPesertaList.length > MAX_PESERTA_KUOTA) {
+                    showToast(`ℹ️ Mencentang ${MAX_PESERTA_KUOTA} peserta pertama sesuai kuota maksimal.`, true);
+                } else {
+                    showToast("Semua peserta tercentang.", true);
+                }
+            }
             renderPublicPesertaTable();
         }
 
@@ -369,14 +440,26 @@
                 return;
             }
 
-            const confirmKonfirm = confirm(`Submit konfirmasi ${selectedPeserta.length} dari ${gCurrentPesertaList.length} peserta untuk Kombel ${gSelectedKombel.nama_kombel}?`);
+            if (selectedPeserta.length > MAX_PESERTA_KUOTA) {
+                showToast(`⚠️ Kuota maksimal peserta terpilih adalah ${MAX_PESERTA_KUOTA} orang.`, false);
+                return;
+            }
+
+            const isRevisi = gSelectedKombel.konfirmasi && gSelectedKombel.konfirmasi.is_konfirmasi;
+            const actionLabel = isRevisi ? "menyimpan perbaikan konfirmasi" : "mengirim konfirmasi";
+
+            const confirmKonfirm = confirm(`Apakah Anda yakin ingin ${actionLabel} ${selectedPeserta.length} peserta terpilih (dari total ${gCurrentPesertaList.length} peserta) untuk Kombel ${gSelectedKombel.nama_kombel}?`);
             if (!confirmKonfirm) return;
 
             const nowStr = new Date().toLocaleString('id-ID', { dateStyle: 'medium', timeStyle: 'short' });
+            const selectedIndices = [];
+            gCurrentPesertaList.forEach((p, idx) => {
+                if (p.checked) selectedIndices.push(idx);
+            });
 
             const payloadKonfirmasi = {
                 is_konfirmasi: true,
-                tgl_konfirmasi: nowStr,
+                tgl_konfirmasi: `${nowStr}${isRevisi ? ' (Revisi)' : ''}`,
                 total_konfirmasi: selectedPeserta.length,
                 total_peserta_impor: gCurrentPesertaList.length,
                 peserta_konfirmasi: selectedPeserta,
@@ -384,16 +467,24 @@
             };
 
             try {
-                await db.ref(`master_kombel/${gSelectedKombel.id}/konfirmasi`).set(payloadKonfirmasi);
+                await Promise.all([
+                    db.ref(`master_kombel/${gSelectedKombel.id}/konfirmasi`).set(payloadKonfirmasi),
+                    db.ref(`master_kombel/${gSelectedKombel.id}`).update({ selected_peserta_indices: selectedIndices })
+                ]);
+
+                gSelectedKombel.konfirmasi = payloadKonfirmasi;
+                gSelectedKombel.selected_peserta_indices = selectedIndices;
 
                 // Tampilkan screen sukses
                 document.getElementById('stepChecklistSection').classList.add('hidden');
                 document.getElementById('stepSuccessSection').classList.remove('hidden');
 
                 document.getElementById('successKombelTitle').textContent = gSelectedKombel.nama_kombel;
-                document.getElementById('succTgl').textContent = nowStr;
-                document.getElementById('succJumlah').textContent = `${selectedPeserta.length} / ${gCurrentPesertaList.length} Peserta`;
+                document.getElementById('succTgl').textContent = payloadKonfirmasi.tgl_konfirmasi;
+                document.getElementById('succJumlah').textContent = `${selectedPeserta.length} / ${MAX_PESERTA_KUOTA} Peserta Terpilih`;
                 document.getElementById('succKetua').textContent = gSelectedKombel.nama_ketua || '-';
+
+                showToast(`✅ Konfirmasi ${selectedPeserta.length} peserta berhasil disimpan!`, true);
 
             } catch(e) {
                 console.error("Gagal submit konfirmasi:", e);
