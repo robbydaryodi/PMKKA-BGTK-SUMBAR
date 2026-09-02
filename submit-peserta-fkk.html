@@ -885,9 +885,27 @@
                 payload.catatan_peserta_tidak_lengkap = pesertaTidakLengkap;
             }
 
+            const selectedIndices = [];
+            gAllPeserta.forEach((p, idx) => {
+                if (p._checked) selectedIndices.push(idx);
+            });
+
+            const payloadKonfirmasi = {
+                is_konfirmasi: true,
+                tgl_konfirmasi: nowStr,
+                total_konfirmasi: pesertaTerpilih.length,
+                total_peserta_impor: gAllPeserta.length,
+                peserta_konfirmasi: cleanPeserta,
+                submitted_by: gVerifiedKetuaEmail || gSelectedKK.email || 'Ketua KK'
+            };
+
             try {
                 const kkId = gSelectedKK.id || gSelectedKK.slug;
-                await db.ref(`master_kombel/${kkId}/seleksi_peserta_fkk`).set(payload);
+                await Promise.all([
+                    db.ref(`master_kombel/${kkId}/seleksi_peserta_fkk`).set(payload),
+                    db.ref(`master_kombel/${kkId}/konfirmasi`).set(payloadKonfirmasi),
+                    db.ref(`master_kombel/${kkId}`).update({ selected_peserta_indices: selectedIndices })
+                ]);
                 goToStep3(nowStr, pesertaTerpilih.length, countSM, countWarning);
 
             } catch(e) {

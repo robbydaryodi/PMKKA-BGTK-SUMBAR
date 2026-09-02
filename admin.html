@@ -4735,6 +4735,42 @@
         let gSubmitKombelPage = 1;
         const SUBMIT_PER_PAGE = 15;
 
+        function getKombelSubmissionStatus(k) {
+            if (!k) return { isSubmitted: false, date: '', count: 0, total: 0 };
+            
+            // Check node konfirmasi
+            if (k.konfirmasi && (k.konfirmasi.is_konfirmasi || k.konfirmasi.is_submitted)) {
+                return {
+                    isSubmitted: true,
+                    date: k.konfirmasi.tgl_konfirmasi || k.konfirmasi.tanggal_konfirmasi || '',
+                    count: k.konfirmasi.total_konfirmasi || k.konfirmasi.total_dipilih || (Array.isArray(k.selected_peserta_indices) ? k.selected_peserta_indices.length : 0),
+                    total: k.konfirmasi.total_peserta_impor || k.konfirmasi.total_peserta || (k.peserta ? (Array.isArray(k.peserta) ? k.peserta.length : Object.keys(k.peserta).length) : 0)
+                };
+            }
+            
+            // Check node seleksi_peserta_fkk
+            if (k.seleksi_peserta_fkk && (k.seleksi_peserta_fkk.is_submitted || k.seleksi_peserta_fkk.is_konfirmasi)) {
+                return {
+                    isSubmitted: true,
+                    date: k.seleksi_peserta_fkk.tgl_seleksi || k.seleksi_peserta_fkk.tgl_konfirmasi || '',
+                    count: k.seleksi_peserta_fkk.total_dipilih || k.seleksi_peserta_fkk.total_konfirmasi || 0,
+                    total: k.seleksi_peserta_fkk.total_peserta || (k.peserta ? (Array.isArray(k.peserta) ? k.peserta.length : Object.keys(k.peserta).length) : 0)
+                };
+            }
+
+            // Check array selected_peserta_indices
+            if (Array.isArray(k.selected_peserta_indices) && k.selected_peserta_indices.length > 0) {
+                return {
+                    isSubmitted: true,
+                    date: 'Disimpan',
+                    count: k.selected_peserta_indices.length,
+                    total: k.peserta ? (Array.isArray(k.peserta) ? k.peserta.length : Object.keys(k.peserta).length) : 0
+                };
+            }
+
+            return { isSubmitted: false, date: '', count: 0, total: 0 };
+        }
+
         async function loadStatusSubmitKombelData(forceRefresh = false) {
             const body = document.getElementById('tableSubmitKombelBody');
             if (body) {
@@ -4750,12 +4786,12 @@
                 // Filter Kombel Sasaran
                 gSubmitKombelRawList = Object.keys(gAllKombels).map(id => {
                     return { id, ...gAllKombels[id] };
-                }).filter(k => k.is_sasaran || (k.konfirmasi && k.konfirmasi.is_konfirmasi));
+                }).filter(k => k.is_sasaran || getKombelSubmissionStatus(k).isSubmitted);
 
                 // Sort: Submitted first, then by name
                 gSubmitKombelRawList.sort((a, b) => {
-                    const aSub = a.konfirmasi && a.konfirmasi.is_konfirmasi ? 1 : 0;
-                    const bSub = b.konfirmasi && b.konfirmasi.is_konfirmasi ? 1 : 0;
+                    const aSub = getKombelSubmissionStatus(a).isSubmitted ? 1 : 0;
+                    const bSub = getKombelSubmissionStatus(b).isSubmitted ? 1 : 0;
                     if (aSub !== bSub) return bSub - aSub;
                     return (a.nama_kombel || '').localeCompare(b.nama_kombel || '');
                 });
@@ -4765,7 +4801,7 @@
 
                 // Compute Summary Stats
                 const totalSasaranCount = gSubmitKombelRawList.length;
-                const submittedList = gSubmitKombelRawList.filter(k => k.konfirmasi && k.konfirmasi.is_konfirmasi);
+                const submittedList = gSubmitKombelRawList.filter(k => getKombelSubmissionStatus(k).isSubmitted);
                 const submittedCount = submittedList.length;
                 const pendingCount = totalSasaranCount - submittedCount;
                 const pctSubmitted = totalSasaranCount > 0 ? Math.round((submittedCount / totalSasaranCount) * 100) : 0;
@@ -4826,9 +4862,9 @@
             const adminFilter = document.getElementById('filterSubmitAdmin')?.value || 'ALL';
 
             gSubmitKombelFilteredList = gSubmitKombelRawList.filter(k => {
-                const isSubmitted = k.konfirmasi && k.konfirmasi.is_konfirmasi;
-                if (statusFilter === 'SUBMITTED' && !isSubmitted) return false;
-                if (statusFilter === 'PENDING' && isSubmitted) return false;
+                const subStatus = getKombelSubmissionStatus(k);
+                if (statusFilter === 'SUBMITTED' && !subStatus.isSubmitted) return false;
+                if (statusFilter === 'PENDING' && subStatus.isSubmitted) return false;
 
                 if (kabFilter !== 'ALL' && k.kab_kota !== kabFilter) return false;
                 if (fasilFilter !== 'ALL' && k.fasil_nama !== fasilFilter) return false;
@@ -4863,7 +4899,7 @@
             const pageItems = gSubmitKombelFilteredList.slice(start, end);
 
             body.innerHTML = pageItems.map((k, idx) => {
-                const isSubmitted = k.konfirmasi && k.konfirmasi.is_konfirmasi;
+                const subStatus = getKombelSubmissionStatus(k);
 
                 const fasilNama = k.fasil_nama || '-';
                 const fasilEmail = k.fasil_email || (typeof getFasilEmailFromCache === 'function' ? getFasilEmailFromCache(k.fasil_id, fasilNama) : '') || '-';
@@ -4881,10 +4917,10 @@
 
                 // Status badge
                 let statusBadge = `<span class="px-2.5 py-1 rounded-full text-xs font-bold bg-amber-100 text-amber-900 border border-amber-300">⏳ Belum Submit</span>`;
-                if (isSubmitted) {
-                    const tgl = k.konfirmasi.tanggal_konfirmasi || '';
-                    const totalConf = k.konfirmasi.total_konfirmasi || selectedPeserta.length;
-                    const totalImp = k.konfirmasi.total_peserta_impor || allPeserta.length;
+                if (subStatus.isSubmitted) {
+                    const tgl = subStatus.date || '';
+                    const totalConf = subStatus.count || selectedPeserta.length;
+                    const totalImp = subStatus.total || allPeserta.length;
                     statusBadge = `
                         <div class="flex flex-col items-center gap-1">
                             <span class="px-2.5 py-1 rounded-full text-xs font-black bg-emerald-100 text-emerald-900 border border-emerald-300 shadow-2xs">✅ Disetujui (${totalConf}/${totalImp})</span>
@@ -4979,7 +5015,8 @@
                 return;
             }
 
-            const isSubmitted = kombel.konfirmasi && kombel.konfirmasi.is_konfirmasi;
+            const subStatus = getKombelSubmissionStatus(kombel);
+            const isSubmitted = subStatus.isSubmitted;
             const fasilNama = kombel.fasil_nama || 'Fasilitator Pendamping';
             const fasilEmail = kombel.fasil_email || getFasilEmailFromCache(kombel.fasil_id, fasilNama) || '-';
 
@@ -5052,7 +5089,7 @@
         }
 
         function exportBulkLMSCSVAllSubmitted() {
-            const submittedList = gSubmitKombelRawList.filter(k => k.is_sasaran || (k.konfirmasi && k.konfirmasi.is_konfirmasi));
+            const submittedList = gSubmitKombelRawList.filter(k => k.is_sasaran || getKombelSubmissionStatus(k).isSubmitted);
 
             if (submittedList.length === 0) {
                 showToast("⚠️ Tidak ada data Kombel sasaran yang dapat diekspor.", "rose");

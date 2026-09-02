@@ -466,13 +466,27 @@
                 submitted_by: gSelectedKombel.email || 'Ketua Kombel'
             };
 
+            const payloadSeleksiFKK = {
+                is_submitted: true,
+                tgl_seleksi: `${nowStr}${isRevisi ? ' (Revisi)' : ''}`,
+                total_dipilih: selectedPeserta.length,
+                total_peserta: gCurrentPesertaList.length,
+                nama_kk: gSelectedKombel.nama_kombel,
+                nama_ketua: gSelectedKombel.nama_ketua || '-',
+                kab_kota: gSelectedKombel.kab_kota || '-',
+                submitted_by: gSelectedKombel.email || 'Ketua Kombel',
+                peserta_terpilih: selectedPeserta
+            };
+
             try {
                 await Promise.all([
                     db.ref(`master_kombel/${gSelectedKombel.id}/konfirmasi`).set(payloadKonfirmasi),
+                    db.ref(`master_kombel/${gSelectedKombel.id}/seleksi_peserta_fkk`).set(payloadSeleksiFKK),
                     db.ref(`master_kombel/${gSelectedKombel.id}`).update({ selected_peserta_indices: selectedIndices })
                 ]);
 
                 gSelectedKombel.konfirmasi = payloadKonfirmasi;
+                gSelectedKombel.seleksi_peserta_fkk = payloadSeleksiFKK;
                 gSelectedKombel.selected_peserta_indices = selectedIndices;
 
                 // Tampilkan screen sukses
