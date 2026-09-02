@@ -4771,6 +4771,29 @@
             return { isSubmitted: false, date: '', count: 0, total: 0 };
         }
 
+        function getSelectedPesertaForKombel(k) {
+            if (!k) return [];
+            const allPeserta = getCombinedPesertaForKombel(k.id);
+
+            // 1. Cek selected_peserta_indices
+            if (Array.isArray(k.selected_peserta_indices) && k.selected_peserta_indices.length > 0) {
+                return allPeserta.filter((_, i) => k.selected_peserta_indices.includes(i)).slice(0, 35);
+            }
+
+            // 2. Cek konfirmasi.peserta_konfirmasi
+            if (k.konfirmasi && Array.isArray(k.konfirmasi.peserta_konfirmasi) && k.konfirmasi.peserta_konfirmasi.length > 0) {
+                return k.konfirmasi.peserta_konfirmasi.slice(0, 35);
+            }
+
+            // 3. Cek seleksi_peserta_fkk.peserta_terpilih
+            if (k.seleksi_peserta_fkk && Array.isArray(k.seleksi_peserta_fkk.peserta_terpilih) && k.seleksi_peserta_fkk.peserta_terpilih.length > 0) {
+                return k.seleksi_peserta_fkk.peserta_terpilih.slice(0, 35);
+            }
+
+            // Default jika belum submit
+            return allPeserta.slice(0, 35);
+        }
+
         async function loadStatusSubmitKombelData(forceRefresh = false) {
             const body = document.getElementById('tableSubmitKombelBody');
             if (body) {
@@ -4808,13 +4831,7 @@
 
                 let totalPesertaTerpilihSum = 0;
                 gSubmitKombelRawList.forEach(k => {
-                    const allP = getCombinedPesertaForKombel(k.id);
-                    let selP = [];
-                    if (Array.isArray(k.selected_peserta_indices) && k.selected_peserta_indices.length > 0) {
-                        selP = allP.filter((_, idx) => k.selected_peserta_indices.includes(idx));
-                    } else {
-                        selP = allP;
-                    }
+                    const selP = getSelectedPesertaForKombel(k);
                     totalPesertaTerpilihSum += selP.length;
                 });
 
@@ -4908,15 +4925,7 @@
                 const adminEmail = k.admin_email || (typeof getAdminEmailFromCache === 'function' ? getAdminEmailFromCache(adminNama) : '') || '-';
 
                 const allPeserta = getCombinedPesertaForKombel(k.id);
-                let selectedPeserta = [];
-                if (Array.isArray(k.selected_peserta_indices) && k.selected_peserta_indices.length > 0) {
-                    selectedPeserta = allPeserta.filter((_, i) => k.selected_peserta_indices.includes(i));
-                } else {
-                    selectedPeserta = allPeserta;
-                }
-                if (selectedPeserta.length > 35) {
-                    selectedPeserta = selectedPeserta.slice(0, 35);
-                }
+                const selectedPeserta = getSelectedPesertaForKombel(k);
 
                 // Status badge
                 let statusBadge = `<span class="px-2.5 py-1 rounded-full text-xs font-bold bg-amber-100 text-amber-900 border border-amber-300">⏳ Belum Submit</span>`;
