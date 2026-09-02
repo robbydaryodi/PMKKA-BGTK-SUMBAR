@@ -4567,8 +4567,22 @@
 
             let selectedIndices = kombel.selected_peserta_indices;
             if (!Array.isArray(selectedIndices)) {
-                // Default: Max 35 participants
-                selectedIndices = allPeserta.slice(0, 35).map((_, idx) => idx);
+                const selPeserta = getSelectedPesertaForKombel(kombel);
+                selectedIndices = [];
+                allPeserta.forEach((p, idx) => {
+                    const pEmail = (p.email || p.email_belajar_id || p.email_login || '').trim().toLowerCase();
+                    const pNama = (p.nama || p.nama_lengkap || p.nama_anggota || '').trim().toLowerCase();
+                    const isMatch = selPeserta.some(sp => {
+                        const spEmail = (sp.email || sp.email_belajar_id || sp.email_login || '').trim().toLowerCase();
+                        const spNama = (sp.nama || sp.nama_lengkap || sp.nama_anggota || '').trim().toLowerCase();
+                        return (spEmail && spEmail === pEmail) || (spNama && spNama === pNama);
+                    });
+                    if (isMatch) selectedIndices.push(idx);
+                });
+
+                if (selectedIndices.length === 0 && !getKombelSubmissionStatus(kombel).isSubmitted) {
+                    selectedIndices = allPeserta.slice(0, 35).map((_, idx) => idx);
+                }
                 kombel.selected_peserta_indices = selectedIndices;
             }
 
@@ -4621,7 +4635,18 @@
             const allPeserta = getCombinedPesertaForKombel(gCurrentModalKombelId);
             let selectedIndices = kombel.selected_peserta_indices;
             if (!Array.isArray(selectedIndices)) {
-                selectedIndices = allPeserta.slice(0, 35).map((_, i) => i);
+                const selPeserta = getSelectedPesertaForKombel(kombel);
+                selectedIndices = [];
+                allPeserta.forEach((p, i) => {
+                    const pEmail = (p.email || p.email_belajar_id || p.email_login || '').trim().toLowerCase();
+                    const pNama = (p.nama || p.nama_lengkap || p.nama_anggota || '').trim().toLowerCase();
+                    const isMatch = selPeserta.some(sp => {
+                        const spEmail = (sp.email || sp.email_belajar_id || sp.email_login || '').trim().toLowerCase();
+                        const spNama = (sp.nama || sp.nama_lengkap || sp.nama_anggota || '').trim().toLowerCase();
+                        return (spEmail && spEmail === pEmail) || (spNama && spNama === pNama);
+                    });
+                    if (isMatch) selectedIndices.push(i);
+                });
             }
 
             if (selectedIndices.includes(idx)) {
