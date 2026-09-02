@@ -4914,6 +4914,9 @@
                 } else {
                     selectedPeserta = allPeserta;
                 }
+                if (selectedPeserta.length > 35) {
+                    selectedPeserta = selectedPeserta.slice(0, 35);
+                }
 
                 // Status badge
                 let statusBadge = `<span class="px-2.5 py-1 rounded-full text-xs font-bold bg-amber-100 text-amber-900 border border-amber-300">⏳ Belum Submit</span>`;
@@ -5049,8 +5052,11 @@
             } else {
                 selectedPeserta = allPeserta;
             }
+            if (selectedPeserta.length > 35) {
+                selectedPeserta = selectedPeserta.slice(0, 35);
+            }
 
-            setEl('detailModalPesertaCountBadge', `${selectedPeserta.length.toLocaleString('id-ID')} Peserta Terpilih`);
+            setEl('detailModalPesertaCountBadge', `${selectedPeserta.length.toLocaleString('id-ID')} Peserta Terpilih (Maks 35)`);
 
             const tableBody = document.getElementById('detailModalPesertaTableBody');
             if (tableBody) {
@@ -5114,6 +5120,9 @@
                     selectedPeserta = allPeserta.filter((_, idx) => kombel.selected_peserta_indices.includes(idx));
                 } else {
                     selectedPeserta = allPeserta;
+                }
+                if (selectedPeserta.length > 35) {
+                    selectedPeserta = selectedPeserta.slice(0, 35);
                 }
 
                 // Row 1: Fasilitator (instruktur)
