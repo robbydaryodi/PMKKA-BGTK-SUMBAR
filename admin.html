@@ -107,6 +107,13 @@
                                 <span class="font-bold">Master Kombel</span>
                             </div>
                         </button>
+                        <button onclick="switchAdminView('modeSubmitKombel')" id="btnModeSubmitKombel" class="sidebar-btn flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-medium text-slate-600 hover:bg-emerald-50/80 hover:text-emerald-950 transition-all duration-200 w-full text-left group border-l-4 border-transparent">
+                            <div class="flex items-center gap-3">
+                                <svg class="w-5 h-5 flex-shrink-0 text-emerald-600 group-hover:text-emerald-700 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                                <span class="font-bold">Status Submission &amp; Peserta</span>
+                            </div>
+                            <span class="text-[10px] bg-emerald-100 text-emerald-800 font-extrabold px-2 py-0.5 rounded-full border border-emerald-200">Baru</span>
+                        </button>
                     </nav>
                 </div>
 
@@ -728,6 +735,114 @@
                             </table>
                         </div>
                         <div class="p-4 bg-slate-50 border-t border-slate-200 flex flex-col sm:flex-row justify-between items-center gap-3 text-xs text-slate-500" id="kombelPagination"></div>
+                    </div>
+                </div>
+
+                <!-- MODE SUBMIT KOMBEL: STATUS SUBMISSION & PESERTA TERPILIH LMS -->
+                <div id="viewModeSubmitKombel" class="hidden fade-in space-y-6">
+                    <!-- Top Banner Card -->
+                    <div class="bg-gradient-to-r from-emerald-800 via-teal-900 to-indigo-900 rounded-3xl shadow-md p-6 text-white">
+                        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                            <div>
+                                <span class="inline-block px-3 py-1 bg-white/20 backdrop-blur-md rounded-full text-xs font-bold text-emerald-100 uppercase tracking-wider mb-2">Pusat Informasi Pengkelasan LMS</span>
+                                <div class="flex items-center gap-3">
+                                    <h1 class="text-2xl font-black">Status Submission &amp; Peserta Terpilih Kombel</h1>
+                                    <span id="liveIndicatorSubmit" class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-emerald-500/30 border border-emerald-400/50 rounded-full text-[11px] font-black text-emerald-200 backdrop-blur-sm">
+                                        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse inline-block"></span>
+                                        LIVE REALTIME
+                                    </span>
+                                </div>
+                                <p class="text-xs text-emerald-100/90 mt-1 max-w-2xl">Pantau Komunitas Belajar yang sudah melakukan konfirmasi/submit, rincian Aktor Kelas (Fasilitator &amp; Admin), serta daftar lengkap peserta yang dipilih untuk masuk ke kelas LMS.</p>
+                            </div>
+                            <div class="flex items-center gap-2 flex-wrap">
+                                <button onclick="exportBulkLMSCSVAllSubmitted()" title="Unduh CSV gabungan LMS untuk seluruh Kombel yang sudah disetujui/submit" class="bg-emerald-500 hover:bg-emerald-600 text-white px-4 py-2.5 rounded-2xl text-xs font-black transition-all flex items-center gap-2 border border-emerald-400 shadow-md cursor-pointer hover:scale-105">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                                    <span>📥 Bulk Export CSV Semua Kelas LMS</span>
+                                </button>
+                                <button onclick="loadStatusSubmitKombelData(true)" class="bg-white/10 hover:bg-white/20 text-white px-4 py-2.5 rounded-2xl text-xs font-bold transition-colors flex items-center gap-2 border border-white/20 shadow-xs cursor-pointer">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+                                    <span>Refresh</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Stat Cards -->
+                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-6 pt-6 border-t border-white/10">
+                            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-4">
+                                <div class="text-[11px] text-emerald-200 uppercase font-bold">Total Kombel Sasaran</div>
+                                <div class="text-2xl font-black mt-1" id="statSubmitTotalSasaran">0 / 54</div>
+                                <div class="text-[10px] text-emerald-300/80 mt-0.5">Kombel sasaran PMKKA</div>
+                            </div>
+                            <div class="bg-emerald-500/20 backdrop-blur-sm border border-emerald-300/30 rounded-2xl p-4">
+                                <div class="text-[11px] text-emerald-200 uppercase font-bold">Sudah Submit / Disetujui</div>
+                                <div class="text-2xl font-black text-emerald-300 mt-1" id="statSubmitSudahCount">0 Selesai</div>
+                                <div class="text-[10px] text-emerald-200/90 mt-0.5" id="statSubmitSudahPct">Progress: 0%</div>
+                            </div>
+                            <div class="bg-amber-400/20 backdrop-blur-sm border border-amber-300/30 rounded-2xl p-4">
+                                <div class="text-[11px] text-amber-200 uppercase font-bold">Belum Submit / Pending</div>
+                                <div class="text-2xl font-black text-amber-300 mt-1" id="statSubmitBelumCount">0 Kombel</div>
+                                <div class="text-[10px] text-amber-200/90 mt-0.5">Menunggu konfirmasi Fasil/Admin</div>
+                            </div>
+                            <div class="bg-indigo-500/20 backdrop-blur-sm border border-indigo-300/30 rounded-2xl p-4">
+                                <div class="text-[11px] text-indigo-200 uppercase font-bold">Total Peserta Terpilih LMS</div>
+                                <div class="text-2xl font-black text-indigo-200 mt-1" id="statSubmitTotalPesertaTerpilih">0 Peserta</div>
+                                <div class="text-[10px] text-indigo-300/80 mt-0.5">Siap di-import ke LMS Admin</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Filter Toolbar -->
+                    <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-4 space-y-3">
+                        <div class="flex flex-col lg:flex-row gap-3 justify-between items-stretch lg:items-center">
+                            <div class="relative w-full lg:w-80">
+                                <input type="text" id="searchSubmitInput" onkeyup="filterSubmitKombelData()" placeholder="Cari Kombel, Ketua, Fasil, Admin, Peserta..." class="w-full pl-10 pr-4 py-2 border border-slate-300 rounded-xl text-sm focus:ring-emerald-500 focus:border-emerald-500">
+                                <svg class="w-4 h-4 text-slate-400 absolute left-3.5 top-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                            </div>
+                            <div class="flex flex-wrap items-center gap-2.5">
+                                <select id="filterSubmitStatus" onchange="filterSubmitKombelData()" class="border-emerald-300 rounded-xl text-sm px-3 py-2 bg-emerald-50/60 font-bold text-emerald-950">
+                                    <option value="ALL">Semua Status Submission</option>
+                                    <option value="SUBMITTED">✅ Sudah Submit / Disetujui</option>
+                                    <option value="PENDING">⏳ Belum Submit / Pending</option>
+                                </select>
+                                <select id="filterSubmitKab" onchange="filterSubmitKombelData()" class="border-slate-300 rounded-xl text-sm px-3 py-2 bg-slate-50 font-semibold text-slate-700">
+                                    <option value="ALL">Semua Kab / Kota (19)</option>
+                                </select>
+                                <select id="filterSubmitFasil" onchange="filterSubmitKombelData()" class="border-purple-200 rounded-xl text-sm px-3 py-2 bg-purple-50/70 font-semibold text-purple-900">
+                                    <option value="ALL">🤝 Semua Fasilitator</option>
+                                </select>
+                                <select id="filterSubmitAdmin" onchange="filterSubmitKombelData()" class="border-indigo-200 rounded-xl text-sm px-3 py-2 bg-indigo-50/70 font-semibold text-indigo-900">
+                                    <option value="ALL">👤 Semua Admin BGTK</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Data Table Container -->
+                    <div class="bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden">
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left text-sm whitespace-nowrap">
+                                <thead class="bg-slate-100/90 text-slate-700 font-extrabold border-b border-slate-200 text-xs uppercase tracking-wider">
+                                    <tr>
+                                        <th class="px-3 py-3.5 text-center w-12">No</th>
+                                        <th class="px-4 py-3.5 text-center bg-emerald-100/70 text-emerald-950 border-r border-emerald-200 w-44">Aksi &amp; Detail</th>
+                                        <th class="px-4 py-3.5 w-[260px] max-w-[260px]">Komunitas Belajar / Kelas LMS</th>
+                                        <th class="px-4 py-3.5 text-center w-44">Status Submission</th>
+                                        <th class="px-4 py-3.5 bg-purple-50/60 text-purple-950 w-52">Fasilitator (Instruktur)</th>
+                                        <th class="px-4 py-3.5 bg-indigo-50/60 text-indigo-950 w-48">Admin BGTK (Admin Kelas)</th>
+                                        <th class="px-4 py-3.5 text-center w-48">Peserta Terpilih (Murid)</th>
+                                        <th class="px-4 py-3.5 text-center w-32">Surat Tugas</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tableSubmitKombelBody" class="divide-y divide-slate-100">
+                                    <tr>
+                                        <td colspan="8" class="px-6 py-12 text-center text-slate-400">
+                                            <div class="spinner mx-auto mb-2"></div>Memuat data submission &amp; peserta Kombel...
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div id="submitKombelPagination" class="px-6 py-4 bg-slate-50 border-t border-slate-200/80 flex flex-col sm:flex-row justify-between items-center gap-3 text-xs text-slate-600 font-medium"></div>
                     </div>
                 </div>
 
@@ -1718,6 +1833,92 @@
         </div>
     </div>
 
+    <!-- MODAL DETAIL SUBMISSION & PESERTA TERPILIH KOMBEL -->
+    <div id="modalDetailSubmissionPeserta" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[110] hidden flex items-center justify-center p-4 overflow-y-auto">
+        <div class="bg-white rounded-3xl shadow-2xl border border-slate-100 w-full max-w-4xl max-h-[90vh] flex flex-col overflow-hidden my-auto transform transition-all">
+            <!-- Modal Header -->
+            <div class="bg-gradient-to-r from-emerald-800 to-teal-900 text-white px-6 py-5 flex justify-between items-center flex-shrink-0">
+                <div>
+                    <span class="inline-block px-2.5 py-0.5 bg-white/20 text-emerald-100 rounded-full text-[10px] font-black uppercase tracking-wider mb-1">Rincian Submission Kelas LMS</span>
+                    <h3 class="text-xl font-black leading-tight" id="detailModalKombelNama">Nama Komunitas Belajar</h3>
+                    <div class="text-xs text-emerald-100/90 mt-0.5 flex items-center gap-2" id="detailModalKombelSub">
+                        <span id="detailModalKombelKab">-</span> • <span id="detailModalKombelStatusBadge" class="px-2 py-0.5 rounded-full bg-emerald-400/30 text-emerald-200 font-bold text-[10px]">✅ Disetujui</span>
+                    </div>
+                </div>
+                <button onclick="closeModalDetailSubmissionPeserta()" class="p-2 rounded-xl bg-white/10 hover:bg-white/20 text-white transition-colors cursor-pointer">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                </button>
+            </div>
+
+            <!-- Modal Body Content -->
+            <div class="p-6 overflow-y-auto space-y-6 flex-1">
+                <!-- Section 1: Aktor Kelas LMS (Fasil & Admin) -->
+                <div>
+                    <h4 class="text-xs font-black uppercase tracking-wider text-slate-400 mb-3 flex items-center gap-1.5">
+                        <span>👑</span> Aktor Pengampu Kelas LMS
+                    </h4>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div class="bg-purple-50/80 p-4 rounded-2xl border border-purple-200">
+                            <div class="text-[10px] uppercase font-bold text-purple-700">Fasilitator Pendamping (Role: Instruktur)</div>
+                            <div class="font-extrabold text-sm text-purple-950 mt-0.5" id="detailModalFasilNama">Nama Fasilitator</div>
+                            <div class="text-xs font-semibold text-purple-800 font-mono mt-0.5" id="detailModalFasilEmail">email@fasil.id</div>
+                        </div>
+                        <div class="bg-indigo-50/80 p-4 rounded-2xl border border-indigo-200">
+                            <div class="text-[10px] uppercase font-bold text-indigo-700">Admin BGTK (Role: Admin Kelas)</div>
+                            <div class="font-extrabold text-sm text-indigo-950 mt-0.5" id="detailModalAdminNama">Nama Admin BGTK</div>
+                            <div class="text-xs font-semibold text-indigo-800 font-mono mt-0.5" id="detailModalAdminEmail">email@bgtk.go.id</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section 2: Daftar Peserta Terpilih (Murid) -->
+                <div>
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mb-3">
+                        <h4 class="text-xs font-black uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
+                            <span>👥</span> Peserta Terpilih (Role: Murid)
+                        </h4>
+                        <span id="detailModalPesertaCountBadge" class="px-3 py-1 rounded-full text-xs font-extrabold bg-emerald-100 text-emerald-900 border border-emerald-300">0 Peserta Terpilih</span>
+                    </div>
+                    <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-2xs">
+                        <div class="overflow-x-auto max-h-72">
+                            <table class="w-full text-left text-xs whitespace-nowrap">
+                                <thead class="bg-slate-100 sticky top-0 font-extrabold text-slate-700 border-b border-slate-200">
+                                    <tr>
+                                        <th class="px-3 py-2.5 text-center w-10">No</th>
+                                        <th class="px-3.5 py-2.5">Nama Peserta</th>
+                                        <th class="px-3.5 py-2.5">Email Belajar.id / Login</th>
+                                        <th class="px-3.5 py-2.5">Sekolah / Instansi</th>
+                                        <th class="px-3.5 py-2.5">No. HP / WA</th>
+                                        <th class="px-3 py-2.5 text-center">Role LMS</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="detailModalPesertaTableBody" class="divide-y divide-slate-100">
+                                    <tr><td colspan="6" class="px-4 py-8 text-center text-slate-400">Memuat peserta...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal Footer -->
+            <div class="px-6 py-4 bg-slate-50 border-t border-slate-200 flex flex-col sm:flex-row justify-between items-center gap-3 flex-shrink-0">
+                <div class="text-xs text-slate-500 font-medium">
+                    Sistem Pengkelasan PMKKA Reguler BGTK Sumbar
+                </div>
+                <div class="flex items-center gap-2 w-full sm:w-auto">
+                    <button id="btnDetailExportCSV" onclick="downloadCSVLMSAdminCurrent()" class="flex-1 sm:flex-initial px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-extrabold transition shadow-sm flex items-center justify-center gap-1.5 cursor-pointer">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                        <span>Download CSV LMS Kelas Ini</span>
+                    </button>
+                    <button onclick="closeModalDetailSubmissionPeserta()" class="px-4 py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-xl text-xs font-bold transition cursor-pointer">
+                        Tutup
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- MODAL EDIT HAK AKSES & ROLE -->
     <div id="modalEditHakAkses" class="hidden fixed inset-0 z-[120] bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
         <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden fade-in border border-slate-100">
@@ -2286,13 +2487,13 @@
             }
             // Guard for Admin FKK
             if (gCurrentLoggedRole === 'Admin FKK') {
-                const allowedModes = ['mode0', 'modeKombel'];
+                const allowedModes = ['mode0', 'modeKombel', 'modeSubmitKombel'];
                 if (!allowedModes.includes(mode)) {
                     mode = 'modeKombel';
                 }
             }
 
-            const modes = ['mode0', 'mode1', 'mode2', 'mode3', 'mode4', 'mode5', 'mode7', 'mode8', 'modeKombel', 'modePegawai', 'modeAkses', 'modeStatusSekolah'];
+            const modes = ['mode0', 'mode1', 'mode2', 'mode3', 'mode4', 'mode5', 'mode7', 'mode8', 'modeKombel', 'modeSubmitKombel', 'modePegawai', 'modeAkses', 'modeStatusSekolah'];
             modes.forEach(m => {
                 const viewEl = document.getElementById('view' + m.charAt(0).toUpperCase() + m.slice(1));
                 const btnEl = document.getElementById('btn' + m.charAt(0).toUpperCase() + m.slice(1));
@@ -2317,14 +2518,14 @@
             if (targetBtn) {
                 if (mode === 'mode3' || mode === 'mode4' || mode === 'mode7' || mode === 'mode5' || mode === 'modeStatusSekolah' || mode === 'mode1' || mode === 'mode2') {
                     targetBtn.className = "sidebar-btn flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-bold bg-teal-50 text-teal-900 border-l-2 border-teal-600 transition-all duration-200 w-full text-left";
-                } else if (mode === 'modeKombel') {
-                    targetBtn.className = "sidebar-btn flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-bold bg-amber-50 text-amber-950 border-l-4 border-amber-500 transition-all duration-200 w-full text-left relative group shadow-2xs";
+                } else if (mode === 'modeKombel' || mode === 'modeSubmitKombel') {
+                    targetBtn.className = "sidebar-btn flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-bold bg-emerald-50 text-emerald-950 border-l-4 border-emerald-500 transition-all duration-200 w-full text-left relative group shadow-2xs";
                 } else {
                     targetBtn.className = "sidebar-btn flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-bold bg-purple-50 text-purple-900 border-l-4 border-purple-600 transition-all duration-200 w-full text-left relative group shadow-2xs";
                 }
                 const svgIcon = targetBtn.querySelector('svg');
                 if (svgIcon) {
-                    if (mode === 'modeKombel') svgIcon.className = "w-5 h-5 flex-shrink-0 text-amber-600 transition-colors";
+                    if (mode === 'modeKombel' || mode === 'modeSubmitKombel') svgIcon.className = "w-5 h-5 flex-shrink-0 text-emerald-600 transition-colors";
                     else if (mode.includes('mode1') || mode.includes('mode2') || mode.includes('mode3') || mode.includes('mode4') || mode.includes('mode5') || mode.includes('mode7') || mode.includes('modeStatusSekolah')) svgIcon.className = "w-5 h-5 flex-shrink-0 text-teal-600 transition-colors";
                     else svgIcon.className = "w-5 h-5 flex-shrink-0 text-purple-600 transition-colors";
                 }
@@ -2368,6 +2569,16 @@
                 }
                 if (tabFKK) tabFKK.className = "workspace-track-tab px-3.5 py-1.5 rounded-xl text-xs font-black transition-all flex items-center gap-2 border border-amber-500 bg-amber-500 text-slate-950 shadow-sm";
                 loadKombelData(); 
+            }
+            else if (mode === 'modeSubmitKombel') { 
+                if (pageTitle) pageTitle.textContent = "Status Submission & Peserta LMS"; 
+                if (trackBadge) trackBadge.innerHTML = '⭐ Program PMKKA Reguler';
+                if (pillText) {
+                    pillText.className = 'px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-950 border border-emerald-300 font-black';
+                    pillText.textContent = '✅ Status Submission & Peserta LMS';
+                }
+                if (tabFKK) tabFKK.className = "workspace-track-tab px-3.5 py-1.5 rounded-xl text-xs font-black transition-all flex items-center gap-2 border border-emerald-600 bg-emerald-600 text-white shadow-sm";
+                loadStatusSubmitKombelData(); 
             }
             else if (mode === 'modeStatusSekolah' || mode === 'mode5' || mode === 'mode7' || mode === 'mode3' || mode === 'mode4' || mode === 'mode1' || mode === 'mode2') { 
                 if (tabSekolah) tabSekolah.className = "workspace-track-tab px-3.5 py-1.5 rounded-xl text-xs font-black transition-all flex items-center gap-2 border border-teal-600 bg-teal-600 text-white shadow-sm";
@@ -4498,6 +4709,385 @@
             if (gCurrentModalKombelId) {
                 downloadCSVLMSAdmin(gCurrentModalKombelId);
             }
+        }
+
+        // ==========================================
+        // STATUS SUBMISSION & PESERTA TERPILIH KOMBEL (LMS)
+        // ==========================================
+        let gSubmitKombelRawList = [];
+        let gSubmitKombelFilteredList = [];
+        let gSubmitKombelPage = 1;
+        const SUBMIT_PER_PAGE = 15;
+
+        async function loadStatusSubmitKombelData(forceRefresh = false) {
+            const body = document.getElementById('tableSubmitKombelBody');
+            if (body) {
+                body.innerHTML = '<tr><td colspan="8" class="px-6 py-12 text-center text-slate-400"><div class="spinner mx-auto mb-2"></div>Memuat data submission &amp; peserta Kombel...</td></tr>';
+            }
+
+            try {
+                if (Object.keys(gAllKombels).length === 0 || forceRefresh) {
+                    const snap = await db.ref('master_kombel').once('value');
+                    gAllKombels = snap.val() || {};
+                }
+
+                // Filter Kombel Sasaran
+                gSubmitKombelRawList = Object.keys(gAllKombels).map(id => {
+                    return { id, ...gAllKombels[id] };
+                }).filter(k => k.is_sasaran || (k.konfirmasi && k.konfirmasi.is_konfirmasi));
+
+                // Sort: Submitted first, then by name
+                gSubmitKombelRawList.sort((a, b) => {
+                    const aSub = a.konfirmasi && a.konfirmasi.is_konfirmasi ? 1 : 0;
+                    const bSub = b.konfirmasi && b.konfirmasi.is_konfirmasi ? 1 : 0;
+                    if (aSub !== bSub) return bSub - aSub;
+                    return (a.nama_kombel || '').localeCompare(b.nama_kombel || '');
+                });
+
+                // Populate filter options for Kab, Fasil, Admin
+                populateSubmitFilterOptions();
+
+                // Compute Summary Stats
+                const totalSasaranCount = gSubmitKombelRawList.length;
+                const submittedList = gSubmitKombelRawList.filter(k => k.konfirmasi && k.konfirmasi.is_konfirmasi);
+                const submittedCount = submittedList.length;
+                const pendingCount = totalSasaranCount - submittedCount;
+                const pctSubmitted = totalSasaranCount > 0 ? Math.round((submittedCount / totalSasaranCount) * 100) : 0;
+
+                let totalPesertaTerpilihSum = 0;
+                gSubmitKombelRawList.forEach(k => {
+                    const allP = getCombinedPesertaForKombel(k.id);
+                    let selP = [];
+                    if (Array.isArray(k.selected_peserta_indices) && k.selected_peserta_indices.length > 0) {
+                        selP = allP.filter((_, idx) => k.selected_peserta_indices.includes(idx));
+                    } else {
+                        selP = allP;
+                    }
+                    totalPesertaTerpilihSum += selP.length;
+                });
+
+                const setEl = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
+                setEl('statSubmitTotalSasaran', `${totalSasaranCount} / 54`);
+                setEl('statSubmitSudahCount', `${submittedCount} Selesai`);
+                setEl('statSubmitSudahPct', `Progress: ${pctSubmitted}% Selesai`);
+                setEl('statSubmitBelumCount', `${pendingCount} Kombel`);
+                setEl('statSubmitTotalPesertaTerpilih', `${totalPesertaTerpilihSum.toLocaleString('id-ID')} Peserta`);
+
+                filterSubmitKombelData();
+            } catch (e) {
+                console.error("Gagal loadStatusSubmitKombelData:", e);
+                if (body) body.innerHTML = `<tr><td colspan="8" class="px-6 py-12 text-center text-rose-500">Gagal memuat data: ${e.message}</td></tr>`;
+            }
+        }
+
+        function populateSubmitFilterOptions() {
+            const kabSel = document.getElementById('filterSubmitKab');
+            const fasilSel = document.getElementById('filterSubmitFasil');
+            const adminSel = document.getElementById('filterSubmitAdmin');
+
+            if (kabSel && kabSel.options.length <= 1) {
+                const kabs = [...new Set(gSubmitKombelRawList.map(k => k.kab_kota).filter(Boolean))].sort();
+                kabSel.innerHTML = '<option value="ALL">Semua Kab / Kota (' + kabs.length + ')</option>' +
+                    kabs.map(kab => `<option value="${kab}">${kab}</option>`).join('');
+            }
+            if (fasilSel && fasilSel.options.length <= 1) {
+                const fasils = [...new Set(gSubmitKombelRawList.map(k => k.fasil_nama).filter(Boolean))].sort();
+                fasilSel.innerHTML = '<option value="ALL">🤝 Semua Fasilitator</option>' +
+                    fasils.map(f => `<option value="${f}">${f}</option>`).join('');
+            }
+            if (adminSel && adminSel.options.length <= 1) {
+                const admins = [...new Set(gSubmitKombelRawList.map(k => k.admin_nama ? k.admin_nama.split(',')[0] : '').filter(Boolean))].sort();
+                adminSel.innerHTML = '<option value="ALL">👤 Semua Admin BGTK</option>' +
+                    admins.map(a => `<option value="${a}">${a}</option>`).join('');
+            }
+        }
+
+        function filterSubmitKombelData() {
+            const query = (document.getElementById('searchSubmitInput')?.value || '').toLowerCase().trim();
+            const statusFilter = document.getElementById('filterSubmitStatus')?.value || 'ALL';
+            const kabFilter = document.getElementById('filterSubmitKab')?.value || 'ALL';
+            const fasilFilter = document.getElementById('filterSubmitFasil')?.value || 'ALL';
+            const adminFilter = document.getElementById('filterSubmitAdmin')?.value || 'ALL';
+
+            gSubmitKombelFilteredList = gSubmitKombelRawList.filter(k => {
+                const isSubmitted = k.konfirmasi && k.konfirmasi.is_konfirmasi;
+                if (statusFilter === 'SUBMITTED' && !isSubmitted) return false;
+                if (statusFilter === 'PENDING' && isSubmitted) return false;
+
+                if (kabFilter !== 'ALL' && k.kab_kota !== kabFilter) return false;
+                if (fasilFilter !== 'ALL' && k.fasil_nama !== fasilFilter) return false;
+                if (adminFilter !== 'ALL' && (!k.admin_nama || !k.admin_nama.includes(adminFilter))) return false;
+
+                if (!query) return true;
+
+                const allP = getCombinedPesertaForKombel(k.id);
+                const pNames = allP.map(p => p.nama || p.nama_lengkap || '').join(' ');
+
+                const searchStr = `${k.nama_kombel || ''} ${k.nama_ketua || ''} ${k.kab_kota || ''} ${k.fasil_nama || ''} ${k.admin_nama || ''} ${pNames}`.toLowerCase();
+                return searchStr.includes(query);
+            });
+
+            gSubmitKombelPage = 1;
+            renderSubmitKombelTable();
+        }
+
+        function renderSubmitKombelTable() {
+            const body = document.getElementById('tableSubmitKombelBody');
+            const pagination = document.getElementById('submitKombelPagination');
+            if (!body) return;
+
+            if (gSubmitKombelFilteredList.length === 0) {
+                body.innerHTML = '<tr><td colspan="8" class="px-6 py-12 text-center text-slate-400">Tidak ada Kombel yang sesuai dengan filter.</td></tr>';
+                if (pagination) pagination.innerHTML = '';
+                return;
+            }
+
+            const start = (gSubmitKombelPage - 1) * SUBMIT_PER_PAGE;
+            const end = start + SUBMIT_PER_PAGE;
+            const pageItems = gSubmitKombelFilteredList.slice(start, end);
+
+            body.innerHTML = pageItems.map((k, idx) => {
+                const isSubmitted = k.konfirmasi && k.konfirmasi.is_konfirmasi;
+
+                const fasilNama = k.fasil_nama || '-';
+                const fasilEmail = k.fasil_email || (typeof getFasilEmailFromCache === 'function' ? getFasilEmailFromCache(k.fasil_id, fasilNama) : '') || '-';
+
+                const adminNama = k.admin_nama ? k.admin_nama.split(',')[0] : '-';
+                const adminEmail = k.admin_email || (typeof getAdminEmailFromCache === 'function' ? getAdminEmailFromCache(adminNama) : '') || '-';
+
+                const allPeserta = getCombinedPesertaForKombel(k.id);
+                let selectedPeserta = [];
+                if (Array.isArray(k.selected_peserta_indices) && k.selected_peserta_indices.length > 0) {
+                    selectedPeserta = allPeserta.filter((_, i) => k.selected_peserta_indices.includes(i));
+                } else {
+                    selectedPeserta = allPeserta;
+                }
+
+                // Status badge
+                let statusBadge = `<span class="px-2.5 py-1 rounded-full text-xs font-bold bg-amber-100 text-amber-900 border border-amber-300">⏳ Belum Submit</span>`;
+                if (isSubmitted) {
+                    const tgl = k.konfirmasi.tanggal_konfirmasi || '';
+                    const totalConf = k.konfirmasi.total_konfirmasi || selectedPeserta.length;
+                    const totalImp = k.konfirmasi.total_peserta_impor || allPeserta.length;
+                    statusBadge = `
+                        <div class="flex flex-col items-center gap-1">
+                            <span class="px-2.5 py-1 rounded-full text-xs font-black bg-emerald-100 text-emerald-900 border border-emerald-300 shadow-2xs">✅ Disetujui (${totalConf}/${totalImp})</span>
+                            ${tgl ? `<span class="text-[10px] text-slate-400 font-mono">${tgl}</span>` : ''}
+                        </div>
+                    `;
+                }
+
+                // Action buttons
+                const btnActions = `
+                    <div class="flex items-center justify-center gap-1.5">
+                        <button onclick="openModalDetailSubmissionPeserta('${k.id}')" title="Klik untuk lihat rincian peserta terpilih &amp; aktor kelas" class="px-3 py-1.5 rounded-xl text-xs font-black bg-indigo-600 hover:bg-indigo-700 text-white transition-all shadow-2xs flex items-center gap-1 cursor-pointer hover:scale-105">
+                            <span>👁️ Lihat Peserta (${selectedPeserta.length})</span>
+                        </button>
+                        <button onclick="downloadCSVLMSAdmin('${k.id}')" title="Download CSV LMS Kelas Ini" class="p-1.5 rounded-xl text-xs font-bold bg-emerald-100 text-emerald-900 hover:bg-emerald-200 border border-emerald-300 transition-colors cursor-pointer">
+                            📥 CSV
+                        </button>
+                    </div>
+                `;
+
+                // Participant preview
+                const pPreviewNames = selectedPeserta.slice(0, 2).map(p => p.nama || p.nama_lengkap || '').join(', ');
+                const pMoreCount = selectedPeserta.length > 2 ? ` (+${selectedPeserta.length - 2} lainnya)` : '';
+
+                const pesertaBadge = `
+                    <button onclick="openModalDetailSubmissionPeserta('${k.id}')" class="text-left group cursor-pointer focus:outline-none">
+                        <div class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-black bg-emerald-100 text-emerald-900 border border-emerald-300 group-hover:scale-105 transition-transform">
+                            👥 ${selectedPeserta.length} Peserta Terpilih
+                        </div>
+                        ${pPreviewNames ? `<div class="text-[11px] text-slate-500 mt-1 truncate max-w-[180px]">${pPreviewNames}${pMoreCount}</div>` : ''}
+                    </button>
+                `;
+
+                // Surat tugas badge
+                let stBadge = `<span class="text-xs text-slate-400">-</span>`;
+                const stUrl = k.surat_tugas_url || k.surat_tugas_link || (k.konfirmasi && (k.konfirmasi.surat_tugas_url || k.konfirmasi.surat_tugas_link));
+                if (stUrl) {
+                    stBadge = `<a href="${stUrl}" target="_blank" class="px-2.5 py-1 rounded-xl text-xs font-bold bg-purple-100 hover:bg-purple-200 text-purple-900 border border-purple-300 inline-flex items-center gap-1 transition-colors">📄 Lihat Surat</a>`;
+                }
+
+                return `
+                    <tr class="hover:bg-slate-50 transition-colors">
+                        <td class="px-3 py-3.5 text-center text-slate-400 text-xs font-bold w-12">${start + idx + 1}</td>
+                        <td class="px-4 py-3.5 text-center bg-emerald-50/30 border-r border-emerald-100 w-44">${btnActions}</td>
+                        <td class="px-4 py-3.5 w-[260px] max-w-[260px] whitespace-normal">
+                            <button onclick="openModalDetailSubmissionPeserta('${k.id}')" class="text-left w-full group cursor-pointer focus:outline-none">
+                                <div class="font-bold text-slate-900 group-hover:text-emerald-700 text-xs sm:text-sm leading-snug break-words transition-colors">${k.nama_kombel || 'Kombel'}</div>
+                            </button>
+                            <div class="text-[11px] text-slate-500 mt-0.5 break-words">${k.jenjang || ''} ${k.kab_kota ? '• ' + k.kab_kota : ''}</div>
+                        </td>
+                        <td class="px-4 py-3.5 text-center w-44">${statusBadge}</td>
+                        <td class="px-4 py-3.5 bg-purple-50/20 w-52 whitespace-normal">
+                            <div class="font-bold text-purple-950 text-xs">${fasilNama}</div>
+                            <div class="text-[11px] text-purple-700 font-mono truncate max-w-[190px]">${fasilEmail}</div>
+                        </td>
+                        <td class="px-4 py-3.5 bg-indigo-50/20 w-48 whitespace-normal">
+                            <div class="font-bold text-indigo-950 text-xs">${adminNama}</div>
+                            <div class="text-[11px] text-indigo-700 font-mono truncate max-w-[180px]">${adminEmail}</div>
+                        </td>
+                        <td class="px-4 py-3.5 text-center w-48 whitespace-normal">${pesertaBadge}</td>
+                        <td class="px-4 py-3.5 text-center w-32">${stBadge}</td>
+                    </tr>
+                `;
+            }).join('');
+
+            const totalPages = Math.ceil(gSubmitKombelFilteredList.length / SUBMIT_PER_PAGE);
+            if (pagination) {
+                pagination.innerHTML = `
+                    <div>Menampilkan <strong>${start + 1}</strong> - <strong>${Math.min(end, gSubmitKombelFilteredList.length)}</strong> dari <strong>${gSubmitKombelFilteredList.length.toLocaleString('id-ID')}</strong> Kombel Sasaran</div>
+                    <div class="flex items-center gap-2">
+                        <button onclick="changeSubmitKombelPage(-1)" ${gSubmitKombelPage === 1 ? 'disabled class="opacity-40 px-3 py-1 bg-slate-200 rounded-lg text-xs font-bold"' : 'class="px-3 py-1 bg-white border border-slate-300 hover:bg-slate-50 rounded-lg text-xs font-bold text-slate-700 cursor-pointer"'}>Sebelumnya</button>
+                        <span class="font-bold text-slate-700 px-2">Halaman ${gSubmitKombelPage} / ${totalPages || 1}</span>
+                        <button onclick="changeSubmitKombelPage(1)" ${gSubmitKombelPage >= totalPages ? 'disabled class="opacity-40 px-3 py-1 bg-slate-200 rounded-lg text-xs font-bold"' : 'class="px-3 py-1 bg-white border border-slate-300 hover:bg-slate-50 rounded-lg text-xs font-bold text-slate-700 cursor-pointer"'}>Selanjutnya</button>
+                    </div>
+                `;
+            }
+        }
+
+        function changeSubmitKombelPage(dir) {
+            gSubmitKombelPage += dir;
+            renderSubmitKombelTable();
+        }
+
+        function openModalDetailSubmissionPeserta(kombelId) {
+            gCurrentModalKombelId = kombelId;
+            const kombel = gAllKombels[kombelId];
+            if (!kombel) {
+                showToast("⚠️ Data Kombel tidak ditemukan", "rose");
+                return;
+            }
+
+            const isSubmitted = kombel.konfirmasi && kombel.konfirmasi.is_konfirmasi;
+            const fasilNama = kombel.fasil_nama || 'Fasilitator Pendamping';
+            const fasilEmail = kombel.fasil_email || getFasilEmailFromCache(kombel.fasil_id, fasilNama) || '-';
+
+            const adminNama = kombel.admin_nama ? kombel.admin_nama.split(',')[0] : 'Admin BGTK';
+            const adminEmail = kombel.admin_email || getAdminEmailFromCache(adminNama) || '-';
+
+            const setEl = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
+            setEl('detailModalKombelNama', kombel.nama_kombel || 'Komunitas Belajar');
+            setEl('detailModalKombelKab', `${kombel.jenjang || ''} • ${kombel.kab_kota || 'Sumbar'} • Kec. ${kombel.kecamatan || '-'}`);
+            setEl('detailModalFasilNama', fasilNama);
+            setEl('detailModalFasilEmail', fasilEmail);
+            setEl('detailModalAdminNama', adminNama);
+            setEl('detailModalAdminEmail', adminEmail);
+
+            const badgeEl = document.getElementById('detailModalKombelStatusBadge');
+            if (badgeEl) {
+                if (isSubmitted) {
+                    badgeEl.className = 'px-2.5 py-0.5 rounded-full bg-emerald-400/30 text-emerald-200 font-bold text-xs';
+                    badgeEl.textContent = '✅ Disetujui / Selesai (LMS)';
+                } else {
+                    badgeEl.className = 'px-2.5 py-0.5 rounded-full bg-amber-400/30 text-amber-200 font-bold text-xs';
+                    badgeEl.textContent = '⏳ Belum Submit / Pending';
+                }
+            }
+
+            const allPeserta = getCombinedPesertaForKombel(kombelId);
+            let selectedPeserta = [];
+            if (Array.isArray(kombel.selected_peserta_indices) && kombel.selected_peserta_indices.length > 0) {
+                selectedPeserta = allPeserta.filter((_, i) => kombel.selected_peserta_indices.includes(i));
+            } else {
+                selectedPeserta = allPeserta;
+            }
+
+            setEl('detailModalPesertaCountBadge', `${selectedPeserta.length.toLocaleString('id-ID')} Peserta Terpilih`);
+
+            const tableBody = document.getElementById('detailModalPesertaTableBody');
+            if (tableBody) {
+                if (selectedPeserta.length === 0) {
+                    tableBody.innerHTML = '<tr><td colspan="6" class="px-4 py-8 text-center text-slate-400">Belum ada peserta yang dipilih untuk kelas ini.</td></tr>';
+                } else {
+                    tableBody.innerHTML = selectedPeserta.map((p, idx) => {
+                        const pNama = p.nama || p.nama_lengkap || p.nama_anggota || '-';
+                        const pEmail = p.email || p.email_belajar_id || p.email_login || '-';
+                        const pInstansi = p.sekolah || p.instansi || p.asal_sekolah || kombel.instansi || '-';
+                        const pHp = cleanPhoneForExport(p.no_hp || p.telepon || p.kontak);
+
+                        return `
+                            <tr class="hover:bg-slate-50 transition-colors">
+                                <td class="px-3 py-2.5 text-center text-slate-400 font-bold w-10">${idx + 1}</td>
+                                <td class="px-3.5 py-2.5 font-bold text-slate-900">${pNama}</td>
+                                <td class="px-3.5 py-2.5 font-mono text-emerald-800 font-semibold">${pEmail}</td>
+                                <td class="px-3.5 py-2.5 text-slate-700">${pInstansi}</td>
+                                <td class="px-3.5 py-2.5 font-mono text-slate-600">${pHp}</td>
+                                <td class="px-3 py-2.5 text-center">
+                                    <span class="px-2 py-0.5 rounded-full text-[10px] font-black bg-purple-100 text-purple-900 border border-purple-200">murid</span>
+                                </td>
+                            </tr>
+                        `;
+                    }).join('');
+                }
+            }
+
+            const modal = document.getElementById('modalDetailSubmissionPeserta');
+            if (modal) modal.classList.remove('hidden');
+        }
+
+        function closeModalDetailSubmissionPeserta() {
+            const modal = document.getElementById('modalDetailSubmissionPeserta');
+            if (modal) modal.classList.add('hidden');
+        }
+
+        function exportBulkLMSCSVAllSubmitted() {
+            const submittedList = gSubmitKombelRawList.filter(k => k.is_sasaran || (k.konfirmasi && k.konfirmasi.is_konfirmasi));
+
+            if (submittedList.length === 0) {
+                showToast("⚠️ Tidak ada data Kombel sasaran yang dapat diekspor.", "rose");
+                return;
+            }
+
+            let csvContent = "\uFEFF"; // UTF-8 BOM
+            csvContent += "name,email,jenjang,kode_provinsi,kode_kabupaten,kode_kecamatan,mata_pelajaran,jenis_ptk,nuptk,npsn,ptk_id_simpkb,tanggal_lahir,no_hp,role\n";
+
+            let totalAktorCount = 0;
+
+            submittedList.forEach(kombel => {
+                const fasilNama = kombel.fasil_nama || 'Fasilitator';
+                const fasilEmail = kombel.fasil_email || getFasilEmailFromCache(kombel.fasil_id, fasilNama) || '';
+
+                const adminNama = kombel.admin_nama ? kombel.admin_nama.split(',')[0] : 'Admin BGTK';
+                const adminEmail = kombel.admin_email || getAdminEmailFromCache(adminNama) || '';
+
+                const allPeserta = getCombinedPesertaForKombel(kombel.id);
+                let selectedPeserta = [];
+                if (Array.isArray(kombel.selected_peserta_indices) && kombel.selected_peserta_indices.length > 0) {
+                    selectedPeserta = allPeserta.filter((_, idx) => kombel.selected_peserta_indices.includes(idx));
+                } else {
+                    selectedPeserta = allPeserta;
+                }
+
+                // Row 1: Fasilitator (instruktur)
+                csvContent += formatCSVRow(fasilNama, fasilEmail, 'instruktur') + "\n";
+                totalAktorCount++;
+
+                // Row 2: Admin BGTK (admin kelas)
+                csvContent += formatCSVRow(adminNama, adminEmail, 'admin kelas') + "\n";
+                totalAktorCount++;
+
+                // Rows: Selected Peserta (murid)
+                selectedPeserta.forEach(p => {
+                    const pNama = p.nama || p.nama_lengkap || p.nama_anggota || '';
+                    const pEmail = p.email || p.email_belajar_id || p.email_login || '';
+                    csvContent += formatCSVRow(pNama, pEmail, 'murid') + "\n";
+                    totalAktorCount++;
+                });
+            });
+
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement("a");
+            const filename = `LMS_Bulk_Semua_Kelas_${submittedList.length}_Kombel_${new Date().toISOString().slice(0, 10)}.csv`;
+
+            link.href = URL.createObjectURL(blob);
+            link.download = filename;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+
+            showToast(`📥 Bulk CSV LMS (${submittedList.length} Kelas Kombel, ${totalAktorCount.toLocaleString('id-ID')} Aktor) berhasil diunduh!`, 'emerald');
         }
 
         // ==========================================
