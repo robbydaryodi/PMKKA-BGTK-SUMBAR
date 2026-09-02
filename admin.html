@@ -4956,11 +4956,10 @@
                 let statusBadge = `<span class="px-2.5 py-1 rounded-full text-xs font-bold bg-amber-100 text-amber-900 border border-amber-300">⏳ Belum Submit</span>`;
                 if (subStatus.isSubmitted) {
                     const tgl = subStatus.date || '';
-                    const totalConf = subStatus.count || selectedPeserta.length;
-                    const totalImp = subStatus.total || allPeserta.length;
+                    const totalConf = selectedPeserta.length || subStatus.count || 0;
                     statusBadge = `
                         <div class="flex flex-col items-center gap-1">
-                            <span class="px-2.5 py-1 rounded-full text-xs font-black bg-emerald-100 text-emerald-900 border border-emerald-300 shadow-2xs">✅ Disetujui (${totalConf}/${totalImp})</span>
+                            <span class="px-2.5 py-1 rounded-full text-xs font-black bg-emerald-100 text-emerald-900 border border-emerald-300 shadow-2xs">✅ Disetujui (${totalConf} Peserta)</span>
                             ${tgl ? `<span class="text-[10px] text-slate-400 font-mono">${tgl}</span>` : ''}
                         </div>
                     `;
