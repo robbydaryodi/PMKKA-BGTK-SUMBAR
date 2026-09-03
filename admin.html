@@ -755,9 +755,13 @@
                                 <p class="text-xs text-emerald-100/90 mt-1 max-w-2xl">Pantau Komunitas Belajar yang sudah melakukan konfirmasi/submit, rincian Aktor Kelas (Fasilitator &amp; Admin), serta daftar lengkap peserta yang dipilih untuk masuk ke kelas LMS.</p>
                             </div>
                             <div class="flex items-center gap-2 flex-wrap">
+                                <button onclick="exportSubmitKombelRecap('xlsx')" title="Unduh rekap tabel status submission beserta catatan strategis ke format Excel" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2.5 rounded-2xl text-xs font-black transition-all flex items-center gap-2 border border-indigo-400 shadow-md cursor-pointer hover:scale-105">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 01-2-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                                    <span>📊 Export Data &amp; Catatan (Excel)</span>
+                                </button>
                                 <button onclick="exportBulkLMSCSVAllSubmitted()" title="Unduh CSV gabungan LMS untuk seluruh Kombel yang sudah disetujui/submit" class="bg-emerald-500 hover:bg-emerald-600 text-white px-4 py-2.5 rounded-2xl text-xs font-black transition-all flex items-center gap-2 border border-emerald-400 shadow-md cursor-pointer hover:scale-105">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
-                                    <span>📥 Bulk Export CSV Semua Kelas LMS</span>
+                                    <span>📥 Bulk CSV LMS</span>
                                 </button>
                                 <button onclick="loadStatusSubmitKombelData(true)" class="bg-white/10 hover:bg-white/20 text-white px-4 py-2.5 rounded-2xl text-xs font-bold transition-colors flex items-center gap-2 border border-white/20 shadow-xs cursor-pointer">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
@@ -813,6 +817,15 @@
                                 <select id="filterSubmitAdmin" onchange="filterSubmitKombelData()" class="border-indigo-200 rounded-xl text-sm px-3 py-2 bg-indigo-50/70 font-semibold text-indigo-900">
                                     <option value="ALL">👤 Semua Admin BGTK</option>
                                 </select>
+                                <div class="flex items-center gap-1.5 ml-auto">
+                                    <button onclick="exportSubmitKombelRecap('xlsx')" title="Export tabel dan Catatan Strategis ke Excel" class="px-3.5 py-2 rounded-xl text-xs font-bold bg-indigo-600 hover:bg-indigo-700 text-white transition-all shadow-xs flex items-center gap-1.5 cursor-pointer">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 01-2-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                                        <span>Export Excel</span>
+                                    </button>
+                                    <button onclick="exportSubmitKombelRecap('csv')" title="Export tabel dan Catatan Strategis ke CSV" class="px-2.5 py-2 rounded-xl text-xs font-bold bg-slate-100 hover:bg-slate-200 text-slate-700 transition-all border border-slate-200 flex items-center gap-1 cursor-pointer">
+                                        <span>CSV</span>
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -830,7 +843,7 @@
                                         <th class="px-4 py-3.5 bg-purple-50/60 text-purple-950 w-52">Fasilitator (Instruktur)</th>
                                         <th class="px-4 py-3.5 bg-indigo-50/60 text-indigo-950 w-48">Admin BGTK (Admin Kelas)</th>
                                         <th class="px-4 py-3.5 text-center w-48">Peserta Terpilih (Murid)</th>
-                                        <th class="px-4 py-3.5 text-center w-32">Surat Tugas</th>
+                                        <th class="px-4 py-3.5 w-72 min-w-[280px] bg-amber-50/70 text-amber-950 font-black">Catatan Strategis</th>
                                     </tr>
                                 </thead>
                                 <tbody id="tableSubmitKombelBody" class="divide-y divide-slate-100">
@@ -1897,6 +1910,26 @@
                                 </tbody>
                             </table>
                         </div>
+                    </div>
+                </div>
+
+                <!-- Section 3: Catatan Strategis Kombel -->
+                <div class="bg-amber-50/70 p-4 rounded-2xl border border-amber-200">
+                    <div class="flex items-center justify-between mb-2">
+                        <h4 class="text-xs font-black uppercase tracking-wider text-amber-900 flex items-center gap-1.5">
+                            <span>📝</span> Catatan Strategis Kombel
+                        </h4>
+                        <span id="detailModalCatatanStatus" class="text-[11px] font-semibold text-amber-800"></span>
+                    </div>
+                    <textarea 
+                        id="detailModalCatatanInput" 
+                        rows="3" 
+                        placeholder="Tulis catatan strategis khusus untuk kombel / kelas ini..."
+                        class="w-full text-xs p-3 rounded-xl border border-amber-300 bg-white focus:ring-2 focus:ring-amber-300 focus:border-amber-500 outline-none transition font-medium text-slate-800 leading-relaxed placeholder-slate-400"></textarea>
+                    <div class="flex justify-end mt-2">
+                        <button type="button" onclick="saveCatatanFromModal()" class="px-3.5 py-1.5 bg-amber-500 hover:bg-amber-600 text-slate-950 font-black text-xs rounded-xl transition shadow-2xs cursor-pointer flex items-center gap-1.5">
+                            <span>💾 Simpan Catatan Strategis</span>
+                        </button>
                     </div>
                 </div>
             </div>
@@ -4833,7 +4866,11 @@
 
                 // Filter Kombel Sasaran
                 gSubmitKombelRawList = Object.keys(gAllKombels).map(id => {
-                    return { id, ...gAllKombels[id] };
+                    const item = { id, ...gAllKombels[id] };
+                    if (!item.catatan_strategis) {
+                        item.catatan_strategis = localStorage.getItem('kombel_catatan_' + id) || '';
+                    }
+                    return item;
                 }).filter(k => k.is_sasaran || getKombelSubmissionStatus(k).isSubmitted);
 
                 // Sort: Submitted first, then by name
@@ -4916,8 +4953,9 @@
 
                 const allP = getCombinedPesertaForKombel(k.id);
                 const pNames = allP.map(p => p.nama || p.nama_lengkap || '').join(' ');
+                const catStr = (k.catatan_strategis || '').toLowerCase();
 
-                const searchStr = `${k.nama_kombel || ''} ${k.nama_ketua || ''} ${k.kab_kota || ''} ${k.fasil_nama || ''} ${k.admin_nama || ''} ${pNames}`.toLowerCase();
+                const searchStr = `${k.nama_kombel || ''} ${k.nama_ketua || ''} ${k.kab_kota || ''} ${k.fasil_nama || ''} ${k.admin_nama || ''} ${pNames} ${catStr}`.toLowerCase();
                 return searchStr.includes(query);
             });
 
@@ -4993,12 +5031,8 @@
                     </button>
                 `;
 
-                // Surat tugas badge
-                let stBadge = `<span class="text-xs text-slate-400">-</span>`;
-                const stUrl = k.surat_tugas_url || k.surat_tugas_link || (k.konfirmasi && (k.konfirmasi.surat_tugas_url || k.konfirmasi.surat_tugas_link));
-                if (stUrl) {
-                    stBadge = `<a href="${stUrl}" target="_blank" class="px-2.5 py-1 rounded-xl text-xs font-bold bg-purple-100 hover:bg-purple-200 text-purple-900 border border-purple-300 inline-flex items-center gap-1 transition-colors">📄 Lihat Surat</a>`;
-                }
+                // Catatan strategis
+                const catatanVal = k.catatan_strategis || localStorage.getItem('kombel_catatan_' + k.id) || '';
 
                 return `
                     <tr class="hover:bg-slate-50 transition-colors">
@@ -5020,7 +5054,30 @@
                             <div class="text-[11px] text-indigo-700 font-mono truncate max-w-[180px]">${adminEmail}</div>
                         </td>
                         <td class="px-4 py-3.5 text-center w-48 whitespace-normal">${pesertaBadge}</td>
-                        <td class="px-4 py-3.5 text-center w-32">${stBadge}</td>
+                        <td class="px-3.5 py-3 w-72 min-w-[280px] whitespace-normal bg-amber-50/20 border-l border-amber-100">
+                            <div class="relative group">
+                                <textarea
+                                    id="catatan_kombel_${k.id}"
+                                    rows="2"
+                                    placeholder="Tulis catatan strategis..."
+                                    class="w-full text-xs p-2 rounded-xl border border-slate-200 bg-white hover:border-amber-400 focus:border-amber-500 focus:ring-2 focus:ring-amber-200 focus:bg-amber-50/20 transition-all resize-y text-slate-800 placeholder-slate-400 shadow-2xs font-medium leading-relaxed"
+                                    onchange="saveCatatanStrategis('${k.id}', this.value)"
+                                    onblur="saveCatatanStrategis('${k.id}', this.value)"
+                                >${escapeHtml(catatanVal)}</textarea>
+                                <div class="flex items-center justify-between mt-1 px-1">
+                                    <span id="catatan_status_${k.id}" class="text-[10px] font-medium truncate max-w-[170px]">
+                                        ${catatanVal ? '<span class="text-emerald-600 font-semibold">✓ Ada Catatan</span>' : '<span class="text-slate-400 italic">Belum ada catatan</span>'}
+                                    </span>
+                                    <button 
+                                        type="button"
+                                        onclick="saveCatatanStrategis('${k.id}', document.getElementById('catatan_kombel_${k.id}').value)"
+                                        title="Simpan Catatan Strategis"
+                                        class="text-[10px] font-bold px-2 py-0.5 rounded-lg bg-white hover:bg-amber-500 hover:text-white text-slate-600 transition-all border border-slate-200 shadow-2xs cursor-pointer flex items-center gap-1">
+                                        <span>💾 Simpan</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </td>
                     </tr>
                 `;
             }).join('');
@@ -5118,6 +5175,15 @@
                 }
             }
 
+            const catatanInput = document.getElementById('detailModalCatatanInput');
+            const catatanStatus = document.getElementById('detailModalCatatanStatus');
+            if (catatanInput) {
+                catatanInput.value = kombel.catatan_strategis || localStorage.getItem('kombel_catatan_' + kombelId) || '';
+            }
+            if (catatanStatus) {
+                catatanStatus.textContent = '';
+            }
+
             const modal = document.getElementById('modalDetailSubmissionPeserta');
             if (modal) modal.classList.remove('hidden');
         }
@@ -5125,6 +5191,189 @@
         function closeModalDetailSubmissionPeserta() {
             const modal = document.getElementById('modalDetailSubmissionPeserta');
             if (modal) modal.classList.add('hidden');
+        }
+
+        function escapeHtml(str) {
+            if (!str) return '';
+            return String(str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
+        }
+
+        async function saveCatatanStrategis(kombelId, text) {
+            if (!kombelId) return;
+            const cleanText = (text || '').trim();
+
+            // Update cache in-memory
+            if (gAllKombels[kombelId]) {
+                gAllKombels[kombelId].catatan_strategis = cleanText;
+            }
+            const rawItem = gSubmitKombelRawList.find(x => x.id === kombelId);
+            if (rawItem) rawItem.catatan_strategis = cleanText;
+            const filtItem = gSubmitKombelFilteredList.find(x => x.id === kombelId);
+            if (filtItem) filtItem.catatan_strategis = cleanText;
+
+            // Simpan ke local storage
+            try {
+                localStorage.setItem('kombel_catatan_' + kombelId, cleanText);
+            } catch (e) {
+                console.warn("Gagal simpan ke localStorage:", e);
+            }
+
+            // Indikator status pada baris tabel
+            const statusEl = document.getElementById(`catatan_status_${kombelId}`);
+            if (statusEl) {
+                statusEl.innerHTML = '<span class="text-amber-600 font-bold inline-flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-amber-500 animate-ping"></span> Menyimpan...</span>';
+            }
+
+            // Simpan ke Firebase
+            try {
+                if (typeof db !== 'undefined' && db.ref) {
+                    await db.ref(`master_kombel/${kombelId}`).update({
+                        catatan_strategis: cleanText
+                    });
+                }
+                if (statusEl) {
+                    statusEl.innerHTML = cleanText 
+                        ? '<span class="text-emerald-600 font-bold">✓ Tersimpan!</span>' 
+                        : '<span class="text-slate-400 italic">Belum ada catatan</span>';
+                }
+            } catch (err) {
+                console.error("Gagal simpan catatan ke Firebase:", err);
+                if (statusEl) {
+                    statusEl.innerHTML = '<span class="text-emerald-600 font-bold">✓ Tersimpan (Lokal)</span>';
+                }
+            }
+        }
+
+        async function saveCatatanFromModal() {
+            if (!gCurrentModalKombelId) return;
+            const input = document.getElementById('detailModalCatatanInput');
+            const statusEl = document.getElementById('detailModalCatatanStatus');
+            const val = input ? input.value : '';
+
+            if (statusEl) {
+                statusEl.innerHTML = '<span class="text-amber-700 font-bold">Menyimpan...</span>';
+            }
+
+            await saveCatatanStrategis(gCurrentModalKombelId, val);
+
+            // Sinkronkan textarea baris tabel jika sedang dirender
+            const rowTextarea = document.getElementById(`catatan_kombel_${gCurrentModalKombelId}`);
+            if (rowTextarea) {
+                rowTextarea.value = val;
+            }
+
+            if (statusEl) {
+                statusEl.innerHTML = '<span class="text-emerald-700 font-bold">✓ Catatan strategis berhasil disimpan!</span>';
+                setTimeout(() => {
+                    if (statusEl) statusEl.textContent = '';
+                }, 3000);
+            }
+            showToast("💾 Catatan strategis berhasil disimpan!", "emerald");
+        }
+
+        function exportSubmitKombelRecap(format = 'xlsx') {
+            const listToExport = (gSubmitKombelFilteredList && gSubmitKombelFilteredList.length > 0)
+                ? gSubmitKombelFilteredList
+                : gSubmitKombelRawList;
+
+            if (!listToExport || listToExport.length === 0) {
+                showToast("⚠️ Tidak ada data Kombel yang dapat diekspor.", "rose");
+                return;
+            }
+
+            const exportData = listToExport.map((k, idx) => {
+                const subStatus = getKombelSubmissionStatus(k);
+                const isSub = subStatus.isSubmitted;
+                const statusStr = isSub ? 'Sudah Disetujui / Submit' : 'Belum Submit / Pending';
+                const tglStr = subStatus.date || '-';
+
+                const fasilNama = k.fasil_nama || '-';
+                const fasilEmail = k.fasil_email || (typeof getFasilEmailFromCache === 'function' ? getFasilEmailFromCache(k.fasil_id, fasilNama) : '') || '-';
+
+                const adminNama = k.admin_nama ? k.admin_nama.split(',')[0] : '-';
+                const adminEmail = k.admin_email || (typeof getAdminEmailFromCache === 'function' ? getAdminEmailFromCache(adminNama) : '') || '-';
+
+                const selectedPeserta = getSelectedPesertaForKombel(k);
+                const catatanVal = k.catatan_strategis || localStorage.getItem('kombel_catatan_' + k.id) || '';
+
+                const ringkasanPeserta = selectedPeserta.map((p, pIdx) => `${pIdx + 1}. ${p.nama || p.nama_lengkap || '-'} (${p.sekolah || p.instansi || '-'})`).join('; ');
+
+                return {
+                    "No": idx + 1,
+                    "ID Kombel": k.id || '',
+                    "Komunitas Belajar": k.nama_kombel || '',
+                    "Jenjang": k.jenjang || '',
+                    "Kabupaten / Kota": k.kab_kota || '',
+                    "Kecamatan": k.kecamatan || '',
+                    "Nama Ketua": k.nama_ketua || '',
+                    "Kontak Ketua": k.no_hp || k.kontak || '',
+                    "Status Submission": statusStr,
+                    "Waktu Submission": tglStr,
+                    "Fasilitator (Instruktur)": fasilNama,
+                    "Email Fasilitator": fasilEmail,
+                    "Admin BGTK (Admin Kelas)": adminNama,
+                    "Email Admin BGTK": adminEmail,
+                    "Jumlah Peserta Terpilih": selectedPeserta.length,
+                    "Ringkasan Peserta Terpilih": ringkasanPeserta,
+                    "Catatan Strategis": catatanVal
+                };
+            });
+
+            const dateStr = new Date().toISOString().slice(0, 10);
+            const baseFileName = `Rekap_Status_Submission_Kombel_LMS_${dateStr}`;
+
+            if (format === 'xlsx' && typeof XLSX !== 'undefined') {
+                const ws = XLSX.utils.json_to_sheet(exportData);
+                ws['!cols'] = [
+                    { wch: 6 },  // No
+                    { wch: 15 }, // ID Kombel
+                    { wch: 38 }, // Komunitas Belajar
+                    { wch: 12 }, // Jenjang
+                    { wch: 22 }, // Kab/Kota
+                    { wch: 18 }, // Kecamatan
+                    { wch: 25 }, // Nama Ketua
+                    { wch: 18 }, // Kontak Ketua
+                    { wch: 26 }, // Status Submission
+                    { wch: 22 }, // Waktu Submission
+                    { wch: 26 }, // Fasilitator
+                    { wch: 28 }, // Email Fasilitator
+                    { wch: 24 }, // Admin BGTK
+                    { wch: 28 }, // Email Admin
+                    { wch: 22 }, // Jml Peserta
+                    { wch: 50 }, // Ringkasan Peserta
+                    { wch: 50 }  // Catatan Strategis
+                ];
+                const wb = XLSX.utils.book_new();
+                XLSX.utils.book_append_sheet(wb, ws, "Rekap Status & Catatan");
+                XLSX.writeFile(wb, `${baseFileName}.xlsx`);
+                showToast(`📊 Berhasil mengekspor ${exportData.length} data Kombel & Catatan Strategis ke Excel!`, 'emerald');
+            } else {
+                // CSV Fallback / Direct CSV
+                let csv = "\uFEFF"; // UTF-8 BOM
+                const headers = Object.keys(exportData[0]);
+                csv += headers.map(h => `"${h}"`).join(',') + "\n";
+                exportData.forEach(row => {
+                    const line = headers.map(h => {
+                        const val = (row[h] !== undefined && row[h] !== null) ? String(row[h]) : '';
+                        return `"${val.replace(/"/g, '""').replace(/\r?\n/g, ' ')}"`;
+                    }).join(',');
+                    csv += line + "\n";
+                });
+
+                const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+                const link = document.createElement("a");
+                link.href = URL.createObjectURL(blob);
+                link.download = `${baseFileName}.csv`;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                showToast(`📊 Berhasil mengekspor ${exportData.length} data Kombel & Catatan Strategis ke CSV!`, 'emerald');
+            }
         }
 
         function exportBulkLMSCSVAllSubmitted() {
