@@ -1650,7 +1650,13 @@
                     <span id="modalKombelJenjangBadge" class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-white/20 text-white backdrop-blur-sm">Jenjang</span>
                     <span id="modalKombelKabBadge" class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-white/20 text-white backdrop-blur-sm">Kab/Kota</span>
                 </div>
-                <h2 class="text-xl sm:text-2xl font-black leading-tight" id="modalKombelNama">Nama Kelompok Kerja</h2>
+                <div class="flex items-center gap-3 flex-wrap">
+                    <h2 class="text-xl sm:text-2xl font-black leading-tight" id="modalKombelNama">Nama Kelompok Kerja</h2>
+                    <button onclick="openModalUbahNamaKombel(gCurrentModalKombelId)" title="Ubah Nama Kombel Ini" class="px-2.5 py-1 rounded-xl bg-amber-400 hover:bg-amber-300 text-amber-950 text-xs font-black transition flex items-center gap-1 shadow-sm cursor-pointer hover:scale-105">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
+                        <span>Ubah Nama</span>
+                    </button>
+                </div>
                 <div class="text-xs text-purple-200 mt-1 flex flex-wrap items-center gap-x-4 gap-y-1">
                     <span id="modalKombelKecDesa">Kecamatan / Desa</span>
                     <span>•</span>
@@ -1675,6 +1681,17 @@
                         <div id="statusFasilTerpilihBadge" class="text-xs"></div>
                     </div>
                     <div class="space-y-3 pt-2">
+                        <!-- Input Nama Kombel -->
+                        <div class="p-3.5 bg-amber-50/70 border border-amber-200 rounded-2xl">
+                            <label class="block text-[11px] font-black text-amber-950 mb-1">🏷️ Nama Komunitas Belajar (Kombel):</label>
+                            <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
+                                <input type="text" id="modalInputNamaKombel" placeholder="Nama Komunitas Belajar" class="flex-1 border border-amber-300 rounded-xl px-3.5 py-2 text-xs sm:text-sm font-bold text-slate-900 bg-white focus:ring-2 focus:ring-amber-500 outline-none">
+                                <button type="button" onclick="simpanNamaKombelDariModalKelola()" class="px-4 py-2 bg-amber-500 hover:bg-amber-600 text-slate-950 font-black rounded-xl text-xs transition shadow-2xs cursor-pointer flex items-center justify-center gap-1 flex-shrink-0">
+                                    <span>💾 Simpan Nama</span>
+                                </button>
+                            </div>
+                        </div>
+
                         <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
                             <div class="flex-1">
                                 <label class="block text-[11px] font-bold text-slate-600 mb-1">🤝 Fasilitator Pendamping (FKK):</label>
@@ -1942,7 +1959,13 @@
             <div class="bg-gradient-to-r from-emerald-800 to-teal-900 text-white px-6 py-5 flex justify-between items-center flex-shrink-0">
                 <div>
                     <span class="inline-block px-2.5 py-0.5 bg-white/20 text-emerald-100 rounded-full text-[10px] font-black uppercase tracking-wider mb-1">Rincian Submission Kelas LMS</span>
-                    <h3 class="text-xl font-black leading-tight" id="detailModalKombelNama">Nama Komunitas Belajar</h3>
+                    <div class="flex items-center gap-3 flex-wrap">
+                        <h3 class="text-xl font-black leading-tight" id="detailModalKombelNama">Nama Komunitas Belajar</h3>
+                        <button onclick="openModalUbahNamaKombel(gCurrentModalKombelId)" title="Ubah Nama Kombel Ini" class="px-2.5 py-1 rounded-xl bg-amber-400 hover:bg-amber-300 text-amber-950 text-xs font-black transition flex items-center gap-1 shadow-sm cursor-pointer hover:scale-105">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
+                            <span>Ubah Nama</span>
+                        </button>
+                    </div>
                     <div class="text-xs text-emerald-100/90 mt-0.5 flex items-center gap-2" id="detailModalKombelSub">
                         <span id="detailModalKombelKab">-</span> • <span id="detailModalKombelStatusBadge" class="px-2 py-0.5 rounded-full bg-emerald-400/30 text-emerald-200 font-bold text-[10px]">✅ Disetujui</span>
                     </div>
@@ -2038,6 +2061,42 @@
                     </button>
                     <button onclick="closeModalDetailSubmissionPeserta()" class="px-4 py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-xl text-xs font-bold transition cursor-pointer">
                         Tutup
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL CEPAT UBAH NAMA KOMBEL -->
+    <div id="modalUbahNamaKombel" class="hidden fixed inset-0 z-[150] bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl shadow-2xl w-full max-w-lg overflow-hidden fade-in border border-slate-100">
+            <div class="bg-gradient-to-r from-amber-500 to-amber-600 p-5 text-slate-950 flex justify-between items-center">
+                <div class="flex items-center gap-2.5">
+                    <span class="text-2xl">✏️</span>
+                    <div>
+                        <h3 class="font-black text-base">Ubah Nama Komunitas Belajar</h3>
+                        <p class="text-[11px] text-amber-950/80 font-medium">Perbarui nama kombel di database aplikasi</p>
+                    </div>
+                </div>
+                <button onclick="closeModalUbahNamaKombel()" class="p-1.5 rounded-full hover:bg-black/10 text-slate-900 transition cursor-pointer">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                </button>
+            </div>
+            <div class="p-6 space-y-4">
+                <input type="hidden" id="editNamaKombelId">
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Nama Kombel Saat Ini:</label>
+                    <div id="editNamaKombelOldText" class="p-3 rounded-xl bg-slate-100 text-slate-700 text-xs font-semibold break-words border border-slate-200"></div>
+                </div>
+                <div>
+                    <label class="block text-xs font-black text-slate-800 mb-1">Nama Kombel Baru: <span class="text-rose-500">*</span></label>
+                    <input type="text" id="editNamaKombelNewInput" onkeydown="if(event.key==='Enter') simpanUbahNamaKombel()" placeholder="Masukkan nama kombel baru..." class="w-full border-2 border-amber-400 focus:border-amber-600 rounded-xl px-3.5 py-2.5 text-sm font-bold text-slate-900 outline-none transition focus:ring-2 focus:ring-amber-300 bg-amber-50/20">
+                    <p class="text-[11px] text-slate-500 mt-1">Nama ini akan langsung diperbarui di database Firebase, seluruh tabel Master, Status Submission, dan Export LMS.</p>
+                </div>
+                <div class="flex justify-end gap-2 pt-3 border-t border-slate-100">
+                    <button onclick="closeModalUbahNamaKombel()" class="px-4 py-2 rounded-xl text-xs font-bold text-slate-600 hover:bg-slate-100 transition cursor-pointer">Batal</button>
+                    <button onclick="simpanUbahNamaKombel()" id="btnSimpanNamaKombel" class="px-5 py-2.5 bg-amber-500 hover:bg-amber-600 text-slate-950 font-black rounded-xl text-xs transition shadow-sm flex items-center gap-1.5 cursor-pointer">
+                        <span>💾 Simpan Perubahan Nama</span>
                     </button>
                 </div>
             </div>
@@ -4192,9 +4251,14 @@
                     <td class="px-2 py-3 text-center text-slate-400 text-xs font-bold w-10">${start + i + 1}</td>
                     <td class="px-3 py-3 text-center bg-amber-50/40 border-r border-amber-200/60 w-36">${btnActions}</td>
                     <td class="px-3.5 py-3 w-[260px] max-w-[260px] whitespace-normal">
-                        <button onclick="openKelolaKombelModal('${k.id}')" title="Klik untuk Kelola &amp; CSV Peserta" class="text-left w-full group focus:outline-none cursor-pointer">
-                            <div class="font-bold text-slate-900 group-hover:text-indigo-600 group-hover:underline text-xs sm:text-sm leading-snug break-words transition-colors">${k.nama_kombel}</div>
-                        </button>
+                        <div class="flex items-start justify-between gap-1 group/kname">
+                            <button onclick="openKelolaKombelModal('${k.id}')" title="Klik untuk Kelola &amp; CSV Peserta" class="text-left flex-1 focus:outline-none cursor-pointer">
+                                <div class="font-bold text-slate-900 group-hover/kname:text-indigo-600 text-xs sm:text-sm leading-snug break-words transition-colors">${k.nama_kombel}</div>
+                            </button>
+                            <button onclick="openModalUbahNamaKombel('${k.id}')" title="Ubah Nama Kombel Ini" class="p-1 text-slate-400 hover:text-amber-800 hover:bg-amber-100 rounded-lg transition-all flex-shrink-0 cursor-pointer" style="margin-top:-2px;">
+                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
+                            </button>
+                        </div>
                         <div class="text-[11px] text-slate-500 mt-0.5 break-words">${k.jenjang || ''} ${k.instansi ? '• ' + k.instansi : ''}</div>
                         ${smBadgeHtml}
                     </td>
@@ -4278,7 +4342,9 @@
             const noHpKetua = isExpo ? '-' : (rawHp || '-');
             document.getElementById('modalKombelKetuaKontak').textContent = `Ketua: ${kombel.nama_ketua || '-'} • HP/WA: ${noHpKetua} • (${kombel.email || kombel.email_ketua || '-'})`;
 
-            // Populate Form Ketua, Email Belajar.id & Kontak WA
+            // Populate Form Nama Kombel, Ketua, Email Belajar.id & Kontak WA
+            const inputNamaKombel = document.getElementById('modalInputNamaKombel');
+            if (inputNamaKombel) inputNamaKombel.value = kombel.nama_kombel || '';
             const inputNamaKetua = document.getElementById('modalInputNamaKetua');
             const inputEmailKetua = document.getElementById('modalInputEmailKetua');
             const inputHpKetua = document.getElementById('modalInputHpKetua');
@@ -4459,6 +4525,7 @@
             if (!gCurrentModalKombelId) return;
             const selFasil = document.getElementById('modalSelectFasilKombel');
             const selAdmin = document.getElementById('modalSelectAdminKombel');
+            const inputNamaKombel = (document.getElementById('modalInputNamaKombel')?.value || '').trim();
             const inputNamaKetua = (document.getElementById('modalInputNamaKetua')?.value || '').trim();
             const inputEmailKetua = (document.getElementById('modalInputEmailKetua')?.value || '').trim();
             const inputHpKetua = (document.getElementById('modalInputHpKetua')?.value || '').trim();
@@ -4473,6 +4540,11 @@
                 const payload = {
                     is_sasaran: true
                 };
+                if (inputNamaKombel) {
+                    payload.nama_kombel = inputNamaKombel;
+                    const modalKombelTitle = document.getElementById('modalKombelNama');
+                    if (modalKombelTitle) modalKombelTitle.textContent = inputNamaKombel;
+                }
                 if (fasilNama) {
                     payload.fasil_nama = fasilNama;
                     payload.fasil_id = fasilId;
@@ -4518,10 +4590,133 @@
                 }
 
                 filterKombelData();
-                showToast("✅ Berhasil menyimpan Fasilitator, Admin & Email Aktor Kelas!", "emerald");
+                showToast("✅ Berhasil menyimpan Data Kombel, Fasilitator & Admin!", "emerald");
             } catch(e) {
                 console.error("Gagal menyimpan penugasan:", e);
                 showToast("❌ Gagal menyimpan penugasan", "rose");
+            }
+        }
+
+        async function simpanNamaKombelDariModalKelola() {
+            if (!gCurrentModalKombelId) return;
+            const newName = (document.getElementById('modalInputNamaKombel')?.value || '').trim();
+            if (!newName) {
+                showToast('⚠️ Nama kombel tidak boleh kosong!', 'rose');
+                return;
+            }
+            try {
+                await db.ref(`master_kombel/${gCurrentModalKombelId}`).update({
+                    nama_kombel: newName
+                });
+                if (gAllKombels[gCurrentModalKombelId]) {
+                    gAllKombels[gCurrentModalKombelId].nama_kombel = newName;
+                }
+                const titleEl = document.getElementById('modalKombelNama');
+                if (titleEl) titleEl.textContent = newName;
+                if (typeof filterKombelData === 'function') filterKombelData();
+                if (typeof filterSubmitKombelData === 'function' && gSubmitKombelRawList && gSubmitKombelRawList.length > 0) {
+                    const itm = gSubmitKombelRawList.find(x => x.id === gCurrentModalKombelId);
+                    if (itm) itm.nama_kombel = newName;
+                    filterSubmitKombelData();
+                }
+                if (typeof filterExportLMSData === 'function' && gExportLMSRawList && gExportLMSRawList.length > 0) {
+                    const itm = gExportLMSRawList.find(x => x.id === gCurrentModalKombelId);
+                    if (itm) itm.nama_kombel = newName;
+                    filterExportLMSData();
+                }
+                showToast('✅ Nama kombel berhasil disimpan: "' + newName + '"', 'emerald');
+            } catch(e) {
+                console.error('Gagal simpan nama kombel:', e);
+                showToast('❌ Gagal menyimpan nama: ' + e.message, 'rose');
+            }
+        }
+
+        // ==========================================
+        // FITUR UBAH NAMA KOMBEL CEPAT (MODAL DIALOG)
+        // ==========================================
+        function openModalUbahNamaKombel(kombelId) {
+            if (!kombelId) return;
+            const kombel = gAllKombels[kombelId];
+            if (!kombel) {
+                showToast('⚠️ Data kombel tidak ditemukan', 'rose');
+                return;
+            }
+            document.getElementById('editNamaKombelId').value = kombelId;
+            document.getElementById('editNamaKombelOldText').textContent = kombel.nama_kombel || '-';
+            document.getElementById('editNamaKombelNewInput').value = kombel.nama_kombel || '';
+            document.getElementById('modalUbahNamaKombel').classList.remove('hidden');
+            setTimeout(() => {
+                const inp = document.getElementById('editNamaKombelNewInput');
+                if (inp) {
+                    inp.focus();
+                    inp.select();
+                }
+            }, 80);
+        }
+
+        function closeModalUbahNamaKombel() {
+            const modal = document.getElementById('modalUbahNamaKombel');
+            if (modal) modal.classList.add('hidden');
+        }
+
+        async function simpanUbahNamaKombel() {
+            const kombelId = document.getElementById('editNamaKombelId')?.value;
+            const newName = (document.getElementById('editNamaKombelNewInput')?.value || '').trim();
+            if (!kombelId || !newName) {
+                showToast('⚠️ Nama kombel tidak boleh kosong!', 'rose');
+                return;
+            }
+
+            const btn = document.getElementById('btnSimpanNamaKombel');
+            if (btn) {
+                btn.disabled = true;
+                btn.innerHTML = '<span>Menyimpan...</span>';
+            }
+
+            try {
+                await db.ref(`master_kombel/${kombelId}`).update({
+                    nama_kombel: newName
+                });
+
+                if (gAllKombels[kombelId]) {
+                    gAllKombels[kombelId].nama_kombel = newName;
+                }
+
+                // Update judul jika modal sedang terbuka
+                if (gCurrentModalKombelId === kombelId) {
+                    const titleEl = document.getElementById('modalKombelNama');
+                    if (titleEl) titleEl.textContent = newName;
+                    const inputEl = document.getElementById('modalInputNamaKombel');
+                    if (inputEl) inputEl.value = newName;
+                }
+                const detailTitleEl = document.getElementById('detailModalKombelNama');
+                if (detailTitleEl && gCurrentModalKombelId === kombelId) {
+                    detailTitleEl.textContent = newName;
+                }
+
+                // Update tables
+                if (typeof filterKombelData === 'function') filterKombelData();
+                if (typeof filterSubmitKombelData === 'function' && gSubmitKombelRawList && gSubmitKombelRawList.length > 0) {
+                    const itm = gSubmitKombelRawList.find(x => x.id === kombelId);
+                    if (itm) itm.nama_kombel = newName;
+                    filterSubmitKombelData();
+                }
+                if (typeof filterExportLMSData === 'function' && gExportLMSRawList && gExportLMSRawList.length > 0) {
+                    const itm = gExportLMSRawList.find(x => x.id === kombelId);
+                    if (itm) itm.nama_kombel = newName;
+                    filterExportLMSData();
+                }
+
+                closeModalUbahNamaKombel();
+                showToast(`✅ Nama Kombel berhasil diubah menjadi: "${newName}"`, 'emerald');
+            } catch(e) {
+                console.error('Gagal update nama kombel:', e);
+                showToast('❌ Gagal mengubah nama: ' + e.message, 'rose');
+            } finally {
+                if (btn) {
+                    btn.disabled = false;
+                    btn.innerHTML = '<span>💾 Simpan Perubahan Nama</span>';
+                }
             }
         }
 
@@ -5148,9 +5343,14 @@
                         <td class="px-3 py-3.5 text-center text-slate-400 text-xs font-bold w-12">${start + idx + 1}</td>
                         <td class="px-4 py-3.5 text-center bg-emerald-50/30 border-r border-emerald-100 w-44">${btnActions}</td>
                         <td class="px-4 py-3.5 w-[260px] max-w-[260px] whitespace-normal">
-                            <button onclick="openModalDetailSubmissionPeserta('${k.id}')" class="text-left w-full group cursor-pointer focus:outline-none">
-                                <div class="font-bold text-slate-900 group-hover:text-emerald-700 text-xs sm:text-sm leading-snug break-words transition-colors">${k.nama_kombel || 'Kombel'}</div>
-                            </button>
+                            <div class="flex items-start justify-between gap-1 group/kname">
+                                <button onclick="openModalDetailSubmissionPeserta('${k.id}')" class="text-left flex-1 cursor-pointer focus:outline-none">
+                                    <div class="font-bold text-slate-900 group-hover/kname:text-emerald-700 text-xs sm:text-sm leading-snug break-words transition-colors">${k.nama_kombel || 'Kombel'}</div>
+                                </button>
+                                <button onclick="openModalUbahNamaKombel('${k.id}')" title="Ubah Nama Kombel Ini" class="p-1 text-slate-400 hover:text-amber-800 hover:bg-amber-100 rounded-lg transition-all flex-shrink-0 cursor-pointer" style="margin-top:-2px;">
+                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
+                                </button>
+                            </div>
                             <div class="text-[11px] text-slate-500 mt-0.5 break-words">${k.jenjang || ''} ${k.kab_kota ? '• ' + k.kab_kota : ''}</div>
                         </td>
                         <td class="px-4 py-3.5 text-center w-44">${statusBadge}</td>
@@ -5759,9 +5959,14 @@
                     <tr class="hover:bg-slate-50 transition-colors">
                         <td class="px-3 py-3.5 text-center text-slate-400 text-xs font-bold w-12">${start + idx + 1}</td>
                         <td class="px-4 py-3.5 w-[280px] whitespace-normal">
-                            <button onclick="openModalDetailSubmissionPeserta('${k.id}')" class="text-left w-full group cursor-pointer focus:outline-none">
-                                <div class="font-bold text-slate-900 group-hover:text-blue-700 text-xs sm:text-sm leading-snug break-words transition-colors">${k.nama_kombel || 'Kombel'}</div>
-                            </button>
+                            <div class="flex items-start justify-between gap-1 group/kname">
+                                <button onclick="openModalDetailSubmissionPeserta('${k.id}')" class="text-left flex-1 cursor-pointer focus:outline-none">
+                                    <div class="font-bold text-slate-900 group-hover/kname:text-blue-700 text-xs sm:text-sm leading-snug break-words transition-colors">${k.nama_kombel || 'Kombel'}</div>
+                                </button>
+                                <button onclick="openModalUbahNamaKombel('${k.id}')" title="Ubah Nama Kombel Ini" class="p-1 text-slate-400 hover:text-amber-800 hover:bg-amber-100 rounded-lg transition-all flex-shrink-0 cursor-pointer" style="margin-top:-2px;">
+                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
+                                </button>
+                            </div>
                             <div class="text-[11px] text-slate-500 mt-0.5 break-words">${k.jenjang || ''} ${k.kab_kota ? '• ' + k.kab_kota : ''}</div>
                         </td>
                         <td class="px-4 py-3.5 bg-purple-50/20 w-52 whitespace-normal">
