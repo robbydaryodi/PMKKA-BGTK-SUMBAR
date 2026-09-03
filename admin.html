@@ -1652,7 +1652,7 @@
                 </div>
                 <div class="flex items-center gap-3 flex-wrap">
                     <h2 class="text-xl sm:text-2xl font-black leading-tight" id="modalKombelNama">Nama Kelompok Kerja</h2>
-                    <button onclick="openModalUbahNamaKombel(gCurrentModalKombelId)" title="Ubah Nama Kombel Ini" class="px-2.5 py-1 rounded-xl bg-amber-400 hover:bg-amber-300 text-amber-950 text-xs font-black transition flex items-center gap-1 shadow-sm cursor-pointer hover:scale-105">
+                    <button id="btnHeaderUbahNamaKombel" onclick="openModalUbahNamaKombel(gCurrentModalKombelId)" title="Ubah Nama Kombel Ini" class="px-2.5 py-1 rounded-xl bg-amber-400 hover:bg-amber-300 text-amber-950 text-xs font-black transition flex items-center gap-1 shadow-sm cursor-pointer hover:scale-105">
                         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
                         <span>Ubah Nama</span>
                     </button>
@@ -1686,10 +1686,11 @@
                             <label class="block text-[11px] font-black text-amber-950 mb-1">🏷️ Nama Komunitas Belajar (Kombel):</label>
                             <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
                                 <input type="text" id="modalInputNamaKombel" placeholder="Nama Komunitas Belajar" class="flex-1 border border-amber-300 rounded-xl px-3.5 py-2 text-xs sm:text-sm font-bold text-slate-900 bg-white focus:ring-2 focus:ring-amber-500 outline-none">
-                                <button type="button" onclick="simpanNamaKombelDariModalKelola()" class="px-4 py-2 bg-amber-500 hover:bg-amber-600 text-slate-950 font-black rounded-xl text-xs transition shadow-2xs cursor-pointer flex items-center justify-center gap-1 flex-shrink-0">
+                                <button type="button" id="btnSimpanNamaKombelModal" onclick="simpanNamaKombelDariModalKelola()" class="px-4 py-2 bg-amber-500 hover:bg-amber-600 text-slate-950 font-black rounded-xl text-xs transition shadow-2xs cursor-pointer flex items-center justify-center gap-1 flex-shrink-0">
                                     <span>💾 Simpan Nama</span>
                                 </button>
                             </div>
+                            <p id="descNamaKombelModal" class="text-[10px] text-amber-900/80 mt-1 font-medium"></p>
                         </div>
 
                         <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
@@ -1961,7 +1962,7 @@
                     <span class="inline-block px-2.5 py-0.5 bg-white/20 text-emerald-100 rounded-full text-[10px] font-black uppercase tracking-wider mb-1">Rincian Submission Kelas LMS</span>
                     <div class="flex items-center gap-3 flex-wrap">
                         <h3 class="text-xl font-black leading-tight" id="detailModalKombelNama">Nama Komunitas Belajar</h3>
-                        <button onclick="openModalUbahNamaKombel(gCurrentModalKombelId)" title="Ubah Nama Kombel Ini" class="px-2.5 py-1 rounded-xl bg-amber-400 hover:bg-amber-300 text-amber-950 text-xs font-black transition flex items-center gap-1 shadow-sm cursor-pointer hover:scale-105">
+                        <button id="btnDetailHeaderUbahNamaKombel" onclick="openModalUbahNamaKombel(gCurrentModalKombelId)" title="Ubah Nama Kombel Ini" class="px-2.5 py-1 rounded-xl bg-amber-400 hover:bg-amber-300 text-amber-950 text-xs font-black transition flex items-center gap-1 shadow-sm cursor-pointer hover:scale-105">
                             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
                             <span>Ubah Nama</span>
                         </button>
@@ -2452,6 +2453,11 @@
             'rosariaayu5@gmail.com',
             'rosa.ria@kemendikdasmen.go.id'
         ];
+
+        function isUserMasterSumbar() {
+            const email = (sessionStorage.getItem('admin_bgtk_email') || '').toLowerCase().trim();
+            return email.includes('mastersumbar');
+        }
 
         async function checkAndApplyUserRole(email) {
             const cleanEmail = (email || '').toLowerCase();
@@ -4246,6 +4252,13 @@
                     ? `<div class="mt-1"><span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-black bg-teal-100 text-teal-900 border border-teal-300/80 shadow-2xs">🏫 Rekomendasi Sekolah Model (${k.sekolah_model_participant_count || 1} Peserta SM)</span></div>`
                     : '';
 
+                const canEditName = typeof isUserMasterSumbar === 'function' && isUserMasterSumbar();
+                const editNameBtnHtml = canEditName 
+                    ? `<button onclick="openModalUbahNamaKombel('${k.id}')" title="Ubah Nama Kombel Ini (Khusus Master Sumbar)" class="p-1 text-slate-400 hover:text-amber-800 hover:bg-amber-100 rounded-lg transition-all flex-shrink-0 cursor-pointer" style="margin-top:-2px;">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
+                    </button>` 
+                    : '';
+
                 return `
                 <tr class="${rowClass}">
                     <td class="px-2 py-3 text-center text-slate-400 text-xs font-bold w-10">${start + i + 1}</td>
@@ -4255,9 +4268,7 @@
                             <button onclick="openKelolaKombelModal('${k.id}')" title="Klik untuk Kelola &amp; CSV Peserta" class="text-left flex-1 focus:outline-none cursor-pointer">
                                 <div class="font-bold text-slate-900 group-hover/kname:text-indigo-600 text-xs sm:text-sm leading-snug break-words transition-colors">${k.nama_kombel}</div>
                             </button>
-                            <button onclick="openModalUbahNamaKombel('${k.id}')" title="Ubah Nama Kombel Ini" class="p-1 text-slate-400 hover:text-amber-800 hover:bg-amber-100 rounded-lg transition-all flex-shrink-0 cursor-pointer" style="margin-top:-2px;">
-                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
-                            </button>
+                            ${editNameBtnHtml}
                         </div>
                         <div class="text-[11px] text-slate-500 mt-0.5 break-words">${k.jenjang || ''} ${k.instansi ? '• ' + k.instansi : ''}</div>
                         ${smBadgeHtml}
@@ -4342,9 +4353,39 @@
             const noHpKetua = isExpo ? '-' : (rawHp || '-');
             document.getElementById('modalKombelKetuaKontak').textContent = `Ketua: ${kombel.nama_ketua || '-'} • HP/WA: ${noHpKetua} • (${kombel.email || kombel.email_ketua || '-'})`;
 
+            // Role check for renaming (Hanya akun mastersumbar)
+            const isMaster = typeof isUserMasterSumbar === 'function' && isUserMasterSumbar();
+            const btnHeaderRename = document.getElementById('btnHeaderUbahNamaKombel');
+            if (btnHeaderRename) {
+                if (isMaster) btnHeaderRename.classList.remove('hidden');
+                else btnHeaderRename.classList.add('hidden');
+            }
+
             // Populate Form Nama Kombel, Ketua, Email Belajar.id & Kontak WA
             const inputNamaKombel = document.getElementById('modalInputNamaKombel');
-            if (inputNamaKombel) inputNamaKombel.value = kombel.nama_kombel || '';
+            const btnSimpanNamaKombelModal = document.getElementById('btnSimpanNamaKombelModal');
+            const descNamaKombelModal = document.getElementById('descNamaKombelModal');
+
+            if (inputNamaKombel) {
+                inputNamaKombel.value = kombel.nama_kombel || '';
+                if (!isMaster) {
+                    inputNamaKombel.setAttribute('readonly', 'readonly');
+                    inputNamaKombel.className = "flex-1 border border-slate-200 rounded-xl px-3.5 py-2 text-xs sm:text-sm font-bold text-slate-600 bg-slate-100 cursor-not-allowed outline-none";
+                } else {
+                    inputNamaKombel.removeAttribute('readonly');
+                    inputNamaKombel.className = "flex-1 border border-amber-300 rounded-xl px-3.5 py-2 text-xs sm:text-sm font-bold text-slate-900 bg-white focus:ring-2 focus:ring-amber-500 outline-none";
+                }
+            }
+            if (btnSimpanNamaKombelModal) {
+                if (isMaster) btnSimpanNamaKombelModal.classList.remove('hidden');
+                else btnSimpanNamaKombelModal.classList.add('hidden');
+            }
+            if (descNamaKombelModal) {
+                descNamaKombelModal.textContent = isMaster 
+                    ? "Nama ini akan tersimpan langsung ke database master."
+                    : "🔒 Pengubahan nama kombel hanya dapat dilakukan oleh akun Master Sumbar.";
+            }
+
             const inputNamaKetua = document.getElementById('modalInputNamaKetua');
             const inputEmailKetua = document.getElementById('modalInputEmailKetua');
             const inputHpKetua = document.getElementById('modalInputHpKetua');
@@ -4540,7 +4581,7 @@
                 const payload = {
                     is_sasaran: true
                 };
-                if (inputNamaKombel) {
+                if (inputNamaKombel && (typeof isUserMasterSumbar === 'function' && isUserMasterSumbar())) {
                     payload.nama_kombel = inputNamaKombel;
                     const modalKombelTitle = document.getElementById('modalKombelNama');
                     if (modalKombelTitle) modalKombelTitle.textContent = inputNamaKombel;
@@ -4598,6 +4639,10 @@
         }
 
         async function simpanNamaKombelDariModalKelola() {
+            if (typeof isUserMasterSumbar === 'function' && !isUserMasterSumbar()) {
+                showToast('⛔ Akses Ditolak: Hanya akun Master Sumbar (mastersumbar1@gmail.com) yang diizinkan mengubah nama kombel.', 'rose');
+                return;
+            }
             if (!gCurrentModalKombelId) return;
             const newName = (document.getElementById('modalInputNamaKombel')?.value || '').trim();
             if (!newName) {
@@ -4635,6 +4680,10 @@
         // FITUR UBAH NAMA KOMBEL CEPAT (MODAL DIALOG)
         // ==========================================
         function openModalUbahNamaKombel(kombelId) {
+            if (typeof isUserMasterSumbar === 'function' && !isUserMasterSumbar()) {
+                showToast('⛔ Akses Ditolak: Hanya akun Master Sumbar (mastersumbar1@gmail.com) yang diizinkan mengubah nama kombel.', 'rose');
+                return;
+            }
             if (!kombelId) return;
             const kombel = gAllKombels[kombelId];
             if (!kombel) {
@@ -4660,6 +4709,10 @@
         }
 
         async function simpanUbahNamaKombel() {
+            if (typeof isUserMasterSumbar === 'function' && !isUserMasterSumbar()) {
+                showToast('⛔ Akses Ditolak: Hanya akun Master Sumbar (mastersumbar1@gmail.com) yang diizinkan mengubah nama kombel.', 'rose');
+                return;
+            }
             const kombelId = document.getElementById('editNamaKombelId')?.value;
             const newName = (document.getElementById('editNamaKombelNewInput')?.value || '').trim();
             if (!kombelId || !newName) {
@@ -5338,6 +5391,13 @@
                 // Catatan strategis
                 const catatanVal = k.catatan_strategis || localStorage.getItem('kombel_catatan_' + k.id) || '';
 
+                const canEditName = typeof isUserMasterSumbar === 'function' && isUserMasterSumbar();
+                const editNameBtnHtml = canEditName 
+                    ? `<button onclick="openModalUbahNamaKombel('${k.id}')" title="Ubah Nama Kombel Ini (Khusus Master Sumbar)" class="p-1 text-slate-400 hover:text-amber-800 hover:bg-amber-100 rounded-lg transition-all flex-shrink-0 cursor-pointer" style="margin-top:-2px;">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
+                    </button>` 
+                    : '';
+
                 return `
                     <tr class="hover:bg-slate-50 transition-colors">
                         <td class="px-3 py-3.5 text-center text-slate-400 text-xs font-bold w-12">${start + idx + 1}</td>
@@ -5347,9 +5407,7 @@
                                 <button onclick="openModalDetailSubmissionPeserta('${k.id}')" class="text-left flex-1 cursor-pointer focus:outline-none">
                                     <div class="font-bold text-slate-900 group-hover/kname:text-emerald-700 text-xs sm:text-sm leading-snug break-words transition-colors">${k.nama_kombel || 'Kombel'}</div>
                                 </button>
-                                <button onclick="openModalUbahNamaKombel('${k.id}')" title="Ubah Nama Kombel Ini" class="p-1 text-slate-400 hover:text-amber-800 hover:bg-amber-100 rounded-lg transition-all flex-shrink-0 cursor-pointer" style="margin-top:-2px;">
-                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
-                                </button>
+                                ${editNameBtnHtml}
                             </div>
                             <div class="text-[11px] text-slate-500 mt-0.5 break-words">${k.jenjang || ''} ${k.kab_kota ? '• ' + k.kab_kota : ''}</div>
                         </td>
@@ -5432,6 +5490,14 @@
             setEl('detailModalFasilEmail', fasilEmail);
             setEl('detailModalAdminNama', adminNama);
             setEl('detailModalAdminEmail', adminEmail);
+
+            // Role check rename button
+            const isMaster = typeof isUserMasterSumbar === 'function' && isUserMasterSumbar();
+            const btnDetailRename = document.getElementById('btnDetailHeaderUbahNamaKombel');
+            if (btnDetailRename) {
+                if (isMaster) btnDetailRename.classList.remove('hidden');
+                else btnDetailRename.classList.add('hidden');
+            }
 
             const badgeEl = document.getElementById('detailModalKombelStatusBadge');
             if (badgeEl) {
@@ -5955,6 +6021,13 @@
                 const pPreview = selectedPeserta.slice(0, 2).map(p => p.nama || p.nama_lengkap || '').join(', ');
                 const pMore = selectedPeserta.length > 2 ? ` (+${selectedPeserta.length - 2} lainnya)` : '';
 
+                const canEditName = typeof isUserMasterSumbar === 'function' && isUserMasterSumbar();
+                const editNameBtnHtml = canEditName 
+                    ? `<button onclick="openModalUbahNamaKombel('${k.id}')" title="Ubah Nama Kombel Ini (Khusus Master Sumbar)" class="p-1 text-slate-400 hover:text-amber-800 hover:bg-amber-100 rounded-lg transition-all flex-shrink-0 cursor-pointer" style="margin-top:-2px;">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
+                    </button>` 
+                    : '';
+
                 return `
                     <tr class="hover:bg-slate-50 transition-colors">
                         <td class="px-3 py-3.5 text-center text-slate-400 text-xs font-bold w-12">${start + idx + 1}</td>
@@ -5963,9 +6036,7 @@
                                 <button onclick="openModalDetailSubmissionPeserta('${k.id}')" class="text-left flex-1 cursor-pointer focus:outline-none">
                                     <div class="font-bold text-slate-900 group-hover/kname:text-blue-700 text-xs sm:text-sm leading-snug break-words transition-colors">${k.nama_kombel || 'Kombel'}</div>
                                 </button>
-                                <button onclick="openModalUbahNamaKombel('${k.id}')" title="Ubah Nama Kombel Ini" class="p-1 text-slate-400 hover:text-amber-800 hover:bg-amber-100 rounded-lg transition-all flex-shrink-0 cursor-pointer" style="margin-top:-2px;">
-                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
-                                </button>
+                                ${editNameBtnHtml}
                             </div>
                             <div class="text-[11px] text-slate-500 mt-0.5 break-words">${k.jenjang || ''} ${k.kab_kota ? '• ' + k.kab_kota : ''}</div>
                         </td>
