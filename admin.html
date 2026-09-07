@@ -2459,6 +2459,38 @@
             return email.includes('mastersumbar');
         }
 
+        async function fetchFirebaseDataWithFallback(path) {
+            return new Promise((resolve) => {
+                let resolved = false;
+                db.ref(path).once('value').then(snap => {
+                    if (!resolved) {
+                        resolved = true;
+                        resolve(snap.val() || {});
+                    }
+                }).catch(err => {
+                    console.warn(`Firebase WebSocket error for ${path}:`, err);
+                });
+
+                setTimeout(async () => {
+                    if (!resolved) {
+                        try {
+                            const res = await fetch(`https://sekolah-model-2026-default-rtdb.asia-southeast1.firebasedatabase.app/${path}.json`);
+                            if (res.ok) {
+                                const json = await res.json();
+                                if (!resolved) {
+                                    resolved = true;
+                                    console.log(`[REST API Fallback OK] Loaded ${path}`);
+                                    resolve(json || {});
+                                }
+                            }
+                        } catch(e) {
+                            console.warn(`REST API fallback error for ${path}:`, e);
+                        }
+                    }
+                }, 2000);
+            });
+        }
+
         async function checkAndApplyUserRole(email) {
             const cleanEmail = (email || '').toLowerCase();
             const emailKey = sanitizeEmailKey(cleanEmail);
@@ -2497,8 +2529,7 @@
                 gAssignedFasilNames = assignedNames;
                 if (assignedNames && assignedNames.length > 0) {
                     try {
-                        const fasilSnap = await db.ref('fasilitator').once('value');
-                        const fasils = fasilSnap.val() || {};
+                        const fasils = await fetchFirebaseDataWithFallback('fasilitator');
                         gAssignedFasilIds = [];
                         for (const fId in fasils) {
                             const fNama = (fasils[fId].nama || '').trim();
@@ -3237,18 +3268,13 @@
         // ==========================================
         async function loadDashboardUtamaData() {
             try {
-                const [fasilSnap, assignSnap, kombelSnap, guruSnap, jadwalSnap] = await Promise.all([
-                    db.ref('fasilitator').once('value'),
-                    db.ref('fasilitator_sekolah').once('value'),
-                    db.ref('master_kombel').once('value'),
-                    db.ref('master_guru').once('value'),
-                    db.ref('jadwal_kunjungan').once('value')
+                const [fasils, assigns, kombels, gurus, jadwals] = await Promise.all([
+                    fetchFirebaseDataWithFallback('fasilitator'),
+                    fetchFirebaseDataWithFallback('fasilitator_sekolah'),
+                    fetchFirebaseDataWithFallback('master_kombel'),
+                    fetchFirebaseDataWithFallback('master_guru'),
+                    fetchFirebaseDataWithFallback('jadwal_kunjungan')
                 ]);
-                const fasils = fasilSnap.val() || {};
-                const assigns = assignSnap.val() || {};
-                const kombels = kombelSnap.val() || {};
-                const gurus = guruSnap.val() || {};
-                const jadwals = jadwalSnap.val() || {};
                 const fasilList = Object.values(fasils);
                 const kombelList = Object.values(kombels);
                 // master_guru structure: NPSN → {guru_id → {asal_sekolah, kode_kabupaten, ...}}
@@ -7709,15 +7735,13 @@
             if (container) container.innerHTML = '<div class="text-center text-slate-500 py-12"><div class="spinner mx-auto mb-2"></div>Memuat data status sekolah...</div>';
             
             try {
-                const [res, fasilSnap, assignSnap] = await Promise.all([
+                const [res, fasils, assigns] = await Promise.all([
                     fetch('./data_status_sekolah_model.json'),
-                    db.ref('fasilitator').once('value'),
-                    db.ref('fasilitator_sekolah').once('value')
+                    fetchFirebaseDataWithFallback('fasilitator'),
+                    fetchFirebaseDataWithFallback('fasilitator_sekolah')
                 ]);
                 
                 gStatusSekolahRaw = await res.json();
-                const fasils = fasilSnap.val() || {};
-                const assigns = assignSnap.val() || {};
 
                 // Map NPSN -> Fasilitator Name and ID
                 const schoolToFasil = {};
