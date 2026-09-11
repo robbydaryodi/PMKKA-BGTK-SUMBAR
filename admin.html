@@ -750,6 +750,10 @@
                                 <p class="text-xs text-emerald-100/90 mt-1 max-w-2xl">Pantau Komunitas Belajar yang sudah melakukan konfirmasi/submit, rincian Aktor Kelas (Fasilitator &amp; Admin), serta daftar lengkap peserta yang dipilih untuk masuk ke kelas LMS.</p>
                             </div>
                             <div class="flex items-center gap-2 flex-wrap">
+                                <button onclick="exportAllKombelAndPesertaExcel()" title="Unduh data lengkap seluruh Kombel beserta rincian semua pesertanya ke berkas Excel Multi-Sheet" class="bg-amber-500 hover:bg-amber-600 text-slate-900 px-4 py-2.5 rounded-2xl text-xs font-black transition-all flex items-center gap-2 border border-amber-300 shadow-md cursor-pointer hover:scale-105">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 01-2-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                                    <span>📗 Unduh Excel Kombel &amp; Peserta</span>
+                                </button>
                                 <button onclick="exportSubmitKombelRecap('xlsx')" title="Unduh rekap tabel status submission beserta catatan strategis ke format Excel" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2.5 rounded-2xl text-xs font-black transition-all flex items-center gap-2 border border-indigo-400 shadow-md cursor-pointer hover:scale-105">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 01-2-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
                                     <span>📊 Export Data &amp; Catatan (Excel)</span>
@@ -812,10 +816,14 @@
                                 <select id="filterSubmitAdmin" onchange="filterSubmitKombelData()" class="border-indigo-200 rounded-xl text-sm px-3 py-2 bg-indigo-50/70 font-semibold text-indigo-900">
                                     <option value="ALL">👤 Semua Admin BGTK</option>
                                 </select>
-                                <div class="flex items-center gap-1.5 ml-auto">
-                                    <button onclick="exportSubmitKombelRecap('xlsx')" title="Export tabel dan Catatan Strategis ke Excel" class="px-3.5 py-2 rounded-xl text-xs font-bold bg-indigo-600 hover:bg-indigo-700 text-white transition-all shadow-xs flex items-center gap-1.5 cursor-pointer">
+                                <div class="flex items-center gap-1.5 ml-auto flex-wrap">
+                                    <button onclick="exportAllKombelAndPesertaExcel()" title="Export Semua Kombel & Detail Seluruh Peserta ke Excel (Multi-Sheet)" class="px-3.5 py-2 rounded-xl text-xs font-bold bg-amber-500 hover:bg-amber-600 text-slate-900 transition-all shadow-xs flex items-center gap-1.5 cursor-pointer">
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 01-2-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
-                                        <span>Export Excel</span>
+                                        <span>📗 Excel Lengkap Kombel &amp; Peserta</span>
+                                    </button>
+                                    <button onclick="exportSubmitKombelRecap('xlsx')" title="Export tabel dan Catatan Strategis ke Excel" class="px-3 py-2 rounded-xl text-xs font-bold bg-indigo-600 hover:bg-indigo-700 text-white transition-all shadow-xs flex items-center gap-1.5 cursor-pointer">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 01-2-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                                        <span>Export Status</span>
                                     </button>
                                     <button onclick="exportSubmitKombelRecap('csv')" title="Export tabel dan Catatan Strategis ke CSV" class="px-2.5 py-2 rounded-xl text-xs font-bold bg-slate-100 hover:bg-slate-200 text-slate-700 transition-all border border-slate-200 flex items-center gap-1 cursor-pointer">
                                         <span>CSV</span>
@@ -871,6 +879,10 @@
                                 <p class="text-xs text-teal-100/90 mt-1 max-w-2xl">Daftar Komunitas Belajar yang sudah melakukan konfirmasi / submit. Fokus verifikasi rincian peserta terpilih (Role: Murid) dan unduh berkas CSV format import LMS Admin.</p>
                             </div>
                             <div class="flex items-center gap-2 flex-wrap">
+                                <button onclick="exportAllKombelAndPesertaExcel()" title="Unduh data lengkap seluruh Kombel beserta rincian pesertanya ke format Excel Multi-Sheet" class="bg-amber-500 hover:bg-amber-600 text-slate-900 px-4 py-2.5 rounded-2xl text-xs font-black transition-all flex items-center gap-2 border border-amber-300 shadow-md cursor-pointer hover:scale-105">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 01-2-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                                    <span>📗 Unduh Excel Kombel &amp; Peserta</span>
+                                </button>
                                 <button onclick="exportBulkLMSCSVAllSubmitted()" title="Unduh CSV gabungan LMS untuk seluruh Kombel yang sudah disetujui/submit" class="bg-emerald-500 hover:bg-emerald-600 text-white px-4 py-2.5 rounded-2xl text-xs font-black transition-all flex items-center gap-2 border border-emerald-400 shadow-md cursor-pointer hover:scale-105">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
                                     <span>📥 Bulk Export CSV Semua Kelas LMS</span>
@@ -2376,6 +2388,9 @@
             // 3. Andri Alphonso
             "andrialphonso23@gmail.com": { adminNama: "ANDRI ALPHONSO, S.AP.", nip: "199508232025211023" },
             "andri.alphonso@kemendikdasmen.go.id": { adminNama: "ANDRI ALPHONSO, S.AP.", nip: "199508232025211023" },
+            // 3b. Fikra Aulya Irhas (Pengganti Andri Alphonso)
+            "f.aulyairhas03@gmail.com": { adminNama: "FIKRA AULYA IRHAS, S.Pd.", nip: "199601032022032018" },
+            "fikra.aulya@kemendikdasmen.go.id": { adminNama: "FIKRA AULYA IRHAS, S.Pd.", nip: "199601032022032018" },
             // 4. Desi Permata Sari
             "desipermata661@gmail.com": { adminNama: "DESI PERMATA SARI, A.Md.", nip: "199112112025212041" },
             "desi.permata@kemendikdasmen.go.id": { adminNama: "DESI PERMATA SARI, A.Md.", nip: "199112112025212041" },
@@ -3957,10 +3972,12 @@
                 }
             });
 
-            // Default dual-program admins
+            // Default dual-program & FKK admins
             const defaultAdmins = [
                 'Rosa Ria Ayu', 'Siti Oktovani', 'Aflidarneti', 
-                'Ristita Humairoh', 'Lisa Anggraini', 'Irawati'
+                'Ristita Humairoh', 'Lisa Anggraini', 'Irawati',
+                'ANDRI ALPHONSO', 'FIKRA AULYA IRHAS', 'ABI RAFDHI',
+                'LEINDRAWATI MEGAHAYU', 'DESI PERMATA SARI'
             ];
             defaultAdmins.forEach(a => adminSet.add(a));
 
@@ -4455,6 +4472,7 @@
                         "LEINDRAWATI MEGAHAYU, S.P.",
                         "ABI RAFDHI, S.Kom.",
                         "ANDRI ALPHONSO, S.AP.",
+                        "FIKRA AULYA IRHAS, S.Pd.",
                         "DESI PERMATA SARI, A.Md.",
                         "LISA ANGGRAINI, S.Pd.",
                         "SITI OKTOVANI, S.I.P.",
@@ -4504,6 +4522,23 @@
                 }
                 if (inputAdminEmail) {
                     inputAdminEmail.value = kombel.admin_email || getAdminEmailFromCache(kombel.admin_nama) || '';
+                }
+
+                // Auto-sync email fields when dropdown selections change
+                sel.onchange = function() {
+                    const chosenId = this.value;
+                    const chosenNama = this.options[this.selectedIndex]?.getAttribute('data-nama') || '';
+                    if (inputFasilEmail) {
+                        inputFasilEmail.value = getFasilEmailFromCache(chosenId, chosenNama) || '';
+                    }
+                };
+                if (selAdmin) {
+                    selAdmin.onchange = function() {
+                        const chosenAdmin = this.value;
+                        if (inputAdminEmail) {
+                            inputAdminEmail.value = getAdminEmailFromCache(chosenAdmin) || '';
+                        }
+                    };
                 }
 
                 // Badge status fasil & admin
@@ -4576,6 +4611,21 @@
 
                 const badge = document.getElementById('statusFasilTerpilihBadge');
                 if (badge) badge.innerHTML = `<span class="px-2.5 py-1 rounded-full font-bold bg-emerald-100 text-emerald-800 border border-emerald-200">✅ Fasil: ${namaFasda} | Admin: ${selectedAdmin.split(',')[0]}</span>`;
+
+                // Sync dropdown & email input in modal
+                const selFasil = document.getElementById('modalSelectFasilKombel');
+                if (selFasil) {
+                    for (let i = 0; i < selFasil.options.length; i++) {
+                        if (selFasil.options[i].getAttribute('data-nama') === namaFasda) {
+                            selFasil.selectedIndex = i;
+                            break;
+                        }
+                    }
+                }
+                const inputEmailFasil = document.getElementById('modalInputEmailFasil');
+                if (inputEmailFasil) {
+                    inputEmailFasil.value = getFasilEmailFromCache(null, namaFasda) || '';
+                }
 
                 const rekPanel = document.getElementById('modalRekomendasiPanel');
                 if (rekPanel) rekPanel.classList.add('hidden');
@@ -4821,6 +4871,11 @@
             if (cleanAdmin.includes('irawati')) return 'irawati@bgtk.sumbar.go.id';
             if (cleanAdmin.includes('bima')) return 'bimaazee@gmail.com';
             if (cleanAdmin.includes('fauzia') || cleanAdmin.includes('tresia')) return 'fauziaatresia35@gmail.com';
+            if (cleanAdmin.includes('andri')) return 'andri.alphonso@kemendikdasmen.go.id';
+            if (cleanAdmin.includes('fikra')) return 'fikra.aulya@kemendikdasmen.go.id';
+            if (cleanAdmin.includes('abi')) return 'abi.rafdhi@kemendikdasmen.go.id';
+            if (cleanAdmin.includes('leindra')) return 'leindrawati.megahayu@kemendikdasmen.go.id';
+            if (cleanAdmin.includes('desi')) return 'desi.permata@kemendikdasmen.go.id';
             return '';
         }
 
@@ -5751,8 +5806,112 @@
                 ];
                 const wb = XLSX.utils.book_new();
                 XLSX.utils.book_append_sheet(wb, ws, "Rekap Status & Catatan");
+
+                // Tambahkan Sheet 2: Semua Peserta Kombel & Sheet 3: Peserta Terpilih LMS
+                try {
+                    const sheetSemuaPeserta = [];
+                    const sheetPesertaLMS = [];
+                    let gPIdx = 0, gLmsIdx = 0;
+
+                    listToExport.forEach(k => {
+                        const allP = getCombinedPesertaForKombel(k.id);
+                        const selP = getSelectedPesertaForKombel(k);
+                        const subStatus = getKombelSubmissionStatus(k);
+                        const statusStr = subStatus.isSubmitted ? 'Sudah Disetujui / Submit' : 'Belum Submit / Pending';
+                        const fasilNama = k.fasil_nama || '-';
+                        const adminNama = k.admin_nama ? k.admin_nama.split(',')[0] : '-';
+
+                        const selectedNiks = new Set(selP.map(p => String(p.nik || p.nik_peserta || '')).filter(Boolean));
+                        const selectedEmails = new Set(selP.map(p => String(p.email || p.email_belajar_id || p.email_login || '')).filter(Boolean));
+                        const selectedNames = new Set(selP.map(p => String(p.nama || p.nama_lengkap || p.nama_anggota || '').trim().toLowerCase()));
+
+                        allP.forEach((p, pIdx) => {
+                            gPIdx++;
+                            const pNama = p.nama || p.nama_lengkap || p.nama_anggota || '-';
+                            const pNik = p.nik || p.nik_peserta || '';
+                            const pEmail = p.email || p.email_belajar_id || p.email_login || '';
+                            const pNpsn = p.npsn || '';
+                            const pSekolah = p.sekolah || p.instansi || '-';
+                            const pNoHp = p.no_hp || p.telepon || p.kontak || '';
+                            const pJabatan = p.jabatan || p.peran || p.role || 'Anggota';
+
+                            let isTerpilih = false;
+                            if (Array.isArray(k.selected_peserta_indices) && k.selected_peserta_indices.length > 0) {
+                                isTerpilih = k.selected_peserta_indices.includes(pIdx);
+                            } else if (pNik && selectedNiks.has(String(pNik))) {
+                                isTerpilih = true;
+                            } else if (pEmail && selectedEmails.has(String(pEmail))) {
+                                isTerpilih = true;
+                            } else if (selectedNames.has(pNama.trim().toLowerCase())) {
+                                isTerpilih = true;
+                            } else if (!subStatus.isSubmitted && pIdx < 35) {
+                                isTerpilih = true;
+                            }
+
+                            sheetSemuaPeserta.push({
+                                "No Global": gPIdx,
+                                "No Kombel": pIdx + 1,
+                                "Nama Kombel": k.nama_kombel || '',
+                                "Jenjang": k.jenjang || '',
+                                "Kabupaten / Kota": k.kab_kota || '',
+                                "Nama Peserta": pNama,
+                                "NIK": pNik ? `'${pNik}` : '',
+                                "NPSN": pNpsn,
+                                "Sekolah / Instansi": pSekolah,
+                                "Email (Belajar.id)": pEmail,
+                                "No HP / WhatsApp": pNoHp ? `'${pNoHp}` : '',
+                                "Jabatan": pJabatan,
+                                "Status di LMS": isTerpilih ? 'Terpilih (Murid LMS)' : 'Cadangan',
+                                "Status Submit Kombel": statusStr,
+                                "Fasilitator": fasilNama,
+                                "Admin BGTK": adminNama
+                            });
+
+                            if (isTerpilih) {
+                                gLmsIdx++;
+                                sheetPesertaLMS.push({
+                                    "No": gLmsIdx,
+                                    "Nama Kombel": k.nama_kombel || '',
+                                    "Jenjang": k.jenjang || '',
+                                    "Kabupaten / Kota": k.kab_kota || '',
+                                    "Nama Peserta (Murid LMS)": pNama,
+                                    "NIK": pNik ? `'${pNik}` : '',
+                                    "NPSN": pNpsn,
+                                    "Sekolah / Instansi": pSekolah,
+                                    "Email Belajar.id": pEmail,
+                                    "No HP / WhatsApp": pNoHp ? `'${pNoHp}` : '',
+                                    "Fasilitator": fasilNama,
+                                    "Admin BGTK": adminNama
+                                });
+                            }
+                        });
+                    });
+
+                    if (sheetSemuaPeserta.length > 0) {
+                        const ws2 = XLSX.utils.json_to_sheet(sheetSemuaPeserta);
+                        ws2['!cols'] = [
+                            { wch: 8 }, { wch: 8 }, { wch: 38 }, { wch: 10 }, { wch: 20 },
+                            { wch: 30 }, { wch: 20 }, { wch: 12 }, { wch: 32 }, { wch: 32 },
+                            { wch: 18 }, { wch: 16 }, { wch: 22 }, { wch: 24 }, { wch: 22 }, { wch: 22 }
+                        ];
+                        XLSX.utils.book_append_sheet(wb, ws2, "Semua Peserta Kombel");
+                    }
+
+                    if (sheetPesertaLMS.length > 0) {
+                        const ws3 = XLSX.utils.json_to_sheet(sheetPesertaLMS);
+                        ws3['!cols'] = [
+                            { wch: 6 }, { wch: 38 }, { wch: 10 }, { wch: 20 }, { wch: 30 },
+                            { wch: 20 }, { wch: 12 }, { wch: 32 }, { wch: 32 }, { wch: 18 },
+                            { wch: 24 }, { wch: 24 }
+                        ];
+                        XLSX.utils.book_append_sheet(wb, ws3, "Peserta Terpilih LMS");
+                    }
+                } catch(errP) {
+                    console.warn("Gagal menyertakan sheet detail peserta:", errP);
+                }
+
                 XLSX.writeFile(wb, `${baseFileName}.xlsx`);
-                showToast(`📊 Berhasil mengekspor ${exportData.length} data Kombel & Catatan Strategis ke Excel!`, 'emerald');
+                showToast(`📊 Berhasil mengekspor ${exportData.length} data Kombel & seluruh rincian peserta ke Excel!`, 'emerald');
             } else {
                 // CSV Fallback / Direct CSV
                 let csv = "\uFEFF"; // UTF-8 BOM
@@ -5774,6 +5933,171 @@
                 link.click();
                 document.body.removeChild(link);
                 showToast(`📊 Berhasil mengekspor ${exportData.length} data Kombel & Catatan Strategis ke CSV!`, 'emerald');
+            }
+        }
+
+        function exportAllKombelAndPesertaExcel() {
+            if (typeof XLSX === 'undefined') {
+                showToast("⚠️ Pustaka Excel (SheetJS) belum selesai dimuat. Silakan refresh halaman.", "rose");
+                return;
+            }
+
+            let listKombel = [];
+            if (gSubmitKombelRawList && gSubmitKombelRawList.length > 0) {
+                listKombel = [...gSubmitKombelRawList];
+            } else if (gAllKombels && Object.keys(gAllKombels).length > 0) {
+                listKombel = Object.keys(gAllKombels).map(id => ({ id, ...gAllKombels[id] }))
+                    .filter(k => k.is_sasaran || getKombelSubmissionStatus(k).isSubmitted);
+            }
+
+            if (!listKombel || listKombel.length === 0) {
+                showToast("⚠️ Data Kombel belum siap. Silakan klik tombol Refresh terlebih dahulu.", "rose");
+                return;
+            }
+
+            showToast("⏳ Sedang memproses dan menyusun data Excel seluruh Kombel & Peserta...", "indigo");
+
+            try {
+                const sheetKombel = [];
+                const sheetSemuaPeserta = [];
+                const sheetPesertaLMS = [];
+
+                let globalPesertaIdx = 0;
+                let globalLmsIdx = 0;
+
+                listKombel.forEach((k, kIdx) => {
+                    const subStatus = getKombelSubmissionStatus(k);
+                    const isSub = subStatus.isSubmitted;
+                    const statusStr = isSub ? 'Sudah Disetujui / Submit' : 'Belum Submit / Pending';
+                    const tglStr = subStatus.date || '-';
+
+                    const fasilNama = k.fasil_nama || '-';
+                    const adminNama = k.admin_nama ? k.admin_nama.split(',')[0] : '-';
+
+                    const allPeserta = getCombinedPesertaForKombel(k.id);
+                    const selectedPeserta = getSelectedPesertaForKombel(k);
+
+                    sheetKombel.push({
+                        "No": kIdx + 1,
+                        "ID Kombel": k.id || k.id_komunitas || '',
+                        "Nama Komunitas Belajar": k.nama_kombel || '',
+                        "Jenjang": k.jenjang || '',
+                        "Mata Pelajaran": k.mapel || '',
+                        "Kabupaten / Kota": k.kab_kota || '',
+                        "Kecamatan": k.kecamatan || '',
+                        "Nama Ketua": k.nama_ketua || '',
+                        "Kontak Ketua": k.no_hp || k.kontak || '',
+                        "Fasilitator": fasilNama,
+                        "Admin BGTK": adminNama,
+                        "Status Submission": statusStr,
+                        "Waktu Submission": tglStr,
+                        "Total Anggota Terdaftar": allPeserta.length,
+                        "Jumlah Peserta Terpilih LMS": selectedPeserta.length
+                    });
+
+                    const selectedNiks = new Set(selectedPeserta.map(p => String(p.nik || p.nik_peserta || '')).filter(Boolean));
+                    const selectedEmails = new Set(selectedPeserta.map(p => String(p.email || p.email_belajar_id || p.email_login || '')).filter(Boolean));
+                    const selectedNames = new Set(selectedPeserta.map(p => String(p.nama || p.nama_lengkap || p.nama_anggota || '').trim().toLowerCase()));
+
+                    allPeserta.forEach((p, pIdx) => {
+                        globalPesertaIdx++;
+                        const pNama = p.nama || p.nama_lengkap || p.nama_anggota || '-';
+                        const pNik = p.nik || p.nik_peserta || '';
+                        const pEmail = p.email || p.email_belajar_id || p.email_login || '';
+                        const pNpsn = p.npsn || '';
+                        const pSekolah = p.sekolah || p.instansi || '-';
+                        const pNoHp = p.no_hp || p.telepon || p.kontak || '';
+                        const pJabatan = p.jabatan || p.peran || p.role || 'Anggota';
+
+                        let isTerpilih = false;
+                        if (Array.isArray(k.selected_peserta_indices) && k.selected_peserta_indices.length > 0) {
+                            isTerpilih = k.selected_peserta_indices.includes(pIdx);
+                        } else if (pNik && selectedNiks.has(String(pNik))) {
+                            isTerpilih = true;
+                        } else if (pEmail && selectedEmails.has(String(pEmail))) {
+                            isTerpilih = true;
+                        } else if (selectedNames.has(pNama.trim().toLowerCase())) {
+                            isTerpilih = true;
+                        } else if (!isSub && pIdx < 35) {
+                            isTerpilih = true;
+                        }
+
+                        sheetSemuaPeserta.push({
+                            "No Global": globalPesertaIdx,
+                            "No Kombel": pIdx + 1,
+                            "Nama Kombel": k.nama_kombel || '',
+                            "Jenjang": k.jenjang || '',
+                            "Kabupaten / Kota": k.kab_kota || '',
+                            "Nama Peserta": pNama,
+                            "NIK": pNik ? `'${pNik}` : '',
+                            "NPSN": pNpsn,
+                            "Sekolah / Instansi": pSekolah,
+                            "Email (Belajar.id)": pEmail,
+                            "No HP / WhatsApp": pNoHp ? `'${pNoHp}` : '',
+                            "Jabatan": pJabatan,
+                            "Status di LMS": isTerpilih ? 'Terpilih (Murid LMS)' : 'Cadangan',
+                            "Status Submit Kombel": statusStr,
+                            "Fasilitator": fasilNama,
+                            "Admin BGTK": adminNama
+                        });
+
+                        if (isTerpilih) {
+                            globalLmsIdx++;
+                            sheetPesertaLMS.push({
+                                "No": globalLmsIdx,
+                                "Nama Kombel": k.nama_kombel || '',
+                                "Jenjang": k.jenjang || '',
+                                "Kabupaten / Kota": k.kab_kota || '',
+                                "Nama Peserta (Murid LMS)": pNama,
+                                "NIK": pNik ? `'${pNik}` : '',
+                                "NPSN": pNpsn,
+                                "Sekolah / Instansi": pSekolah,
+                                "Email Belajar.id": pEmail,
+                                "No HP / WhatsApp": pNoHp ? `'${pNoHp}` : '',
+                                "Fasilitator": fasilNama,
+                                "Admin BGTK": adminNama
+                            });
+                        }
+                    });
+                });
+
+                const wb = XLSX.utils.book_new();
+
+                // Sheet 1: Rekap Kombel
+                const ws1 = XLSX.utils.json_to_sheet(sheetKombel);
+                ws1['!cols'] = [
+                    { wch: 6 }, { wch: 14 }, { wch: 42 }, { wch: 12 }, { wch: 25 },
+                    { wch: 22 }, { wch: 20 }, { wch: 25 }, { wch: 16 }, { wch: 25 },
+                    { wch: 25 }, { wch: 24 }, { wch: 20 }, { wch: 20 }, { wch: 22 }
+                ];
+                XLSX.utils.book_append_sheet(wb, ws1, "Rekap Kombel");
+
+                // Sheet 2: Semua Peserta
+                const ws2 = XLSX.utils.json_to_sheet(sheetSemuaPeserta);
+                ws2['!cols'] = [
+                    { wch: 8 }, { wch: 8 }, { wch: 38 }, { wch: 10 }, { wch: 20 },
+                    { wch: 30 }, { wch: 20 }, { wch: 12 }, { wch: 32 }, { wch: 32 },
+                    { wch: 18 }, { wch: 16 }, { wch: 22 }, { wch: 24 }, { wch: 22 }, { wch: 22 }
+                ];
+                XLSX.utils.book_append_sheet(wb, ws2, "Semua Peserta Kombel");
+
+                // Sheet 3: Peserta Terpilih LMS
+                const ws3 = XLSX.utils.json_to_sheet(sheetPesertaLMS);
+                ws3['!cols'] = [
+                    { wch: 6 }, { wch: 38 }, { wch: 10 }, { wch: 20 }, { wch: 30 },
+                    { wch: 20 }, { wch: 12 }, { wch: 32 }, { wch: 32 }, { wch: 18 },
+                    { wch: 24 }, { wch: 24 }
+                ];
+                XLSX.utils.book_append_sheet(wb, ws3, "Peserta Terpilih LMS");
+
+                const dateStr = new Date().toISOString().slice(0, 10);
+                const fileName = `Data_Lengkap_Kombel_dan_Peserta_PMKKA_${dateStr}.xlsx`;
+                XLSX.writeFile(wb, fileName);
+
+                showToast(`📗 Berhasil mengunduh Excel: ${sheetKombel.length} Kombel & ${sheetSemuaPeserta.length} Peserta (${sheetPesertaLMS.length} Masuk LMS)!`, 'emerald');
+            } catch(err) {
+                console.error("Gagal ekspor excel kombel dan peserta:", err);
+                showToast("⚠️ Gagal membuat file Excel: " + err.message, "rose");
             }
         }
 
