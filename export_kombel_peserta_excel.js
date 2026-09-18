@@ -10,68 +10,125 @@ async function main() {
     const allKombels = await res.json();
     console.log("Berhasil memuat", Object.keys(allKombels).length, "kombel dari Firebase.");
 
-    // Filter kombel sasaran (atau yang submit)
-    const sasaranList = [];
-    for (let id in allKombels) {
-        const k = { id, ...allKombels[id] };
-        const isSubmitted = k.konfirmasi && (k.konfirmasi.is_konfirmasi || k.konfirmasi.status === 'submitted' || k.konfirmasi.tgl_konfirmasi);
-        if (k.is_sasaran || isSubmitted) {
-            sasaranList.push(k);
+    // Fungsi status submission PERSIS 100% seperti di admin.html
+    function getKombelSubmissionStatus(k) {
+        if (!k) return { isSubmitted: false, date: '', count: 0, total: 0 };
+        
+        // 1. Cek node konfirmasi
+        if (k.konfirmasi && (k.konfirmasi.is_konfirmasi || k.konfirmasi.is_submitted || k.konfirmasi.status === 'submitted')) {
+            return {
+                isSubmitted: true,
+                date: k.konfirmasi.tgl_konfirmasi || k.konfirmasi.tanggal_konfirmasi || '',
+                count: k.konfirmasi.total_konfirmasi || k.konfirmasi.total_dipilih || (Array.isArray(k.selected_peserta_indices) ? k.selected_peserta_indices.length : 0),
+                total: k.konfirmasi.total_peserta_impor || k.konfirmasi.total_peserta || (k.peserta ? (Array.isArray(k.peserta) ? k.peserta.length : Object.keys(k.peserta).length) : 0)
+            };
         }
+        
+        // 2. Cek node seleksi_peserta_fkk
+        if (k.seleksi_peserta_fkk && (k.seleksi_peserta_fkk.is_submitted || k.seleksi_peserta_fkk.is_konfirmasi)) {
+            return {
+                isSubmitted: true,
+                date: k.seleksi_peserta_fkk.tgl_seleksi || k.seleksi_peserta_fkk.tgl_konfirmasi || '',
+                count: k.seleksi_peserta_fkk.total_dipilih || k.seleksi_peserta_fkk.total_konfirmasi || 0,
+                total: k.seleksi_peserta_fkk.total_peserta || (k.peserta ? (Array.isArray(k.peserta) ? k.peserta.length : Object.keys(k.peserta).length) : 0)
+            };
+        }
+
+        // 3. Cek array selected_peserta_indices
+        if (Array.isArray(k.selected_peserta_indices) && k.selected_peserta_indices.length > 0) {
+            return {
+                isSubmitted: true,
+                date: 'Disimpan',
+                count: k.selected_peserta_indices.length,
+                total: k.peserta ? (Array.isArray(k.peserta) ? k.peserta.length : Object.keys(k.peserta).length) : 0
+            };
+        }
+
+        return { isSubmitted: false, date: '', count: 0, total: 0 };
     }
 
-    // Urutkan: yang sudah submit lebih dulu, lalu nama kombel
+    function getCombinedPesertaForKombel(kombelId) {
+        const kombel = allKombels[kombelId];
+        if (!kombel) return [];
+
+        let list = [];
+        const mainPeserta = kombel.peserta ? (Array.isArray(kombel.peserta) ? kombel.peserta : Object.values(kombel.peserta)) : [];
+        mainPeserta.forEach(p => {
+            list.push({ ...p, source_kombel_id: kombelId, source_kombel_nama: kombel.nama_kombel });
+        });
+
+        if (Array.isArray(kombel.merged_kombel_ids)) {
+            kombel.merged_kombel_ids.forEach(mId => {
+                const mKombel = allKombels[mId];
+                if (mKombel) {
+                    const mPeserta = mKombel.peserta ? (Array.isArray(mKombel.peserta) ? mKombel.peserta : Object.values(mKombel.peserta)) : [];
+                    mPeserta.forEach(p => {
+                        list.push({ ...p, source_kombel_id: mId, source_kombel_nama: mKombel.nama_kombel });
+                    });
+                }
+            });
+        }
+
+        return list;
+    }
+
+    function getSelectedPesertaForKombel(k) {
+        if (!k) return [];
+        const allPeserta = getCombinedPesertaForKombel(k.id);
+
+        if (Array.isArray(k.selected_peserta_indices) && k.selected_peserta_indices.length > 0) {
+            return allPeserta.filter((_, i) => k.selected_peserta_indices.includes(i)).slice(0, 35);
+        }
+
+        if (k.konfirmasi && Array.isArray(k.konfirmasi.peserta_konfirmasi) && k.konfirmasi.peserta_konfirmasi.length > 0) {
+            return k.konfirmasi.peserta_konfirmasi.slice(0, 35);
+        }
+
+        if (k.seleksi_peserta_fkk && Array.isArray(k.seleksi_peserta_fkk.peserta_terpilih) && k.seleksi_peserta_fkk.peserta_terpilih.length > 0) {
+            return k.seleksi_peserta_fkk.peserta_terpilih.slice(0, 35);
+        }
+
+        return allPeserta.slice(0, 35);
+    }
+
+    // Filter daftar Kombel sasaran
+    const sasaranList = Object.keys(allKombels).map(id => ({ id, ...allKombels[id] }))
+        .filter(k => k.is_sasaran || getKombelSubmissionStatus(k).isSubmitted);
+
     sasaranList.sort((a, b) => {
-        const aSub = (a.konfirmasi && a.konfirmasi.is_konfirmasi) ? 1 : 0;
-        const bSub = (b.konfirmasi && b.konfirmasi.is_konfirmasi) ? 1 : 0;
+        const aSub = getKombelSubmissionStatus(a).isSubmitted ? 1 : 0;
+        const bSub = getKombelSubmissionStatus(b).isSubmitted ? 1 : 0;
         if (aSub !== bSub) return bSub - aSub;
         return (a.nama_kombel || '').localeCompare(b.nama_kombel || '');
     });
 
-    console.log(`Ditemukan ${sasaranList.length} Kombel Sasaran / Siap Pengkelasan.`);
+    const submittedList = sasaranList.filter(k => getKombelSubmissionStatus(k).isSubmitted);
+    const pendingList = sasaranList.filter(k => !getKombelSubmissionStatus(k).isSubmitted);
+
+    console.log(`Statistik Kombel Sasaran:`);
+    console.log(`- Total Sasaran: ${sasaranList.length}`);
+    console.log(`- Sudah Submit / Selesai: ${submittedList.length}`);
+    console.log(`- Belum Submit / Pending: ${pendingList.length}`);
 
     // 1. DATA SHEET REKAP KOMBEL
     const sheetKombelData = [];
-    // 2. DATA SHEET DETAIL PESERTA (SEMUA PESERTA KOMBEL SASARAN)
+    // 2. DATA SHEET DETAIL PESERTA
     const sheetPesertaDetailData = [];
-    // 3. DATA SHEET PESERTA TERPILIH LMS SAJA (ROLE MURID)
+    // 3. DATA SHEET PESERTA TERPILIH LMS
     const sheetPesertaTerpilihLMS = [];
 
     let totalPesertaCount = 0;
     let totalTerpilihCount = 0;
 
     sasaranList.forEach((kombel, kIdx) => {
-        const isSubmitted = !!(kombel.konfirmasi && (kombel.konfirmasi.is_konfirmasi || kombel.konfirmasi.tgl_konfirmasi));
+        const subStatus = getKombelSubmissionStatus(kombel);
+        const isSubmitted = subStatus.isSubmitted;
         const statusStr = isSubmitted ? 'Sudah Disetujui / Submit' : 'Belum Submit / Pending';
-        const tglSubmit = (kombel.konfirmasi && kombel.konfirmasi.tgl_konfirmasi) || '-';
+        const tglSubmit = subStatus.date || '-';
 
-        // Peserta asli
-        const rawPeserta = kombel.peserta ? (Array.isArray(kombel.peserta) ? kombel.peserta : Object.values(kombel.peserta)) : [];
-        
-        // Cek jika ada gabungan kombel (merge)
-        let combinedPeserta = [...rawPeserta];
-        if (Array.isArray(kombel.merged_kombel_ids)) {
-            kombel.merged_kombel_ids.forEach(mId => {
-                const mKombel = allKombels[mId];
-                if (mKombel && mKombel.peserta) {
-                    const mList = Array.isArray(mKombel.peserta) ? mKombel.peserta : Object.values(mKombel.peserta);
-                    combinedPeserta.push(...mList);
-                }
-            });
-        }
+        const allPeserta = getCombinedPesertaForKombel(kombel.id);
+        const selectedPeserta = getSelectedPesertaForKombel(kombel);
 
-        // Peserta terpilih (jika ada selected_peserta_indices atau konfirmasi.peserta_konfirmasi)
-        let selectedPeserta = [];
-        if (Array.isArray(kombel.selected_peserta_indices) && kombel.selected_peserta_indices.length > 0) {
-            selectedPeserta = combinedPeserta.filter((_, idx) => kombel.selected_peserta_indices.includes(idx));
-        } else if (kombel.konfirmasi && Array.isArray(kombel.konfirmasi.peserta_konfirmasi)) {
-            selectedPeserta = kombel.konfirmasi.peserta_konfirmasi;
-        } else {
-            // Default semua atau max 35
-            selectedPeserta = combinedPeserta.slice(0, 35);
-        }
-
-        // Simpan ke Rekap Kombel
         sheetKombelData.push({
             "No": kIdx + 1,
             "ID Kombel": kombel.id || kombel.id_komunitas || '',
@@ -84,19 +141,18 @@ async function main() {
             "Kontak Ketua": kombel.no_hp || kombel.kontak || '',
             "Fasilitator": kombel.fasil_nama || '-',
             "Admin BGTK": kombel.admin_nama || '-',
+            "Link Google Meet": kombel.link_gmeet || '-',
             "Status Submission": statusStr,
-            "Tanggal Submit": tglSubmit,
-            "Total Anggota Terdaftar": combinedPeserta.length,
-            "Jumlah Peserta Terpilih LMS": selectedPeserta.length
+            "Waktu Submission": tglSubmit,
+            "Total Anggota Terdaftar": allPeserta.length,
+            "Jumlah Peserta Terpilih LMS": isSubmitted ? selectedPeserta.length : 0
         });
 
-        // Set untuk identifikasi siapa saja yang terpilih
         const selectedNiks = new Set(selectedPeserta.map(p => String(p.nik || p.nik_peserta || '')).filter(Boolean));
         const selectedEmails = new Set(selectedPeserta.map(p => String(p.email || p.email_belajar_id || p.email_login || '')).filter(Boolean));
         const selectedNames = new Set(selectedPeserta.map(p => String(p.nama || p.nama_lengkap || p.nama_anggota || '').trim().toLowerCase()));
 
-        // Loop semua peserta kombel
-        combinedPeserta.forEach((p, pIdx) => {
+        allPeserta.forEach((p, pIdx) => {
             totalPesertaCount++;
             const pNama = p.nama || p.nama_lengkap || p.nama_anggota || '-';
             const pNik = p.nik || p.nik_peserta || '';
@@ -106,30 +162,29 @@ async function main() {
             const pNoHp = p.no_hp || p.telepon || p.kontak || '';
             const pJabatan = p.jabatan || p.peran || p.role || 'Anggota';
 
-            // Cek apakah peserta terpilih
             let isTerpilih = false;
-            if (Array.isArray(kombel.selected_peserta_indices) && kombel.selected_peserta_indices.length > 0) {
-                isTerpilih = kombel.selected_peserta_indices.includes(pIdx);
-            } else if (pNik && selectedNiks.has(String(pNik))) {
-                isTerpilih = true;
-            } else if (pEmail && selectedEmails.has(String(pEmail))) {
-                isTerpilih = true;
-            } else if (selectedNames.has(pNama.trim().toLowerCase())) {
-                isTerpilih = true;
-            } else if (!kombel.konfirmasi && pIdx < 35) {
-                isTerpilih = true; // Default kuota
+            if (isSubmitted) {
+                if (Array.isArray(kombel.selected_peserta_indices) && kombel.selected_peserta_indices.length > 0) {
+                    isTerpilih = kombel.selected_peserta_indices.includes(pIdx);
+                } else if (pNik && selectedNiks.has(String(pNik))) {
+                    isTerpilih = true;
+                } else if (pEmail && selectedEmails.has(String(pEmail))) {
+                    isTerpilih = true;
+                } else if (selectedNames.has(pNama.trim().toLowerCase())) {
+                    isTerpilih = true;
+                }
             }
 
-            const statusLms = isTerpilih ? 'Terpilih (Murid LMS)' : 'Cadangan / Belum Terpilih';
+            const statusLms = isTerpilih ? 'Terpilih (Murid LMS)' : (isSubmitted ? 'Cadangan' : 'Belum Submit');
 
-            const pesertaRow = {
+            sheetPesertaDetailData.push({
                 "No Urut Global": totalPesertaCount,
                 "No Urut Kombel": pIdx + 1,
                 "Nama Kombel": kombel.nama_kombel || '',
                 "Jenjang": kombel.jenjang || '',
                 "Kabupaten / Kota": kombel.kab_kota || '',
                 "Nama Peserta": pNama,
-                "NIK": pNik ? `'${pNik}` : '', // prefix single quote to prevent scientific notation in Excel
+                "NIK": pNik ? `'${pNik}` : '',
                 "NPSN": pNpsn,
                 "Asal Sekolah / Instansi": pSekolah,
                 "Email Belajar.id / Pribadi": pEmail,
@@ -139,9 +194,7 @@ async function main() {
                 "Status Submission Kombel": statusStr,
                 "Fasilitator": kombel.fasil_nama || '-',
                 "Admin BGTK": kombel.admin_nama || '-'
-            };
-
-            sheetPesertaDetailData.push(pesertaRow);
+            });
 
             if (isTerpilih) {
                 totalTerpilihCount++;
@@ -231,7 +284,7 @@ async function main() {
     const dateStr = new Date().toISOString().slice(0, 10);
     const fileName = `Data_Semua_Kombel_dan_Peserta_PMKKA_${dateStr}.xlsx`;
     XLSX.writeFile(wb, fileName);
-    console.log(`✅ File Excel berhasil dibuat: ${fileName}`);
+    console.log(`✅ File Excel berhasil diperbarui: ${fileName}`);
 }
 
 main().catch(err => {

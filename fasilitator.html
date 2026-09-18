@@ -181,32 +181,36 @@
                         <span class="w-2.5 h-2.5 rounded-full bg-rose-500 animate-ping absolute -top-0.5 -right-0.5"></span>
                         <span class="w-2.5 h-2.5 rounded-full bg-rose-500 absolute -top-0.5 -right-0.5"></span>
                     </button>
+                    <button id="btnViewGMeet" onclick="switchMainView('gmeet')" class="px-4 py-2 rounded-lg transition-all flex items-center gap-1.5 text-slate-600 hover:text-slate-900">
+                        <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+                        <span>Ruang GMeet</span>
+                    </button>
                 </div>
             </div>
         </div>
 
-        <!-- TRIPLE CORE DASHBOARD DECK (PILAR 1: PENJADWALAN, PILAR 2: BASELINE & PILAR 3: SURAT TUGAS) -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-5 mb-8 fade-in">
+        <!-- 4 CORE DASHBOARD DECK (PILAR 1: PENJADWALAN, PILAR 2: BASELINE, PILAR 3: SURAT TUGAS, PILAR 4: GMEET & REKAMAN) -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-8 fade-in">
             <!-- CORE PILLAR 1: PENJADWALAN & AGENDA PENDAMPINGAN -->
             <div class="relative bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 text-white rounded-3xl p-6 shadow-md border border-indigo-500/30 flex flex-col justify-between group">
                 <div class="absolute top-0 right-0 w-36 h-36 bg-indigo-500/10 rounded-full blur-2xl group-hover:bg-indigo-500/20 transition-all"></div>
                 <div class="space-y-3 relative z-10">
                     <div class="flex items-center justify-between">
                         <span class="px-3 py-1 bg-indigo-500/20 text-indigo-300 border border-indigo-400/30 rounded-full text-[11px] font-extrabold uppercase tracking-wide flex items-center gap-1.5">
-                            <span>🗓️</span> PILAR 1: PENJADWALAN KUNJUNGAN
+                            <span>🗓️</span> PILAR 1: JADWAL
                         </span>
                         <span class="text-xs font-bold text-emerald-400 flex items-center gap-1">
                             <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span> 6 Tahap
                         </span>
                     </div>
-                    <h3 class="text-xl font-black text-white tracking-tight">Kalender &amp; Agenda Kunjungan</h3>
+                    <h3 class="text-lg font-black text-white tracking-tight">Kalender Kunjungan</h3>
                     <p class="text-xs text-slate-300 leading-relaxed">
-                        Kelola tanggal dan agenda pendampingan sekolah binaan Anda. Sistem mendeteksi otomatis tahap kunjungan berikutnya agar penjadwalan terstruktur.
+                        Kelola tanggal dan agenda pendampingan sekolah binaan Anda. Sistem mendeteksi otomatis tahap kunjungan berikutnya.
                     </p>
                 </div>
                 <div class="pt-4 mt-4 border-t border-white/10 flex items-center justify-between relative z-10">
-                    <span class="text-xs text-indigo-200 font-semibold">📍 Drag-and-drop kalender</span>
-                    <button onclick="switchMainView('calendar')" class="px-4 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-extrabold rounded-xl shadow-md transition-all flex items-center gap-1.5">
+                    <span class="text-xs text-indigo-200 font-semibold">📍 Drag-and-drop</span>
+                    <button onclick="switchMainView('calendar')" class="px-3.5 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-extrabold rounded-xl shadow-md transition-all flex items-center gap-1.5">
                         <span>🗓️ Kalender</span>
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
                     </button>
@@ -219,20 +223,20 @@
                 <div class="space-y-3 relative z-10">
                     <div class="flex items-center justify-between">
                         <span class="px-3 py-1 bg-purple-500/20 text-purple-300 border border-purple-400/30 rounded-full text-[11px] font-extrabold uppercase tracking-wide flex items-center gap-1.5">
-                            <span>🎯</span> PILAR 2: EVALUASI BASELINE
+                            <span>🎯</span> PILAR 2: BASELINE
                         </span>
-                        <span class="text-xs font-bold text-amber-300">Status Baseline</span>
+                        <span class="text-xs font-bold text-amber-300">Status Awal</span>
                     </div>
-                    <h3 class="text-xl font-black text-white tracking-tight">Rapor Status Baseline PM &amp; KKA</h3>
+                    <h3 class="text-lg font-black text-white tracking-tight">Rapor Baseline PM-KKA</h3>
                     <p class="text-xs text-purple-200 leading-relaxed">
-                        Asesmen baseline awal PM &amp; KKA untuk sekolah binaan Anda. Gunakan skor &amp; rubrik indikator PM-KKA sebagai pijakan fokus pendampingan.
+                        Asesmen baseline awal PM &amp; KKA sekolah binaan. Gunakan skor &amp; rubrik indikator sebagai pijakan pendampingan.
                     </p>
                 </div>
                 <div class="pt-4 mt-4 border-t border-white/10 flex items-center justify-between relative z-10">
                     <button onclick="openModalKamusRubrik()" class="text-xs text-amber-300 hover:text-amber-200 font-bold underline flex items-center gap-1">
                         <span>📖 Rubrik</span>
                     </button>
-                    <button onclick="switchMainView('status')" class="px-4 py-2.5 bg-purple-600 hover:bg-purple-500 text-white text-xs font-extrabold rounded-xl shadow-md transition-all flex items-center gap-1.5">
+                    <button onclick="switchMainView('status')" class="px-3.5 py-2 bg-purple-600 hover:bg-purple-500 text-white text-xs font-extrabold rounded-xl shadow-md transition-all flex items-center gap-1.5">
                         <span>📊 Status</span>
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
                     </button>
@@ -245,19 +249,43 @@
                 <div class="space-y-3 relative z-10">
                     <div class="flex items-center justify-between">
                         <span class="px-3 py-1 bg-indigo-500/20 text-indigo-300 border border-indigo-400/30 rounded-full text-[11px] font-extrabold uppercase tracking-wide flex items-center gap-1.5">
-                            <span>📜</span> PILAR 3: SURAT TUGAS
+                            <span>📜</span> PILAR 3: PERSURATAN
                         </span>
-                        <span class="text-xs font-bold text-emerald-400" id="badgeTotalSuratTugas">0 ST Terinput</span>
+                        <span class="text-xs font-bold text-emerald-400" id="badgeTotalSuratTugas">0 ST</span>
                     </div>
-                    <h3 class="text-xl font-black text-white tracking-tight">Surat Tugas Pendampingan</h3>
+                    <h3 class="text-lg font-black text-white tracking-tight">Surat Tugas Resmi</h3>
                     <p class="text-xs text-slate-300 leading-relaxed">
-                        Input, simpan, dan kelola rincian Nomor &amp; File Surat Tugas resmi untuk setiap kegiatan pendampingan sekolah binaan Anda.
+                        Input, simpan, dan kelola rincian Nomor &amp; File Surat Tugas resmi kegiatan pendampingan sekolah binaan Anda.
                     </p>
                 </div>
                 <div class="pt-4 mt-4 border-t border-white/10 flex items-center justify-between relative z-10">
-                    <span class="text-xs text-purple-200 font-semibold" id="summarySuratTugasStatus">Belum diinput</span>
-                    <button onclick="openModalSuratTugas()" class="px-4 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-extrabold rounded-xl shadow-md transition-all flex items-center gap-1.5 cursor-pointer">
-                        <span>📜 Kelola Surat Tugas</span>
+                    <span class="text-xs text-purple-200 font-semibold truncate max-w-[80px]" id="summarySuratTugasStatus">Belum</span>
+                    <button onclick="openModalSuratTugas()" class="px-3.5 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-extrabold rounded-xl shadow-md transition-all flex items-center gap-1.5 cursor-pointer">
+                        <span>📜 Surat</span>
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                    </button>
+                </div>
+            </div>
+
+            <!-- CORE PILLAR 4: KELAS GMEET & REKAMAN KOMBEL -->
+            <div class="relative bg-gradient-to-br from-emerald-950 via-slate-900 to-teal-950 text-white rounded-3xl p-6 shadow-md border border-emerald-500/30 flex flex-col justify-between group">
+                <div class="absolute top-0 right-0 w-36 h-36 bg-emerald-500/10 rounded-full blur-2xl group-hover:bg-emerald-500/20 transition-all"></div>
+                <div class="space-y-3 relative z-10">
+                    <div class="flex items-center justify-between">
+                        <span class="px-3 py-1 bg-emerald-500/20 text-emerald-300 border border-emerald-400/30 rounded-full text-[11px] font-extrabold uppercase tracking-wide flex items-center gap-1.5">
+                            <span>📹</span> PILAR 4: DARING
+                        </span>
+                        <span class="text-xs font-bold text-emerald-300" id="badgeGMeetPilar">54 Ruang</span>
+                    </div>
+                    <h3 class="text-lg font-black text-white tracking-tight">GMeet &amp; Rekaman</h3>
+                    <p class="text-xs text-slate-300 leading-relaxed">
+                        Link permanen Google Meet kelas kombel dampingan, kelola jadwal sesi daring, dan link rekaman video.
+                    </p>
+                </div>
+                <div class="pt-4 mt-4 border-t border-white/10 flex items-center justify-between relative z-10">
+                    <span class="text-xs text-emerald-200 font-semibold truncate max-w-[80px]" id="summaryGMeetStatus">Siap</span>
+                    <button onclick="switchMainView('gmeet')" class="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-extrabold rounded-xl shadow-md transition-all flex items-center gap-1.5 cursor-pointer">
+                        <span>📹 GMeet</span>
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
                     </button>
                 </div>
@@ -361,6 +389,29 @@
             </div>
             <div id="fasilStatusListContainer" class="space-y-6">
                 <!-- Populated dynamically per assigned school -->
+            </div>
+        </div>
+
+        <!-- ================= CONTAINER TAMPILAN 4: RUANG KELAS GMEET & REKAMAN KOMBEL ================= -->
+        <div id="containerGMeetView" class="hidden space-y-6 fade-in">
+            <!-- Header Banner -->
+            <div class="glass-card rounded-2xl p-6 bg-gradient-to-r from-teal-900 via-slate-900 to-emerald-950 text-white shadow-sm flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                <div>
+                    <span class="inline-block px-3 py-1 bg-emerald-500/20 border border-emerald-400/30 backdrop-blur-md rounded-full text-xs font-bold text-emerald-200 uppercase tracking-wider mb-2">📹 Ruang Kelas Daring &amp; Rekaman Sesi</span>
+                    <h2 class="text-xl font-extrabold" id="gmeetViewTitle">Google Meet &amp; Jadwal Sesi Kombel</h2>
+                    <p class="text-xs text-emerald-200/90 mt-1">Kelola link Google Meet, agenda sesi daring/webinar, serta arsip rekaman video dan bahan tayang untuk Kombel dampingan Anda.</p>
+                </div>
+                <div class="flex flex-wrap items-center gap-2">
+                    <a href="ruang-kelas.html" target="_blank" class="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-500 text-white border border-emerald-400/30 px-4 py-2.5 rounded-xl text-xs font-bold transition-all shadow-md flex-shrink-0 cursor-pointer no-underline">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+                        <span>🌐 Buka Portal Publik 54 Kelas</span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- List Container of Assigned Kombel Classes -->
+            <div id="fasilKombelListContainer" class="space-y-6">
+                <!-- Rendered dynamically -->
             </div>
         </div>
     </div>
@@ -915,6 +966,120 @@
         </div>
     </div>
 
+    <!-- ================= MODAL KELOLA SESI & REKAMAN GMEET (FASILITATOR) ================= -->
+    <div id="modalKelolaSesiFasil" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 z-50 hidden fade-in">
+        <div class="bg-white rounded-3xl shadow-2xl max-w-2xl w-full max-h-[92vh] flex flex-col overflow-hidden border border-slate-200">
+            <!-- Modal Header -->
+            <div class="p-5 bg-gradient-to-r from-teal-700 via-emerald-700 to-teal-800 text-white flex justify-between items-center flex-shrink-0">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-white/15 flex items-center justify-center text-xl">📹</div>
+                    <div>
+                        <h3 class="font-extrabold text-base leading-tight" id="mFasilSesiNamaKelas">Nama Kelas Kombel</h3>
+                        <p class="text-xs text-emerald-100 mt-0.5" id="mFasilSesiWilayah">Wilayah • Fasilitator</p>
+                    </div>
+                </div>
+                <button onclick="closeModalKelolaSesiFasil()" class="text-white/80 hover:text-white p-2 rounded-xl hover:bg-white/10 transition-colors">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                </button>
+            </div>
+
+            <!-- Modal Content Scrollable -->
+            <div class="p-6 overflow-y-auto space-y-6 flex-1 bg-slate-50/50">
+                <!-- Box Permanent Google Meet Link -->
+                <div class="p-4 bg-emerald-50 border border-emerald-200 rounded-2xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                    <div class="min-w-0">
+                        <div class="text-[10px] font-black text-emerald-800 uppercase tracking-wider">Link Permanen Google Meet Kelas Ini</div>
+                        <a id="mFasilSesiGMeetLinkText" href="#" target="_blank" class="text-xs font-mono font-bold text-emerald-700 hover:underline break-all block mt-0.5">https://meet.google.com/...</a>
+                    </div>
+                    <div class="flex items-center gap-2 flex-shrink-0">
+                        <button type="button" onclick="salinLinkModalFasil()" class="px-3 py-1.5 bg-white hover:bg-emerald-100 text-emerald-700 border border-emerald-300 rounded-xl text-xs font-bold transition-all flex items-center gap-1 shadow-2xs">
+                            📋 Salin Link
+                        </button>
+                        <a id="mFasilSesiBtnBukaGMeet" href="#" target="_blank" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold transition-all shadow-sm flex items-center gap-1 no-underline">
+                            🚀 Buka GMeet
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Formulir Tambah / Edit Sesi -->
+                <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-2xs space-y-4">
+                    <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+                        <h4 class="font-black text-sm text-slate-900 flex items-center gap-2" id="mFasilSesiFormTitle">
+                            <span>➕</span> Tambah / Jadwalkan Sesi Baru
+                        </h4>
+                        <button type="button" onclick="resetFormSesiFasil()" class="text-xs text-slate-500 hover:text-slate-800 font-semibold underline">Reset Form</button>
+                    </div>
+
+                    <input type="hidden" id="inputFasilSesiEditKey" value="">
+
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">Nomor Sesi <span class="text-rose-500">*</span></label>
+                            <input type="number" id="inputFasilSesiNomor" min="1" max="20" class="w-full text-xs bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 font-bold focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white" value="1">
+                        </div>
+                        <div class="sm:col-span-2">
+                            <label class="block text-xs font-bold text-slate-700 mb-1">Topik / Materi Pertemuan <span class="text-rose-500">*</span></label>
+                            <input type="text" id="inputFasilSesiTopik" placeholder="Contoh: Orientasi LMS &amp; Modul Pembelajaran Mendalam" class="w-full text-xs bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white">
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">Tanggal <span class="text-rose-500">*</span></label>
+                            <input type="date" id="inputFasilSesiTanggal" class="w-full text-xs bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">Jam Mulai</label>
+                            <input type="time" id="inputFasilSesiJamMulai" value="08:30" class="w-full text-xs bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">Jam Selesai</label>
+                            <input type="time" id="inputFasilSesiJamSelesai" value="11:30" class="w-full text-xs bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1 flex items-center justify-between">
+                            <span class="flex items-center gap-1.5">🎬 Link Rekaman Video (YouTube / Google Drive)</span>
+                            <span class="text-[11px] text-emerald-600 font-normal">Dapat diisi setelah sesi selesai</span>
+                        </label>
+                        <input type="url" id="inputFasilSesiLinkRekaman" placeholder="https://drive.google.com/file/d/... atau https://youtube.com/watch?v=..." class="w-full text-xs bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 font-mono focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1">📂 Link Bahan / Materi / Slide Tayang (Google Drive)</label>
+                        <input type="url" id="inputFasilSesiLinkMateri" placeholder="https://drive.google.com/..." class="w-full text-xs bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 font-mono focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1">Catatan / Deskripsi Singkat Sesi</label>
+                        <textarea id="inputFasilSesiDeskripsi" rows="2" placeholder="Catatan tugas, bahan diskusi, atau arahan fasilitator..." class="w-full text-xs bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white"></textarea>
+                    </div>
+
+                    <div class="flex justify-end gap-2 pt-2">
+                        <button type="button" onclick="simpanSesiPertemuanFasil()" id="btnSimpanSesiFasil" class="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold transition-all shadow-md flex items-center gap-1.5 cursor-pointer">
+                            💾 Simpan Sesi
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Daftar Sesi Yang Telah Terjadwal -->
+                <div>
+                    <h4 class="font-black text-xs text-slate-500 uppercase tracking-wider mb-2">Daftar Sesi Terjadwal Pada Kelas Ini</h4>
+                    <div id="mFasilSesiExistingListContainer" class="space-y-2">
+                        <!-- Populated dynamically -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal Footer -->
+            <div class="p-4 bg-white border-t border-slate-200 flex justify-between items-center flex-shrink-0">
+                <span class="text-xs text-slate-500">Tersinkronisasi otomatis ke portal publik ruang kelas</span>
+                <button type="button" onclick="closeModalKelolaSesiFasil()" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-bold transition-colors">Tutup</button>
+            </div>
+        </div>
+    </div>
+
     <!-- ================= FLOATING TOAST NOTIFICATION ================= -->
     <div id="toastNotification" class="fixed bottom-6 right-6 z-50 transform translate-y-20 opacity-0 transition-all duration-300 pointer-events-none">
         <div class="bg-slate-900 text-white px-5 py-3.5 rounded-2xl shadow-2xl flex items-center gap-3 border border-slate-700/80 text-sm font-semibold">
@@ -946,6 +1111,19 @@
         let myAssignedSchools = []; // List of NPSNs
         let allJadwalData = {};
         let globalSettingJadwal = {};
+        let allMasterKombel = {};
+        let allSesiKombel = {};
+        let myAssignedKombelList = [];
+        let currentModalKombelKelas = null;
+
+        const KELAS_GABUNGAN_MAP = {
+            '177738': { partner_id: '161025', nama_kelas: 'MKKS SMP SWASTA KOTA PADANG + Tumbuh Bersama', link_gmeet: 'https://meet.google.com/yzt-wbpp-nhy', wilayah: 'Kota Padang' },
+            '161025': { partner_id: '177738', nama_kelas: 'MKKS SMP SWASTA KOTA PADANG + Tumbuh Bersama', link_gmeet: 'https://meet.google.com/yzt-wbpp-nhy', wilayah: 'Kota Padang' },
+            '182059': { partner_id: '187339', nama_kelas: 'Kenanga + gugus seroja', link_gmeet: 'https://meet.google.com/cug-apna-zbe', wilayah: 'Kota Payakumbuh' },
+            '187339': { partner_id: '182059', nama_kelas: 'Kenanga + gugus seroja', link_gmeet: 'https://meet.google.com/cug-apna-zbe', wilayah: 'Kota Payakumbuh' },
+            '161533': { partner_id: '184503', nama_kelas: 'KKG GUGUS II BANUHAMPU + KKG Gugus 1 Sungaipua', link_gmeet: 'https://meet.google.com/gdm-zbbe-hyc', wilayah: 'Kab. Agam' },
+            '184503': { partner_id: '161533', nama_kelas: 'KKG GUGUS II BANUHAMPU + KKG Gugus 1 Sungaipua', link_gmeet: 'https://meet.google.com/gdm-zbbe-hyc', wilayah: 'Kab. Agam' }
+        };
 
         // Calendar State
         const todayObj = new Date();
@@ -1158,19 +1336,25 @@
             document.getElementById('navUserName').innerText = loggedInFasil.nama;
             document.getElementById('dashGreeting').innerText = `Halo, ${loggedInFasil.nama}`;
             
-            const [snapSekolah, snapAssign, snapJadwal, snapSetting] = await Promise.all([
+            const [snapSekolah, snapAssign, snapJadwal, snapSetting, snapKombel, snapSesiKombel] = await Promise.all([
                 db.ref('master_guru').once('value'),
                 db.ref('fasilitator_sekolah/' + loggedInFasil.id).once('value'),
                 db.ref('jadwal_kunjungan').once('value'),
-                db.ref('setting_jadwal').once('value')
+                db.ref('setting_jadwal').once('value'),
+                db.ref('master_kombel').once('value'),
+                db.ref('jadwal_sesi_kombel').once('value')
             ]);
 
             allSchools = snapSekolah.val() || {};
             myAssignedSchools = snapAssign.val() || [];
             allJadwalData = snapJadwal.val() || {};
             globalSettingJadwal = snapSetting.val() || {};
+            allMasterKombel = snapKombel.val() || {};
+            allSesiKombel = snapSesiKombel.val() || {};
 
-            document.getElementById('dashSubGreeting').innerText = `${myAssignedSchools.length} Sekolah Binaan Ditugaskan`;
+            buildAssignedKombels();
+
+            document.getElementById('dashSubGreeting').innerText = `${myAssignedSchools.length} Sekolah Binaan • ${myAssignedKombelList.length} Kombel Dampingan`;
 
             // Load baseline status data
             await loadStatusBaselineData();
@@ -1184,6 +1368,8 @@
                 renderCalendar();
             } else if (currentActiveView === 'status') {
                 renderStatusBaselineFasil();
+            } else if (currentActiveView === 'gmeet') {
+                renderGMeetFasilView();
             } else {
                 renderListView();
             }
@@ -1214,34 +1400,33 @@
             const btnCal = document.getElementById('btnViewCalendar');
             const btnList = document.getElementById('btnViewList');
             const btnStatus = document.getElementById('btnViewStatus');
+            const btnGMeet = document.getElementById('btnViewGMeet');
             const cCal = document.getElementById('containerCalendarView');
             const cList = document.getElementById('containerListView');
             const cStatus = document.getElementById('containerStatusView');
+            const cGMeet = document.getElementById('containerGMeetView');
+
+            const inactiveClass = "px-4 py-2 rounded-lg transition-all flex items-center gap-1.5 text-slate-600 hover:text-slate-900";
+            const activeClass = "px-4 py-2 rounded-lg transition-all flex items-center gap-1.5 bg-white text-indigo-700 shadow-sm";
+
+            btnCal.className = view === 'calendar' ? activeClass : inactiveClass;
+            btnList.className = view === 'list' ? activeClass : inactiveClass;
+            btnStatus.className = view === 'status' ? activeClass : inactiveClass;
+            if (btnGMeet) btnGMeet.className = view === 'gmeet' ? activeClass : inactiveClass;
+
+            cCal.classList.toggle('hidden', view !== 'calendar');
+            cList.classList.toggle('hidden', view !== 'list');
+            cStatus.classList.toggle('hidden', view !== 'status');
+            if (cGMeet) cGMeet.classList.toggle('hidden', view !== 'gmeet');
 
             if (view === 'calendar') {
-                btnCal.className = "px-4 py-2 rounded-lg transition-all flex items-center gap-1.5 bg-white text-indigo-700 shadow-sm";
-                btnList.className = "px-4 py-2 rounded-lg transition-all flex items-center gap-1.5 text-slate-600 hover:text-slate-900";
-                btnStatus.className = "px-4 py-2 rounded-lg transition-all flex items-center gap-1.5 text-slate-600 hover:text-slate-900";
-                cCal.classList.remove('hidden');
-                cList.classList.add('hidden');
-                cStatus.classList.add('hidden');
                 renderCalendar();
             } else if (view === 'list') {
-                btnList.className = "px-4 py-2 rounded-lg transition-all flex items-center gap-1.5 bg-white text-indigo-700 shadow-sm";
-                btnCal.className = "px-4 py-2 rounded-lg transition-all flex items-center gap-1.5 text-slate-600 hover:text-slate-900";
-                btnStatus.className = "px-4 py-2 rounded-lg transition-all flex items-center gap-1.5 text-slate-600 hover:text-slate-900";
-                cList.classList.remove('hidden');
-                cCal.classList.add('hidden');
-                cStatus.classList.add('hidden');
                 renderListView();
             } else if (view === 'status') {
-                btnStatus.className = "px-4 py-2 rounded-lg transition-all flex items-center gap-1.5 bg-white text-indigo-700 shadow-sm";
-                btnCal.className = "px-4 py-2 rounded-lg transition-all flex items-center gap-1.5 text-slate-600 hover:text-slate-900";
-                btnList.className = "px-4 py-2 rounded-lg transition-all flex items-center gap-1.5 text-slate-600 hover:text-slate-900";
-                cStatus.classList.remove('hidden');
-                cCal.classList.add('hidden');
-                cList.classList.add('hidden');
                 renderStatusBaselineFasil();
+            } else if (view === 'gmeet') {
+                renderGMeetFasilView();
             }
         }
 
@@ -3347,6 +3532,447 @@
             onStSekolahChange();
             const modalBody = document.querySelector('#modalKelolaSuratTugas .overflow-y-auto');
             if (modalBody) modalBody.scrollTop = 0;
+        }
+
+        // ==========================================
+        // FITUR PILAR 4: RUANG KELAS GMEET & REKAMAN
+        // ==========================================
+        function buildAssignedKombels() {
+            myAssignedKombelList = [];
+            if (!loggedInFasil) return;
+
+            const myName = (loggedInFasil.nama || '').trim().toLowerCase();
+            const myFkk1 = (loggedInFasil.fkk_1 || '').trim().toLowerCase();
+
+            const processedCombinedKeys = new Set();
+
+            Object.entries(allMasterKombel).forEach(([kId, k]) => {
+                if (!k || !k.is_sasaran) return;
+
+                const kFasil = (k.fasil_nama || '').trim().toLowerCase();
+                const kNama = (k.nama_kombel || '').trim().toLowerCase();
+
+                const isMatch = (kFasil && (kFasil === myName || kFasil.includes(myName) || myName.includes(kFasil))) ||
+                                (myFkk1 && (kNama.includes(myFkk1) || myFkk1.includes(kNama)));
+
+                if (!isMatch) return;
+
+                if (KELAS_GABUNGAN_MAP[kId]) {
+                    const cfg = KELAS_GABUNGAN_MAP[kId];
+                    const partnerId = cfg.partner_id;
+                    const pairKey = [kId, partnerId].sort().join('_');
+                    if (processedCombinedKeys.has(pairKey)) return;
+                    processedCombinedKeys.add(pairKey);
+
+                    const partnerK = allMasterKombel[partnerId] || {};
+                    const linkGmeet = k.link_gmeet || partnerK.link_gmeet || cfg.link_gmeet;
+
+                    myAssignedKombelList.push({
+                        primary_id: kId,
+                        secondary_id: partnerId,
+                        nama_kelas: cfg.nama_kelas,
+                        nama_kombel: `${k.nama_kombel} & ${partnerK.nama_kombel || partnerId}`,
+                        wilayah: cfg.wilayah || k.kab_kota || '-',
+                        jenjang: k.jenjang || partnerK.jenjang || '-',
+                        mapel: k.mapel || partnerK.mapel || '-',
+                        link_gmeet: linkGmeet,
+                        tipe: 'gabungan',
+                        fasil: loggedInFasil.nama,
+                        jumlah_anggota: (k.jumlah_anggota || 0) + (partnerK.jumlah_anggota || 0)
+                    });
+                } else {
+                    myAssignedKombelList.push({
+                        primary_id: kId,
+                        secondary_id: null,
+                        nama_kelas: k.nama_kombel,
+                        nama_kombel: k.nama_kombel,
+                        wilayah: k.kab_kota || '-',
+                        jenjang: k.jenjang || '-',
+                        mapel: k.mapel || '-',
+                        link_gmeet: k.link_gmeet || '',
+                        tipe: 'mandiri',
+                        fasil: loggedInFasil.nama,
+                        jumlah_anggota: k.jumlah_anggota || 0
+                    });
+                }
+            });
+
+            const badgePilar = document.getElementById('badgeGMeetPilar');
+            const summaryStatus = document.getElementById('summaryGMeetStatus');
+            if (badgePilar) {
+                badgePilar.textContent = myAssignedKombelList.length > 0 ? `${myAssignedKombelList.length} Kombel` : '54 Ruang';
+            }
+            if (summaryStatus) {
+                summaryStatus.textContent = myAssignedKombelList.length > 0 ? `${myAssignedKombelList.length} Kelas Siap` : 'Siap';
+            }
+        }
+
+        function renderGMeetFasilView() {
+            const container = document.getElementById('fasilKombelListContainer');
+            if (!container) return;
+
+            if (myAssignedKombelList.length === 0) {
+                container.innerHTML = `
+                    <div class="glass-card rounded-2xl p-8 text-center max-w-xl mx-auto shadow-sm border border-slate-200">
+                        <div class="w-16 h-16 rounded-2xl bg-teal-50 text-teal-600 flex items-center justify-center text-3xl mx-auto mb-4">🏫</div>
+                        <h3 class="text-lg font-black text-slate-900">Pendampingan Sekolah Model Binaan</h3>
+                        <p class="text-xs text-slate-500 leading-relaxed mt-2 max-w-md mx-auto">
+                            Anda saat ini tercatat sebagai Fasilitator Pendamping untuk <strong>${myAssignedSchools.length} Sekolah Model Binaan</strong>. Penugasan khusus Komunitas Belajar (Kombel) dikelola terpisah.
+                        </p>
+                        <div class="mt-6 flex flex-wrap items-center justify-center gap-3">
+                            <button onclick="switchMainView('calendar')" class="px-4 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-bold transition-all shadow-sm">
+                                🗓️ Lihat Kalender Kunjungan Sekolah
+                            </button>
+                            <a href="ruang-kelas.html" target="_blank" class="px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold transition-all shadow-sm no-underline inline-flex items-center gap-1.5">
+                                <span>🌐 Buka 54 Ruang Kelas Daring</span>
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+                            </a>
+                        </div>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = myAssignedKombelList.map(k => {
+                const sObj = allSesiKombel[k.primary_id] || (k.secondary_id ? allSesiKombel[k.secondary_id] : null) || {};
+                const sesiKeys = Object.keys(sObj);
+                const sesiList = sesiKeys.map(key => ({ key, ...sObj[key] }));
+                sesiList.sort((a, b) => (a.nomor_sesi || 0) - (b.nomor_sesi || 0));
+
+                const gmeetLink = k.link_gmeet || '';
+                const badgeTipe = k.tipe === 'gabungan' 
+                    ? '<span class="px-2.5 py-0.5 rounded-full text-[10px] font-black bg-amber-100 text-amber-900 border border-amber-300">⭐ KELAS GABUNGAN</span>'
+                    : '<span class="px-2.5 py-0.5 rounded-full text-[10px] font-black bg-indigo-100 text-indigo-800 border border-indigo-200">KELAS MANDIRI</span>';
+
+                return `
+                <div class="glass-card rounded-2xl border border-slate-200 shadow-sm overflow-hidden fade-in">
+                    <!-- Header Kelas -->
+                    <div class="p-5 sm:p-6 bg-slate-50/80 border-b border-slate-200 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                        <div>
+                            <div class="flex items-center gap-2 mb-1 flex-wrap">
+                                ${badgeTipe}
+                                <span class="text-xs font-bold text-slate-500">${k.wilayah}</span>
+                                <span class="text-xs text-slate-400">•</span>
+                                <span class="text-xs font-semibold text-slate-600">${k.jenjang} / ${k.mapel}</span>
+                            </div>
+                            <h3 class="text-lg font-black text-slate-900 tracking-tight">${k.nama_kelas}</h3>
+                            <p class="text-xs text-slate-500 mt-0.5">Fasilitator Pendamping: <strong class="text-slate-700">${k.fasil}</strong> • Anggota: <strong class="text-slate-700">${k.jumlah_anggota} orang</strong></p>
+                        </div>
+                        <div class="flex items-center gap-2 w-full md:w-auto">
+                            <button onclick="openModalKelolaSesiFasil('${k.primary_id}')" class="w-full md:w-auto px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-black rounded-xl shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer">
+                                <span>➕ Kelola / Jadwalkan Sesi</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- GMeet Access Bar -->
+                    <div class="p-5 bg-gradient-to-r from-emerald-50 via-teal-50 to-emerald-50 border-b border-emerald-100 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                        <div class="flex items-center gap-3 min-w-0">
+                            <div class="w-10 h-10 rounded-xl bg-emerald-600 text-white flex items-center justify-center font-bold text-lg flex-shrink-0 shadow-sm">
+                                📹
+                            </div>
+                            <div class="min-w-0">
+                                <div class="text-[10px] uppercase font-black tracking-wider text-emerald-800">Link Permanen Google Meet</div>
+                                <a href="${gmeetLink || '#'}" target="_blank" class="text-xs sm:text-sm font-mono font-bold text-emerald-700 hover:underline truncate block max-w-md">
+                                    ${gmeetLink || 'Belum diatur'}
+                                </a>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-2 flex-shrink-0 w-full sm:w-auto">
+                            <button onclick="salinLinkMeet('${gmeetLink}')" class="flex-1 sm:flex-none px-3.5 py-2 bg-white hover:bg-emerald-100 text-emerald-800 border border-emerald-300 rounded-xl text-xs font-bold transition-all shadow-2xs flex items-center justify-center gap-1.5 cursor-pointer">
+                                <span>📋 Salin Link</span>
+                            </button>
+                            ${gmeetLink ? `
+                                <a href="${gmeetLink}" target="_blank" class="flex-1 sm:flex-none px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-black transition-all shadow-md flex items-center justify-center gap-1.5 no-underline">
+                                    <span>🚀 Masuk GMeet</span>
+                                </a>
+                            ` : ''}
+                        </div>
+                    </div>
+
+                    <!-- Session Timeline & Recordings -->
+                    <div class="p-5 sm:p-6 space-y-3">
+                        <div class="flex items-center justify-between">
+                            <h4 class="text-xs font-black text-slate-600 uppercase tracking-wider">Jadwal Sesi Pertemuan &amp; Rekaman Video (${sesiList.length} Sesi)</h4>
+                        </div>
+
+                        ${sesiList.length === 0 ? `
+                            <div class="p-6 bg-slate-50 border border-dashed border-slate-200 rounded-2xl text-center">
+                                <p class="text-xs text-slate-500 font-medium">Belum ada sesi pertemuan yang dijadwalkan untuk kelas ini.</p>
+                                <p class="text-[11px] text-slate-400 mt-0.5">Klik tombol "Kelola / Jadwalkan Sesi" di atas untuk menentukan jadwal dan mengunggah tautan rekaman.</p>
+                            </div>
+                        ` : `
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                ${sesiList.map(s => {
+                                    const hasRekaman = !!s.link_rekaman;
+                                    const hasMateri = !!s.link_materi;
+                                    return `
+                                    <div class="p-4 bg-white border border-slate-200 rounded-2xl shadow-2xs hover:border-emerald-300 transition-all flex flex-col justify-between space-y-3">
+                                        <div>
+                                            <div class="flex items-center justify-between gap-2 mb-1.5">
+                                                <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black bg-emerald-100 text-emerald-800">Sesi ${s.nomor_sesi || 1}</span>
+                                                <span class="text-[11px] text-slate-500 font-semibold">📅 ${s.tanggal || '-'}</span>
+                                            </div>
+                                            <h5 class="text-sm font-bold text-slate-900 leading-snug">${s.topik || 'Tanpa Judul'}</h5>
+                                            <p class="text-[11px] text-slate-500 mt-1">⏰ Waktu: ${s.jam_mulai || '08:30'} - ${s.jam_selesai || '11:30'} WIB</p>
+                                            ${s.deskripsi ? `<p class="text-[11px] text-slate-600 mt-2 p-2 bg-slate-50 rounded-lg border border-slate-100 italic">${s.deskripsi}</p>` : ''}
+                                        </div>
+
+                                        <div class="pt-3 border-t border-slate-100 flex items-center justify-between gap-2">
+                                            <div class="flex items-center gap-2 flex-wrap">
+                                                ${hasRekaman ? `
+                                                    <a href="${s.link_rekaman}" target="_blank" class="inline-flex items-center gap-1 px-2.5 py-1 bg-purple-50 text-purple-700 hover:bg-purple-100 rounded-lg text-xs font-bold border border-purple-200 transition-colors no-underline">
+                                                        <span>🎬 Tonton Rekaman</span>
+                                                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+                                                    </a>
+                                                ` : `
+                                                    <span class="text-[11px] text-slate-400 font-medium italic">Rekaman: belum ada</span>
+                                                `}
+                                                ${hasMateri ? `
+                                                    <a href="${s.link_materi}" target="_blank" class="inline-flex items-center gap-1 px-2.5 py-1 bg-indigo-50 text-indigo-700 hover:bg-indigo-100 rounded-lg text-xs font-bold border border-indigo-200 transition-colors no-underline">
+                                                        <span>📂 Materi</span>
+                                                    </a>
+                                                ` : ''}
+                                            </div>
+                                            <div class="flex items-center gap-1">
+                                                <button onclick="editSesiPertemuanFasil('${k.primary_id}', '${s.key}')" title="Edit Sesi" class="p-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs font-bold transition-colors">
+                                                    ✏️
+                                                </button>
+                                                <button onclick="hapusSesiPertemuanFasil('${k.primary_id}', '${s.key}')" title="Hapus Sesi" class="p-1.5 text-rose-500 hover:bg-rose-50 rounded-lg text-xs font-bold transition-colors">
+                                                    🗑️
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    `;
+                                }).join('')}
+                            </div>
+                        `}
+                    </div>
+                </div>
+                `;
+            }).join('');
+        }
+
+        function salinLinkMeet(url) {
+            if (!url) return alert("Belum ada link Meet.");
+            navigator.clipboard.writeText(url).then(() => {
+                alert("✅ Link Google Meet berhasil disalin ke clipboard:\n" + url);
+            }).catch(() => {
+                prompt("Salin link Google Meet berikut:", url);
+            });
+        }
+
+        function openModalKelolaSesiFasil(kombelId) {
+            const k = myAssignedKombelList.find(item => item.primary_id === kombelId);
+            if (!k) return;
+            currentModalKombelKelas = k;
+
+            document.getElementById('mFasilSesiNamaKelas').textContent = k.nama_kelas;
+            document.getElementById('mFasilSesiWilayah').textContent = `${k.wilayah} • Fasil: ${k.fasil}`;
+
+            const gmeet = k.link_gmeet || '';
+            const linkEl = document.getElementById('mFasilSesiGMeetLinkText');
+            linkEl.textContent = gmeet || 'Belum diatur';
+            linkEl.href = gmeet || '#';
+
+            const btnBuka = document.getElementById('mFasilSesiBtnBukaGMeet');
+            if (gmeet) {
+                btnBuka.href = gmeet;
+                btnBuka.classList.remove('opacity-50', 'pointer-events-none');
+            } else {
+                btnBuka.removeAttribute('href');
+                btnBuka.classList.add('opacity-50', 'pointer-events-none');
+            }
+
+            resetFormSesiFasil();
+            renderModalExistingSesiListFasil();
+
+            document.getElementById('modalKelolaSesiFasil').classList.remove('hidden');
+        }
+
+        function closeModalKelolaSesiFasil() {
+            document.getElementById('modalKelolaSesiFasil').classList.add('hidden');
+            currentModalKombelKelas = null;
+        }
+
+        function resetFormSesiFasil() {
+            document.getElementById('inputFasilSesiEditKey').value = '';
+            document.getElementById('inputFasilSesiTopik').value = '';
+            document.getElementById('inputFasilSesiTanggal').value = new Date().toISOString().slice(0, 10);
+            document.getElementById('inputFasilSesiJamMulai').value = '08:30';
+            document.getElementById('inputFasilSesiJamSelesai').value = '11:30';
+            document.getElementById('inputFasilSesiLinkRekaman').value = '';
+            document.getElementById('inputFasilSesiLinkMateri').value = '';
+            document.getElementById('inputFasilSesiDeskripsi').value = '';
+            document.getElementById('mFasilSesiFormTitle').innerHTML = '<span>➕</span> Tambah / Jadwalkan Sesi Baru';
+            document.getElementById('btnSimpanSesiFasil').textContent = '💾 Simpan Sesi';
+
+            if (currentModalKombelKelas) {
+                const sObj = allSesiKombel[currentModalKombelKelas.primary_id] || (currentModalKombelKelas.secondary_id ? allSesiKombel[currentModalKombelKelas.secondary_id] : null) || {};
+                const nextNo = Object.keys(sObj).length + 1;
+                document.getElementById('inputFasilSesiNomor').value = nextNo;
+            }
+        }
+
+        function renderModalExistingSesiListFasil() {
+            const container = document.getElementById('mFasilSesiExistingListContainer');
+            if (!currentModalKombelKelas || !container) return;
+
+            const sObj = allSesiKombel[currentModalKombelKelas.primary_id] || (currentModalKombelKelas.secondary_id ? allSesiKombel[currentModalKombelKelas.secondary_id] : null) || {};
+            const keys = Object.keys(sObj);
+
+            if (keys.length === 0) {
+                container.innerHTML = `<div class="text-center py-6 text-slate-400 text-xs bg-slate-50 rounded-xl border border-slate-200">Belum ada sesi pertemuan yang dijadwalkan. Gunakan formulir di atas untuk menambahkan sesi.</div>`;
+                return;
+            }
+
+            const list = keys.map(k => ({ key: k, ...sObj[k] }));
+            list.sort((a, b) => (a.nomor_sesi || 0) - (b.nomor_sesi || 0));
+
+            container.innerHTML = list.map(s => {
+                return `
+                <div class="p-3 bg-white border border-slate-200 rounded-xl flex items-center justify-between gap-3 text-xs shadow-2xs">
+                    <div class="min-w-0 flex-1">
+                        <div class="flex items-center gap-2">
+                            <span class="font-black text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">Sesi ${s.nomor_sesi || 1}</span>
+                            <span class="font-bold text-slate-900 truncate">${s.topik || 'Tanpa Judul'}</span>
+                        </div>
+                        <div class="text-[11px] text-slate-500 mt-1 flex flex-wrap items-center gap-2">
+                            <span>📅 ${s.tanggal || '-'} (${s.jam_mulai || ''} - ${s.jam_selesai || ''})</span>
+                            ${s.link_rekaman ? `<a href="${s.link_rekaman}" target="_blank" class="font-black text-purple-700 hover:underline">🎬 Rekaman Video ↗</a>` : `<span class="text-slate-400">Rekaman: -</span>`}
+                            ${s.link_materi ? `<a href="${s.link_materi}" target="_blank" class="font-bold text-indigo-600 hover:underline">📂 Materi ↗</a>` : ''}
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-1.5 flex-shrink-0">
+                        <button onclick="editSesiPertemuanFasilDirect('${s.key}')" title="Edit Sesi" class="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs font-bold transition-colors">
+                            ✏️ Edit
+                        </button>
+                        <button onclick="hapusSesiPertemuanFasil('${currentModalKombelKelas.primary_id}', '${s.key}')" title="Hapus Sesi" class="p-1 text-rose-500 hover:bg-rose-50 rounded-lg text-xs font-bold transition-colors">
+                            🗑️
+                        </button>
+                    </div>
+                </div>
+                `;
+            }).join('');
+        }
+
+        function editSesiPertemuanFasil(kombelId, sesiKey) {
+            openModalKelolaSesiFasil(kombelId);
+            editSesiPertemuanFasilDirect(sesiKey);
+        }
+
+        function editSesiPertemuanFasilDirect(sesiKey) {
+            if (!currentModalKombelKelas) return;
+            const sObj = allSesiKombel[currentModalKombelKelas.primary_id] || (currentModalKombelKelas.secondary_id ? allSesiKombel[currentModalKombelKelas.secondary_id] : null) || {};
+            const s = sObj[sesiKey];
+            if (!s) return;
+
+            document.getElementById('inputFasilSesiEditKey').value = sesiKey;
+            document.getElementById('inputFasilSesiNomor').value = s.nomor_sesi || 1;
+            document.getElementById('inputFasilSesiTopik').value = s.topik || '';
+            document.getElementById('inputFasilSesiTanggal').value = s.tanggal || '';
+            document.getElementById('inputFasilSesiJamMulai').value = s.jam_mulai || '08:30';
+            document.getElementById('inputFasilSesiJamSelesai').value = s.jam_selesai || '11:30';
+            document.getElementById('inputFasilSesiLinkRekaman').value = s.link_rekaman || '';
+            document.getElementById('inputFasilSesiLinkMateri').value = s.link_materi || '';
+            document.getElementById('inputFasilSesiDeskripsi').value = s.deskripsi || '';
+
+            document.getElementById('mFasilSesiFormTitle').innerHTML = `<span>✏️</span> Edit Sesi ${s.nomor_sesi || 1}`;
+            document.getElementById('btnSimpanSesiFasil').textContent = '💾 Update Sesi';
+        }
+
+        async function simpanSesiPertemuanFasil() {
+            if (!currentModalKombelKelas) return;
+
+            const topik = (document.getElementById('inputFasilSesiTopik')?.value || '').trim();
+            if (!topik) {
+                alert("Mohon masukkan topik / judul pertemuan sesi.");
+                return;
+            }
+
+            const nomor = parseInt(document.getElementById('inputFasilSesiNomor')?.value) || 1;
+            const tanggal = document.getElementById('inputFasilSesiTanggal')?.value || '';
+            const jamMulai = document.getElementById('inputFasilSesiJamMulai')?.value || '';
+            const jamSelesai = document.getElementById('inputFasilSesiJamSelesai')?.value || '';
+            const linkRekaman = (document.getElementById('inputFasilSesiLinkRekaman')?.value || '').trim();
+            const linkMateri = (document.getElementById('inputFasilSesiLinkMateri')?.value || '').trim();
+            const deskripsi = (document.getElementById('inputFasilSesiDeskripsi')?.value || '').trim();
+
+            const editKey = document.getElementById('inputFasilSesiEditKey')?.value;
+            const sesiKey = editKey || `sesi_${Date.now()}`;
+
+            const payload = {
+                nomor_sesi: nomor,
+                topik: topik,
+                tanggal: tanggal,
+                jam_mulai: jamMulai,
+                jam_selesai: jamSelesai,
+                link_rekaman: linkRekaman,
+                link_materi: linkMateri,
+                deskripsi: deskripsi,
+                updated_at: new Date().toISOString(),
+                updated_by: loggedInFasil ? loggedInFasil.nama : 'Fasilitator'
+            };
+
+            const btn = document.getElementById('btnSimpanSesiFasil');
+            btn.disabled = true;
+            btn.textContent = 'Menyimpan...';
+
+            try {
+                await db.ref(`jadwal_sesi_kombel/${currentModalKombelKelas.primary_id}/${sesiKey}`).set(payload);
+
+                if (currentModalKombelKelas.secondary_id) {
+                    await db.ref(`jadwal_sesi_kombel/${currentModalKombelKelas.secondary_id}/${sesiKey}`).set(payload);
+                }
+
+                if (!allSesiKombel[currentModalKombelKelas.primary_id]) allSesiKombel[currentModalKombelKelas.primary_id] = {};
+                allSesiKombel[currentModalKombelKelas.primary_id][sesiKey] = payload;
+
+                if (currentModalKombelKelas.secondary_id) {
+                    if (!allSesiKombel[currentModalKombelKelas.secondary_id]) allSesiKombel[currentModalKombelKelas.secondary_id] = {};
+                    allSesiKombel[currentModalKombelKelas.secondary_id][sesiKey] = payload;
+                }
+
+                resetFormSesiFasil();
+                renderModalExistingSesiListFasil();
+                renderGMeetFasilView();
+                alert("✅ Jadwal sesi berhasil disimpan!");
+            } catch (err) {
+                console.error("Gagal simpan sesi fasil:", err);
+                alert("Gagal menyimpan sesi: " + err.message);
+            } finally {
+                btn.disabled = false;
+                btn.textContent = '💾 Simpan Sesi';
+            }
+        }
+
+        async function hapusSesiPertemuanFasil(kombelId, sesiKey) {
+            if (!confirm("Apakah Anda yakin ingin menghapus sesi ini?")) return;
+
+            const k = myAssignedKombelList.find(item => item.primary_id === kombelId);
+            const secId = k ? k.secondary_id : null;
+
+            try {
+                await db.ref(`jadwal_sesi_kombel/${kombelId}/${sesiKey}`).remove();
+                if (secId) {
+                    await db.ref(`jadwal_sesi_kombel/${secId}/${sesiKey}`).remove();
+                }
+
+                if (allSesiKombel[kombelId]) delete allSesiKombel[kombelId][sesiKey];
+                if (secId && allSesiKombel[secId]) delete allSesiKombel[secId][sesiKey];
+
+                renderModalExistingSesiListFasil();
+                renderGMeetFasilView();
+            } catch (err) {
+                console.error("Gagal hapus sesi:", err);
+                alert("Gagal menghapus sesi: " + err.message);
+            }
+        }
+
+        function salinLinkModalFasil() {
+            if (!currentModalKombelKelas || !currentModalKombelKelas.link_gmeet) return alert("Belum ada link Meet.");
+            salinLinkMeet(currentModalKombelKelas.link_gmeet);
         }
     </script>
     <script src="nav-crumbs.js"></script>

@@ -101,6 +101,13 @@
                         </div>
                     </div>
                     <nav class="space-y-1">
+                        <button onclick="switchTahapanWorkflow('tahap5')" id="btnModeGMeet" class="sidebar-btn flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-medium text-slate-600 hover:bg-emerald-50/80 hover:text-emerald-950 transition-all duration-200 w-full text-left group border-l-4 border-transparent">
+                            <div class="flex items-center gap-3">
+                                <svg class="w-5 h-5 flex-shrink-0 text-emerald-600 group-hover:text-emerald-700 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+                                <span class="font-bold">GMeet &amp; Rekaman</span>
+                            </div>
+                            <span class="text-[10px] bg-emerald-100 text-emerald-800 font-extrabold px-2 py-0.5 rounded-full border border-emerald-200">54</span>
+                        </button>
                         <button onclick="switchTahapanWorkflow('tahap1')" id="btnModeKombel" class="sidebar-btn flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-medium text-slate-600 hover:bg-amber-50/80 hover:text-amber-950 transition-all duration-200 w-full text-left group border-l-4 border-transparent">
                             <div class="flex items-center gap-3">
                                 <svg class="w-5 h-5 flex-shrink-0 text-amber-600 group-hover:text-amber-700 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
@@ -229,6 +236,11 @@
                         <!-- TAHAP 4: EXPORT CSV LMS ADMIN -->
                         <button onclick="switchTahapanWorkflow('tahap4')" id="tabTahap4" class="tahap-workflow-tab px-3 py-1.5 rounded-xl text-xs font-black transition-all flex items-center gap-1.5 border border-slate-200 text-slate-700 hover:bg-purple-50 bg-white">
                             <span>📥 4. Export CSV LMS Admin</span>
+                        </button>
+
+                        <!-- TAHAP 5: JADWAL & REKAMAN GMEET -->
+                        <button onclick="switchTahapanWorkflow('tahap5')" id="tabTahap5" class="tahap-workflow-tab px-3 py-1.5 rounded-xl text-xs font-black transition-all flex items-center gap-1.5 border border-emerald-300 text-emerald-800 hover:bg-emerald-50 bg-white">
+                            <span>📹 5. Jadwal &amp; Rekaman GMeet</span>
                         </button>
                     </div>
                     <div id="activeWorkspacePill" class="hidden sm:flex items-center gap-1.5 text-xs font-extrabold text-slate-500">
@@ -708,6 +720,10 @@
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
                                 <span>📥 Export Spreadsheet</span>
                             </button>
+                            <a href="cleanup_peserta.html" target="_blank" title="Buka Alat Optimasi Database untuk membersihkan data peserta kombel non-sasaran" class="px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white font-extrabold text-xs rounded-xl transition-all shadow-2xs flex items-center gap-1.5 cursor-pointer">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                                <span>🧹 Bersihkan Peserta Non-Sasaran</span>
+                            </a>
                         </div>
                     </div>
                     <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
@@ -895,21 +911,26 @@
                         </div>
 
                         <!-- Summary Stat Cards -->
-                        <div class="grid grid-cols-2 sm:grid-cols-3 gap-4 mt-6 pt-6 border-t border-white/10">
+                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-6 pt-6 border-t border-white/10">
                             <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-4">
-                                <div class="text-[11px] text-teal-200 uppercase font-bold">Kelas Siap LMS (Sudah Submit)</div>
+                                <div class="text-[11px] text-teal-200 uppercase font-bold">Kelas Siap LMS</div>
                                 <div class="text-2xl font-black mt-1" id="statExportLMSKombelCount">0 Kelas</div>
                                 <div class="text-[10px] text-teal-300/80 mt-0.5">Sudah disetujui / submit</div>
                             </div>
                             <div class="bg-emerald-500/20 backdrop-blur-sm border border-emerald-300/30 rounded-2xl p-4">
-                                <div class="text-[11px] text-emerald-200 uppercase font-bold">Total Peserta Terpilih (Murid)</div>
-                                <div class="text-2xl font-black text-emerald-300 mt-1" id="statExportLMSPesertaCount">0 Peserta</div>
-                                <div class="text-[10px] text-emerald-200/90 mt-0.5">Siap di-import ke LMS Admin</div>
+                                <div class="text-[11px] text-emerald-200 uppercase font-bold">Terkelaskan di LMS</div>
+                                <div class="text-2xl font-black text-emerald-300 mt-1" id="statExportLMSTerkelaskanCount">0 Peserta</div>
+                                <div class="text-[10px] text-emerald-200/90 mt-0.5">Akun Belajar Valid Terdaftar</div>
                             </div>
-                            <div class="bg-indigo-500/20 backdrop-blur-sm border border-indigo-300/30 rounded-2xl p-4 col-span-2 sm:col-span-1">
-                                <div class="text-[11px] text-indigo-200 uppercase font-bold">Total Aktor Lengkap LMS</div>
+                            <div class="bg-teal-500/20 backdrop-blur-sm border border-teal-300/30 rounded-2xl p-4">
+                                <div class="text-[11px] text-teal-200 uppercase font-bold">Peserta Terpilih (Murid)</div>
+                                <div class="text-2xl font-black text-teal-200 mt-1" id="statExportLMSPesertaCount">0 Peserta</div>
+                                <div class="text-[10px] text-teal-300/80 mt-0.5">Seluruh Roster Kelas</div>
+                            </div>
+                            <div class="bg-indigo-500/20 backdrop-blur-sm border border-indigo-300/30 rounded-2xl p-4">
+                                <div class="text-[11px] text-indigo-200 uppercase font-bold">Aktor Lengkap LMS</div>
                                 <div class="text-2xl font-black text-indigo-200 mt-1" id="statExportLMSAktorCount">0 Aktor</div>
-                                <div class="text-[10px] text-indigo-300/80 mt-0.5">Termasuk Fasilitator &amp; Admin Kelas</div>
+                                <div class="text-[10px] text-indigo-300/80 mt-0.5">Fasil + Admin + Peserta</div>
                             </div>
                         </div>
                     </div>
@@ -922,9 +943,18 @@
                                 <svg class="w-4 h-4 text-slate-400 absolute left-3.5 top-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
                             </div>
                             <div class="flex items-center gap-2.5 flex-wrap">
+                                <select id="filterExportLMSStatus" onchange="filterExportLMSData()" class="border-slate-300 rounded-xl text-sm px-3 py-2 bg-slate-50 font-semibold text-slate-700">
+                                    <option value="ALL">Semua Status Pengkelasan</option>
+                                    <option value="TERKELASKAN">✅ Terkelaskan LMS</option>
+                                    <option value="BELUM">⏳ Belum Terkelaskan</option>
+                                </select>
                                 <select id="filterExportLMSKab" onchange="filterExportLMSData()" class="border-slate-300 rounded-xl text-sm px-3 py-2 bg-slate-50 font-semibold text-slate-700">
                                     <option value="ALL">Semua Kab / Kota</option>
                                 </select>
+                                <button onclick="exportRekapPengkelasanExcel()" title="Unduh Rekap Publikasi Excel seluruh Peserta Terkelaskan LMS" class="px-3.5 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-xl text-xs font-bold transition flex items-center gap-1.5 cursor-pointer shadow-2xs hover:scale-105">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                                    <span>📢 Rekap Publikasi LMS</span>
+                                </button>
                                 <button onclick="exportBulkLMSCSVAllSubmitted()" title="Unduh CSV gabungan seluruh kelas LMS" class="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold transition flex items-center gap-1.5 cursor-pointer shadow-2xs">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
                                     <span>Download Bulk CSV</span>
@@ -957,6 +987,104 @@
                             </table>
                         </div>
                         <div id="exportLMSPagination" class="px-6 py-4 bg-slate-50 border-t border-slate-200/80 flex flex-col sm:flex-row justify-between items-center gap-3 text-xs text-slate-600 font-medium"></div>
+                <!-- MODE 5: DISTRIBUSI GMEET, PENJADWALAN & REPOSITORI REKAMAN (54 KELAS) -->
+                <div id="viewModeGMeet" class="hidden fade-in space-y-6">
+                    <!-- Top Banner Card -->
+                    <div class="bg-gradient-to-r from-emerald-950 via-teal-900 to-indigo-950 rounded-3xl shadow-md p-6 text-white">
+                        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                            <div>
+                                <span class="inline-block px-3 py-1 bg-white/20 backdrop-blur-md rounded-full text-xs font-bold text-emerald-100 uppercase tracking-wider mb-2">Workflow Tahap 5: Fase Operasional Daring</span>
+                                <div class="flex items-center gap-3">
+                                    <h1 class="text-2xl font-black">Distribusi GMeet, Jadwal &amp; Rekaman Sesi</h1>
+                                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-emerald-500/30 border border-emerald-400/50 rounded-full text-[11px] font-black text-emerald-200 backdrop-blur-sm">
+                                        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse inline-block"></span>
+                                        54 RUANG AKTIF
+                                    </span>
+                                </div>
+                                <p class="text-xs text-teal-100/90 mt-1 max-w-2xl">Pusat kontrol operasional seluruh 54 ruang Google Meet permanen, kalender sesi pertemuan pendampingan daring, dan repositori rekaman video pembelajaran untuk peserta.</p>
+                            </div>
+                            <div class="flex items-center gap-2 flex-wrap">
+                                <a href="ruang-kelas.html" target="_blank" title="Buka Portal Ruang Kelas Daring Publik" class="bg-white text-emerald-950 hover:bg-emerald-50 px-4 py-2.5 rounded-2xl text-xs font-black transition-all flex items-center gap-2 border border-emerald-200 shadow-md cursor-pointer hover:scale-105">
+                                    <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+                                    <span>🌐 Buka Portal Ruang Kelas</span>
+                                </a>
+                                <button onclick="exportGMeet54Excel()" title="Unduh data 54 link Google Meet dan jadwal pertemuan format Excel" class="bg-emerald-500 hover:bg-emerald-600 text-white px-4 py-2.5 rounded-2xl text-xs font-black transition-all flex items-center gap-2 border border-emerald-400 shadow-md cursor-pointer hover:scale-105">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 01-2-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                                    <span>📗 Unduh Rekap 54 GMeet (Excel)</span>
+                                </button>
+                                <button onclick="loadGMeetAdminViewData(true)" class="bg-white/10 hover:bg-white/20 text-white px-4 py-2.5 rounded-2xl text-xs font-bold transition-colors flex items-center gap-2 border border-white/20 shadow-xs cursor-pointer">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+                                    <span>Refresh</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Summary Stat Cards -->
+                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-6 pt-6 border-t border-white/10">
+                            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-4">
+                                <div class="text-[11px] text-teal-200 uppercase font-bold">Total Ruang Kelas</div>
+                                <div class="text-2xl font-black mt-1" id="statGMeetAdminTotalKelas">54 Kelas</div>
+                                <div class="text-[10px] text-teal-300/80 mt-0.5">51 Mandiri + 3 Gabungan</div>
+                            </div>
+                            <div class="bg-emerald-500/20 backdrop-blur-sm border border-emerald-300/30 rounded-2xl p-4">
+                                <div class="text-[11px] text-emerald-200 uppercase font-bold">GMeet Aktif Permanen</div>
+                                <div class="text-2xl font-black text-emerald-300 mt-1" id="statGMeetAdminAktifCount">54 Link</div>
+                                <div class="text-[10px] text-emerald-200/90 mt-0.5">Terhubung Kalender 2026</div>
+                            </div>
+                            <div class="bg-teal-500/20 backdrop-blur-sm border border-teal-300/30 rounded-2xl p-4">
+                                <div class="text-[11px] text-teal-200 uppercase font-bold">Total Sesi Terjadwal</div>
+                                <div class="text-2xl font-black text-teal-200 mt-1" id="statGMeetAdminSesiCount">0 Sesi</div>
+                                <div class="text-[10px] text-teal-300/80 mt-0.5">Dikelola Fasilitator &amp; Admin</div>
+                            </div>
+                            <div class="bg-purple-500/20 backdrop-blur-sm border border-purple-300/30 rounded-2xl p-4">
+                                <div class="text-[11px] text-purple-200 uppercase font-bold">Rekaman Video Tersedia</div>
+                                <div class="text-2xl font-black text-purple-200 mt-1" id="statGMeetAdminRekamanCount">0 Rekaman</div>
+                                <div class="text-[10px] text-purple-200/80 mt-0.5">Siap Ditonton Peserta</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Filter & Search Bar -->
+                    <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-2xs flex flex-col md:flex-row items-center justify-between gap-3">
+                        <div class="relative w-full md:w-80">
+                            <input type="text" id="searchGMeetAdmin" oninput="filterGMeetAdminTable()" placeholder="Cari nama kombel, fasilitator..." class="w-full text-xs bg-slate-50 border border-slate-200 rounded-xl pl-9 pr-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white transition-all">
+                            <svg class="w-4 h-4 text-slate-400 absolute left-3 top-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                        </div>
+                        <div class="flex flex-wrap items-center gap-2 w-full md:w-auto">
+                            <select id="filterKabGMeetAdmin" onchange="filterGMeetAdminTable()" class="bg-slate-50 border border-slate-200 rounded-xl text-xs px-3 py-2 font-bold text-slate-700">
+                                <option value="ALL">Semua Kabupaten / Kota</option>
+                            </select>
+                            <select id="filterTipeGMeetAdmin" onchange="filterGMeetAdminTable()" class="bg-slate-50 border border-slate-200 rounded-xl text-xs px-3 py-2 font-bold text-slate-700">
+                                <option value="ALL">Semua Tipe Kelas</option>
+                                <option value="gabungan">Kelas Gabungan (3)</option>
+                                <option value="mandiri">Kelas Mandiri (51)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Table Container -->
+                    <div class="bg-white rounded-3xl shadow-sm border border-slate-200/90 overflow-hidden">
+                        <div class="overflow-x-auto custom-scroll">
+                            <table class="w-full text-left text-xs">
+                                <thead class="bg-slate-100/90 text-slate-700 font-extrabold border-b border-slate-200 text-xs uppercase tracking-wider">
+                                    <tr>
+                                        <th class="px-3 py-3.5 text-center w-12">No</th>
+                                        <th class="px-4 py-3.5 w-72">Kelas Daring &amp; Wilayah</th>
+                                        <th class="px-4 py-3.5 w-48 bg-purple-50/50 text-purple-950">Fasilitator Pendamping</th>
+                                        <th class="px-4 py-3.5 w-60 bg-emerald-50/60 text-emerald-950">Link Google Meet Permanen</th>
+                                        <th class="px-4 py-3.5 text-center w-40">Sesi &amp; Rekaman</th>
+                                        <th class="px-4 py-3.5 text-center w-44 bg-slate-50">Kelola Jadwal &amp; Video</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tableGMeetAdminBody" class="divide-y divide-slate-100">
+                                    <tr>
+                                        <td colspan="6" class="px-6 py-12 text-center text-slate-400">
+                                            <div class="spinner mx-auto mb-2"></div>Memuat data ruang kelas GMeet...
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
 
@@ -2350,6 +2478,106 @@
                 <button onclick="simpanFasilUntukSekolah()" class="px-4 py-2 bg-emerald-600 text-white text-xs font-bold rounded-xl hover:bg-emerald-700 shadow-sm">Simpan Penugasan</button>
             </div>
         </div>
+    <!-- MODAL KELOLA JADWAL SESI & REKAMAN GMEET KOMBEL -->
+    <div id="modalKelolaSesiGMeet" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 z-50 hidden fade-in">
+        <div class="bg-white rounded-3xl max-w-2xl w-full max-h-[90vh] overflow-hidden flex flex-col shadow-2xl border border-slate-100">
+            <div class="bg-gradient-to-r from-emerald-800 to-teal-800 p-5 text-white flex justify-between items-start flex-shrink-0">
+                <div>
+                    <span class="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-white/20 border border-white/20 mb-1" id="mSesiBadgeTipe">Kelas Mandiri</span>
+                    <h3 class="text-lg sm:text-xl font-black" id="mSesiNamaKelas">Nama Kelas</h3>
+                    <p class="text-emerald-200 text-xs mt-0.5" id="mSesiWilayah">Kabupaten / Kota</p>
+                </div>
+                <button onclick="closeModalKelolaSesi()" class="p-1.5 text-white/70 hover:text-white hover:bg-white/10 rounded-full transition-colors">✕</button>
+            </div>
+
+            <div class="p-6 overflow-y-auto custom-scroll space-y-6 flex-1">
+                <!-- Info Link GMeet Permanen -->
+                <div class="bg-emerald-50 border border-emerald-200 rounded-2xl p-4 flex flex-col sm:flex-row items-center justify-between gap-3">
+                    <div class="min-w-0 flex-1">
+                        <div class="text-[10px] font-bold text-emerald-800 uppercase tracking-wider">Link Google Meet Permanen</div>
+                        <div class="text-xs font-mono font-bold text-emerald-950 truncate" id="mSesiGMeetLinkText">https://meet.google.com/...</div>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <a id="mSesiBtnBukaGMeet" href="#" target="_blank" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold transition-all shadow-xs flex items-center gap-1">
+                            <span>Buka GMeet</span>
+                        </a>
+                        <button onclick="salinGMeetAdminModal()" id="btnSalinGMeetModalAdmin" class="px-3 py-1.5 bg-white hover:bg-emerald-100 text-emerald-800 rounded-xl text-xs font-bold border border-emerald-300">
+                            📋 Salin
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Form Tambah / Edit Sesi -->
+                <div class="bg-slate-50 border border-slate-200/90 rounded-2xl p-4 sm:p-5 space-y-3">
+                    <h4 class="text-xs font-black text-slate-800 uppercase tracking-wider flex items-center gap-1.5">
+                        <span id="mSesiFormTitle">➕ Tambah / Jadwalkan Sesi Baru</span>
+                    </h4>
+                    <input type="hidden" id="inputSesiEditKey" value="">
+
+                    <div class="grid grid-cols-1 sm:grid-cols-4 gap-3">
+                        <div>
+                            <label class="block text-[11px] font-bold text-slate-700 mb-1">Nomor Sesi</label>
+                            <input type="number" id="inputSesiNomor" min="1" value="1" class="w-full bg-white border border-slate-300 rounded-xl px-3 py-2 text-xs focus:ring-2 focus:ring-emerald-500 font-bold">
+                        </div>
+                        <div class="sm:col-span-3">
+                            <label class="block text-[11px] font-bold text-slate-700 mb-1">Topik / Judul Pertemuan <span class="text-rose-500">*</span></label>
+                            <input type="text" id="inputSesiTopik" placeholder="Contoh: Sesi 1: Pengenalan Pembelajaran Mendalam" class="w-full bg-white border border-slate-300 rounded-xl px-3 py-2 text-xs focus:ring-2 focus:ring-emerald-500">
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                        <div>
+                            <label class="block text-[11px] font-bold text-slate-700 mb-1">Tanggal Pelaksanaan</label>
+                            <input type="date" id="inputSesiTanggal" class="w-full bg-white border border-slate-300 rounded-xl px-3 py-2 text-xs focus:ring-2 focus:ring-emerald-500">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-bold text-slate-700 mb-1">Jam Mulai</label>
+                            <input type="time" id="inputSesiJamMulai" value="08:30" class="w-full bg-white border border-slate-300 rounded-xl px-3 py-2 text-xs focus:ring-2 focus:ring-emerald-500">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-bold text-slate-700 mb-1">Jam Selesai</label>
+                            <input type="time" id="inputSesiJamSelesai" value="11:30" class="w-full bg-white border border-slate-300 rounded-xl px-3 py-2 text-xs focus:ring-2 focus:ring-emerald-500">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-[11px] font-bold text-purple-900 mb-1">🎬 Link Rekaman Video (Google Drive / YouTube)</label>
+                        <input type="url" id="inputSesiLinkRekaman" placeholder="https://drive.google.com/file/d/... atau https://youtu.be/..." class="w-full bg-white border border-purple-200 rounded-xl px-3 py-2 text-xs focus:ring-2 focus:ring-purple-500 font-mono">
+                    </div>
+
+                    <div>
+                        <label class="block text-[11px] font-bold text-slate-700 mb-1">📂 Link Materi Pembelajaran (Google Drive / Slides)</label>
+                        <input type="url" id="inputSesiLinkMateri" placeholder="https://drive.google.com/drive/folders/..." class="w-full bg-white border border-slate-300 rounded-xl px-3 py-2 text-xs focus:ring-2 focus:ring-indigo-500 font-mono">
+                    </div>
+
+                    <div>
+                        <label class="block text-[11px] font-bold text-slate-700 mb-1">Catatan / Keterangan Sesi</label>
+                        <textarea id="inputSesiDeskripsi" rows="2" placeholder="Catatan tugas mandiri atau informasi penting untuk peserta..." class="w-full bg-white border border-slate-300 rounded-xl p-2.5 text-xs focus:ring-2 focus:ring-emerald-500"></textarea>
+                    </div>
+
+                    <div class="flex items-center justify-between pt-2">
+                        <button type="button" onclick="resetFormSesi()" class="text-xs text-slate-500 hover:text-slate-800 font-bold">Reset Form</button>
+                        <button type="button" onclick="simpanSesiPertemuan()" id="btnSimpanSesi" class="bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xs px-5 py-2 rounded-xl transition-all shadow-sm">
+                            💾 Simpan Sesi
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Daftar Sesi Yang Sudah Ada -->
+                <div>
+                    <h4 class="text-xs font-black text-slate-800 uppercase tracking-wider mb-2.5">
+                        Daftar Sesi Terjadwal
+                    </h4>
+                    <div id="mSesiExistingListContainer" class="space-y-2.5">
+                        <!-- Injected here -->
+                    </div>
+                </div>
+            </div>
+
+            <div class="p-4 bg-slate-50 border-t border-slate-100 flex justify-end">
+                <button onclick="closeModalKelolaSesi()" class="px-5 py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold rounded-xl text-xs transition-colors">Tutup</button>
+            </div>
+        </div>
     </div>
 
     <!-- MAIN JAVASCRIPT -->
@@ -2474,35 +2702,55 @@
             return email.includes('mastersumbar');
         }
 
-        async function fetchFirebaseDataWithFallback(path) {
+        window._fbMemoryCache = window._fbMemoryCache || {};
+
+        async function fetchFirebaseDataWithFallback(path, forceRefresh = false) {
+            if (!forceRefresh && window._fbMemoryCache[path]) {
+                return window._fbMemoryCache[path];
+            }
+
             return new Promise((resolve) => {
                 let resolved = false;
-                db.ref(path).once('value').then(snap => {
+
+                const finish = (data, source) => {
                     if (!resolved) {
                         resolved = true;
-                        resolve(snap.val() || {});
+                        if (data && Object.keys(data).length > 0) {
+                            window._fbMemoryCache[path] = data;
+                        }
+                        resolve(data || {});
                     }
+                };
+
+                // Jalur 1: Realtime WebSocket
+                db.ref(path).once('value').then(snap => {
+                    finish(snap.val() || {}, 'WebSocket');
                 }).catch(err => {
                     console.warn(`Firebase WebSocket error for ${path}:`, err);
                 });
 
+                // Jalur 2: REST API Fallback setelah 2 detik jika WebSocket lambat
                 setTimeout(async () => {
                     if (!resolved) {
                         try {
                             const res = await fetch(`https://sekolah-model-2026-default-rtdb.asia-southeast1.firebasedatabase.app/${path}.json`);
                             if (res.ok) {
                                 const json = await res.json();
-                                if (!resolved) {
-                                    resolved = true;
-                                    console.log(`[REST API Fallback OK] Loaded ${path}`);
-                                    resolve(json || {});
-                                }
+                                finish(json || {}, 'REST Fallback');
                             }
                         } catch(e) {
                             console.warn(`REST API fallback error for ${path}:`, e);
                         }
                     }
                 }, 2000);
+
+                // Jalur 3: Safety Guard Timeout 8 detik agar TIDAK HANG selamanya
+                setTimeout(() => {
+                    if (!resolved) {
+                        console.warn(`[TIMEOUT GUARD] fetchFirebaseDataWithFallback untuk ${path} melebihi 8 detik. Mengembalikan data aman.`);
+                        finish(window._fbMemoryCache[path] || {}, 'Timeout Guard');
+                    }
+                }, 8000);
             });
         }
 
@@ -2723,13 +2971,13 @@
             }
             // Guard for Admin FKK
             if (gCurrentLoggedRole === 'Admin FKK') {
-                const allowedModes = ['mode0', 'modeKombel', 'modeSubmitKombel', 'modeExportLMS'];
+                const allowedModes = ['mode0', 'modeKombel', 'modeSubmitKombel', 'modeExportLMS', 'modeGMeet'];
                 if (!allowedModes.includes(mode)) {
-                    mode = 'modeKombel';
+                    mode = 'modeGMeet';
                 }
             }
 
-            const modes = ['mode0', 'mode1', 'mode2', 'mode3', 'mode4', 'mode5', 'mode7', 'mode8', 'modeKombel', 'modeSubmitKombel', 'modeExportLMS', 'modePegawai', 'modeAkses', 'modeStatusSekolah'];
+            const modes = ['mode0', 'mode1', 'mode2', 'mode3', 'mode4', 'mode5', 'mode7', 'mode8', 'modeKombel', 'modeSubmitKombel', 'modeExportLMS', 'modeGMeet', 'modePegawai', 'modeAkses', 'modeStatusSekolah'];
             modes.forEach(m => {
                 const viewEl = document.getElementById('view' + m.charAt(0).toUpperCase() + m.slice(1));
                 const btnEl = document.getElementById('btn' + m.charAt(0).toUpperCase() + m.slice(1));
@@ -2737,11 +2985,13 @@
                 if (btnEl) {
                     if (m === 'mode3' || m === 'mode4' || m === 'mode7' || m === 'mode5' || m === 'modeStatusSekolah' || m === 'mode1' || m === 'mode2') {
                         btnEl.className = "sidebar-btn flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium text-slate-500 hover:text-slate-900 hover:bg-slate-100/80 transition-all duration-200 w-full text-left border-l-2 border-transparent";
+                    } else if (m === 'modeGMeet') {
+                        btnEl.className = "sidebar-btn flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-medium text-slate-600 hover:bg-emerald-50/80 hover:text-emerald-950 transition-all duration-200 w-full text-left group border-l-4 border-transparent";
                     } else {
                         btnEl.className = "sidebar-btn flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-100/80 hover:text-slate-900 transition-all duration-200 w-full text-left relative group border-l-4 border-transparent";
                     }
                     const svgIcon = btnEl.querySelector('svg');
-                    if (svgIcon && !m.includes('Kombel') && !m.includes('Pegawai')) {
+                    if (svgIcon && !m.includes('Kombel') && !m.includes('Pegawai') && m !== 'modeGMeet') {
                         svgIcon.className = "w-5 h-5 flex-shrink-0 text-slate-400 group-hover:text-slate-600 transition-colors";
                     }
                 }
@@ -2758,6 +3008,8 @@
             if (targetBtn) {
                 if (mode === 'mode3' || mode === 'mode4' || mode === 'mode7' || mode === 'mode5' || mode === 'modeStatusSekolah' || mode === 'mode1' || mode === 'mode2') {
                     targetBtn.className = "sidebar-btn flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-bold bg-teal-50 text-teal-900 border-l-2 border-teal-600 transition-all duration-200 w-full text-left";
+                } else if (mode === 'modeGMeet') {
+                    targetBtn.className = "sidebar-btn flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-bold bg-emerald-100 text-emerald-950 border-l-4 border-emerald-600 transition-all duration-200 w-full text-left relative group shadow-2xs";
                 } else if (mode === 'modeKombel' || mode === 'modeSubmitKombel' || mode === 'modeExportLMS') {
                     targetBtn.className = "sidebar-btn flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-bold bg-amber-50 text-amber-950 border-l-4 border-amber-500 transition-all duration-200 w-full text-left relative group shadow-2xs";
                 } else {
@@ -2765,7 +3017,8 @@
                 }
                 const svgIcon = targetBtn.querySelector('svg');
                 if (svgIcon) {
-                    if (mode === 'modeKombel' || mode === 'modeSubmitKombel' || mode === 'modeExportLMS') svgIcon.className = "w-5 h-5 flex-shrink-0 text-amber-600 transition-colors";
+                    if (mode === 'modeGMeet') svgIcon.className = "w-5 h-5 flex-shrink-0 text-emerald-700 transition-colors";
+                    else if (mode === 'modeKombel' || mode === 'modeSubmitKombel' || mode === 'modeExportLMS') svgIcon.className = "w-5 h-5 flex-shrink-0 text-amber-600 transition-colors";
                     else if (mode.includes('mode1') || mode.includes('mode2') || mode.includes('mode3') || mode.includes('mode4') || mode.includes('mode5') || mode.includes('mode7') || mode.includes('modeStatusSekolah')) svgIcon.className = "w-5 h-5 flex-shrink-0 text-teal-600 transition-colors";
                     else svgIcon.className = "w-5 h-5 flex-shrink-0 text-purple-600 transition-colors";
                 }
@@ -2774,6 +3027,14 @@
             const pageTitle = document.getElementById('adminPageTitle');
             const trackBadge = document.getElementById('adminProgramTrackBadge');
             const pillText = document.getElementById('activeWorkspacePillText');
+
+            if (mode === 'modeGMeet') {
+                if (pageTitle) pageTitle.textContent = "Distribusi GMeet, Jadwal & Rekaman (54 Kelas)";
+                if (trackBadge) {
+                    trackBadge.textContent = "📹 Ruang Belajar Daring";
+                    trackBadge.className = "hidden sm:inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-black bg-emerald-100 text-emerald-800 border border-emerald-300 shadow-2xs";
+                }
+            }
 
             const tabSekolah = document.getElementById('tabWorkspaceSekolahModel');
             const tabFKK = document.getElementById('tabWorkspaceFKK');
@@ -4863,19 +5124,19 @@
         function getAdminEmailFromCache(adminNama) {
             if (!adminNama) return '';
             const cleanAdmin = adminNama.split(',')[0].trim().toLowerCase();
-            if (cleanAdmin.includes('rosa')) return 'rosa.ria@bgtk.sumbar.go.id';
-            if (cleanAdmin.includes('vani') || cleanAdmin.includes('siti')) return 'siti.oktovani@bgtk.sumbar.go.id';
-            if (cleanAdmin.includes('aflidarneti')) return 'aflidarneti@bgtk.sumbar.go.id';
-            if (cleanAdmin.includes('ristita')) return 'ristita.humairoh@bgtk.sumbar.go.id';
-            if (cleanAdmin.includes('lisa')) return 'lisa.anggraini@bgtk.sumbar.go.id';
-            if (cleanAdmin.includes('irawati')) return 'irawati@bgtk.sumbar.go.id';
+            if (cleanAdmin.includes('lisa')) return 'lisaanggraini15@dikbud.belajar.id';
+            if (cleanAdmin.includes('ristita')) return 'ristitahumairoh71@dikbud.belajar.id';
+            if (cleanAdmin.includes('leindra')) return 'leindrawatimegahayu05@dikbud.belajar.id';
+            if (cleanAdmin.includes('andri')) return 'andrialphonso58@dikbud.belajar.id';
+            if (cleanAdmin.includes('vani') || cleanAdmin.includes('siti')) return 'sitioktovani00@dikbud.belajar.id';
+            if (cleanAdmin.includes('desi')) return 'desisari12@dikdasmen.belajar.id';
+            if (cleanAdmin.includes('abi')) return 'abirafdhi24@dikbud.belajar.id';
+            if (cleanAdmin.includes('aflidarneti')) return 'aflidarneti24@dikdasmen.belajar.id';
+            if (cleanAdmin.includes('rosa')) return 'rosaayu68@dikbud.belajar.id';
+            if (cleanAdmin.includes('irawati')) return 'irawati88@dikbud.belajar.id';
             if (cleanAdmin.includes('bima')) return 'bimaazee@gmail.com';
             if (cleanAdmin.includes('fauzia') || cleanAdmin.includes('tresia')) return 'fauziaatresia35@gmail.com';
-            if (cleanAdmin.includes('andri')) return 'andri.alphonso@kemendikdasmen.go.id';
             if (cleanAdmin.includes('fikra')) return 'fikra.aulya@kemendikdasmen.go.id';
-            if (cleanAdmin.includes('abi')) return 'abi.rafdhi@kemendikdasmen.go.id';
-            if (cleanAdmin.includes('leindra')) return 'leindrawati.megahayu@kemendikdasmen.go.id';
-            if (cleanAdmin.includes('desi')) return 'desi.permata@kemendikdasmen.go.id';
             return '';
         }
 
@@ -5582,7 +5843,10 @@
 
             const badgeEl = document.getElementById('detailModalKombelStatusBadge');
             if (badgeEl) {
-                if (isSubmitted) {
+                if (kombel.is_terkelaskan_lms) {
+                    badgeEl.className = 'px-2.5 py-0.5 rounded-full bg-emerald-500 text-white font-black text-xs shadow-xs';
+                    badgeEl.textContent = `✅ Terkelaskan di LMS (${kombel.lms_peserta_count || selectedPeserta.length} Peserta)`;
+                } else if (isSubmitted) {
                     badgeEl.className = 'px-2.5 py-0.5 rounded-full bg-emerald-400/30 text-emerald-200 font-bold text-xs';
                     badgeEl.textContent = '✅ Disetujui / Selesai (LMS)';
                 } else {
@@ -5614,16 +5878,24 @@
                         const pEmail = p.email || p.email_belajar_id || p.email_login || '-';
                         const pInstansi = p.sekolah || p.instansi || p.asal_sekolah || kombel.instansi || '-';
                         const pHp = cleanPhoneForExport(p.no_hp || p.telepon || p.kontak);
+                        const isTerkelaskan = !!p.terkelaskan_lms || p.status_lms === 'Terkelaskan';
+                        const lmsIdTag = p.lms_user_id ? `<div class="text-[9px] text-slate-400 font-mono mt-0.5">ID: ${p.lms_user_id}</div>` : '';
 
                         return `
                             <tr class="hover:bg-slate-50 transition-colors">
                                 <td class="px-3 py-2.5 text-center text-slate-400 font-bold w-10">${idx + 1}</td>
-                                <td class="px-3.5 py-2.5 font-bold text-slate-900">${pNama}</td>
+                                <td class="px-3.5 py-2.5 font-bold text-slate-900">
+                                    <div>${pNama}</div>
+                                    ${isTerkelaskan ? '<span class="inline-flex items-center gap-0.5 text-[10px] text-emerald-700 font-semibold bg-emerald-50 px-1.5 py-0.2 rounded border border-emerald-200 mt-0.5">✓ Akun Belajar Valid</span>' : ''}
+                                </td>
                                 <td class="px-3.5 py-2.5 font-mono text-emerald-800 font-semibold">${pEmail}</td>
                                 <td class="px-3.5 py-2.5 text-slate-700">${pInstansi}</td>
                                 <td class="px-3.5 py-2.5 font-mono text-slate-600">${pHp}</td>
                                 <td class="px-3 py-2.5 text-center">
-                                    <span class="px-2 py-0.5 rounded-full text-[10px] font-black bg-purple-100 text-purple-900 border border-purple-200">murid</span>
+                                    ${isTerkelaskan 
+                                        ? `<span class="px-2 py-0.5 rounded-full text-[10px] font-black bg-emerald-100 text-emerald-900 border border-emerald-300 shadow-2xs">✅ Terkelaskan LMS</span>${lmsIdTag}`
+                                        : '<span class="px-2 py-0.5 rounded-full text-[10px] font-black bg-purple-100 text-purple-900 border border-purple-200">murid</span>'
+                                    }
                                 </td>
                             </tr>
                         `;
@@ -6216,7 +6488,7 @@
         // ==========================================
         // TAHAPAN WORKFLOW & HAK AKSES ROLE ADMIN
         // ==========================================
-        let gCurrentTahapWorkflow = 'tahap1';
+        let gCurrentTahapWorkflow = 'tahap5';
 
         function switchTahapanWorkflow(tahap) {
             gCurrentTahapWorkflow = tahap;
@@ -6225,25 +6497,25 @@
                 'tahap1': 'Tahap 1: Pemilihan Kombel (Semua Database)',
                 'tahap2': 'Tahap 2: Penugasan Fasil & Admin (Kombel Terpilih)',
                 'tahap3': 'Tahap 3: Konfirmasi KK / Kombel & Status Submission',
-                'tahap4': 'Tahap 4: Export CSV LMS Admin & Verifikasi Peserta'
+                'tahap4': 'Tahap 4: Export CSV LMS Admin & Verifikasi Peserta',
+                'tahap5': 'Tahap 5: Distribusi Link GMeet, Penjadwalan & Repositori Rekaman (54 Kelas)'
             };
 
             const pillText = document.getElementById('activeWorkspacePillText');
             if (pillText) pillText.textContent = labels[tahap] || 'Workflow Active';
 
             // Highlight the active tab button
-            ['tahap1', 'tahap2', 'tahap3', 'tahap4'].forEach(t => {
+            ['tahap1', 'tahap2', 'tahap3', 'tahap4', 'tahap5'].forEach(t => {
                 const btn = document.getElementById('tab' + t.charAt(0).toUpperCase() + t.slice(1));
                 if (!btn) return;
                 if (t === tahap) {
-                    btn.className = "tahap-workflow-tab px-3 py-1.5 rounded-xl text-xs font-black transition-all flex items-center gap-1.5 border border-amber-500 bg-amber-500 text-slate-950 shadow-xs";
+                    btn.className = "tahap-workflow-tab px-3 py-1.5 rounded-xl text-xs font-black transition-all flex items-center gap-1.5 border border-emerald-500 bg-emerald-600 text-white shadow-xs";
                 } else {
-                    btn.className = "tahap-workflow-tab px-3 py-1.5 rounded-xl text-xs font-black transition-all flex items-center gap-1.5 border border-slate-200 text-slate-700 hover:bg-amber-50 bg-white";
+                    btn.className = "tahap-workflow-tab px-3 py-1.5 rounded-xl text-xs font-black transition-all flex items-center gap-1.5 border border-slate-200 text-slate-700 hover:bg-emerald-50 bg-white";
                 }
             });
 
             if (tahap === 'tahap1') {
-                // 1. Pemilihan Kombel: Memperlihatkan semua kombel yang ada di database kita
                 switchAdminView('modeKombel');
                 const statusFilterEl = document.getElementById('filterStatusSasaran');
                 if (statusFilterEl) statusFilterEl.value = 'ALL';
@@ -6253,7 +6525,6 @@
                 if (sub) sub.textContent = 'Menampilkan seluruh 1.804 Komunitas Belajar dalam database. Tandai sasaran untuk memilih kombel program PMKKA.';
                 filterKombelData();
             } else if (tahap === 'tahap2') {
-                // 2. Penugasan Fasil & Admin: Berisi kombel yang sudah terpilih sasaran
                 switchAdminView('modeKombel');
                 const statusFilterEl = document.getElementById('filterStatusSasaran');
                 if (statusFilterEl) statusFilterEl.value = 'SASARAN';
@@ -6263,12 +6534,529 @@
                 if (sub) sub.textContent = 'Menampilkan 54 Kombel Sasaran PMKKA yang sudah terpilih. Lakukan penugasan Fasilitator Pendamping (FKK) dan Admin BGTK (Pengampu).';
                 filterKombelData();
             } else if (tahap === 'tahap3') {
-                // 3. Konfirmasi KK / Kombel: Berisi halaman status submission sekarang
                 switchAdminView('modeSubmitKombel');
             } else if (tahap === 'tahap4') {
-                // 4. Export CSV LMS: Memperlihatkan kombel yang sudah submit dan fokus pesertanya
                 switchAdminView('modeExportLMS');
+            } else if (tahap === 'tahap5') {
+                switchAdminView('modeGMeet');
+                loadGMeetAdminViewData();
             }
+        }
+
+        // ==========================================
+        // WORKFLOW TAHAP 5: DISTRIBUSI GMEET & REKAMAN SESI (54 KELAS)
+        // ==========================================
+        let gGMeetAdminRawList = [];
+        let gGMeetAdminFilteredList = [];
+        let gSesiKombelCache = {};
+        let gCurrentModalGMeetKelas = null;
+
+        const ADMIN_KELAS_GABUNGAN_MAP = {
+            'padang_mkks': {
+                id: 'padang_mkks',
+                primary_id: '177738',
+                secondary_id: '161025',
+                tipe: 'gabungan',
+                nama_kelas: 'MKKS SMP SWASTA KOTA PADANG & TUMBUH BERSAMA',
+                wilayah: 'Kota Padang',
+                jenjang: 'SMP / KS',
+                mapel: 'Kepemimpinan Pembelajaran',
+                fasil: 'Irawati, S.Pd., M.Pd',
+                admin: 'ANDRI ALPHONSO S.AP',
+                link_gmeet: 'https://meet.google.com/yzt-wbpp-nhy',
+                keterangan: 'Penggabungan 2 komunitas Kepala Sekolah SMP di Kota Padang'
+            },
+            'payakumbuh_paud': {
+                id: 'payakumbuh_paud',
+                primary_id: '182059',
+                secondary_id: '187339',
+                tipe: 'gabungan',
+                nama_kelas: 'Kenanga & Seroja',
+                wilayah: 'Kota Payakumbuh',
+                jenjang: 'PAUD',
+                mapel: 'Guru PAUD',
+                fasil: 'Desfiar Hanif',
+                admin: 'LEINDRAWATI MEGAHAYU S.P',
+                link_gmeet: 'https://meet.google.com/cug-apna-zbe',
+                keterangan: 'Penggabungan 2 gugus PAUD di Kota Payakumbuh (Kenanga & gugus seroja)'
+            },
+            'agam_sd': {
+                id: 'agam_sd',
+                primary_id: '161533',
+                secondary_id: '184503',
+                tipe: 'gabungan',
+                nama_kelas: 'KKG GUGUS II BANUHAMPU & KKG GUGUS 1 SUNGAIPUA',
+                wilayah: 'Kab. Agam',
+                jenjang: 'SD',
+                mapel: 'Guru Kelas SD',
+                fasil: 'Rahmi Isra, S.Pd',
+                admin: 'LISA ANGGRAINI',
+                link_gmeet: 'https://meet.google.com/gdm-zbbe-hyc',
+                keterangan: 'Penggabungan pendampingan kelas daring Kab. Agam (Banuhampu & Sungai Puar)'
+            }
+        };
+
+        const ADMIN_GABUNGAN_ID_SET = new Set(['177738', '161025', '182059', '187339', '161533', '184503']);
+
+        async function loadGMeetAdminViewData(forceRefresh = false) {
+            const tableBody = document.getElementById('tableGMeetAdminBody');
+            if (tableBody) {
+                tableBody.innerHTML = '<tr><td colspan="6" class="px-6 py-12 text-center text-slate-400"><div class="spinner mx-auto mb-2"></div>Memuat 54 Ruang Kelas &amp; Jadwal Sesi...</td></tr>';
+            }
+
+            try {
+                if (Object.keys(gAllKombels).length === 0 || forceRefresh) {
+                    const snap = await db.ref('master_kombel').once('value');
+                    gAllKombels = snap.val() || {};
+                }
+
+                // Ambil data sesi jadwal kombel
+                try {
+                    const snapSesi = await db.ref('jadwal_sesi_kombel').once('value');
+                    gSesiKombelCache = snapSesi.val() || {};
+                } catch(e) { gSesiKombelCache = {}; }
+
+                build54KelasListAdmin();
+                populateFilterKabGMeet();
+                filterGMeetAdminTable();
+
+            } catch (err) {
+                console.error("Gagal load GMeet Admin view:", err);
+                if (tableBody) {
+                    tableBody.innerHTML = `<tr><td colspan="6" class="px-6 py-8 text-center text-rose-500 font-bold">Gagal memuat data: ${err.message}</td></tr>`;
+                }
+            }
+        }
+
+        function build54KelasListAdmin() {
+            gGMeetAdminRawList = [];
+
+            // 1. Masukkan 3 Kelas Gabungan
+            Object.values(ADMIN_KELAS_GABUNGAN_MAP).forEach(cfg => {
+                const k1 = gAllKombels[cfg.primary_id] || {};
+                const k2 = gAllKombels[cfg.secondary_id] || {};
+                const link = k1.link_gmeet || k2.link_gmeet || cfg.link_gmeet;
+
+                gGMeetAdminRawList.push({
+                    id: cfg.id,
+                    primary_id: cfg.primary_id,
+                    secondary_id: cfg.secondary_id,
+                    tipe: 'gabungan',
+                    nama_kelas: cfg.nama_kelas,
+                    wilayah: cfg.wilayah,
+                    jenjang: cfg.jenjang,
+                    mapel: cfg.mapel,
+                    fasil: cfg.fasil,
+                    admin: cfg.admin,
+                    link_gmeet: link,
+                    keterangan: cfg.keterangan
+                });
+            });
+
+            // 2. Masukkan 51 Kelas Mandiri
+            Object.keys(gAllKombels).forEach(id => {
+                if (ADMIN_GABUNGAN_ID_SET.has(id)) return;
+
+                const k = gAllKombels[id];
+                const isSasaran = k.is_sasaran || (k.konfirmasi && k.konfirmasi.is_konfirmasi) || (Array.isArray(k.selected_peserta_indices) && k.selected_peserta_indices.length > 0);
+                if (!isSasaran) return;
+
+                gGMeetAdminRawList.push({
+                    id: id,
+                    primary_id: id,
+                    tipe: 'mandiri',
+                    nama_kelas: k.nama_kombel || `Kombel ${id}`,
+                    wilayah: k.kab_kota || '-',
+                    jenjang: k.jenjang || '-',
+                    mapel: k.mapel || '-',
+                    fasil: k.fasil_nama || '-',
+                    admin: k.admin_nama || '-',
+                    link_gmeet: k.link_gmeet || '',
+                    keterangan: 'Kelas Mandiri Tunggal'
+                });
+            });
+
+            // Sort: Gabungan di atas, lalu abjad wilayah
+            gGMeetAdminRawList.sort((a, b) => {
+                if (a.tipe !== b.tipe) return a.tipe === 'gabungan' ? -1 : 1;
+                return (a.wilayah || '').localeCompare(b.wilayah || '');
+            });
+
+            // Update statistik
+            const totalKelas = gGMeetAdminRawList.length;
+            const withGMeet = gGMeetAdminRawList.filter(k => k.link_gmeet && k.link_gmeet.includes('meet.google.com')).length;
+            let totalSesi = 0;
+            let totalRekaman = 0;
+
+            gGMeetAdminRawList.forEach(k => {
+                const sObj = gSesiKombelCache[k.primary_id] || (k.secondary_id ? gSesiKombelCache[k.secondary_id] : null) || {};
+                const sList = Object.values(sObj);
+                totalSesi += sList.length;
+                totalRekaman += sList.filter(s => s.link_rekaman).length;
+            });
+
+            const statTotal = document.getElementById('statGMeetAdminTotalKelas');
+            const statAktif = document.getElementById('statGMeetAdminAktifCount');
+            const statSesi = document.getElementById('statGMeetAdminSesiCount');
+            const statRekaman = document.getElementById('statGMeetAdminRekamanCount');
+
+            if (statTotal) statTotal.textContent = `${totalKelas} Kelas`;
+            if (statAktif) statAktif.textContent = `${withGMeet} Link`;
+            if (statSesi) statSesi.textContent = `${totalSesi} Sesi`;
+            if (statRekaman) statRekaman.textContent = `${totalRekaman} Rekaman`;
+        }
+
+        function populateFilterKabGMeet() {
+            const sel = document.getElementById('filterKabGMeetAdmin');
+            if (!sel || sel.options.length > 1) return;
+            const wilSet = new Set();
+            gGMeetAdminRawList.forEach(k => { if (k.wilayah && k.wilayah !== '-') wilSet.add(k.wilayah); });
+            Array.from(wilSet).sort().forEach(w => {
+                const opt = document.createElement('option');
+                opt.value = w;
+                opt.textContent = w;
+                sel.appendChild(opt);
+            });
+        }
+
+        function filterGMeetAdminTable() {
+            const q = (document.getElementById('searchGMeetAdmin')?.value || '').toLowerCase().trim();
+            const kab = document.getElementById('filterKabGMeetAdmin')?.value || 'ALL';
+            const tipe = document.getElementById('filterTipeGMeetAdmin')?.value || 'ALL';
+
+            gGMeetAdminFilteredList = gGMeetAdminRawList.filter(k => {
+                if (kab !== 'ALL' && k.wilayah !== kab) return false;
+                if (tipe !== 'ALL' && k.tipe !== tipe) return false;
+                if (q) {
+                    const mName = (k.nama_kelas || '').toLowerCase().includes(q);
+                    const mWil = (k.wilayah || '').toLowerCase().includes(q);
+                    const mFasil = (k.fasil || '').toLowerCase().includes(q);
+                    if (!mName && !mWil && !mFasil) return false;
+                }
+                return true;
+            });
+
+            renderGMeetAdminTable();
+        }
+
+        function renderGMeetAdminTable() {
+            const tbody = document.getElementById('tableGMeetAdminBody');
+            if (!tbody) return;
+
+            if (gGMeetAdminFilteredList.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" class="px-6 py-12 text-center text-slate-400">Tidak ada ruang kelas yang sesuai filter.</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = gGMeetAdminFilteredList.map((k, idx) => {
+                const isGabungan = k.tipe === 'gabungan';
+                const hasMeet = k.link_gmeet && k.link_gmeet.includes('meet.google.com');
+
+                const sObj = gSesiKombelCache[k.primary_id] || (k.secondary_id ? gSesiKombelCache[k.secondary_id] : null) || {};
+                const sList = Object.values(sObj);
+                const countSesi = sList.length;
+                const countRekaman = sList.filter(s => s.link_rekaman).length;
+
+                return `
+                <tr class="hover:bg-slate-50/80 transition-colors ${isGabungan ? 'bg-amber-50/20' : ''}">
+                    <td class="px-3 py-4 text-center font-bold text-slate-400">${idx + 1}</td>
+                    <td class="px-4 py-4">
+                        <div class="flex items-center gap-1.5 mb-1">
+                            <span class="text-[10px] font-black px-2 py-0.5 rounded-full ${isGabungan ? 'bg-amber-100 text-amber-900 border border-amber-300' : 'bg-slate-100 text-slate-700'}">
+                                ${isGabungan ? '⭐ GABUNGAN' : 'MANDIRI'}
+                            </span>
+                            <span class="text-[11px] font-bold text-slate-500">📍 ${k.wilayah}</span>
+                        </div>
+                        <div class="font-extrabold text-slate-900 text-xs leading-snug">${k.nama_kelas}</div>
+                        <div class="text-[10px] text-slate-400 mt-0.5">${k.jenjang} • ${k.mapel}</div>
+                    </td>
+                    <td class="px-4 py-4 bg-purple-50/20">
+                        <div class="font-bold text-slate-800 text-xs">${k.fasil}</div>
+                        <div class="text-[10px] text-slate-400 mt-0.5">Admin: ${k.admin}</div>
+                    </td>
+                    <td class="px-4 py-4 bg-emerald-50/30">
+                        ${hasMeet 
+                            ? `<div class="flex items-center gap-2">
+                                <a href="${k.link_gmeet}" target="_blank" class="px-2.5 py-1 rounded-lg text-xs font-mono font-bold bg-emerald-100 text-emerald-900 border border-emerald-300 hover:bg-emerald-200 transition-colors truncate max-w-[170px]" title="${k.link_gmeet}">
+                                    ${k.link_gmeet.replace('https://meet.google.com/', '')} ↗
+                                </a>
+                                <button onclick="salinLinkGMeetTable('${k.link_gmeet}')" title="Salin Tautan" class="p-1 rounded bg-white hover:bg-emerald-50 border border-emerald-200 text-emerald-700 text-xs">
+                                    📋
+                                </button>
+                               </div>`
+                            : `<span class="text-slate-400 text-xs italic">Belum dibuat</span>`}
+                    </td>
+                    <td class="px-4 py-4 text-center">
+                        <div class="inline-flex flex-col items-center gap-1">
+                            <span class="font-bold text-slate-700 text-xs">${countSesi} Sesi</span>
+                            ${countRekaman > 0 
+                                ? `<span class="text-[10px] font-black px-2 py-0.5 rounded-full bg-purple-100 text-purple-800 border border-purple-200">🎬 ${countRekaman} Rekaman</span>`
+                                : `<span class="text-[10px] text-slate-400">Belum ada video</span>`}
+                        </div>
+                    </td>
+                    <td class="px-4 py-4 text-center bg-slate-50/50">
+                        <button onclick="openModalKelolaSesi('${k.id}')" class="px-3 py-1.5 rounded-xl text-xs font-black bg-indigo-600 hover:bg-indigo-700 text-white shadow-2xs hover:scale-105 transition-all flex items-center justify-center gap-1.5 mx-auto">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                            <span>Kelola Sesi</span>
+                        </button>
+                    </td>
+                </tr>
+                `;
+            }).join('');
+        }
+
+        function openModalKelolaSesi(kelasId) {
+            const k = gGMeetAdminRawList.find(item => item.id === kelasId);
+            if (!k) return;
+            gCurrentModalGMeetKelas = k;
+
+            document.getElementById('mSesiNamaKelas').textContent = k.nama_kelas;
+            document.getElementById('mSesiWilayah').textContent = `${k.wilayah} • Fasil: ${k.fasil}`;
+            document.getElementById('mSesiBadgeTipe').textContent = k.tipe === 'gabungan' ? '⭐ KELAS GABUNGAN' : 'KELAS MANDIRI';
+
+            const gmeet = k.link_gmeet || '';
+            document.getElementById('mSesiGMeetLinkText').textContent = gmeet || 'Belum diatur';
+            const btnBuka = document.getElementById('mSesiBtnBukaGMeet');
+            if (gmeet) {
+                btnBuka.href = gmeet;
+                btnBuka.classList.remove('opacity-50', 'pointer-events-none');
+            } else {
+                btnBuka.removeAttribute('href');
+                btnBuka.classList.add('opacity-50', 'pointer-events-none');
+            }
+
+            resetFormSesi();
+            renderModalExistingSesiList();
+
+            document.getElementById('modalKelolaSesiGMeet').classList.remove('hidden');
+        }
+
+        function closeModalKelolaSesi() {
+            document.getElementById('modalKelolaSesiGMeet').classList.add('hidden');
+            gCurrentModalGMeetKelas = null;
+        }
+
+        function resetFormSesi() {
+            document.getElementById('inputSesiEditKey').value = '';
+            document.getElementById('inputSesiTopik').value = '';
+            document.getElementById('inputSesiTanggal').value = new Date().toISOString().slice(0, 10);
+            document.getElementById('inputSesiJamMulai').value = '08:30';
+            document.getElementById('inputSesiJamSelesai').value = '11:30';
+            document.getElementById('inputSesiLinkRekaman').value = '';
+            document.getElementById('inputSesiLinkMateri').value = '';
+            document.getElementById('inputSesiDeskripsi').value = '';
+            document.getElementById('mSesiFormTitle').textContent = '➕ Tambah / Jadwalkan Sesi Baru';
+            document.getElementById('btnSimpanSesi').textContent = '💾 Simpan Sesi';
+
+            // Tentukan nomor sesi berikutnya otomatis
+            if (gCurrentModalGMeetKelas) {
+                const sObj = gSesiKombelCache[gCurrentModalGMeetKelas.primary_id] || (gCurrentModalGMeetKelas.secondary_id ? gSesiKombelCache[gCurrentModalGMeetKelas.secondary_id] : null) || {};
+                const nextNo = Object.keys(sObj).length + 1;
+                document.getElementById('inputSesiNomor').value = nextNo;
+            }
+        }
+
+        function renderModalExistingSesiList() {
+            const container = document.getElementById('mSesiExistingListContainer');
+            if (!gCurrentModalGMeetKelas || !container) return;
+
+            const sObj = gSesiKombelCache[gCurrentModalGMeetKelas.primary_id] || (gCurrentModalGMeetKelas.secondary_id ? gSesiKombelCache[gCurrentModalGMeetKelas.secondary_id] : null) || {};
+            const keys = Object.keys(sObj);
+
+            if (keys.length === 0) {
+                container.innerHTML = `<div class="text-center py-6 text-slate-400 text-xs bg-slate-50 rounded-xl border border-slate-200">Belum ada sesi pertemuan yang dijadwalkan. Gunakan formulir di atas untuk menambahkan sesi.</div>`;
+                return;
+            }
+
+            const list = keys.map(k => ({ key: k, ...sObj[k] }));
+            list.sort((a, b) => (a.nomor_sesi || 0) - (b.nomor_sesi || 0));
+
+            container.innerHTML = list.map(s => {
+                return `
+                <div class="p-3 bg-white border border-slate-200 rounded-xl flex items-center justify-between gap-3 text-xs shadow-2xs">
+                    <div class="min-w-0 flex-1">
+                        <div class="flex items-center gap-2">
+                            <span class="font-black text-indigo-700 bg-indigo-50 px-2 py-0.5 rounded border border-indigo-200">Sesi ${s.nomor_sesi || 1}</span>
+                            <span class="font-bold text-slate-900 truncate">${s.topik || 'Tanpa Judul'}</span>
+                        </div>
+                        <div class="text-[11px] text-slate-500 mt-1 flex flex-wrap items-center gap-2">
+                            <span>📅 ${s.tanggal || '-'} (${s.jam_mulai || ''} - ${s.jam_selesai || ''})</span>
+                            ${s.link_rekaman ? `<a href="${s.link_rekaman}" target="_blank" class="font-black text-purple-700 hover:underline">🎬 Rekaman Video ↗</a>` : `<span class="text-slate-400">Rekaman: -</span>`}
+                            ${s.link_materi ? `<a href="${s.link_materi}" target="_blank" class="font-bold text-indigo-600 hover:underline">📂 Materi ↗</a>` : ''}
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-1.5 flex-shrink-0">
+                        <button onclick="editSesiPertemuan('${s.key}')" title="Edit Sesi" class="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs font-bold transition-colors">
+                            ✏️ Edit
+                        </button>
+                        <button onclick="hapusSesiPertemuan('${s.key}')" title="Hapus Sesi" class="p-1 text-rose-500 hover:bg-rose-50 rounded-lg text-xs font-bold transition-colors">
+                            🗑️
+                        </button>
+                    </div>
+                </div>
+                `;
+            }).join('');
+        }
+
+        function editSesiPertemuan(sesiKey) {
+            if (!gCurrentModalGMeetKelas) return;
+            const sObj = gSesiKombelCache[gCurrentModalGMeetKelas.primary_id] || (gCurrentModalGMeetKelas.secondary_id ? gSesiKombelCache[gCurrentModalGMeetKelas.secondary_id] : null) || {};
+            const s = sObj[sesiKey];
+            if (!s) return;
+
+            document.getElementById('inputSesiEditKey').value = sesiKey;
+            document.getElementById('inputSesiNomor').value = s.nomor_sesi || 1;
+            document.getElementById('inputSesiTopik').value = s.topik || '';
+            document.getElementById('inputSesiTanggal').value = s.tanggal || '';
+            document.getElementById('inputSesiJamMulai').value = s.jam_mulai || '08:30';
+            document.getElementById('inputSesiJamSelesai').value = s.jam_selesai || '11:30';
+            document.getElementById('inputSesiLinkRekaman').value = s.link_rekaman || '';
+            document.getElementById('inputSesiLinkMateri').value = s.link_materi || '';
+            document.getElementById('inputSesiDeskripsi').value = s.deskripsi || '';
+
+            document.getElementById('mSesiFormTitle').textContent = `✏️ Edit Sesi ${s.nomor_sesi || 1}`;
+            document.getElementById('btnSimpanSesi').textContent = '💾 Update Sesi';
+        }
+
+        async function simpanSesiPertemuan() {
+            if (!gCurrentModalGMeetKelas) return;
+
+            const topik = (document.getElementById('inputSesiTopik')?.value || '').trim();
+            if (!topik) {
+                alert("Mohon masukkan topik / judul pertemuan sesi.");
+                return;
+            }
+
+            const nomor = parseInt(document.getElementById('inputSesiNomor')?.value) || 1;
+            const tanggal = document.getElementById('inputSesiTanggal')?.value || '';
+            const jamMulai = document.getElementById('inputSesiJamMulai')?.value || '';
+            const jamSelesai = document.getElementById('inputSesiJamSelesai')?.value || '';
+            const linkRekaman = (document.getElementById('inputSesiLinkRekaman')?.value || '').trim();
+            const linkMateri = (document.getElementById('inputSesiLinkMateri')?.value || '').trim();
+            const deskripsi = (document.getElementById('inputSesiDeskripsi')?.value || '').trim();
+
+            const editKey = document.getElementById('inputSesiEditKey')?.value;
+            const sesiKey = editKey || `sesi_${Date.now()}`;
+
+            const payload = {
+                nomor_sesi: nomor,
+                topik: topik,
+                tanggal: tanggal,
+                jam_mulai: jamMulai,
+                jam_selesai: jamSelesai,
+                link_rekaman: linkRekaman,
+                link_materi: linkMateri,
+                deskripsi: deskripsi,
+                updated_at: new Date().toISOString()
+            };
+
+            const btn = document.getElementById('btnSimpanSesi');
+            btn.disabled = true;
+            btn.textContent = 'Menyimpan...';
+
+            try {
+                // Simpan ke primary_id
+                await db.ref(`jadwal_sesi_kombel/${gCurrentModalGMeetKelas.primary_id}/${sesiKey}`).set(payload);
+
+                // Jika kelas gabungan, simpan juga ke secondary_id agar sinkron
+                if (gCurrentModalGMeetKelas.secondary_id) {
+                    await db.ref(`jadwal_sesi_kombel/${gCurrentModalGMeetKelas.secondary_id}/${sesiKey}`).set(payload);
+                }
+
+                // Update cache lokal
+                if (!gSesiKombelCache[gCurrentModalGMeetKelas.primary_id]) {
+                    gSesiKombelCache[gCurrentModalGMeetKelas.primary_id] = {};
+                }
+                gSesiKombelCache[gCurrentModalGMeetKelas.primary_id][sesiKey] = payload;
+
+                if (gCurrentModalGMeetKelas.secondary_id) {
+                    if (!gSesiKombelCache[gCurrentModalGMeetKelas.secondary_id]) gSesiKombelCache[gCurrentModalGMeetKelas.secondary_id] = {};
+                    gSesiKombelCache[gCurrentModalGMeetKelas.secondary_id][sesiKey] = payload;
+                }
+
+                resetFormSesi();
+                renderModalExistingSesiList();
+                renderGMeetAdminTable();
+                showToast("✅ Jadwal sesi berhasil disimpan!", 'emerald');
+            } catch (err) {
+                console.error("Gagal simpan sesi:", err);
+                alert("Gagal menyimpan sesi: " + err.message);
+            } finally {
+                btn.disabled = false;
+                btn.textContent = '💾 Simpan Sesi';
+            }
+        }
+
+        async function hapusSesiPertemuan(sesiKey) {
+            if (!gCurrentModalGMeetKelas) return;
+            if (!confirm("Apakah Anda yakin ingin menghapus sesi ini?")) return;
+
+            try {
+                await db.ref(`jadwal_sesi_kombel/${gCurrentModalGMeetKelas.primary_id}/${sesiKey}`).remove();
+                if (gCurrentModalGMeetKelas.secondary_id) {
+                    await db.ref(`jadwal_sesi_kombel/${gCurrentModalGMeetKelas.secondary_id}/${sesiKey}`).remove();
+                }
+
+                if (gSesiKombelCache[gCurrentModalGMeetKelas.primary_id]) {
+                    delete gSesiKombelCache[gCurrentModalGMeetKelas.primary_id][sesiKey];
+                }
+                if (gCurrentModalGMeetKelas.secondary_id && gSesiKombelCache[gCurrentModalGMeetKelas.secondary_id]) {
+                    delete gSesiKombelCache[gCurrentModalGMeetKelas.secondary_id][sesiKey];
+                }
+
+                resetFormSesi();
+                renderModalExistingSesiList();
+                renderGMeetAdminTable();
+                showToast("🗑️ Sesi berhasil dihapus.", 'slate');
+            } catch (err) {
+                console.error("Gagal hapus sesi:", err);
+                alert("Gagal menghapus sesi: " + err.message);
+            }
+        }
+
+        function salinGMeetAdminModal() {
+            if (!gCurrentModalGMeetKelas || !gCurrentModalGMeetKelas.link_gmeet) return;
+            navigator.clipboard.writeText(gCurrentModalGMeetKelas.link_gmeet).then(() => {
+                const btn = document.getElementById('btnSalinGMeetModalAdmin');
+                btn.textContent = '✅ Tersalin!';
+                setTimeout(() => { btn.textContent = '📋 Salin'; }, 2000);
+            });
+        }
+
+        function salinLinkGMeetTable(url) {
+            if (!url) return;
+            navigator.clipboard.writeText(url).then(() => {
+                showToast("📋 Link GMeet disalin ke clipboard!", 'emerald');
+            });
+        }
+
+        function exportGMeet54Excel() {
+            if (gGMeetAdminRawList.length === 0) return;
+            const rows = gGMeetAdminRawList.map((k, idx) => {
+                const sObj = gSesiKombelCache[k.primary_id] || (k.secondary_id ? gSesiKombelCache[k.secondary_id] : null) || {};
+                const sList = Object.values(sObj);
+                const rekamanLinks = sList.filter(s => s.link_rekaman).map(s => `Sesi ${s.nomor_sesi || 1}: ${s.link_rekaman}`).join("\n");
+
+                return {
+                    "No": idx + 1,
+                    "Tipe Kelas": k.tipe === 'gabungan' ? 'Gabungan (2 Kombel)' : 'Mandiri',
+                    "Nama Kelas LMS": k.nama_kelas,
+                    "Kabupaten / Kota": k.wilayah,
+                    "Jenjang": k.jenjang,
+                    "Mata Pelajaran": k.mapel,
+                    "Fasilitator Pendamping": k.fasil,
+                    "Admin BGTK": k.admin,
+                    "Link Google Meet Permanen": k.link_gmeet || '-',
+                    "Jumlah Sesi Terjadwal": sList.length,
+                    "Rekaman Video": rekamanLinks || 'Belum ada rekaman'
+                };
+            });
+
+            const wb = XLSX.utils.book_new();
+            const ws = XLSX.utils.json_to_sheet(rows);
+            XLSX.utils.book_append_sheet(wb, ws, "54 Kelas GMeet & Rekaman");
+            XLSX.writeFile(wb, `Rekap_54_Kelas_GMeet_Rekaman_${new Date().toISOString().slice(0, 10)}.xlsx`);
+            showToast("📗 File Excel berhasil diunduh!", 'emerald');
         }
 
         // ==========================================
@@ -6310,14 +7098,19 @@
                 // Compute summary stats
                 const totalKombel = gExportLMSRawList.length;
                 let totalPeserta = 0;
+                let totalTerkelaskan = 0;
                 gExportLMSRawList.forEach(k => {
                     const selP = getSelectedPesertaForKombel(k);
                     totalPeserta += selP.length;
+                    if (k.is_terkelaskan_lms) {
+                        totalTerkelaskan += (k.lms_peserta_count || selP.filter(p => p.terkelaskan_lms).length || selP.length);
+                    }
                 });
                 const totalAktor = totalPeserta + (totalKombel * 2);
 
                 const setEl = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
                 setEl('statExportLMSKombelCount', `${totalKombel} Kelas Selesai`);
+                setEl('statExportLMSTerkelaskanCount', `${totalTerkelaskan.toLocaleString('id-ID')} Peserta`);
                 setEl('statExportLMSPesertaCount', `${totalPeserta.toLocaleString('id-ID')} Peserta`);
                 setEl('statExportLMSAktorCount', `${totalAktor.toLocaleString('id-ID')} Aktor`);
 
@@ -6331,14 +7124,17 @@
         function filterExportLMSData() {
             const query = (document.getElementById('searchExportLMSInput')?.value || '').toLowerCase().trim();
             const kabFilter = document.getElementById('filterExportLMSKab')?.value || 'ALL';
+            const statusFilter = document.getElementById('filterExportLMSStatus')?.value || 'ALL';
 
             gExportLMSFilteredList = gExportLMSRawList.filter(k => {
                 if (kabFilter !== 'ALL' && k.kab_kota !== kabFilter) return false;
+                if (statusFilter === 'TERKELASKAN' && !k.is_terkelaskan_lms) return false;
+                if (statusFilter === 'BELUM' && k.is_terkelaskan_lms) return false;
                 if (!query) return true;
 
                 const allP = getCombinedPesertaForKombel(k.id);
                 const pNames = allP.map(p => p.nama || p.nama_lengkap || '').join(' ');
-                const searchStr = `${k.nama_kombel || ''} ${k.kab_kota || ''} ${k.fasil_nama || ''} ${k.admin_nama || ''} ${pNames}`.toLowerCase();
+                const searchStr = `${k.nama_kombel || ''} ${k.lms_kelas_name || ''} ${k.kab_kota || ''} ${k.fasil_nama || ''} ${k.admin_nama || ''} ${pNames}`.toLowerCase();
                 return searchStr.includes(query);
             });
 
@@ -6371,12 +7167,28 @@
                 const pPreview = selectedPeserta.slice(0, 2).map(p => p.nama || p.nama_lengkap || '').join(', ');
                 const pMore = selectedPeserta.length > 2 ? ` (+${selectedPeserta.length - 2} lainnya)` : '';
 
+                const isTerkelaskan = !!k.is_terkelaskan_lms;
+                const pTerkelaskanCount = selectedPeserta.filter(p => p.terkelaskan_lms).length;
+
                 const canEditName = typeof isUserMasterSumbar === 'function' && isUserMasterSumbar();
                 const editNameBtnHtml = canEditName 
                     ? `<button onclick="openModalUbahNamaKombel('${k.id}')" title="Ubah Nama Kombel Ini (Khusus Master Sumbar)" class="p-1 text-slate-400 hover:text-amber-800 hover:bg-amber-100 rounded-lg transition-all flex-shrink-0 cursor-pointer" style="margin-top:-2px;">
                         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
                     </button>` 
                     : '';
+
+                const lmsBadgeHtml = isTerkelaskan 
+                    ? `<div class="mt-1 flex flex-wrap items-center gap-1">
+                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-black bg-emerald-100 text-emerald-800 border border-emerald-300 shadow-2xs">
+                            <svg class="w-3 h-3 text-emerald-600" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>
+                            Terkelaskan di LMS (${k.lms_peserta_count || pTerkelaskanCount || selectedPeserta.length} Peserta)
+                        </span>
+                       </div>`
+                    : `<div class="mt-1">
+                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-bold bg-amber-50 text-amber-800 border border-amber-200">
+                            ⏳ Belum Terkelaskan di LMS
+                        </span>
+                       </div>`;
 
                 return `
                     <tr class="hover:bg-slate-50 transition-colors">
@@ -6389,6 +7201,7 @@
                                 ${editNameBtnHtml}
                             </div>
                             <div class="text-[11px] text-slate-500 mt-0.5 break-words">${k.jenjang || ''} ${k.kab_kota ? '• ' + k.kab_kota : ''}</div>
+                            ${lmsBadgeHtml}
                         </td>
                         <td class="px-4 py-3.5 bg-purple-50/20 w-52 whitespace-normal">
                             <div class="font-bold text-purple-950 text-xs">${fasilNama}</div>
@@ -6398,10 +7211,10 @@
                             <div class="font-bold text-indigo-950 text-xs">${adminNama}</div>
                             <div class="text-[11px] text-indigo-700 font-mono truncate max-w-[180px]">${adminEmail}</div>
                         </td>
-                        <td class="px-4 py-3.5 text-center w-60 whitespace-normal bg-emerald-50/20">
+                        <td class="px-4 py-3.5 text-center w-60 whitespace-normal ${isTerkelaskan ? 'bg-emerald-50/30' : 'bg-slate-50/30'}">
                             <button onclick="openModalDetailSubmissionPeserta('${k.id}')" title="Klik untuk intip rincian seluruh peserta terpilih kelas ini" class="inline-flex flex-col items-center group cursor-pointer">
-                                <span class="px-3 py-1 rounded-full text-xs font-black bg-emerald-100 text-emerald-900 border border-emerald-300 group-hover:scale-105 group-hover:bg-emerald-200 transition-all shadow-2xs">
-                                    👥 ${selectedPeserta.length} Peserta Terpilih
+                                <span class="px-3 py-1 rounded-full text-xs font-black ${isTerkelaskan ? 'bg-emerald-100 text-emerald-900 border border-emerald-300 group-hover:bg-emerald-200' : 'bg-slate-100 text-slate-800 border border-slate-300 group-hover:bg-slate-200'} transition-all shadow-2xs group-hover:scale-105">
+                                    👥 ${selectedPeserta.length} Peserta ${isTerkelaskan ? `(${k.lms_peserta_count || pTerkelaskanCount || selectedPeserta.length} Terkelaskan)` : ''}
                                 </span>
                                 ${pPreview ? `<span class="text-[10px] text-slate-500 mt-1 max-w-[200px] truncate text-center">${pPreview}${pMore}</span>` : ''}
                             </button>
@@ -6409,7 +7222,7 @@
                         <td class="px-4 py-3.5 text-center w-52 bg-slate-50/40">
                             <div class="flex items-center justify-center gap-1.5">
                                 <button onclick="openModalDetailSubmissionPeserta('${k.id}')" title="Lihat rincian lengkap peserta" class="px-2.5 py-1.5 rounded-xl text-xs font-black bg-indigo-600 hover:bg-indigo-700 text-white transition-all shadow-2xs flex items-center gap-1 cursor-pointer hover:scale-105">
-                                    <span>👁️ Rincian Peserta</span>
+                                    <span>👁️ Rincian</span>
                                 </button>
                                 <button onclick="downloadCSVLMSAdmin('${k.id}')" title="Unduh berkas CSV format import LMS Kelas Ini" class="px-2.5 py-1.5 rounded-xl text-xs font-black bg-emerald-600 hover:bg-emerald-700 text-white transition-all shadow-2xs flex items-center gap-1 cursor-pointer hover:scale-105">
                                     <span>📥 CSV</span>
@@ -6431,6 +7244,94 @@
                     </div>
                 `;
             }
+        }
+
+        // ==========================================
+        // EXPORT REKAP PUBLIKASI EXCEL LMS (1.402 PESERTA TERKELASKAN)
+        // ==========================================
+        function exportRekapPengkelasanExcel() {
+            if (typeof XLSX === 'undefined') {
+                showToast("⚠️ Pustaka SheetJS (XLSX) sedang dimuat, coba sesaat lagi...", "rose");
+                return;
+            }
+
+            const terkelaskanKombels = Object.keys(gAllKombels).map(id => ({ id, ...gAllKombels[id] })).filter(k => k.is_terkelaskan_lms);
+
+            if (terkelaskanKombels.length === 0) {
+                showToast("⚠️ Belum ada kelas yang terkelaskan di LMS.", "amber");
+                return;
+            }
+
+            // Sheet 1: Daftar Peserta Terkelaskan (1.402 Baris)
+            const sheetPeserta = [];
+            let rowNum = 1;
+
+            terkelaskanKombels.forEach(k => {
+                const fasilNama = k.fasil_nama || '-';
+                const adminNama = k.admin_nama ? k.admin_nama.split(',')[0] : '-';
+                const allP = getCombinedPesertaForKombel(k.id);
+                
+                // Ambil peserta terkelaskan atau terpilih
+                const terkelaskanList = allP.filter(p => p.terkelaskan_lms);
+                const finalPesertaList = terkelaskanList.length > 0 ? terkelaskanList : getSelectedPesertaForKombel(k);
+
+                finalPesertaList.forEach(p => {
+                    sheetPeserta.push({
+                        "No": rowNum++,
+                        "Nama Peserta": p.nama || p.nama_lengkap || '-',
+                        "Email Akun Belajar (Valid)": p.email || p.email_belajar_id || '-',
+                        "User ID LMS": p.lms_user_id || '-',
+                        "Nama Kelas di LMS": p.lms_kelas || k.lms_kelas_name || k.nama_kombel || '-',
+                        "Program LMS": p.lms_program || k.lms_program_name || '-',
+                        "Komunitas Belajar (Kombel)": k.nama_kombel || '-',
+                        "Jenjang": k.jenjang || '-',
+                        "Kabupaten / Kota": k.kab_kota || '-',
+                        "Fasilitator Pendamping": fasilNama,
+                        "Admin BGTK": adminNama,
+                        "Status Pengkelasan": "Terkelaskan Resmi di LMS"
+                    });
+                });
+            });
+
+            // Sheet 2: Ringkasan 55 Kelas Terkelaskan
+            const sheetKelas = terkelaskanKombels.map((k, idx) => {
+                const selP = getSelectedPesertaForKombel(k);
+                const pTerkelaskan = selP.filter(p => p.terkelaskan_lms).length;
+                return {
+                    "No": idx + 1,
+                    "Nama Kelas LMS": k.lms_kelas_name || k.nama_kombel,
+                    "Komunitas Belajar": k.nama_kombel,
+                    "Program LMS": k.lms_program_name || '-',
+                    "Jenjang": k.jenjang || '-',
+                    "Kabupaten / Kota": k.kab_kota || '-',
+                    "Fasilitator Pendamping": k.fasil_nama || '-',
+                    "Admin BGTK": k.admin_nama ? k.admin_nama.split(',')[0] : '-',
+                    "Jumlah Peserta Terkelaskan": k.lms_peserta_count || pTerkelaskan || selP.length,
+                    "Tanggal Sinkronisasi": k.lms_synced_at ? new Date(k.lms_synced_at).toLocaleString('id-ID') : '-'
+                };
+            });
+
+            const wb = XLSX.utils.book_new();
+            const ws1 = XLSX.utils.json_to_sheet(sheetPeserta);
+            ws1['!cols'] = [
+                { wch: 5 }, { wch: 30 }, { wch: 38 }, { wch: 15 },
+                { wch: 45 }, { wch: 45 }, { wch: 40 }, { wch: 10 },
+                { wch: 25 }, { wch: 30 }, { wch: 25 }, { wch: 25 }
+            ];
+            XLSX.utils.book_append_sheet(wb, ws1, "Daftar Peserta Terkelaskan");
+
+            const ws2 = XLSX.utils.json_to_sheet(sheetKelas);
+            ws2['!cols'] = [
+                { wch: 5 }, { wch: 45 }, { wch: 40 }, { wch: 45 },
+                { wch: 10 }, { wch: 25 }, { wch: 30 }, { wch: 25 },
+                { wch: 28 }, { wch: 25 }
+            ];
+            XLSX.utils.book_append_sheet(wb, ws2, "Rekap 55 Kelas LMS");
+
+            const filename = `Rekap_Publikasi_Peserta_Terkelaskan_LMS_${new Date().toISOString().slice(0, 10)}.xlsx`;
+            XLSX.writeFile(wb, filename);
+
+            showToast(`📢 Rekap Publikasi Berhasil! ${sheetPeserta.length.toLocaleString('id-ID')} Peserta Terkelaskan diekspor ke Excel.`, 'emerald');
         }
 
         function changeExportLMSPage(dir) {

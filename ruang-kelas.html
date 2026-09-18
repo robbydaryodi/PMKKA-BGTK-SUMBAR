@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ruang Kelas Daring & Rekaman – PM-KKA BGTK Sumatera Barat 2026</title>
+    <meta name="description" content="Pusat distribusi link Google Meet permanen, jadwal sesi pertemuan daring, dan repositori rekaman video pendampingan PM-KKA BGTK Sumbar.">
+    <link rel="icon" type="image/jpeg" href="./favicon.jpg" />
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    colors: { primary: '#4f46e5', secondary: '#0f172a' }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body { background: linear-gradient(135deg, #f8fafc 0%, #eef2ff 50%, #f1f5f9 100%); min-height: 100vh; }
+        .glass-card { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(12px); border: 1px solid rgba(226, 232, 240, 0.9); }
+        .fade-in { animation: fadeIn 0.3s ease-out forwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+        .custom-scroll::-webkit-scrollbar { width: 6px; height: 6px; }
+        .custom-scroll::-webkit-scrollbar-track { background: #f1f5f9; }
+        .custom-scroll::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 9999px; }
+    </style>
+
+    <!-- Firebase v10+ Compat CDN -->
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+</head>
+<body class="text-slate-800 antialiased font-sans">
+
+    <!-- ============================
+         NAVBAR
+         ============================ -->
+    <nav class="bg-white/95 backdrop-blur-md border-b border-slate-200 sticky top-0 z-40 shadow-xs">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16 items-center">
+                <a href="index.html" class="flex items-center gap-3 hover:opacity-90 transition-opacity">
+                    <img src="./logo.png" alt="Logo BGTK" class="h-10 sm:h-11 w-auto object-contain">
+                    <div class="border-l-2 border-slate-200 pl-3 ml-1">
+                        <span class="font-black text-slate-900 text-sm sm:text-base block leading-none">PM-KKA BGTK Sumbar</span>
+                        <span class="text-[11px] text-indigo-600 font-bold mt-0.5 block">Ruang Kelas Daring &amp; Repositori Rekaman</span>
+                    </div>
+                </a>
+                <div class="flex items-center gap-3">
+                    <a href="index.html" class="text-xs font-bold text-slate-600 hover:text-slate-900 flex items-center gap-1.5 px-3 py-2 rounded-xl hover:bg-slate-100 transition-colors">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+                        <span>Beranda Utama</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ============================
+         HERO SECTION
+         ============================ -->
+    <header class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 pb-4">
+        <div class="bg-gradient-to-r from-indigo-900 via-indigo-800 to-purple-900 rounded-3xl p-6 sm:p-8 text-white shadow-xl relative overflow-hidden">
+            <div class="absolute right-0 top-0 translate-x-12 -translate-y-12 w-64 h-64 bg-indigo-500/20 rounded-full blur-3xl pointer-events-none"></div>
+            <div class="relative z-10 max-w-3xl">
+                <div class="inline-flex items-center gap-2 px-3.5 py-1.5 bg-white/10 backdrop-blur-md rounded-full text-xs font-black uppercase tracking-wider mb-3 border border-white/20">
+                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                    <span>Portal Operasional Resmi 2026</span>
+                </div>
+                <h1 class="text-2xl sm:text-4xl font-black tracking-tight mb-2">Ruang Kelas Daring &amp; Repositori Rekaman</h1>
+                <p class="text-indigo-100 text-xs sm:text-sm leading-relaxed">
+                    Akses <strong>54 Ruang Google Meet Permanen</strong> untuk seluruh Komunitas Belajar sasaran. Cari kelas Anda untuk bergabung ke ruang pertemuan daring, melihat jadwal sesi, mengunduh materi, serta memutar rekaman video sesi sebelumnya.
+                </p>
+            </div>
+            
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-6 pt-6 border-t border-white/10 text-center">
+                <div class="bg-white/5 rounded-2xl p-3 backdrop-blur-sm border border-white/10">
+                    <div class="text-2xl sm:text-3xl font-black text-white" id="statTotalKelas">54</div>
+                    <div class="text-[11px] text-indigo-200 font-bold mt-0.5">Total Ruang Kelas</div>
+                </div>
+                <div class="bg-white/5 rounded-2xl p-3 backdrop-blur-sm border border-white/10">
+                    <div class="text-2xl sm:text-3xl font-black text-emerald-300" id="statGMeetAktif">54</div>
+                    <div class="text-[11px] text-indigo-200 font-bold mt-0.5">GMeet Aktif (100%)</div>
+                </div>
+                <div class="bg-white/5 rounded-2xl p-3 backdrop-blur-sm border border-white/10">
+                    <div class="text-2xl sm:text-3xl font-black text-amber-300">3</div>
+                    <div class="text-[11px] text-indigo-200 font-bold mt-0.5">Kelas Penggabungan</div>
+                </div>
+                <div class="bg-white/5 rounded-2xl p-3 backdrop-blur-sm border border-white/10">
+                    <div class="text-2xl sm:text-3xl font-black text-purple-300" id="statPesertaLMS">1.411+</div>
+                    <div class="text-[11px] text-indigo-200 font-bold mt-0.5">Guru &amp; KS Sasaran</div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- ============================
+         FILTER & SEARCH CONTROLS
+         ============================ -->
+    <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+        <div class="glass-card rounded-2xl p-4 sm:p-5 shadow-sm space-y-4">
+            <div class="flex flex-col md:flex-row gap-3 items-center justify-between">
+                <!-- Search Box -->
+                <div class="relative w-full md:w-96">
+                    <input type="text" id="searchInput" oninput="applyFilters()" placeholder="Cari nama kombel, kabupaten/kota, fasilitator..." 
+                           class="w-full bg-slate-50 border border-slate-300 rounded-xl pl-10 pr-4 py-2.5 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white transition-all">
+                    <svg class="w-4 h-4 text-slate-400 absolute left-3.5 top-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                </div>
+
+                <!-- Dropdown Filter Wilayah & Tipe -->
+                <div class="flex flex-wrap items-center gap-2 w-full md:w-auto">
+                    <select id="filterKabKota" onchange="applyFilters()" class="bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs font-bold text-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        <option value="">Semua Wilayah (Kab / Kota)</option>
+                    </select>
+                    <select id="filterTipe" onchange="applyFilters()" class="bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs font-bold text-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        <option value="">Semua Tipe Kelas</option>
+                        <option value="gabungan">Kelas Gabungan (3)</option>
+                        <option value="mandiri">Kelas Mandiri (51)</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- TABS TIPE KELAS CEPAT -->
+            <div class="flex items-center gap-2 border-t border-slate-100 pt-3 overflow-x-auto custom-scroll">
+                <button onclick="setTabFilter('semua')" id="btnTabSemua" class="px-3 py-1.5 rounded-xl text-xs font-black transition-all bg-indigo-600 text-white shadow-xs">
+                    Semua Kelas (54)
+                </button>
+                <button onclick="setTabFilter('mandiri')" id="btnTabMandiri" class="px-3 py-1.5 rounded-xl text-xs font-black transition-all bg-slate-100 text-slate-700 hover:bg-slate-200">
+                    Kelas Mandiri (51)
+                </button>
+                <button onclick="setTabFilter('gabungan')" id="btnTabGabungan" class="px-3 py-1.5 rounded-xl text-xs font-black transition-all bg-slate-100 text-slate-700 hover:bg-slate-200">
+                    Kelas Gabungan (3)
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================
+         GRID DAFTAR 54 KELAS
+         ============================ -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 pb-20">
+        <div id="loadingState" class="text-center py-20">
+            <div class="inline-block w-10 h-10 border-4 border-indigo-200 border-t-indigo-600 rounded-full animate-spin mb-3"></div>
+            <p class="text-sm font-bold text-slate-500">Memuat data 54 Ruang Kelas &amp; Link Google Meet...</p>
+        </div>
+
+        <div id="gridKelasContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 hidden">
+            <!-- Cards will be injected by JavaScript -->
+        </div>
+
+        <div id="emptyState" class="hidden text-center py-20 glass-card rounded-3xl">
+            <svg class="w-12 h-12 text-slate-300 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            <h3 class="text-base font-bold text-slate-700">Tidak ada kelas yang sesuai</h3>
+            <p class="text-xs text-slate-400 mt-1">Coba sesuaikan kata kunci pencarian atau filter wilayah Anda.</p>
+        </div>
+    </main>
+
+    <!-- ============================
+         MODAL DETAIL KELAS & REKAMAN SESI
+         ============================ -->
+    <div id="modalDetailKelas" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-hidden flex flex-col fade-in border border-slate-100">
+            <!-- Modal Header -->
+            <div class="bg-gradient-to-r from-indigo-900 to-purple-900 p-5 text-white flex justify-between items-start flex-shrink-0">
+                <div>
+                    <span id="modalBadgeTipe" class="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-white/20 border border-white/20 mb-1.5">Kelas Mandiri</span>
+                    <h3 id="modalJudulKelas" class="text-lg sm:text-xl font-black leading-tight">Nama Kelas</h3>
+                    <p id="modalWilayahKelas" class="text-indigo-200 text-xs mt-0.5">Kabupaten / Kota</p>
+                </div>
+                <button onclick="closeModalDetail()" class="p-1.5 text-white/70 hover:text-white hover:bg-white/10 rounded-full transition-colors">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                </button>
+            </div>
+
+            <!-- Modal Content (Scrollable) -->
+            <div class="p-6 overflow-y-auto custom-scroll space-y-6 flex-1">
+                <!-- Banner GMeet Utama -->
+                <div class="bg-emerald-50 border border-emerald-200 rounded-2xl p-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+                    <div class="flex items-center gap-3">
+                        <div class="w-12 h-12 rounded-2xl bg-emerald-600 text-white flex items-center justify-center flex-shrink-0 shadow-sm">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+                        </div>
+                        <div>
+                            <div class="text-[11px] font-extrabold text-emerald-800 uppercase tracking-wider">Ruang Google Meet Permanen</div>
+                            <div id="modalGMeetUrlText" class="text-xs font-mono text-emerald-950 font-bold truncate max-w-xs">https://meet.google.com/...</div>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2 w-full sm:w-auto">
+                        <a id="modalBtnBukaGMeet" href="#" target="_blank" class="flex-1 sm:flex-none text-center bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-black px-4 py-2.5 rounded-xl transition-all shadow-sm flex items-center justify-center gap-1.5">
+                            <span>Masuk GMeet</span>
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+                        </a>
+                        <button id="modalBtnSalinGMeet" onclick="salinGMeetModal()" class="bg-white hover:bg-emerald-100 text-emerald-800 text-xs font-bold px-3 py-2.5 rounded-xl border border-emerald-300 transition-colors" title="Salin Link">
+                            📋 Salin
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Info Pendamping -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                    <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-200">
+                        <div class="text-[10px] font-bold text-slate-400 uppercase">Fasilitator Pendamping</div>
+                        <div id="modalFasilNama" class="font-extrabold text-slate-800 text-sm mt-0.5">-</div>
+                    </div>
+                    <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-200">
+                        <div class="text-[10px] font-bold text-slate-400 uppercase">Admin BGTK</div>
+                        <div id="modalAdminNama" class="font-extrabold text-slate-800 text-sm mt-0.5">-</div>
+                    </div>
+                </div>
+
+                <!-- Daftar Sesi & Rekaman Video -->
+                <div>
+                    <div class="flex items-center justify-between mb-3">
+                        <h4 class="text-sm font-black text-slate-900 flex items-center gap-2">
+                            <span>📅 Jadwal Sesi Pertemuan &amp; Rekaman Video</span>
+                        </h4>
+                        <span id="modalTotalSesiBadge" class="text-[10px] font-extrabold bg-indigo-50 text-indigo-700 px-2 py-0.5 rounded-md border border-indigo-200">0 Sesi</span>
+                    </div>
+
+                    <div id="modalDaftarSesiContainer" class="space-y-3">
+                        <!-- Sesi items injected here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal Footer -->
+            <div class="p-4 bg-slate-50 border-t border-slate-100 flex justify-end">
+                <button onclick="closeModalDetail()" class="px-5 py-2 rounded-xl text-xs font-bold bg-slate-200 hover:bg-slate-300 text-slate-700 transition-colors">Tutup</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================
+         JAVASCRIPT LOGIC
+         ============================ -->
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyCAMKzhVnGGUxdVKAWeoPXYTAZvPSq6yKY",
+            authDomain: "sekolah-model-2026.firebaseapp.com",
+            databaseURL: "https://sekolah-model-2026-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "sekolah-model-2026",
+            storageBucket: "sekolah-model-2026.firebasestorage.app",
+            messagingSenderId: "1014570073770",
+            appId: "1:1014570073770:web:770e7e6cef2a52a3825ad3"
+        };
+        firebase.initializeApp(firebaseConfig);
+        if (firebase.auth && !firebase.auth().currentUser) {
+            firebase.auth().signInAnonymously().catch(err => console.warn("Firebase Auth:", err));
+        }
+        const db = firebase.database();
+        const FIREBASE_DB_URL = "https://sekolah-model-2026-default-rtdb.asia-southeast1.firebasedatabase.app";
+
+        let gMasterKombels = {};
+        let gSesiKombels = {};
+        let gKelasList54 = [];
+        let gCurrentFilterTab = 'semua';
+
+        // 3 Kelas Gabungan Resmi
+        const KELAS_GABUNGAN_CONFIG = {
+            'padang_mkks': {
+                id_kelas: 'padang_mkks',
+                primary_id: '177738',
+                secondary_id: '161025',
+                nama_kelas: 'MKKS SMP SWASTA KOTA PADANG & TUMBUH BERSAMA',
+                wilayah: 'Kota Padang',
+                jenjang: 'SMP / KS',
+                mapel: 'Kepemimpinan Pembelajaran',
+                fasil: 'Irawati, S.Pd., M.Pd',
+                admin: 'ANDRI ALPHONSO S.AP',
+                link_gmeet: 'https://meet.google.com/yzt-wbpp-nhy',
+                keterangan: 'Penggabungan 2 komunitas Kepala Sekolah SMP di Kota Padang'
+            },
+            'payakumbuh_paud': {
+                id_kelas: 'payakumbuh_paud',
+                primary_id: '182059',
+                secondary_id: '187339',
+                nama_kelas: 'Kenanga & Seroja',
+                wilayah: 'Kota Payakumbuh',
+                jenjang: 'PAUD',
+                mapel: 'Guru PAUD',
+                fasil: 'Desfiar Hanif',
+                admin: 'LEINDRAWATI MEGAHAYU S.P',
+                link_gmeet: 'https://meet.google.com/cug-apna-zbe',
+                keterangan: 'Penggabungan 2 gugus PAUD di Kota Payakumbuh (Kenanga & gugus seroja)'
+            },
+            'agam_sd': {
+                id_kelas: 'agam_sd',
+                primary_id: '161533',
+                secondary_id: '184503',
+                nama_kelas: 'KKG GUGUS II BANUHAMPU & KKG GUGUS 1 SUNGAIPUA',
+                wilayah: 'Kab. Agam',
+                jenjang: 'SD',
+                mapel: 'Guru Kelas SD',
+                fasil: 'Rahmi Isra, S.Pd',
+                admin: 'LISA ANGGRAINI',
+                link_gmeet: 'https://meet.google.com/gdm-zbbe-hyc',
+                keterangan: 'Penggabungan pendampingan kelas daring Kab. Agam (Banuhampu & Sungai Puar)'
+            }
+        };
+
+        const GABUNGAN_IDS = new Set(['177738', '161025', '182059', '187339', '161533', '184503']);
+
+        async function initPage() {
+            try {
+                // 1. Ambil data kombel dari Firebase (SDK & fallback REST)
+                try {
+                    const snap = await db.ref('master_kombel').once('value');
+                    gMasterKombels = snap.val() || {};
+                } catch(eSDK) {
+                    const res = await fetch(`${FIREBASE_DB_URL}/master_kombel.json`);
+                    if (res.ok) gMasterKombels = await res.json() || {};
+                }
+
+                // 2. Ambil data sesi daring (jika ada)
+                try {
+                    const snapSesi = await db.ref('jadwal_sesi_kombel').once('value');
+                    gSesiKombels = snapSesi.val() || {};
+                } catch(eSDK) {
+                    try {
+                        const resSesi = await fetch(`${FIREBASE_DB_URL}/jadwal_sesi_kombel.json`);
+                        if (resSesi.ok) gSesiKombels = await resSesi.json() || {};
+                    } catch(e) { gSesiKombels = {}; }
+                }
+
+                build54KelasList();
+                populateFilterWilayah();
+                renderCards();
+
+                document.getElementById('loadingState').classList.add('hidden');
+                document.getElementById('gridKelasContainer').classList.remove('hidden');
+            } catch (err) {
+                console.error("Error init:", err);
+                document.getElementById('loadingState').innerHTML = `
+                    <div class="text-rose-600 font-bold p-6 bg-rose-50 rounded-2xl border border-rose-200 max-w-md mx-auto">
+                        <p class="text-sm">Gagal memuat data dari server.</p>
+                        <p class="text-xs text-rose-500 mt-1">${err.message}</p>
+                    </div>
+                `;
+            }
+        }
+
+        function build54KelasList() {
+            gKelasList54 = [];
+
+            // 1. Masukkan 3 Kelas Gabungan
+            Object.values(KELAS_GABUNGAN_CONFIG).forEach(cfg => {
+                const k1 = gMasterKombels[cfg.primary_id] || {};
+                const k2 = gMasterKombels[cfg.secondary_id] || {};
+                const link = k1.link_gmeet || k2.link_gmeet || cfg.link_gmeet;
+
+                gKelasList54.push({
+                    id: cfg.id_kelas,
+                    primary_id: cfg.primary_id,
+                    secondary_id: cfg.secondary_id,
+                    tipe: 'gabungan',
+                    nama_kelas: cfg.nama_kelas,
+                    wilayah: cfg.wilayah,
+                    jenjang: cfg.jenjang,
+                    mapel: cfg.mapel,
+                    fasil: cfg.fasil,
+                    admin: cfg.admin,
+                    link_gmeet: link,
+                    keterangan: cfg.keterangan,
+                    peserta_count: (k1.peserta ? (Array.isArray(k1.peserta) ? k1.peserta.length : Object.keys(k1.peserta).length) : 0) +
+                                   (k2.peserta ? (Array.isArray(k2.peserta) ? k2.peserta.length : Object.keys(k2.peserta).length) : 0)
+                });
+            });
+
+            // 2. Masukkan 51 Kelas Mandiri
+            Object.keys(gMasterKombels).forEach(id => {
+                if (GABUNGAN_IDS.has(id)) return; // Lewati yang sudah masuk kelas gabungan
+
+                const k = gMasterKombels[id];
+                const isSasaran = k.is_sasaran || (k.konfirmasi && k.konfirmasi.is_konfirmasi) || (Array.isArray(k.selected_peserta_indices) && k.selected_peserta_indices.length > 0);
+                if (!isSasaran) return;
+
+                const pesertaCount = k.peserta ? (Array.isArray(k.peserta) ? k.peserta.length : Object.keys(k.peserta).length) : (k.jumlah_anggota || 0);
+
+                gKelasList54.push({
+                    id: id,
+                    primary_id: id,
+                    tipe: 'mandiri',
+                    nama_kelas: k.nama_kombel || `Kombel ${id}`,
+                    wilayah: k.kab_kota || '-',
+                    jenjang: k.jenjang || '-',
+                    mapel: k.mapel || '-',
+                    fasil: k.fasil_nama || '-',
+                    admin: k.admin_nama || '-',
+                    link_gmeet: k.link_gmeet || '',
+                    keterangan: 'Kelas Mandiri Tunggal',
+                    peserta_count: pesertaCount
+                });
+            });
+
+            // Urutkan: Kelas gabungan di atas, lalu abjad wilayah
+            gKelasList54.sort((a, b) => {
+                if (a.tipe !== b.tipe) return a.tipe === 'gabungan' ? -1 : 1;
+                return (a.wilayah || '').localeCompare(b.wilayah || '');
+            });
+
+            document.getElementById('statTotalKelas').textContent = gKelasList54.length;
+            const withGmeet = gKelasList54.filter(k => k.link_gmeet && k.link_gmeet.includes('meet.google.com')).length;
+            document.getElementById('statGMeetAktif').textContent = withGmeet;
+        }
+
+        function populateFilterWilayah() {
+            const select = document.getElementById('filterKabKota');
+            const wilayahSet = new Set();
+            gKelasList54.forEach(k => { if (k.wilayah && k.wilayah !== '-') wilayahSet.add(k.wilayah); });
+            const sorted = Array.from(wilayahSet).sort();
+            sorted.forEach(w => {
+                const opt = document.createElement('option');
+                opt.value = w;
+                opt.textContent = w;
+                select.appendChild(opt);
+            });
+        }
+
+        function setTabFilter(tab) {
+            gCurrentFilterTab = tab;
+            document.getElementById('btnTabSemua').className = tab === 'semua' ? 'px-3 py-1.5 rounded-xl text-xs font-black transition-all bg-indigo-600 text-white shadow-xs' : 'px-3 py-1.5 rounded-xl text-xs font-black transition-all bg-slate-100 text-slate-700 hover:bg-slate-200';
+            document.getElementById('btnTabMandiri').className = tab === 'mandiri' ? 'px-3 py-1.5 rounded-xl text-xs font-black transition-all bg-indigo-600 text-white shadow-xs' : 'px-3 py-1.5 rounded-xl text-xs font-black transition-all bg-slate-100 text-slate-700 hover:bg-slate-200';
+            document.getElementById('btnTabGabungan').className = tab === 'gabungan' ? 'px-3 py-1.5 rounded-xl text-xs font-black transition-all bg-indigo-600 text-white shadow-xs' : 'px-3 py-1.5 rounded-xl text-xs font-black transition-all bg-slate-100 text-slate-700 hover:bg-slate-200';
+            applyFilters();
+        }
+
+        function applyFilters() {
+            const q = (document.getElementById('searchInput').value || '').toLowerCase().trim();
+            const kab = document.getElementById('filterKabKota').value;
+            const tipe = document.getElementById('filterTipe').value;
+
+            const filtered = gKelasList54.filter(k => {
+                // Tab filter
+                if (gCurrentFilterTab === 'mandiri' && k.tipe !== 'mandiri') return false;
+                if (gCurrentFilterTab === 'gabungan' && k.tipe !== 'gabungan') return false;
+
+                // Select filter tipe
+                if (tipe && k.tipe !== tipe) return false;
+
+                // Select filter kab
+                if (kab && k.wilayah !== kab) return false;
+
+                // Search
+                if (q) {
+                    const matchName = (k.nama_kelas || '').toLowerCase().includes(q);
+                    const matchWil = (k.wilayah || '').toLowerCase().includes(q);
+                    const matchFasil = (k.fasil || '').toLowerCase().includes(q);
+                    const matchMapel = (k.mapel || '').toLowerCase().includes(q);
+                    if (!matchName && !matchWil && !matchFasil && !matchMapel) return false;
+                }
+                return true;
+            });
+
+            renderCards(filtered);
+        }
+
+        function renderCards(list = gKelasList54) {
+            const container = document.getElementById('gridKelasContainer');
+            const empty = document.getElementById('emptyState');
+
+            if (list.length === 0) {
+                container.innerHTML = '';
+                empty.classList.remove('hidden');
+                return;
+            }
+
+            empty.classList.add('hidden');
+            container.innerHTML = list.map((k, idx) => {
+                const isGabungan = k.tipe === 'gabungan';
+                const hasMeet = k.link_gmeet && k.link_gmeet.includes('meet.google.com');
+
+                // Ambil daftar sesi dari Firebase jika ada
+                const sesiObj = gSesiKombels[k.primary_id] || (k.secondary_id ? gSesiKombels[k.secondary_id] : null) || {};
+                const sesiList = Object.values(sesiObj);
+                const countSesi = sesiList.length;
+                const countRekaman = sesiList.filter(s => s.link_rekaman).length;
+
+                return `
+                <div class="glass-card rounded-3xl p-5 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col justify-between border ${isGabungan ? 'border-amber-200 bg-amber-50/20' : 'border-slate-200/90'} relative group">
+                    <div>
+                        <!-- Header Card -->
+                        <div class="flex items-start justify-between gap-2 mb-3">
+                            <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-wider ${isGabungan ? 'bg-amber-100 text-amber-900 border border-amber-300' : 'bg-indigo-50 text-indigo-700 border border-indigo-200'}">
+                                ${isGabungan ? '⭐ KELAS GABUNGAN' : 'KELAS MANDIRI'}
+                            </span>
+                            <span class="text-[11px] font-bold text-slate-500 bg-slate-100 px-2.5 py-1 rounded-full truncate max-w-[140px]" title="${k.wilayah}">
+                                📍 ${k.wilayah}
+                            </span>
+                        </div>
+
+                        <!-- Title -->
+                        <h3 class="text-base font-black text-slate-900 leading-snug mb-1 group-hover:text-indigo-600 transition-colors line-clamp-2" title="${k.nama_kelas}">
+                            ${k.nama_kelas}
+                        </h3>
+                        <p class="text-xs text-slate-500 mb-3 flex items-center gap-1.5 font-medium">
+                            <span>${k.jenjang || '-'}</span> • <span>${k.mapel || '-'}</span>
+                        </p>
+
+                        <!-- Fasilitator Box -->
+                        <div class="bg-slate-50/80 rounded-2xl p-3 border border-slate-100 mb-4 space-y-1.5 text-xs">
+                            <div class="flex items-center justify-between">
+                                <span class="text-slate-400 font-semibold text-[11px]">Fasilitator:</span>
+                                <span class="font-extrabold text-slate-800 truncate max-w-[170px]" title="${k.fasil}">${k.fasil}</span>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <span class="text-slate-400 font-semibold text-[11px]">Admin BGTK:</span>
+                                <span class="font-bold text-slate-700 truncate max-w-[170px]" title="${k.admin}">${k.admin}</span>
+                            </div>
+                        </div>
+
+                        <!-- Info Sesi & Rekaman Badge -->
+                        <div class="flex items-center justify-between py-2 px-3 rounded-xl bg-slate-100/70 border border-slate-200/60 text-xs mb-4">
+                            <div class="flex items-center gap-1.5 text-slate-600 font-bold text-[11px]">
+                                <svg class="w-3.5 h-3.5 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                                <span>${countSesi} Sesi Terjadwal</span>
+                            </div>
+                            <div>
+                                ${countRekaman > 0 
+                                    ? `<span class="inline-flex items-center gap-1 text-[10px] font-black text-purple-700 bg-purple-100 px-2 py-0.5 rounded-full border border-purple-200">🎬 ${countRekaman} Rekaman</span>`
+                                    : `<span class="text-[10px] font-bold text-slate-400">Belum ada rekaman</span>`}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="space-y-2 pt-2 border-t border-slate-100">
+                        <div class="flex items-center gap-2">
+                            ${hasMeet 
+                                ? `<a href="${k.link_gmeet}" target="_blank" class="flex-1 text-center bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xs py-2.5 px-3 rounded-xl transition-all shadow-2xs hover:shadow-md flex items-center justify-center gap-1.5">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+                                    <span>Gabung GMeet</span>
+                                   </a>`
+                                : `<button disabled class="flex-1 bg-slate-200 text-slate-400 font-bold text-xs py-2.5 px-3 rounded-xl cursor-not-allowed">GMeet Belum Ada</button>`}
+                            
+                            ${hasMeet 
+                                ? `<button onclick="salinLinkCard('${k.link_gmeet}')" title="Salin Tautan GMeet" class="p-2.5 bg-slate-100 hover:bg-emerald-50 hover:text-emerald-700 text-slate-600 rounded-xl border border-slate-200 transition-colors">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+                                   </button>`
+                                : ''}
+                        </div>
+
+                        <button onclick="bukaDetailKelas('${k.id}')" class="w-full text-center bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-bold text-xs py-2 rounded-xl border border-indigo-200/80 transition-colors flex items-center justify-center gap-1">
+                            <span>Lihat Jadwal Sesi &amp; Rekaman</span>
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                        </button>
+                    </div>
+                </div>
+                `;
+            }).join('');
+        }
+
+        let gCurrentKelasModal = null;
+
+        function bukaDetailKelas(kelasId) {
+            const k = gKelasList54.find(item => item.id === kelasId);
+            if (!k) return;
+            gCurrentKelasModal = k;
+
+            document.getElementById('modalJudulKelas').textContent = k.nama_kelas;
+            document.getElementById('modalWilayahKelas').textContent = `${k.wilayah} • ${k.jenjang || ''} ${k.mapel || ''}`;
+            document.getElementById('modalBadgeTipe').textContent = k.tipe === 'gabungan' ? '⭐ KELAS GABUNGAN' : 'KELAS MANDIRI';
+            document.getElementById('modalFasilNama').textContent = k.fasil;
+            document.getElementById('modalAdminNama').textContent = k.admin;
+
+            const gmeetUrl = k.link_gmeet || '';
+            document.getElementById('modalGMeetUrlText').textContent = gmeetUrl || 'Belum diatur';
+            const btnBuka = document.getElementById('modalBtnBukaGMeet');
+            if (gmeetUrl) {
+                btnBuka.href = gmeetUrl;
+                btnBuka.classList.remove('opacity-50', 'pointer-events-none');
+            } else {
+                btnBuka.removeAttribute('href');
+                btnBuka.classList.add('opacity-50', 'pointer-events-none');
+            }
+
+            // Load sesi dari Firebase
+            const sesiObj = gSesiKombels[k.primary_id] || (k.secondary_id ? gSesiKombels[k.secondary_id] : null) || {};
+            const sesiList = Object.keys(sesiObj).map(sKey => ({ key: sKey, ...sesiObj[sKey] }));
+
+            // Urutkan nomor sesi
+            sesiList.sort((a, b) => (a.nomor_sesi || 0) - (b.nomor_sesi || 0));
+
+            document.getElementById('modalTotalSesiBadge').textContent = `${sesiList.length} Sesi Pertemuan`;
+            const sesiContainer = document.getElementById('modalDaftarSesiContainer');
+
+            if (sesiList.length === 0) {
+                sesiContainer.innerHTML = `
+                    <div class="text-center py-8 bg-slate-50 rounded-2xl border border-slate-200/80 p-6">
+                        <div class="w-10 h-10 rounded-full bg-indigo-50 text-indigo-600 flex items-center justify-center mx-auto mb-2 font-bold text-base">📅</div>
+                        <h5 class="text-xs font-bold text-slate-700">Jadwal Sesi Sedang Disusun</h5>
+                        <p class="text-[11px] text-slate-500 mt-1 max-w-sm mx-auto">Jadwal pertemuan daring dan rekaman video akan diperbarui oleh Fasilitator Pendamping.</p>
+                        <div class="mt-3">
+                            <span class="inline-flex items-center gap-1 px-3 py-1 rounded-full text-[10px] font-bold bg-amber-50 text-amber-800 border border-amber-200">
+                                💡 Gunakan tombol Masuk GMeet di atas untuk sesi daring langsung
+                            </span>
+                        </div>
+                    </div>
+                `;
+            } else {
+                sesiContainer.innerHTML = sesiList.map((s, idx) => {
+                    const noSesi = s.nomor_sesi || idx + 1;
+                    const tgl = s.tanggal || 'Tanggal belum diatur';
+                    const jam = (s.jam_mulai && s.jam_selesai) ? `${s.jam_mulai} - ${s.jam_selesai} WIB` : (s.jam_mulai ? `${s.jam_mulai} WIB` : '');
+                    const hasRekaman = !!s.link_rekaman;
+                    const hasMateri = !!s.link_materi;
+
+                    return `
+                    <div class="p-4 rounded-2xl border border-slate-200 bg-white hover:border-indigo-300 transition-all shadow-2xs space-y-3">
+                        <div class="flex items-start justify-between gap-3">
+                            <div class="flex items-center gap-2.5">
+                                <span class="w-7 h-7 rounded-xl bg-indigo-100 text-indigo-800 font-black text-xs flex items-center justify-center flex-shrink-0">
+                                    ${noSesi}
+                                </span>
+                                <div>
+                                    <h5 class="text-xs font-black text-slate-900">${s.topik || `Sesi Pertemuan ${noSesi}`}</h5>
+                                    <div class="text-[11px] text-slate-500 font-medium mt-0.5">
+                                        📅 ${tgl} ${jam ? `• ⏰ ${jam}` : ''}
+                                    </div>
+                                </div>
+                            </div>
+                            <span class="text-[10px] font-black px-2 py-0.5 rounded-full ${s.status === 'selesai' ? 'bg-emerald-100 text-emerald-800 border border-emerald-200' : 'bg-amber-100 text-amber-800 border border-amber-200'}">
+                                ${s.status === 'selesai' ? 'Selesai' : 'Terjadwal'}
+                            </span>
+                        </div>
+
+                        ${s.deskripsi ? `<p class="text-[11px] text-slate-600 bg-slate-50 p-2.5 rounded-xl border border-slate-100 leading-relaxed">${s.deskripsi}</p>` : ''}
+
+                        <!-- Action Sesi (Tonton Rekaman & Unduh Materi) -->
+                        <div class="flex flex-wrap items-center gap-2 pt-1 border-t border-slate-100">
+                            ${hasRekaman 
+                                ? `<a href="${s.link_rekaman}" target="_blank" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-black bg-purple-600 hover:bg-purple-700 text-white transition-colors shadow-2xs">
+                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                                    <span>Tonton Rekaman Video</span>
+                                   </a>`
+                                : `<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[10px] font-bold bg-slate-100 text-slate-400">
+                                    <span>⏳ Rekaman Belum Tersedia</span>
+                                   </span>`}
+
+                            ${hasMateri 
+                                ? `<a href="${s.link_materi}" target="_blank" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 transition-colors">
+                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                                    <span>Materi Sesi</span>
+                                   </a>`
+                                : ''}
+                        </div>
+                    </div>
+                    `;
+                }).join('');
+            }
+
+            document.getElementById('modalDetailKelas').classList.remove('hidden');
+        }
+
+        function closeModalDetail() {
+            document.getElementById('modalDetailKelas').classList.add('hidden');
+            gCurrentKelasModal = null;
+        }
+
+        function salinGMeetModal() {
+            if (!gCurrentKelasModal || !gCurrentKelasModal.link_gmeet) return;
+            navigator.clipboard.writeText(gCurrentKelasModal.link_gmeet).then(() => {
+                const btn = document.getElementById('modalBtnSalinGMeet');
+                btn.textContent = '✅ Tersalin!';
+                setTimeout(() => { btn.textContent = '📋 Salin'; }, 2000);
+            });
+        }
+
+        function salinLinkCard(url) {
+            if (!url) return;
+            navigator.clipboard.writeText(url).then(() => {
+                alert("Tautan Google Meet berhasil disalin ke clipboard:\n" + url);
+            });
+        }
+
+        // Jalankan saat dokumen siap
+        document.addEventListener('DOMContentLoaded', initPage);
+    </script>
+    <script src="nav-crumbs.js"></script>
+</body>
+</html>

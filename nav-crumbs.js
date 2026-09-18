@@ -8,6 +8,10 @@ document.addEventListener("DOMContentLoaded", () => {
     
     if (path.includes('fasilitator.html')) {
         portalName = "Portal Fasilitator";
+    } else if (path.includes('ruang-kelas.html')) {
+        portalName = "Ruang Kelas Daring (GMeet & Rekaman)";
+    } else if (path.includes('submit-peserta-fkk.html')) {
+        portalName = "Status Seleksi & Ruang Kelas";
     } else if (path.includes('konfirmasi-kehadiran.html')) {
         portalName = "Konfirmasi Sekolah";
     } else if (path.includes('kehadiran.html')) {
