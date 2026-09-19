@@ -315,15 +315,26 @@
                     if (res.ok) gMasterKombels = await res.json() || {};
                 }
 
-                // 2. Ambil data sesi daring (jika ada)
+                // 2. Ambil data sesi daring (dari master_kombel dan fallback)
+                gSesiKombels = {};
+                Object.entries(gMasterKombels).forEach(([kId, k]) => {
+                    if (k && k.jadwal_sesi) {
+                        gSesiKombels[kId] = k.jadwal_sesi;
+                    }
+                });
                 try {
                     const snapSesi = await db.ref('jadwal_sesi_kombel').once('value');
-                    gSesiKombels = snapSesi.val() || {};
+                    if (snapSesi && snapSesi.val()) {
+                        Object.assign(gSesiKombels, snapSesi.val());
+                    }
                 } catch(eSDK) {
                     try {
                         const resSesi = await fetch(`${FIREBASE_DB_URL}/jadwal_sesi_kombel.json`);
-                        if (resSesi.ok) gSesiKombels = await resSesi.json() || {};
-                    } catch(e) { gSesiKombels = {}; }
+                        if (resSesi.ok) {
+                            const dataSesi = await resSesi.json();
+                            if (dataSesi) Object.assign(gSesiKombels, dataSesi);
+                        }
+                    } catch(e) {}
                 }
 
                 build54KelasList();

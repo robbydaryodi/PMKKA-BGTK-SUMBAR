@@ -6605,14 +6605,14 @@
                 primary_id: '161533',
                 secondary_id: '184503',
                 tipe: 'gabungan',
-                nama_kelas: 'KKG GUGUS II BANUHAMPU & KKG GUGUS 1 SUNGAIPUA',
+                nama_kelas: 'KKG GUGUS II TK SD KECAMTAN BANUHAMPU & KKG Gugus 1 Kecamatan Sungaipua',
                 wilayah: 'Kab. Agam',
                 jenjang: 'SD',
                 mapel: 'Guru Kelas SD',
                 fasil: 'Rahmi Isra, S.Pd',
                 admin: 'LISA ANGGRAINI',
                 link_gmeet: 'https://meet.google.com/gdm-zbbe-hyc',
-                keterangan: 'Penggabungan pendampingan kelas daring Kab. Agam (Banuhampu & Sungai Puar)'
+                keterangan: 'Penggabungan pendampingan kelas daring Kab. Agam (Banuhampu 17 peserta & Sungaipua 17 peserta)'
             }
         };
 
@@ -6630,11 +6630,19 @@
                     gAllKombels = snap.val() || {};
                 }
 
-                // Ambil data sesi jadwal kombel
+                // Ambil data sesi jadwal kombel dari master_kombel & fallback
+                gSesiKombelCache = {};
+                Object.entries(gAllKombels).forEach(([kId, k]) => {
+                    if (k && k.jadwal_sesi) {
+                        gSesiKombelCache[kId] = k.jadwal_sesi;
+                    }
+                });
                 try {
                     const snapSesi = await db.ref('jadwal_sesi_kombel').once('value');
-                    gSesiKombelCache = snapSesi.val() || {};
-                } catch(e) { gSesiKombelCache = {}; }
+                    if (snapSesi && snapSesi.val()) {
+                        Object.assign(gSesiKombelCache, snapSesi.val());
+                    }
+                } catch(e) {}
 
                 build54KelasListAdmin();
                 populateFilterKabGMeet();
@@ -6975,12 +6983,18 @@
             btn.textContent = 'Menyimpan...';
 
             try {
-                // Simpan ke primary_id
-                await db.ref(`jadwal_sesi_kombel/${gCurrentModalGMeetKelas.primary_id}/${sesiKey}`).set(payload);
+                // Simpan ke master_kombel (resmi diizinkan rules Firebase)
+                await db.ref(`master_kombel/${gCurrentModalGMeetKelas.primary_id}/jadwal_sesi/${sesiKey}`).set(payload);
 
                 // Jika kelas gabungan, simpan juga ke secondary_id agar sinkron
                 if (gCurrentModalGMeetKelas.secondary_id) {
-                    await db.ref(`jadwal_sesi_kombel/${gCurrentModalGMeetKelas.secondary_id}/${sesiKey}`).set(payload);
+                    await db.ref(`master_kombel/${gCurrentModalGMeetKelas.secondary_id}/jadwal_sesi/${sesiKey}`).set(payload);
+                }
+
+                // Coba mirror ke jadwal_sesi_kombel jika diizinkan
+                db.ref(`jadwal_sesi_kombel/${gCurrentModalGMeetKelas.primary_id}/${sesiKey}`).set(payload).catch(() => {});
+                if (gCurrentModalGMeetKelas.secondary_id) {
+                    db.ref(`jadwal_sesi_kombel/${gCurrentModalGMeetKelas.secondary_id}/${sesiKey}`).set(payload).catch(() => {});
                 }
 
                 // Update cache lokal
@@ -7012,9 +7026,13 @@
             if (!confirm("Apakah Anda yakin ingin menghapus sesi ini?")) return;
 
             try {
-                await db.ref(`jadwal_sesi_kombel/${gCurrentModalGMeetKelas.primary_id}/${sesiKey}`).remove();
+                await db.ref(`master_kombel/${gCurrentModalGMeetKelas.primary_id}/jadwal_sesi/${sesiKey}`).remove();
                 if (gCurrentModalGMeetKelas.secondary_id) {
-                    await db.ref(`jadwal_sesi_kombel/${gCurrentModalGMeetKelas.secondary_id}/${sesiKey}`).remove();
+                    await db.ref(`master_kombel/${gCurrentModalGMeetKelas.secondary_id}/jadwal_sesi/${sesiKey}`).remove();
+                }
+                db.ref(`jadwal_sesi_kombel/${gCurrentModalGMeetKelas.primary_id}/${sesiKey}`).remove().catch(() => {});
+                if (gCurrentModalGMeetKelas.secondary_id) {
+                    db.ref(`jadwal_sesi_kombel/${gCurrentModalGMeetKelas.secondary_id}/${sesiKey}`).remove().catch(() => {});
                 }
 
                 if (gSesiKombelCache[gCurrentModalGMeetKelas.primary_id]) {
@@ -7313,23 +7331,48 @@
                 });
             });
 
-            // Sheet 2: Ringkasan 55 Kelas Terkelaskan
-            const sheetKelas = terkelaskanKombels.map((k, idx) => {
+            // Sheet 2: Ringkasan 54 Kelas Terkelaskan LMS
+            const classMap = new Map();
+            terkelaskanKombels.forEach(k => {
+                const className = k.lms_kelas_name || k.nama_kombel;
                 const selP = getSelectedPesertaForKombel(k);
                 const pTerkelaskan = selP.filter(p => p.terkelaskan_lms).length;
-                return {
-                    "No": idx + 1,
-                    "Nama Kelas LMS": k.lms_kelas_name || k.nama_kombel,
-                    "Komunitas Belajar": k.nama_kombel,
-                    "Program LMS": k.lms_program_name || '-',
-                    "Jenjang": k.jenjang || '-',
-                    "Kabupaten / Kota": k.kab_kota || '-',
-                    "Fasilitator Pendamping": k.fasil_nama || '-',
-                    "Admin BGTK": k.admin_nama ? k.admin_nama.split(',')[0] : '-',
-                    "Jumlah Peserta Terkelaskan": k.lms_peserta_count || pTerkelaskan || selP.length,
-                    "Tanggal Sinkronisasi": k.lms_synced_at ? new Date(k.lms_synced_at).toLocaleString('id-ID') : '-'
-                };
+                const pCount = k.lms_peserta_count || pTerkelaskan || selP.length;
+
+                if (!classMap.has(className)) {
+                    classMap.set(className, {
+                        nama_kelas: className,
+                        kombel_list: [k.nama_kombel],
+                        program: k.lms_program_name || '-',
+                        jenjang: k.jenjang || '-',
+                        kab_kota: k.kab_kota || '-',
+                        fasil: k.fasil_nama || '-',
+                        admin: k.admin_nama ? k.admin_nama.split(',')[0] : '-',
+                        total_peserta: pCount,
+                        synced_at: k.lms_synced_at
+                    });
+                } else {
+                    const existing = classMap.get(className);
+                    if (!existing.kombel_list.includes(k.nama_kombel)) {
+                        existing.kombel_list.push(k.nama_kombel);
+                    }
+                    existing.total_peserta += pCount;
+                }
             });
+
+            let idxKelas = 1;
+            const sheetKelas = Array.from(classMap.values()).map(c => ({
+                "No": idxKelas++,
+                "Nama Kelas LMS": c.nama_kelas,
+                "Komunitas Belajar": c.kombel_list.join(' & '),
+                "Program LMS": c.program,
+                "Jenjang": c.jenjang,
+                "Kabupaten / Kota": c.kab_kota,
+                "Fasilitator Pendamping": c.fasil,
+                "Admin BGTK": c.admin,
+                "Jumlah Peserta Terkelaskan": c.total_peserta,
+                "Tanggal Sinkronisasi": c.synced_at ? new Date(c.synced_at).toLocaleString('id-ID') : '-'
+            }));
 
             const wb = XLSX.utils.book_new();
             const ws1 = XLSX.utils.json_to_sheet(sheetPeserta);
@@ -7346,7 +7389,7 @@
                 { wch: 10 }, { wch: 25 }, { wch: 30 }, { wch: 25 },
                 { wch: 28 }, { wch: 25 }
             ];
-            XLSX.utils.book_append_sheet(wb, ws2, "Rekap 55 Kelas LMS");
+            XLSX.utils.book_append_sheet(wb, ws2, "Rekap 54 Kelas LMS");
 
             const filename = `Rekap_Publikasi_Peserta_Terkelaskan_LMS_${new Date().toISOString().slice(0, 10)}.xlsx`;
             XLSX.writeFile(wb, filename);

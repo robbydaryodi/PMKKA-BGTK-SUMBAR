@@ -1285,7 +1285,7 @@
         renderRubrik();
         init();
 
-        function login() {
+        async function login() {
             const fasilId = document.getElementById('loginFasilId').value;
             const password = document.getElementById('loginPassword').value;
             
@@ -1301,11 +1301,15 @@
 
             loggedInFasil = fasil;
             localStorage.setItem('loggedFasilId', fasil.id);
-            showDashboard();
+            await showDashboard();
         }
 
         function logout() {
             loggedInFasil = null;
+            myAssignedSchools = [];
+            myAssignedKombelList = [];
+            allSchools = {};
+            allJadwalData = {};
             localStorage.removeItem('loggedFasilId');
             document.getElementById('viewLogin').classList.remove('hidden');
             document.getElementById('viewDashboard').classList.add('hidden');
@@ -1313,7 +1317,7 @@
             document.getElementById('loginPassword').value = '';
         }
 
-        function openProfilModal() {
+        function openModalProfilFasil() {
             if (!loggedInFasil) return;
             document.getElementById('profilNama').value = loggedInFasil.nama || '';
             document.getElementById('profilNip').value = loggedInFasil.nip || '';
@@ -1333,10 +1337,10 @@
                 loggedInFasil.pangkat_gol = pangkat;
                 loggedInFasil.jabatan = jabatan;
                 document.getElementById('modalProfilFasil').classList.add('hidden');
-                // Toast confirmation
+                
                 const toast = document.createElement('div');
-                toast.className = 'fixed bottom-6 right-6 z-[200] bg-emerald-600 text-white px-5 py-3 rounded-2xl shadow-xl text-sm font-bold flex items-center gap-2 fade-in';
-                toast.innerHTML = '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg> Profil berhasil disimpan!';
+                toast.className = "fixed bottom-5 right-5 bg-emerald-600 text-white px-5 py-3 rounded-xl shadow-lg font-bold text-sm z-50 flex items-center gap-2";
+                toast.innerHTML = `<span>✅</span> Profil berhasil diperbarui!`;
                 document.body.appendChild(toast);
                 setTimeout(() => toast.remove(), 3000);
             } catch(e) {
@@ -1350,22 +1354,44 @@
             document.getElementById('navUser').classList.remove('hidden');
             document.getElementById('navUserName').innerText = loggedInFasil.nama;
             document.getElementById('dashGreeting').innerText = `Halo, ${loggedInFasil.nama}`;
+            document.getElementById('dashSubGreeting').innerHTML = '<span class="inline-flex items-center gap-1.5 text-indigo-600 font-bold"><svg class="animate-spin w-3.5 h-3.5" viewBox="0 0 24 24" fill="none"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path></svg> Menyiapkan data penugasan sekolah & kombel...</span>';
             
-            const [snapSekolah, snapAssign, snapJadwal, snapSetting, snapKombel, snapSesiKombel] = await Promise.all([
-                db.ref('master_guru').once('value'),
-                db.ref('fasilitator_sekolah/' + loggedInFasil.id).once('value'),
-                db.ref('jadwal_kunjungan').once('value'),
-                db.ref('setting_jadwal').once('value'),
-                db.ref('master_kombel').once('value'),
-                db.ref('jadwal_sesi_kombel').once('value')
-            ]);
+            let snapSekolah = null, snapAssign = null, snapJadwal = null, snapSetting = null, snapKombel = null, snapSesiKombel = null;
+            try {
+                const results = await Promise.all([
+                    db.ref('master_guru').once('value').catch(e => { console.warn('master_guru warning:', e); return null; }),
+                    db.ref('fasilitator_sekolah/' + loggedInFasil.id).once('value').catch(e => { console.warn('fasilitator_sekolah warning:', e); return null; }),
+                    db.ref('jadwal_kunjungan').once('value').catch(e => { console.warn('jadwal_kunjungan warning:', e); return null; }),
+                    db.ref('setting_jadwal').once('value').catch(e => { console.warn('setting_jadwal warning:', e); return null; }),
+                    db.ref('master_kombel').once('value').catch(e => { console.warn('master_kombel warning:', e); return null; }),
+                    db.ref('jadwal_sesi_kombel').once('value').catch(e => { return null; })
+                ]);
+                snapSekolah = results[0];
+                snapAssign = results[1];
+                snapJadwal = results[2];
+                snapSetting = results[3];
+                snapKombel = results[4];
+                snapSesiKombel = results[5];
+            } catch (err) {
+                console.error("Critical error in showDashboard fetch:", err);
+            }
 
-            allSchools = snapSekolah.val() || {};
-            myAssignedSchools = snapAssign.val() || [];
-            allJadwalData = snapJadwal.val() || {};
-            globalSettingJadwal = snapSetting.val() || {};
-            allMasterKombel = snapKombel.val() || {};
-            allSesiKombel = snapSesiKombel.val() || {};
+            allSchools = (snapSekolah && snapSekolah.val()) ? snapSekolah.val() : {};
+            myAssignedSchools = (snapAssign && snapAssign.val()) ? snapAssign.val() : [];
+            allJadwalData = (snapJadwal && snapJadwal.val()) ? snapJadwal.val() : {};
+            globalSettingJadwal = (snapSetting && snapSetting.val()) ? snapSetting.val() : {};
+            allMasterKombel = (snapKombel && snapKombel.val()) ? snapKombel.val() : {};
+            
+            // Build sessions map: gather from master_kombel[id].jadwal_sesi, then overlay snapSesiKombel
+            allSesiKombel = {};
+            Object.entries(allMasterKombel).forEach(([kId, k]) => {
+                if (k && k.jadwal_sesi) {
+                    allSesiKombel[kId] = k.jadwal_sesi;
+                }
+            });
+            if (snapSesiKombel && snapSesiKombel.val()) {
+                Object.assign(allSesiKombel, snapSesiKombel.val());
+            }
 
             buildAssignedKombels();
 
@@ -2409,6 +2435,9 @@
                 selSchool.value = currentFilterSchool;
             } else if (myAssignedSchools.length > 0) {
                 selSchool.value = myAssignedSchools[0];
+            }
+            if (!selSchool.value && selSchool.options.length > 1) {
+                selSchool.value = selSchool.options[1].value;
             }
 
             // Auto-update kunjungan options & auto-select first unscheduled stage for selected school
@@ -4000,10 +4029,17 @@
             btn.textContent = 'Menyimpan...';
 
             try {
-                await db.ref(`jadwal_sesi_kombel/${currentModalKombelKelas.primary_id}/${sesiKey}`).set(payload);
+                // Simpan ke master_kombel (resmi diizinkan rules Firebase)
+                await db.ref(`master_kombel/${currentModalKombelKelas.primary_id}/jadwal_sesi/${sesiKey}`).set(payload);
 
                 if (currentModalKombelKelas.secondary_id) {
-                    await db.ref(`jadwal_sesi_kombel/${currentModalKombelKelas.secondary_id}/${sesiKey}`).set(payload);
+                    await db.ref(`master_kombel/${currentModalKombelKelas.secondary_id}/jadwal_sesi/${sesiKey}`).set(payload);
+                }
+
+                // Coba mirror ke jadwal_sesi_kombel jika diizinkan
+                db.ref(`jadwal_sesi_kombel/${currentModalKombelKelas.primary_id}/${sesiKey}`).set(payload).catch(() => {});
+                if (currentModalKombelKelas.secondary_id) {
+                    db.ref(`jadwal_sesi_kombel/${currentModalKombelKelas.secondary_id}/${sesiKey}`).set(payload).catch(() => {});
                 }
 
                 if (!allSesiKombel[currentModalKombelKelas.primary_id]) allSesiKombel[currentModalKombelKelas.primary_id] = {};
@@ -4034,9 +4070,13 @@
             const secId = k ? k.secondary_id : null;
 
             try {
-                await db.ref(`jadwal_sesi_kombel/${kombelId}/${sesiKey}`).remove();
+                await db.ref(`master_kombel/${kombelId}/jadwal_sesi/${sesiKey}`).remove();
                 if (secId) {
-                    await db.ref(`jadwal_sesi_kombel/${secId}/${sesiKey}`).remove();
+                    await db.ref(`master_kombel/${secId}/jadwal_sesi/${sesiKey}`).remove();
+                }
+                db.ref(`jadwal_sesi_kombel/${kombelId}/${sesiKey}`).remove().catch(() => {});
+                if (secId) {
+                    db.ref(`jadwal_sesi_kombel/${secId}/${sesiKey}`).remove().catch(() => {});
                 }
 
                 if (allSesiKombel[kombelId]) delete allSesiKombel[kombelId][sesiKey];
