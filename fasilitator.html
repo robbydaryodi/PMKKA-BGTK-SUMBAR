@@ -76,7 +76,7 @@
                             <div id="navUserName" class="text-xs sm:text-sm font-bold text-slate-800 truncate"></div>
                             <div id="navUserEmail" class="text-[10px] text-emerald-600 font-bold font-mono truncate"></div>
                         </div>
-                        <button onclick="openModalSuratTugas()" title="Kelola / Input Surat Tugas Pendampingan" class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-semibold text-purple-700 hover:text-purple-800 hover:bg-purple-50 transition-colors border border-purple-200">
+                        <button id="btnNavSuratTugas" onclick="openModalSuratTugas()" title="Kelola / Input Surat Tugas Pendampingan" class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-semibold text-purple-700 hover:text-purple-800 hover:bg-purple-50 transition-colors border border-purple-200">
                             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
                             <span class="hidden sm:inline">Surat Tugas</span>
                         </button>
@@ -1519,11 +1519,14 @@
             const bannerSelect = document.getElementById('selectBannerProgram');
             const subGreeting = document.getElementById('dashSubGreeting');
 
+            const btnCal = document.getElementById('btnViewCalendar');
             const btnViewList = document.getElementById('btnViewList');
             const btnViewStatus = document.getElementById('btnViewStatus');
+            const btnGMeet = document.getElementById('btnViewGMeet');
+            const btnNavST = document.getElementById('btnNavSuratTugas');
             const filterSekolahBox = document.getElementById('filterSekolahSelect')?.parentElement;
 
-            if (prog === 'kombel') {
+            if (prog === 'kombel' || myAssignedSchools.length === 0) {
                 if (banner) {
                     banner.className = "mb-6 p-4 rounded-2xl border-2 bg-gradient-to-r from-emerald-50/95 via-teal-50/80 to-blue-50/90 border-emerald-300 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-xs transition-all";
                 }
@@ -1538,10 +1541,13 @@
                     bannerSelect.className = "bg-emerald-50/80 hover:bg-emerald-100/80 text-emerald-950 font-black text-xs rounded-xl px-3.5 py-2 border border-emerald-300 shadow-xs outline-none cursor-pointer pr-8 transition-all appearance-none";
                 }
 
-                // Sembunyikan 'Daftar Sekolah' dan 'Status Baseline' untuk Kombel
+                // Sembunyikan SEMUA fitur Kunjungan Sekolah Model (Kalender, Daftar Sekolah, Status Baseline, Surat Tugas, Filter)
+                if (btnCal) btnCal.classList.add('hidden');
                 if (btnViewList) btnViewList.classList.add('hidden');
                 if (btnViewStatus) btnViewStatus.classList.add('hidden');
+                if (btnNavST) btnNavST.classList.add('hidden');
                 if (filterSekolahBox) filterSekolahBox.classList.add('hidden');
+                if (btnGMeet) btnGMeet.classList.remove('hidden');
 
                 // Otomatis arahkan ke Ruang GMeet / Kombel View
                 switchMainView('gmeet');
@@ -1560,12 +1566,15 @@
                     bannerSelect.className = "bg-indigo-50/70 hover:bg-indigo-100/70 text-indigo-950 font-black text-xs rounded-xl px-3.5 py-2 border border-indigo-300 shadow-xs outline-none cursor-pointer pr-8 transition-all appearance-none";
                 }
 
-                // Munculkan kembali 'Daftar Sekolah' dan 'Status Baseline' untuk Sekolah Model
+                // Munculkan kembali fitur Kunjungan Sekolah Model
+                if (btnCal) btnCal.classList.remove('hidden');
                 if (btnViewList) btnViewList.classList.remove('hidden');
                 if (btnViewStatus) btnViewStatus.classList.remove('hidden');
+                if (btnNavST) btnNavST.classList.remove('hidden');
                 if (filterSekolahBox) filterSekolahBox.classList.remove('hidden');
+                if (btnGMeet) btnGMeet.classList.add('hidden'); // Sembunyikan GMeet di Sekolah Model
 
-                // Jika sedang di gmeet, kembali ke kalender kunjungan
+                // Kembali ke kalender kunjungan
                 if (currentActiveView === 'gmeet') {
                     switchMainView('calendar');
                 } else {
@@ -1770,11 +1779,20 @@
         }
 
         function switchMainView(view) {
+            // Guard: Fasilitator Kombel atau fasil tanpa sekolah binaan fisik hanya boleh di Ruang GMeet
+            if (gActiveFasilProgram === 'kombel' || myAssignedSchools.length === 0) {
+                view = 'gmeet';
+            } else if (gActiveFasilProgram === 'sekolah_model' && view === 'gmeet') {
+                view = 'calendar';
+            }
+
             currentActiveView = view;
             const btnCal = document.getElementById('btnViewCalendar');
             const btnList = document.getElementById('btnViewList');
             const btnStatus = document.getElementById('btnViewStatus');
             const btnGMeet = document.getElementById('btnViewGMeet');
+            const btnNavST = document.getElementById('btnNavSuratTugas');
+            const filterSekolahBox = document.getElementById('filterSekolahSelect')?.parentElement;
             const cCal = document.getElementById('containerCalendarView');
             const cList = document.getElementById('containerListView');
             const cStatus = document.getElementById('containerStatusView');
@@ -1783,22 +1801,30 @@
             const inactiveClass = "px-4 py-2 rounded-lg transition-all flex items-center gap-1.5 text-slate-600 hover:text-slate-900";
             const activeClass = "px-4 py-2 rounded-lg transition-all flex items-center gap-1.5 bg-white text-indigo-700 shadow-sm";
 
-            btnCal.className = view === 'calendar' ? activeClass : inactiveClass;
-            btnList.className = view === 'list' ? activeClass : inactiveClass;
-            btnStatus.className = view === 'status' ? activeClass : inactiveClass;
+            if (btnCal) btnCal.className = view === 'calendar' ? activeClass : inactiveClass;
+            if (btnList) btnList.className = view === 'list' ? activeClass : inactiveClass;
+            if (btnStatus) btnStatus.className = view === 'status' ? activeClass : inactiveClass;
             if (btnGMeet) btnGMeet.className = view === 'gmeet' ? activeClass : inactiveClass;
 
-            if (gActiveFasilProgram === 'kombel') {
+            if (gActiveFasilProgram === 'kombel' || myAssignedSchools.length === 0) {
+                if (btnCal) btnCal.classList.add('hidden');
                 if (btnList) btnList.classList.add('hidden');
                 if (btnStatus) btnStatus.classList.add('hidden');
+                if (btnNavST) btnNavST.classList.add('hidden');
+                if (filterSekolahBox) filterSekolahBox.classList.add('hidden');
+                if (btnGMeet) btnGMeet.classList.remove('hidden');
             } else {
+                if (btnCal) btnCal.classList.remove('hidden');
                 if (btnList) btnList.classList.remove('hidden');
                 if (btnStatus) btnStatus.classList.remove('hidden');
+                if (btnNavST) btnNavST.classList.remove('hidden');
+                if (filterSekolahBox) filterSekolahBox.classList.remove('hidden');
+                if (btnGMeet) btnGMeet.classList.add('hidden');
             }
 
-            cCal.classList.toggle('hidden', view !== 'calendar');
-            cList.classList.toggle('hidden', view !== 'list');
-            cStatus.classList.toggle('hidden', view !== 'status');
+            if (cCal) cCal.classList.toggle('hidden', view !== 'calendar');
+            if (cList) cList.classList.toggle('hidden', view !== 'list');
+            if (cStatus) cStatus.classList.toggle('hidden', view !== 'status');
             if (cGMeet) cGMeet.classList.toggle('hidden', view !== 'gmeet');
 
             if (view === 'calendar') {
