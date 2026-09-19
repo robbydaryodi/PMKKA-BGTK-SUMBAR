@@ -1517,6 +1517,11 @@
             const title = document.getElementById('programActiveTitle');
             const desc = document.getElementById('programActiveDesc');
             const bannerSelect = document.getElementById('selectBannerProgram');
+            const subGreeting = document.getElementById('dashSubGreeting');
+
+            const btnViewList = document.getElementById('btnViewList');
+            const btnViewStatus = document.getElementById('btnViewStatus');
+            const filterSekolahBox = document.getElementById('filterSekolahSelect')?.parentElement;
 
             if (prog === 'kombel') {
                 if (banner) {
@@ -1528,9 +1533,15 @@
                 }
                 if (title) title.innerText = "PMKKA Reguler — Komunitas Belajar";
                 if (desc) desc.innerText = `Membina ${myAssignedKombelList.length} Komunitas Belajar sasaran: Ruang Kelas Daring (GMeet), Kalender Sesi Pendampingan, & Rekaman.`;
+                if (subGreeting) subGreeting.innerText = "Kelola sesi pertemuan daring, link Google Meet, dan rekaman kombel dampingan Anda.";
                 if (bannerSelect) {
                     bannerSelect.className = "bg-emerald-50/80 hover:bg-emerald-100/80 text-emerald-950 font-black text-xs rounded-xl px-3.5 py-2 border border-emerald-300 shadow-xs outline-none cursor-pointer pr-8 transition-all appearance-none";
                 }
+
+                // Sembunyikan 'Daftar Sekolah' dan 'Status Baseline' untuk Kombel
+                if (btnViewList) btnViewList.classList.add('hidden');
+                if (btnViewStatus) btnViewStatus.classList.add('hidden');
+                if (filterSekolahBox) filterSekolahBox.classList.add('hidden');
 
                 // Otomatis arahkan ke Ruang GMeet / Kombel View
                 switchMainView('gmeet');
@@ -1544,13 +1555,21 @@
                 }
                 if (title) title.innerText = "Pendampingan 25 Sekolah Model";
                 if (desc) desc.innerText = `Membina ${myAssignedSchools.length} Sekolah sasaran: Jadwal kunjungan siklus TET, instrumen rubrik observasi, & Surat Tugas.`;
+                if (subGreeting) subGreeting.innerText = "Kelola jadwal kunjungan dan instrumen observasi sekolah binaan Anda.";
                 if (bannerSelect) {
                     bannerSelect.className = "bg-indigo-50/70 hover:bg-indigo-100/70 text-indigo-950 font-black text-xs rounded-xl px-3.5 py-2 border border-indigo-300 shadow-xs outline-none cursor-pointer pr-8 transition-all appearance-none";
                 }
 
+                // Munculkan kembali 'Daftar Sekolah' dan 'Status Baseline' untuk Sekolah Model
+                if (btnViewList) btnViewList.classList.remove('hidden');
+                if (btnViewStatus) btnViewStatus.classList.remove('hidden');
+                if (filterSekolahBox) filterSekolahBox.classList.remove('hidden');
+
                 // Jika sedang di gmeet, kembali ke kalender kunjungan
                 if (currentActiveView === 'gmeet') {
                     switchMainView('calendar');
+                } else {
+                    switchMainView(currentActiveView || 'calendar');
                 }
             }
         }
@@ -1768,6 +1787,14 @@
             btnList.className = view === 'list' ? activeClass : inactiveClass;
             btnStatus.className = view === 'status' ? activeClass : inactiveClass;
             if (btnGMeet) btnGMeet.className = view === 'gmeet' ? activeClass : inactiveClass;
+
+            if (gActiveFasilProgram === 'kombel') {
+                if (btnList) btnList.classList.add('hidden');
+                if (btnStatus) btnStatus.classList.add('hidden');
+            } else {
+                if (btnList) btnList.classList.remove('hidden');
+                if (btnStatus) btnStatus.classList.remove('hidden');
+            }
 
             cCal.classList.toggle('hidden', view !== 'calendar');
             cList.classList.toggle('hidden', view !== 'list');
