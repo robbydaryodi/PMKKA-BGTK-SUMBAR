@@ -295,6 +295,21 @@
         <!-- ================= CONTAINER TAMPILAN 1: KALENDER INTERAKTIF ================= -->
         <div id="containerCalendarView" class="space-y-6">
             
+            <!-- Notice jika Fasil Kombel -->
+            <div id="kombelOnlyCalendarNotice" class="hidden bg-gradient-to-r from-emerald-50 via-teal-50 to-emerald-50 border border-emerald-200 rounded-2xl p-4 sm:p-5 text-emerald-950 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 fade-in">
+                <div class="flex items-start gap-3">
+                    <span class="text-2xl mt-0.5">💡</span>
+                    <div>
+                        <div class="font-extrabold text-sm text-emerald-900" id="kombelNoticeTitle">Anda Terdaftar sebagai Fasilitator Komunitas Belajar (Kombel)</div>
+                        <div class="text-xs text-emerald-800/90 mt-0.5" id="kombelNoticeDesc">Kalender di bawah ini dikhususkan untuk Kunjungan Lapangan 25 Sekolah Model. Untuk mengelola sesi pertemuan daring &amp; link Google Meet kombel dampingan Anda, silakan gunakan tab Ruang GMeet.</div>
+                    </div>
+                </div>
+                <button onclick="switchMainView('gmeet')" class="px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-black shrink-0 transition-all shadow-md flex items-center gap-1.5 cursor-pointer hover:scale-105">
+                    <span>📹 Buka Ruang GMeet Kombel</span>
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                </button>
+            </div>
+
             <!-- Calendar Navigation Header -->
             <div class="glass-card rounded-2xl p-5 shadow-sm flex flex-col md:flex-row items-center justify-between gap-4">
                 <div class="flex items-center gap-3">
@@ -1363,15 +1378,19 @@
             populateSchoolOptions();
             renderSuratTugasList();
 
-            // Render active view
-            if (currentActiveView === 'calendar') {
-                renderCalendar();
-            } else if (currentActiveView === 'status') {
-                renderStatusBaselineFasil();
-            } else if (currentActiveView === 'gmeet') {
-                renderGMeetFasilView();
+            // Render active view: jika Fasil Kombel (bukan Sekolah Model fisik), otomatis buka tab Ruang GMeet
+            if (myAssignedSchools.length === 0 && myAssignedKombelList.length > 0) {
+                switchMainView('gmeet');
             } else {
-                renderListView();
+                if (currentActiveView === 'calendar') {
+                    renderCalendar();
+                } else if (currentActiveView === 'status') {
+                    renderStatusBaselineFasil();
+                } else if (currentActiveView === 'gmeet') {
+                    renderGMeetFasilView();
+                } else {
+                    renderListView();
+                }
             }
         }
 
@@ -1382,17 +1401,27 @@
             let filterHtml = '<option value="ALL">Semua Sekolah Binaan</option>';
             let modalHtml = '<option value="">-- Pilih Sekolah Binaan --</option>';
 
-            myAssignedSchools.forEach(npsn => {
-                const firstTeacher = allSchools[npsn] ? Object.values(allSchools[npsn])[0] : null;
-                const schoolName = (firstTeacher && firstTeacher.asal_sekolah) ? firstTeacher.asal_sekolah : `Sekolah ${npsn}`;
-                
-                filterHtml += `<option value="${npsn}">${schoolName}</option>`;
-                modalHtml += `<option value="${npsn}">${schoolName}</option>`;
-            });
+            if (myAssignedSchools.length === 0) {
+                if (myAssignedKombelList.length > 0) {
+                    filterHtml = '<option value="ALL">Fasilitator Komunitas Belajar (Kombel)</option>';
+                    modalHtml = '<option value="">(Khusus Sekolah Model - Anda Fasil Kombel)</option>';
+                } else {
+                    filterHtml = '<option value="ALL">Belum Ada Penugasan</option>';
+                    modalHtml = '<option value="">-- Tidak Ada Sekolah Binaan --</option>';
+                }
+            } else {
+                myAssignedSchools.forEach(npsn => {
+                    const firstTeacher = allSchools[npsn] ? Object.values(allSchools[npsn])[0] : null;
+                    const schoolName = (firstTeacher && firstTeacher.asal_sekolah) ? firstTeacher.asal_sekolah : `Sekolah ${npsn}`;
+                    
+                    filterHtml += `<option value="${npsn}">${schoolName}</option>`;
+                    modalHtml += `<option value="${npsn}">${schoolName}</option>`;
+                });
+            }
 
-            filterSel.innerHTML = filterHtml;
-            modalSel.innerHTML = modalHtml;
-            filterSel.value = currentFilterSchool;
+            if (filterSel) filterSel.innerHTML = filterHtml;
+            if (modalSel) modalSel.innerHTML = modalHtml;
+            if (filterSel) filterSel.value = currentFilterSchool;
         }
 
         function switchMainView(view) {
@@ -2040,6 +2069,19 @@
         }
 
         function renderCalendar() {
+            const noticeEl = document.getElementById('kombelOnlyCalendarNotice');
+            if (noticeEl) {
+                if (myAssignedSchools.length === 0 && myAssignedKombelList.length > 0) {
+                    noticeEl.classList.remove('hidden');
+                    const descEl = document.getElementById('kombelNoticeDesc');
+                    if (descEl) {
+                        descEl.innerHTML = `Anda mendampingi <strong>${myAssignedKombelList.length} Komunitas Belajar</strong>. Kalender di bawah ini khusus untuk kunjungan fisik 25 Sekolah Model. Untuk mengelola jadwal pertemuan daring &amp; link Google Meet kombel Anda, silakan buka tab <strong>Ruang GMeet</strong>.`;
+                    }
+                } else {
+                    noticeEl.classList.add('hidden');
+                }
+            }
+
             document.getElementById('calendarMonthTitle').innerText = `${monthNames[calCurrentMonth]} ${calCurrentYear}`;
             const grid = document.getElementById('calendarGrid');
 
@@ -2250,6 +2292,30 @@
                 }
             });
 
+            // Sesi Daring Komunitas Belajar (Kombel)
+            if (myAssignedKombelList && myAssignedKombelList.length > 0) {
+                myAssignedKombelList.forEach(k => {
+                    const sObj = allSesiKombel[k.primary_id] || (k.secondary_id ? allSesiKombel[k.secondary_id] : null) || {};
+                    Object.entries(sObj).forEach(([sKey, s]) => {
+                        if (s && s.tanggal === dateStr) {
+                            const safeKombelName = (k.nama_kelas || k.nama_kombel || 'Kombel').replace(/'/g, "\\'").replace(/"/g, '&quot;');
+                            eventsHtml += `
+                                <div onclick="event.stopPropagation(); openModalKelolaSesiFasil('${k.primary_id}')" 
+                                     class="p-1 sm:p-1.5 mb-1 rounded-lg border text-[10px] sm:text-xs font-semibold cursor-pointer hover:shadow-md transition-all shadow-2xs hover:scale-[1.02] flex items-center justify-between gap-1 select-none bg-emerald-100/90 text-emerald-900 border-emerald-300 hover:bg-emerald-200" 
+                                     title="Sesi ${s.nomor_sesi || 1}: ${s.topik || 'Sesi Daring'} (${safeKombelName}) - Klik untuk kelola">
+                                    <div class="flex items-center gap-1 min-w-0 truncate">
+                                        <span class="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-emerald-600 shrink-0"></span>
+                                        <span class="font-extrabold shrink-0">Sesi ${s.nomor_sesi || 1}</span>
+                                        <span class="truncate">${safeKombelName}</span>
+                                    </div>
+                                    <span class="text-[10px] text-emerald-800 font-black hidden sm:inline">📹</span>
+                                </div>
+                            `;
+                        }
+                    });
+                });
+            }
+
             const bgClass = isCurrentMonth ? 'bg-white hover:bg-indigo-50/20' : 'bg-slate-50 text-slate-400';
             const numClass = isToday 
                 ? 'w-6 h-6 sm:w-7 sm:h-7 bg-indigo-600 text-white rounded-full flex items-center justify-center font-bold text-xs sm:text-sm shadow-sm'
@@ -2320,6 +2386,20 @@
         }
 
         function bukaModalJadwalkanKalender(dateStr) {
+            // Guard: Jika fasilitator hanya memiliki Kombel dampingan (bukan Sekolah Model fisik)
+            if (myAssignedSchools.length === 0) {
+                if (myAssignedKombelList.length > 0) {
+                    const firstKombel = myAssignedKombelList[0];
+                    if (confirm(`Pemberitahuan Fasilitator Komunitas Belajar (Kombel):\n\nFormulir ini khusus untuk jadwal kunjungan lapangan 25 Sekolah Model.\n\nAnda tercatat sebagai Fasilitator ${myAssignedKombelList.length} Kombel Dampingan (${firstKombel.nama_kelas}).\n\nApakah Anda ingin membuka menu Ruang GMeet untuk menjadwalkan sesi pertemuan daring pada tanggal ${formatIndoDate(dateStr)}?`)) {
+                        switchMainView('gmeet');
+                        openModalKelolaSesiFasil(firstKombel.primary_id, dateStr);
+                    }
+                } else {
+                    alert("Anda belum memiliki penugasan Sekolah Model maupun Komunitas Belajar.");
+                }
+                return;
+            }
+
             document.getElementById('calInputTanggal').value = dateStr;
             document.getElementById('modalJadwalSelectedDateText').innerText = `Tanggal: ${formatIndoDate(dateStr)}`;
             
@@ -3763,7 +3843,7 @@
             });
         }
 
-        function openModalKelolaSesiFasil(kombelId) {
+        function openModalKelolaSesiFasil(kombelId, defaultDate = null) {
             const k = myAssignedKombelList.find(item => item.primary_id === kombelId);
             if (!k) return;
             currentModalKombelKelas = k;
@@ -3785,7 +3865,7 @@
                 btnBuka.classList.add('opacity-50', 'pointer-events-none');
             }
 
-            resetFormSesiFasil();
+            resetFormSesiFasil(defaultDate);
             renderModalExistingSesiListFasil();
 
             document.getElementById('modalKelolaSesiFasil').classList.remove('hidden');
@@ -3796,10 +3876,10 @@
             currentModalKombelKelas = null;
         }
 
-        function resetFormSesiFasil() {
+        function resetFormSesiFasil(defaultDate = null) {
             document.getElementById('inputFasilSesiEditKey').value = '';
             document.getElementById('inputFasilSesiTopik').value = '';
-            document.getElementById('inputFasilSesiTanggal').value = new Date().toISOString().slice(0, 10);
+            document.getElementById('inputFasilSesiTanggal').value = defaultDate || new Date().toISOString().slice(0, 10);
             document.getElementById('inputFasilSesiJamMulai').value = '08:30';
             document.getElementById('inputFasilSesiJamSelesai').value = '11:30';
             document.getElementById('inputFasilSesiLinkRekaman').value = '';
