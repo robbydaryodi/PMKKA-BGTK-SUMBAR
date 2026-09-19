@@ -229,6 +229,7 @@
         // ADMIN & ROLE MAPPING CONFIGURATION
         // ==========================================
         const SUPER_ADMIN_EMAILS = [
+            'mastersumbar@gmail.com',
             'mastersumbar1@gmail.com',
             'irawati.2308@gmail.com',
             'irawati@kemendikdasmen.go.id',
@@ -367,12 +368,15 @@
                     const snapFasil = await db.ref('fasilitator').once('value');
                     const fasilData = snapFasil.val() || {};
                     let matchedFasilKey = Object.keys(fasilData).find(k => {
-                        const fEmail = (fasilData[k].email || '').toLowerCase();
-                        return fEmail === userEmail;
+                        const f = fasilData[k];
+                        const e1 = (f.email_belajar_id || '').toLowerCase().trim();
+                        const e2 = (f.email || '').toLowerCase().trim();
+                        return e1 === userEmail || e2 === userEmail;
                     });
 
                     if (matchedFasilKey) {
                         localStorage.setItem('loggedFasilId', matchedFasilKey);
+                        localStorage.setItem('loggedFasilEmail', userEmail);
                         window.location.href = `fasilitator.html?fasilId=${matchedFasilKey}`;
                     } else {
                         errorEl.textContent = `❌ Email Google (${userEmail}) tidak terdaftar sebagai Pegawai BGTK, Admin Sekolah Model, atau Fasilitator.`;
