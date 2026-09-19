@@ -10,17 +10,25 @@
 
 ---
 
-## 1. Filosofi & Nilai Inti Desain (*Core Philosophy*)
+## 1. 4 Paradoks & Titik Keseimbangan Desain (The 4 Core Design Trade-Offs)
 
-1. **Aplikasi Kedinasan Harus Tenang, Bersih, dan Tidak Mengintimidasi**
-   * Pengguna utama sistem ini adalah Guru, Kepala Sekolah, Pengawas, Fasilitator, dan Pegawai UPT BGTK.
-   * Tingkat literasi digital beragam. Antarmuka yang gelap, padat, berisik, atau penuh teks teknis akan memicu rasa cemas (*techno-stress*) dan membuat pengguna **malas serta enggan menggunakan aplikasi**.
-2. **Satu Layar, Satu Fokus Utama (*Job-to-be-Done*)**
-   * Saat fasilitator membuka kalender, layar harus 100% didedikasikan untuk kalender.
-   * Saat peserta mencari link GMeet, layar harus langsung menyajikan pencarian kelas dan tombol GMeet.
-   * Hindari menumpuk banner raksasa, kartu penjelasan pilar, atau data statistik admin di atas ruang kerja pengguna.
-3. ***Whitespace* adalah Teman, Bukan Ruang Kosong**
-   * Ruang kosong yang lapang memberikan waktu bagi mata untuk bernapas dan memproses informasi secara santai.
+Setiap keputusan desain di aplikasi BGTK Sumbar harus selalu menimbang 4 titik keseimbangan berikut:
+
+1. **Simplicity vs. Functionality**:
+   * *Makin banyak fitur, makin kompleks UI-nya. Solusinya adalah Progressive Disclosure: tampilkan yang dasar dulu, sembunyikan fitur lanjutan sampai dibutuhkan.*
+   * **Penerapan BGTK**: Di layar utama hanya tampil entitas penting (nama Kombel/Sekolah + tombol GMeet/Visitasi). Data rinci peserta atau riwayat sesi hanya dimunculkan jika pengguna secara sadar mengklik tombol detail.
+
+2. **Consistency vs. Innovation**:
+   * *Mengikuti konvensi membuat produk mudah dipelajari, tapi terlalu patuh bisa membuatnya generik. Inovasilah di tempat yang memberi nilai nyata, bukan di elemen dasar seperti navigasi.*
+   * **Penerapan BGTK**: Navigasi sidebar dan struktur menu dibuat sangat standar dan terprediksi mengikuti alur kerja kantor. Inovasi ditaruh pada **otomatisasi nilai nyata**: ekspor 1-klik CSV LMS, generator otomatis Surat Tugas Word (.docx), dan pelacakan siklus pendampingan otomatis.
+
+3. **Aesthetics vs. Usability**:
+   * *Desain yang sangat artistik kadang mengorbankan keterbacaan. Prioritaskan fungsi, lalu poles estetikanya.*
+   * **Penerapan BGTK**: Hindari banner ungu gelap raksasa atau kartu pilar hitam tebal yang mengintimidasi dan memakan layar. Gunakan latar bersih terang (*clean light UI*), kontras teks tinggi, dan ruang bernapas yang lega. Estetika dipoles secara halus (*subtle elegance*).
+
+4. **Business Goals vs. User Goals**:
+   * *Cari titik keseimbangan, dan jangan bebankan target institusi di layar kerja harian pengguna.*
+   * **Penerapan BGTK**: Target dinas (rekap 1.411 guru, kuota provinsi, rekapitulasi audit) ditaruh di Dashboard Admin Eksekutif. Jangan pamerkan angka-angka itu di layar guru atau fasilitator yang hanya ingin masuk kelas dan melihat jadwal hari ini.
 
 ---
 
@@ -29,7 +37,7 @@
 ### A. Teori *Progressive Disclosure* (Pengungkapan Bertahap 3-Tingkat)
 Informasi tidak boleh ditumpahkan sekaligus. Terapkan pola hierarki 3 tingkat (*3-Tier Depth Pattern*):
 
-```
+```text
 ┌─────────────────────────────────────────────────────────────┐
 │ LEVEL 1: GLANCEABLE SURFACE (Ringkasan Pokok)               │
 │ • Hanya nama entitas utama & 1 tombol aksi primer.          │
