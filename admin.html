@@ -77,129 +77,60 @@
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                 </button>
             </div>
-            <!-- Global Program Context Switcher (Prinsip UI/UX BGTK) -->
-            <div class="p-3 border-b border-slate-100 bg-slate-50/70">
-                <label for="selectAdminProgramScope" class="text-[10px] font-black text-slate-400 uppercase tracking-wider block mb-1.5 px-1">PILIH PROGRAM / RUANG KERJA</label>
-                <div class="relative">
-                    <select id="selectAdminProgramScope" onchange="changeAdminProgramScope(this.value)" class="w-full appearance-none bg-white border border-slate-200 hover:border-slate-300 text-slate-800 text-xs font-bold rounded-xl px-3 py-2 pr-8 focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 transition-all cursor-pointer shadow-2xs">
-                        <option value="all">👑 Pusat Monitoring (Semua)</option>
-                        <option value="sekolah_model">🏫 25 Sekolah Model</option>
-                        <option value="kombel">⭐ PMKKA Reguler (57 Kombel)</option>
-                    </select>
-                    <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2.5 text-slate-400">
-                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Navigation Items Terkelompok dalam 4 Siklus Proses Bisnis BGTK -->
-            <div class="p-3.5 flex-1 overflow-y-auto custom-sidebar-scroll space-y-4">
+            <!-- Navigation Items (Super Minimalis Dropdown) -->
+            <div class="p-3.5 flex-1 overflow-y-auto custom-sidebar-scroll space-y-3">
                 
-                <!-- SIKLUS 1: PERSIAPAN & PENETAPAN -->
-                <div class="sidebar-cycle-group" id="cycleGroupPersiapan">
-                    <div class="text-[10px] font-black text-blue-600 uppercase tracking-wider px-2 mb-1.5 flex items-center gap-1.5">
-                        <span class="w-2 h-2 rounded-full bg-blue-500 inline-block"></span>
-                        <span>1. PERSIAPAN &amp; PENETAPAN</span>
-                    </div>
-                    <nav class="space-y-1">
-                        <!-- Kombel: Target 57 Kombel & Workflow -->
-                        <button onclick="switchTahapanWorkflow('tahap1')" id="btnModeKombel" data-program="kombel" class="sidebar-btn flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium text-slate-600 hover:bg-slate-100/80 hover:text-slate-900 transition-all duration-200 w-full text-left group border-l-3 border-transparent">
-                            <div class="flex items-center gap-2.5 truncate">
-                                <svg class="w-4 h-4 flex-shrink-0 text-amber-500 group-hover:text-amber-600 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
-                                <span class="font-bold truncate">Target 57 Kombel</span>
-                            </div>
-                            <span class="text-[9px] bg-amber-100 text-amber-800 font-extrabold px-1.5 py-0.5 rounded border border-amber-200">57</span>
-                        </button>
-                        
-                        <!-- Sekolah Model: Data Fasilitator Sekolah Model -->
-                        <button onclick="switchAdminView('mode3')" id="btnMode3" data-program="sekolah_model" class="sidebar-btn flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-medium text-slate-600 hover:bg-slate-100/80 hover:text-slate-900 transition-all duration-200 w-full text-left group border-l-3 border-transparent">
-                            <svg class="w-4 h-4 flex-shrink-0 text-teal-600 group-hover:text-teal-700 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
-                            <span class="font-bold truncate">Fasilitator Sekolah Model</span>
-                        </button>
-
-                        <!-- Administrasi: Master Pegawai BGTK -->
-                        <button onclick="switchAdminView('modePegawai')" id="btnModePegawai" data-program="all" class="sidebar-btn flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium text-slate-600 hover:bg-slate-100/80 hover:text-slate-900 transition-all duration-200 w-full text-left group border-l-3 border-transparent">
-                            <div class="flex items-center gap-2.5 truncate">
-                                <svg class="w-4 h-4 flex-shrink-0 text-emerald-500 group-hover:text-emerald-600 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1v1H9V7zm5 0h1v1H9v-1zm5 0h1v1H9v-1zm5 0h1v1H9v-1zm5 0h1v1H9v-1z"/></svg>
-                                <span class="font-semibold truncate">Master Pegawai BGTK</span>
-                            </div>
-                            <span class="text-[9px] bg-emerald-100 text-emerald-800 font-extrabold px-1.5 py-0.5 rounded border border-emerald-200">57</span>
-                        </button>
-                    </nav>
-                </div>
-
-                <!-- SIKLUS 2: PELAKSANAAN PENDAMPINGAN -->
-                <div class="sidebar-cycle-group pt-2 border-t border-slate-100" id="cycleGroupPelaksanaan">
-                    <div class="text-[10px] font-black text-emerald-700 uppercase tracking-wider px-2 mb-1.5 flex items-center gap-1.5">
-                        <span class="w-2 h-2 rounded-full bg-emerald-500 inline-block"></span>
-                        <span>2. PELAKSANAAN PENDAMPINGAN</span>
-                    </div>
-                    <nav class="space-y-1">
-                        <!-- Sekolah Model: Jadwal Kunjungan Lapangan -->
-                        <button onclick="switchAdminView('mode7')" id="btnMode7" data-program="sekolah_model" class="sidebar-btn flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-medium text-slate-600 hover:bg-slate-100/80 hover:text-slate-900 transition-all duration-200 w-full text-left group border-l-3 border-transparent">
-                            <svg class="w-4 h-4 flex-shrink-0 text-teal-600 group-hover:text-teal-700 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-                            <span class="font-bold truncate">Jadwal Kunjungan Sekolah</span>
-                        </button>
-
-                        <!-- Kombel: GMeet & Rekaman 54 Kelas -->
-                        <button onclick="switchTahapanWorkflow('tahap5')" id="btnModeGMeet" data-program="kombel" class="sidebar-btn flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium text-slate-600 hover:bg-slate-100/80 hover:text-slate-900 transition-all duration-200 w-full text-left group border-l-3 border-transparent">
-                            <div class="flex items-center gap-2.5 truncate">
-                                <svg class="w-4 h-4 flex-shrink-0 text-emerald-600 group-hover:text-emerald-700 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
-                                <span class="font-bold truncate">GMeet &amp; Rekaman Daring</span>
-                            </div>
-                            <span class="text-[9px] bg-emerald-100 text-emerald-800 font-extrabold px-1.5 py-0.5 rounded border border-emerald-200">54</span>
-                        </button>
-                    </nav>
-                </div>
-
-                <!-- SIKLUS 3: ASESMEN & EVALUASI -->
-                <div class="sidebar-cycle-group pt-2 border-t border-slate-100" id="cycleGroupAsesmen">
-                    <div class="text-[10px] font-black text-amber-700 uppercase tracking-wider px-2 mb-1.5 flex items-center gap-1.5">
-                        <span class="w-2 h-2 rounded-full bg-amber-500 inline-block"></span>
-                        <span>3. ASESMEN &amp; EVALUASI</span>
-                    </div>
-                    <nav class="space-y-1">
-                        <!-- Sekolah Model: Status & Baseline -->
-                        <button onclick="switchAdminView('modeStatusSekolah')" id="btnModeStatusSekolah" data-program="sekolah_model" class="sidebar-btn flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-medium text-slate-600 hover:bg-slate-100/80 hover:text-slate-900 transition-all duration-200 w-full text-left group border-l-3 border-transparent">
-                            <svg class="w-4 h-4 flex-shrink-0 text-amber-500 group-hover:text-amber-600 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
-                            <span class="font-bold truncate">Status &amp; Baseline Sekolah</span>
-                        </button>
-                    </nav>
-                </div>
-
-                <!-- SIKLUS 4: REPOSITORI & LAPORAN -->
-                <div class="sidebar-cycle-group pt-2 border-t border-slate-100" id="cycleGroupLaporan">
-                    <div class="text-[10px] font-black text-purple-700 uppercase tracking-wider px-2 mb-1.5 flex items-center gap-1.5">
-                        <span class="w-2 h-2 rounded-full bg-purple-500 inline-block"></span>
-                        <span>4. REPOSITORI &amp; LAPORAN</span>
-                    </div>
-                    <nav class="space-y-1">
-                        <!-- Sekolah Model: Laporan Fasilitator -->
-                        <button onclick="switchAdminView('mode4')" id="btnMode4" data-program="sekolah_model" class="sidebar-btn flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-medium text-slate-600 hover:bg-slate-100/80 hover:text-slate-900 transition-all duration-200 w-full text-left group border-l-3 border-transparent">
-                            <svg class="w-4 h-4 flex-shrink-0 text-purple-500 group-hover:text-purple-600 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
-                            <span class="font-bold truncate">Laporan Fasilitator</span>
-                        </button>
-
-                        <!-- Pusat Monitoring: Dashboard Utama -->
-                        <button onclick="switchAdminView('mode0')" id="btnMode0" data-program="all" class="sidebar-btn flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-medium text-slate-600 hover:bg-slate-100/80 hover:text-slate-900 transition-all duration-200 w-full text-left group border-l-3 border-transparent">
-                            <svg class="w-4 h-4 flex-shrink-0 text-purple-600 group-hover:text-purple-700 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
-                            <span class="font-bold truncate">Ringkasan Eksekutif</span>
-                        </button>
-
-                        <!-- Pengaturan Hak Akses & Role (Internal) -->
-                        <div id="sidebarGroupInternal">
-                            <button onclick="switchAdminView('modeAkses')" id="btnModeAkses" data-program="all" class="sidebar-btn flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-medium text-slate-600 hover:bg-slate-100/80 hover:text-slate-900 transition-all duration-200 w-full text-left group border-l-3 border-transparent">
-                                <svg class="w-4 h-4 flex-shrink-0 text-slate-400 group-hover:text-slate-600 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
-                                <span class="font-semibold truncate">Hak Akses &amp; Role</span>
-                            </button>
+                <!-- MENU INDUK 1: PERSIAPAN (DROPDOWN) -->
+                <div class="space-y-1">
+                    <button onclick="toggleDropdownMenu('submenuPersiapan', 'iconPersiapan')" class="w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-bold text-slate-700 bg-slate-100 hover:bg-slate-200/80 transition-colors">
+                        <div class="flex items-center gap-2">
+                            <span class="w-2 h-2 rounded-full bg-blue-600"></span>
+                            <span>Persiapan</span>
                         </div>
-                    </nav>
+                        <svg id="iconPersiapan" class="w-4 h-4 text-slate-400 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                    </button>
+                    <!-- Submenu Persiapan -->
+                    <div id="submenuPersiapan" class="pl-3 pr-1 space-y-1 pt-1">
+                        <button onclick="switchTahapanWorkflow('tahap1')" id="btnModeKombel" class="sidebar-btn w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-semibold text-slate-600 hover:bg-slate-100 hover:text-slate-900 transition-colors text-left border-l-2 border-transparent">
+                            <svg class="w-4 h-4 text-amber-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+                            <span>Master Kombel &amp; Workflow</span>
+                        </button>
+                    </div>
                 </div>
 
-                <!-- Hidden compatibility wrappers for existing JS role checks -->
-                <div id="sidebarGroupFKK" class="hidden"></div>
-                <div id="sidebarGroupSekolahModel" class="hidden"></div>
-                <div id="sidebarGroupBgtk" class="hidden"></div>
+                <!-- MENU INDUK 2: PELAKSANAAN (DROPDOWN) -->
+                <div class="space-y-1">
+                    <button onclick="toggleDropdownMenu('submenuPelaksanaan', 'iconPelaksanaan')" class="w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-bold text-slate-700 bg-slate-100 hover:bg-slate-200/80 transition-colors">
+                        <div class="flex items-center gap-2">
+                            <span class="w-2 h-2 rounded-full bg-emerald-600"></span>
+                            <span>Pelaksanaan</span>
+                        </div>
+                        <svg id="iconPelaksanaan" class="w-4 h-4 text-slate-400 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                    </button>
+                    <!-- Submenu Pelaksanaan -->
+                    <div id="submenuPelaksanaan" class="pl-3 pr-1 space-y-1 pt-1">
+                        <button onclick="switchTahapanWorkflow('tahap5')" id="btnModeGMeet" class="sidebar-btn w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-semibold text-slate-600 hover:bg-slate-100 hover:text-slate-900 transition-colors text-left border-l-2 border-transparent">
+                            <svg class="w-4 h-4 text-emerald-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+                            <span>GMeet &amp; Rekaman</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Hidden compatibility elements to prevent JS null errors -->
+                <div class="hidden">
+                    <button id="btnMode0" onclick="switchAdminView('mode0')"></button>
+                    <button id="btnMode3" onclick="switchAdminView('mode3')"></button>
+                    <button id="btnMode4" onclick="switchAdminView('mode4')"></button>
+                    <button id="btnMode7" onclick="switchAdminView('mode7')"></button>
+                    <button id="btnModeStatusSekolah" onclick="switchAdminView('modeStatusSekolah')"></button>
+                    <button id="btnModePegawai" onclick="switchAdminView('modePegawai')"></button>
+                    <button id="btnModeAkses" onclick="switchAdminView('modeAkses')"></button>
+                    <div id="sidebarGroupFKK"></div>
+                    <div id="sidebarGroupSekolahModel"></div>
+                    <div id="sidebarGroupInternal"></div>
+                    <div id="sidebarGroupBgtk"></div>
+                    <select id="selectAdminProgramScope"><option value="kombel">PMKKA Reguler</option></select>
+                </div>
             </div>
 
             <!-- USER FOOTER CARD -->
@@ -2991,6 +2922,20 @@
                     el.classList.add('hidden');
                     if (icon) icon.classList.remove('rotate-180');
                 }
+            }
+        }
+
+        function toggleDropdownMenu(submenuId, iconId) {
+            const el = document.getElementById(submenuId);
+            const icon = document.getElementById(iconId);
+            if (!el) return;
+            const isHidden = el.classList.contains('hidden');
+            if (isHidden) {
+                el.classList.remove('hidden');
+                if (icon) icon.classList.add('rotate-180');
+            } else {
+                el.classList.add('hidden');
+                if (icon) icon.classList.remove('rotate-180');
             }
         }
 
