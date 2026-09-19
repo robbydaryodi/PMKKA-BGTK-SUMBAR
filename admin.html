@@ -77,99 +77,129 @@
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                 </button>
             </div>
+            <!-- Global Program Context Switcher (Prinsip UI/UX BGTK) -->
+            <div class="p-3 border-b border-slate-100 bg-slate-50/70">
+                <label for="selectAdminProgramScope" class="text-[10px] font-black text-slate-400 uppercase tracking-wider block mb-1.5 px-1">PILIH PROGRAM / RUANG KERJA</label>
+                <div class="relative">
+                    <select id="selectAdminProgramScope" onchange="changeAdminProgramScope(this.value)" class="w-full appearance-none bg-white border border-slate-200 hover:border-slate-300 text-slate-800 text-xs font-bold rounded-xl px-3 py-2 pr-8 focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 transition-all cursor-pointer shadow-2xs">
+                        <option value="all">👑 Pusat Monitoring (Semua)</option>
+                        <option value="sekolah_model">🏫 25 Sekolah Model</option>
+                        <option value="kombel">⭐ PMKKA Reguler (57 Kombel)</option>
+                    </select>
+                    <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2.5 text-slate-400">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                    </div>
+                </div>
+            </div>
 
-            <!-- Navigation Items -->
-            <div class="p-4 flex-1 overflow-y-auto custom-sidebar-scroll space-y-5">
-                <!-- Group 1: MONITORING TERPADU -->
-                <div id="sidebarGroupBgtk">
-                    <div class="text-[10px] font-black text-slate-400 uppercase tracking-widest px-3 mb-2 flex items-center justify-between">
-                        <span>PUSAT MONITORING</span>
+            <!-- Navigation Items Terkelompok dalam 4 Siklus Proses Bisnis BGTK -->
+            <div class="p-3.5 flex-1 overflow-y-auto custom-sidebar-scroll space-y-4">
+                
+                <!-- SIKLUS 1: PERSIAPAN & PENETAPAN -->
+                <div class="sidebar-cycle-group" id="cycleGroupPersiapan">
+                    <div class="text-[10px] font-black text-blue-600 uppercase tracking-wider px-2 mb-1.5 flex items-center gap-1.5">
+                        <span class="w-2 h-2 rounded-full bg-blue-500 inline-block"></span>
+                        <span>1. PERSIAPAN &amp; PENETAPAN</span>
                     </div>
                     <nav class="space-y-1">
-                        <button onclick="switchAdminView('mode0')" id="btnMode0" class="sidebar-btn flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-100/80 hover:text-slate-900 transition-all duration-200 w-full text-left relative group border-l-4 border-transparent">
-                            <svg class="w-5 h-5 flex-shrink-0 text-purple-600 group-hover:text-purple-700 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
-                            <span class="font-bold">Dashboard Utama</span>
+                        <!-- Kombel: Target 57 Kombel & Workflow -->
+                        <button onclick="switchTahapanWorkflow('tahap1')" id="btnModeKombel" data-program="kombel" class="sidebar-btn flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium text-slate-600 hover:bg-slate-100/80 hover:text-slate-900 transition-all duration-200 w-full text-left group border-l-3 border-transparent">
+                            <div class="flex items-center gap-2.5 truncate">
+                                <svg class="w-4 h-4 flex-shrink-0 text-amber-500 group-hover:text-amber-600 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+                                <span class="font-bold truncate">Target 57 Kombel</span>
+                            </div>
+                            <span class="text-[9px] bg-amber-100 text-amber-800 font-extrabold px-1.5 py-0.5 rounded border border-amber-200">57</span>
+                        </button>
+                        
+                        <!-- Sekolah Model: Data Fasilitator Sekolah Model -->
+                        <button onclick="switchAdminView('mode3')" id="btnMode3" data-program="sekolah_model" class="sidebar-btn flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-medium text-slate-600 hover:bg-slate-100/80 hover:text-slate-900 transition-all duration-200 w-full text-left group border-l-3 border-transparent">
+                            <svg class="w-4 h-4 flex-shrink-0 text-teal-600 group-hover:text-teal-700 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+                            <span class="font-bold truncate">Fasilitator Sekolah Model</span>
+                        </button>
+
+                        <!-- Administrasi: Master Pegawai BGTK -->
+                        <button onclick="switchAdminView('modePegawai')" id="btnModePegawai" data-program="all" class="sidebar-btn flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium text-slate-600 hover:bg-slate-100/80 hover:text-slate-900 transition-all duration-200 w-full text-left group border-l-3 border-transparent">
+                            <div class="flex items-center gap-2.5 truncate">
+                                <svg class="w-4 h-4 flex-shrink-0 text-emerald-500 group-hover:text-emerald-600 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1v1H9V7zm5 0h1v1H9v-1zm5 0h1v1H9v-1zm5 0h1v1H9v-1zm5 0h1v1H9v-1z"/></svg>
+                                <span class="font-semibold truncate">Master Pegawai BGTK</span>
+                            </div>
+                            <span class="text-[9px] bg-emerald-100 text-emerald-800 font-extrabold px-1.5 py-0.5 rounded border border-emerald-200">57</span>
                         </button>
                     </nav>
                 </div>
 
-                <!-- Group 2: PMKKA REGULER -->
-                <div id="sidebarGroupFKK" class="pt-3 border-t border-slate-100">
-                    <div class="px-2 mb-2">
-                        <div class="flex items-center justify-between bg-amber-500/10 border border-amber-500/20 px-2.5 py-1.5 rounded-xl">
-                            <span class="text-[11px] font-black text-amber-900 flex items-center gap-1.5">⭐ PMKKA REGULER</span>
-                        </div>
+                <!-- SIKLUS 2: PELAKSANAAN PENDAMPINGAN -->
+                <div class="sidebar-cycle-group pt-2 border-t border-slate-100" id="cycleGroupPelaksanaan">
+                    <div class="text-[10px] font-black text-emerald-700 uppercase tracking-wider px-2 mb-1.5 flex items-center gap-1.5">
+                        <span class="w-2 h-2 rounded-full bg-emerald-500 inline-block"></span>
+                        <span>2. PELAKSANAAN PENDAMPINGAN</span>
                     </div>
                     <nav class="space-y-1">
-                        <button onclick="switchTahapanWorkflow('tahap5')" id="btnModeGMeet" class="sidebar-btn flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-medium text-slate-600 hover:bg-emerald-50/80 hover:text-emerald-950 transition-all duration-200 w-full text-left group border-l-4 border-transparent">
-                            <div class="flex items-center gap-3">
-                                <svg class="w-5 h-5 flex-shrink-0 text-emerald-600 group-hover:text-emerald-700 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
-                                <span class="font-bold">GMeet &amp; Rekaman</span>
-                            </div>
-                            <span class="text-[10px] bg-emerald-100 text-emerald-800 font-extrabold px-2 py-0.5 rounded-full border border-emerald-200">54</span>
+                        <!-- Sekolah Model: Jadwal Kunjungan Lapangan -->
+                        <button onclick="switchAdminView('mode7')" id="btnMode7" data-program="sekolah_model" class="sidebar-btn flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-medium text-slate-600 hover:bg-slate-100/80 hover:text-slate-900 transition-all duration-200 w-full text-left group border-l-3 border-transparent">
+                            <svg class="w-4 h-4 flex-shrink-0 text-teal-600 group-hover:text-teal-700 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                            <span class="font-bold truncate">Jadwal Kunjungan Sekolah</span>
                         </button>
-                        <button onclick="switchTahapanWorkflow('tahap1')" id="btnModeKombel" class="sidebar-btn flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-medium text-slate-600 hover:bg-amber-50/80 hover:text-amber-950 transition-all duration-200 w-full text-left group border-l-4 border-transparent">
-                            <div class="flex items-center gap-3">
-                                <svg class="w-5 h-5 flex-shrink-0 text-amber-600 group-hover:text-amber-700 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
-                                <span class="font-bold">Master Kombel</span>
+
+                        <!-- Kombel: GMeet & Rekaman 54 Kelas -->
+                        <button onclick="switchTahapanWorkflow('tahap5')" id="btnModeGMeet" data-program="kombel" class="sidebar-btn flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium text-slate-600 hover:bg-slate-100/80 hover:text-slate-900 transition-all duration-200 w-full text-left group border-l-3 border-transparent">
+                            <div class="flex items-center gap-2.5 truncate">
+                                <svg class="w-4 h-4 flex-shrink-0 text-emerald-600 group-hover:text-emerald-700 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+                                <span class="font-bold truncate">GMeet &amp; Rekaman Daring</span>
                             </div>
+                            <span class="text-[9px] bg-emerald-100 text-emerald-800 font-extrabold px-1.5 py-0.5 rounded border border-emerald-200">54</span>
                         </button>
                     </nav>
                 </div>
 
-                <!-- Group 3: SEKOLAH MODEL -->
-                <div id="sidebarGroupSekolahModel" class="pt-3 border-t border-slate-100">
-                    <div class="px-2 mb-2">
-                        <div class="flex items-center justify-between bg-teal-500/10 border border-teal-500/20 px-2.5 py-1.5 rounded-xl">
-                            <span class="text-[11px] font-black text-teal-900 flex items-center gap-1.5">🏫 PMKKA SEKOLAH MODEL</span>
-                        </div>
+                <!-- SIKLUS 3: ASESMEN & EVALUASI -->
+                <div class="sidebar-cycle-group pt-2 border-t border-slate-100" id="cycleGroupAsesmen">
+                    <div class="text-[10px] font-black text-amber-700 uppercase tracking-wider px-2 mb-1.5 flex items-center gap-1.5">
+                        <span class="w-2 h-2 rounded-full bg-amber-500 inline-block"></span>
+                        <span>3. ASESMEN &amp; EVALUASI</span>
                     </div>
                     <nav class="space-y-1">
-                        <button onclick="toggleSubmenu('submenuSekolahModel')" class="flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-medium text-slate-600 hover:bg-teal-50/80 hover:text-teal-950 transition-all duration-200 w-full text-left group">
-                            <div class="flex items-center gap-3">
-                                <svg class="w-5 h-5 flex-shrink-0 text-teal-600 group-hover:text-teal-700 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1v1H9V7zm5 0h1v1h-1V7zm-5 4h1v1H9v-1zm5 0h1v1h-1v-1zm-5 4h1v1H9v-1zm5 0h1v1h-1v-1z"/></svg>
-                                <span class="font-bold">Menu Sekolah Model</span>
-                            </div>
-                            <svg class="w-4 h-4 text-slate-400 transition-transform duration-200" id="icon_submenuSekolahModel" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                        <!-- Sekolah Model: Status & Baseline -->
+                        <button onclick="switchAdminView('modeStatusSekolah')" id="btnModeStatusSekolah" data-program="sekolah_model" class="sidebar-btn flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-medium text-slate-600 hover:bg-slate-100/80 hover:text-slate-900 transition-all duration-200 w-full text-left group border-l-3 border-transparent">
+                            <svg class="w-4 h-4 flex-shrink-0 text-amber-500 group-hover:text-amber-600 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+                            <span class="font-bold truncate">Status &amp; Baseline Sekolah</span>
                         </button>
-                        <div id="submenuSekolahModel" class="pl-6 pr-2 space-y-1 mt-1">
-                            <button onclick="switchAdminView('mode7')" id="btnMode7" class="sidebar-btn flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium text-slate-500 hover:text-slate-900 hover:bg-slate-100/80 transition-all duration-200 w-full text-left border-l-2 border-transparent"><span>Jadwal Kunjungan Sekolah</span></button>
-                            <button onclick="switchAdminView('mode4')" id="btnMode4" class="sidebar-btn flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium text-slate-500 hover:text-slate-900 hover:bg-slate-100/80 transition-all duration-200 w-full text-left border-l-2 border-transparent"><span>Laporan Fasil</span></button>
-                            <button onclick="switchAdminView('modeStatusSekolah')" id="btnModeStatusSekolah" class="sidebar-btn flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium text-slate-500 hover:text-slate-900 hover:bg-slate-100/80 transition-all duration-200 w-full text-left border-l-2 border-transparent"><span>Status &amp; Baseline</span></button>
+                    </nav>
+                </div>
+
+                <!-- SIKLUS 4: REPOSITORI & LAPORAN -->
+                <div class="sidebar-cycle-group pt-2 border-t border-slate-100" id="cycleGroupLaporan">
+                    <div class="text-[10px] font-black text-purple-700 uppercase tracking-wider px-2 mb-1.5 flex items-center gap-1.5">
+                        <span class="w-2 h-2 rounded-full bg-purple-500 inline-block"></span>
+                        <span>4. REPOSITORI &amp; LAPORAN</span>
+                    </div>
+                    <nav class="space-y-1">
+                        <!-- Sekolah Model: Laporan Fasilitator -->
+                        <button onclick="switchAdminView('mode4')" id="btnMode4" data-program="sekolah_model" class="sidebar-btn flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-medium text-slate-600 hover:bg-slate-100/80 hover:text-slate-900 transition-all duration-200 w-full text-left group border-l-3 border-transparent">
+                            <svg class="w-4 h-4 flex-shrink-0 text-purple-500 group-hover:text-purple-600 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                            <span class="font-bold truncate">Laporan Fasilitator</span>
+                        </button>
+
+                        <!-- Pusat Monitoring: Dashboard Utama -->
+                        <button onclick="switchAdminView('mode0')" id="btnMode0" data-program="all" class="sidebar-btn flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-medium text-slate-600 hover:bg-slate-100/80 hover:text-slate-900 transition-all duration-200 w-full text-left group border-l-3 border-transparent">
+                            <svg class="w-4 h-4 flex-shrink-0 text-purple-600 group-hover:text-purple-700 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+                            <span class="font-bold truncate">Ringkasan Eksekutif</span>
+                        </button>
+
+                        <!-- Pengaturan Hak Akses & Role (Internal) -->
+                        <div id="sidebarGroupInternal">
+                            <button onclick="switchAdminView('modeAkses')" id="btnModeAkses" data-program="all" class="sidebar-btn flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-medium text-slate-600 hover:bg-slate-100/80 hover:text-slate-900 transition-all duration-200 w-full text-left group border-l-3 border-transparent">
+                                <svg class="w-4 h-4 flex-shrink-0 text-slate-400 group-hover:text-slate-600 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+                                <span class="font-semibold truncate">Hak Akses &amp; Role</span>
+                            </button>
                         </div>
                     </nav>
                 </div>
 
-                <!-- Group 4: DIREKTORI & TIM (Standalone Menu Data Fasilitator) -->
-                <div id="sidebarGroupDirektori" class="pt-3 border-t border-slate-100">
-                    <div class="text-[10px] font-black text-slate-400 uppercase tracking-widest px-3 mb-2">DIREKTORI &amp; TIM</div>
-                    <nav class="space-y-1">
-                        <button onclick="switchAdminView('mode3')" id="btnMode3" class="sidebar-btn flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-100/80 hover:text-slate-900 transition-all duration-200 w-full text-left group border-l-4 border-transparent">
-                            <div class="flex items-center gap-3">
-                                <svg class="w-5 h-5 flex-shrink-0 text-indigo-600 group-hover:text-indigo-700 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
-                                <span class="font-bold">Data Fasilitator</span>
-                            </div>
-                        </button>
-                    </nav>
-                </div>
-
-                <!-- Group 5: ADMINISTRASI & MASTER -->
-                <div id="sidebarGroupInternal" class="pt-3 border-t border-slate-100">
-                    <div class="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest px-3 mb-2">ADMINISTRASI &amp; MASTER</div>
-                    <nav class="space-y-1">
-                        <button onclick="switchAdminView('modePegawai')" id="btnModePegawai" class="sidebar-btn flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-100/80 hover:text-slate-900 transition-all duration-200 w-full text-left group border-l-4 border-transparent">
-                            <div class="flex items-center gap-3">
-                                <svg class="w-5 h-5 flex-shrink-0 text-emerald-500 group-hover:text-emerald-600 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1v1H9V7zm5 0h1v1H9v-1zm5 0h1v1H9v-1zm5 0h1v1H9v-1zm5 0h1v1H9v-1z"/></svg>
-                                <span>Master Pegawai BGTK</span>
-                            </div>
-                            <span class="text-[10px] bg-emerald-100 text-emerald-800 font-extrabold px-2 py-0.5 rounded-full border border-emerald-200">57</span>
-                        </button>
-                        <button onclick="switchAdminView('modeAkses')" id="btnModeAkses" class="sidebar-btn flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-100/80 hover:text-slate-900 transition-all duration-200 w-full text-left group border-l-4 border-transparent">
-                            <svg class="w-5 h-5 flex-shrink-0 text-slate-400 group-hover:text-slate-600 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
-                            <span>Hak Akses &amp; Role</span>
-                        </button>
-                    </nav>
-                </div>
+                <!-- Hidden compatibility wrappers for existing JS role checks -->
+                <div id="sidebarGroupFKK" class="hidden"></div>
+                <div id="sidebarGroupSekolahModel" class="hidden"></div>
+                <div id="sidebarGroupBgtk" class="hidden"></div>
             </div>
 
             <!-- USER FOOTER CARD -->
@@ -2964,6 +2994,56 @@
             }
         }
 
+        function changeAdminProgramScope(scope) {
+            const buttons = document.querySelectorAll('.sidebar-cycle-group button[data-program]');
+            const groups = document.querySelectorAll('.sidebar-cycle-group');
+            
+            buttons.forEach(btn => {
+                const prog = btn.getAttribute('data-program');
+                if (scope === 'all') {
+                    btn.classList.remove('hidden');
+                } else if (scope === 'sekolah_model') {
+                    if (prog === 'sekolah_model' || prog === 'all') {
+                        btn.classList.remove('hidden');
+                    } else {
+                        btn.classList.add('hidden');
+                    }
+                } else if (scope === 'kombel') {
+                    if (prog === 'kombel' || prog === 'all') {
+                        btn.classList.remove('hidden');
+                    } else {
+                        btn.classList.add('hidden');
+                    }
+                }
+            });
+
+            // Auto toggle grup jika tidak ada tombol yang aktif
+            groups.forEach(grp => {
+                const visibleBtns = grp.querySelectorAll('nav button:not(.hidden)');
+                if (visibleBtns.length === 0) {
+                    grp.classList.add('hidden');
+                } else {
+                    grp.classList.remove('hidden');
+                }
+            });
+
+            const brandSub = document.getElementById('adminBrandSubtitle');
+            if (brandSub) {
+                if (scope === 'sekolah_model') brandSub.textContent = 'Pendampingan Sekolah Model';
+                else if (scope === 'kombel') brandSub.textContent = 'PMKKA Reguler (Kombel)';
+                else brandSub.textContent = 'Pusat Monitoring Terpadu';
+            }
+
+            // Arahkan ke view relevan jika pengguna berpindah program
+            if (scope === 'sekolah_model') {
+                const isKombelActive = !document.getElementById('viewModeKombel')?.classList.contains('hidden') || !document.getElementById('viewModeGMeet')?.classList.contains('hidden');
+                if (isKombelActive) switchAdminView('mode7');
+            } else if (scope === 'kombel') {
+                const isSekolahActive = !document.getElementById('viewMode7')?.classList.contains('hidden') || !document.getElementById('viewModeStatusSekolah')?.classList.contains('hidden') || !document.getElementById('viewMode4')?.classList.contains('hidden');
+                if (isSekolahActive) switchTahapanWorkflow('tahap1');
+            }
+        }
+
         function switchAdminView(mode) {
             // Guard for Admin Sekolah Model
             if (gCurrentLoggedRole === 'Admin Sekolah Model') {
@@ -2986,16 +3066,10 @@
                 const btnEl = document.getElementById('btn' + m.charAt(0).toUpperCase() + m.slice(1));
                 if (viewEl) viewEl.classList.add('hidden');
                 if (btnEl) {
-                    if (m === 'mode3' || m === 'mode4' || m === 'mode7' || m === 'mode5' || m === 'modeStatusSekolah' || m === 'mode1' || m === 'mode2') {
-                        btnEl.className = "sidebar-btn flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium text-slate-500 hover:text-slate-900 hover:bg-slate-100/80 transition-all duration-200 w-full text-left border-l-2 border-transparent";
-                    } else if (m === 'modeGMeet') {
-                        btnEl.className = "sidebar-btn flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-medium text-slate-600 hover:bg-emerald-50/80 hover:text-emerald-950 transition-all duration-200 w-full text-left group border-l-4 border-transparent";
-                    } else {
-                        btnEl.className = "sidebar-btn flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-100/80 hover:text-slate-900 transition-all duration-200 w-full text-left relative group border-l-4 border-transparent";
-                    }
+                    btnEl.className = "sidebar-btn flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium text-slate-600 hover:bg-slate-100/80 hover:text-slate-900 transition-all duration-200 w-full text-left group border-l-3 border-transparent";
                     const svgIcon = btnEl.querySelector('svg');
                     if (svgIcon && !m.includes('Kombel') && !m.includes('Pegawai') && m !== 'modeGMeet') {
-                        svgIcon.className = "w-5 h-5 flex-shrink-0 text-slate-400 group-hover:text-slate-600 transition-colors";
+                        svgIcon.className = "w-4 h-4 flex-shrink-0 text-slate-400 group-hover:text-slate-600 transition-colors";
                     }
                 }
             });
@@ -3010,20 +3084,20 @@
             if (targetView) targetView.classList.remove('hidden');
             if (targetBtn) {
                 if (mode === 'mode3' || mode === 'mode4' || mode === 'mode7' || mode === 'mode5' || mode === 'modeStatusSekolah' || mode === 'mode1' || mode === 'mode2') {
-                    targetBtn.className = "sidebar-btn flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-bold bg-teal-50 text-teal-900 border-l-2 border-teal-600 transition-all duration-200 w-full text-left";
+                    targetBtn.className = "sidebar-btn flex items-center justify-between px-3 py-2 rounded-xl text-xs font-bold bg-teal-50 text-teal-950 border-l-3 border-teal-600 transition-all duration-200 w-full text-left shadow-2xs";
                 } else if (mode === 'modeGMeet') {
-                    targetBtn.className = "sidebar-btn flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-bold bg-emerald-100 text-emerald-950 border-l-4 border-emerald-600 transition-all duration-200 w-full text-left relative group shadow-2xs";
+                    targetBtn.className = "sidebar-btn flex items-center justify-between px-3 py-2 rounded-xl text-xs font-bold bg-emerald-50 text-emerald-950 border-l-3 border-emerald-600 transition-all duration-200 w-full text-left shadow-2xs";
                 } else if (mode === 'modeKombel' || mode === 'modeSubmitKombel' || mode === 'modeExportLMS') {
-                    targetBtn.className = "sidebar-btn flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-bold bg-amber-50 text-amber-950 border-l-4 border-amber-500 transition-all duration-200 w-full text-left relative group shadow-2xs";
+                    targetBtn.className = "sidebar-btn flex items-center justify-between px-3 py-2 rounded-xl text-xs font-bold bg-amber-50 text-amber-950 border-l-3 border-amber-600 transition-all duration-200 w-full text-left shadow-2xs";
                 } else {
-                    targetBtn.className = "sidebar-btn flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-bold bg-purple-50 text-purple-900 border-l-4 border-purple-600 transition-all duration-200 w-full text-left relative group shadow-2xs";
+                    targetBtn.className = "sidebar-btn flex items-center justify-between px-3 py-2 rounded-xl text-xs font-bold bg-purple-50 text-purple-950 border-l-3 border-purple-600 transition-all duration-200 w-full text-left shadow-2xs";
                 }
                 const svgIcon = targetBtn.querySelector('svg');
                 if (svgIcon) {
-                    if (mode === 'modeGMeet') svgIcon.className = "w-5 h-5 flex-shrink-0 text-emerald-700 transition-colors";
-                    else if (mode === 'modeKombel' || mode === 'modeSubmitKombel' || mode === 'modeExportLMS') svgIcon.className = "w-5 h-5 flex-shrink-0 text-amber-600 transition-colors";
-                    else if (mode.includes('mode1') || mode.includes('mode2') || mode.includes('mode3') || mode.includes('mode4') || mode.includes('mode5') || mode.includes('mode7') || mode.includes('modeStatusSekolah')) svgIcon.className = "w-5 h-5 flex-shrink-0 text-teal-600 transition-colors";
-                    else svgIcon.className = "w-5 h-5 flex-shrink-0 text-purple-600 transition-colors";
+                    if (mode === 'modeGMeet') svgIcon.className = "w-4 h-4 flex-shrink-0 text-emerald-700 transition-colors";
+                    else if (mode === 'modeKombel' || mode === 'modeSubmitKombel' || mode === 'modeExportLMS') svgIcon.className = "w-4 h-4 flex-shrink-0 text-amber-600 transition-colors";
+                    else if (mode.includes('mode1') || mode.includes('mode2') || mode.includes('mode3') || mode.includes('mode4') || mode.includes('mode5') || mode.includes('mode7') || mode.includes('modeStatusSekolah')) svgIcon.className = "w-4 h-4 flex-shrink-0 text-teal-600 transition-colors";
+                    else svgIcon.className = "w-4 h-4 flex-shrink-0 text-purple-600 transition-colors";
                 }
             }
 

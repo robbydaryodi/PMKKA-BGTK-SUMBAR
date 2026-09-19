@@ -66,78 +66,45 @@
     </nav>
 
     <!-- ============================
-         HERO SECTION
+         HEADER & CONTROLS (CLEAN, MINIMALIST, FOCUS)
          ============================ -->
-    <header class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 pb-4">
-        <div class="bg-gradient-to-r from-indigo-900 via-indigo-800 to-purple-900 rounded-3xl p-6 sm:p-8 text-white shadow-xl relative overflow-hidden">
-            <div class="absolute right-0 top-0 translate-x-12 -translate-y-12 w-64 h-64 bg-indigo-500/20 rounded-full blur-3xl pointer-events-none"></div>
-            <div class="relative z-10 max-w-3xl">
-                <div class="inline-flex items-center gap-2 px-3.5 py-1.5 bg-white/10 backdrop-blur-md rounded-full text-xs font-black uppercase tracking-wider mb-3 border border-white/20">
-                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                    <span>Portal Operasional Resmi 2026</span>
+    <header class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-2">
+        <div class="bg-white/90 backdrop-blur-md rounded-2xl p-5 sm:p-6 border border-slate-200/90 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div>
+                <div class="flex items-center gap-2">
+                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                    <span class="text-[10px] font-black uppercase tracking-wider text-indigo-700 bg-indigo-50 px-2 py-0.5 rounded-md border border-indigo-100">Portal Ruang Daring 2026</span>
                 </div>
-                <h1 class="text-2xl sm:text-4xl font-black tracking-tight mb-2">Ruang Kelas Daring &amp; Repositori Rekaman</h1>
-                <p class="text-indigo-100 text-xs sm:text-sm leading-relaxed">
-                    Akses <strong>54 Ruang Google Meet Permanen</strong> untuk seluruh Komunitas Belajar sasaran. Cari kelas Anda untuk bergabung ke ruang pertemuan daring, melihat jadwal sesi, mengunduh materi, serta memutar rekaman video sesi sebelumnya.
-                </p>
+                <h1 class="text-xl sm:text-2xl font-black text-slate-900 tracking-tight mt-1">Ruang Kelas Daring &amp; Repositori Rekaman</h1>
+                <p class="text-xs text-slate-500 mt-0.5">Akses ruang pertemuan Google Meet dan rekaman video Komunitas Belajar sasaran.</p>
             </div>
-            
-            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-6 pt-6 border-t border-white/10 text-center">
-                <div class="bg-white/5 rounded-2xl p-3 backdrop-blur-sm border border-white/10">
-                    <div class="text-2xl sm:text-3xl font-black text-white" id="statTotalKelas">54</div>
-                    <div class="text-[11px] text-indigo-200 font-bold mt-0.5">Total Ruang Kelas</div>
+
+            <!-- Direct Search & Filter in Header -->
+            <div class="flex flex-col sm:flex-row items-center gap-2.5 w-full md:w-auto">
+                <div class="relative w-full sm:w-72">
+                    <input type="text" id="searchInput" oninput="applyFilters()" placeholder="Cari nama kombel, fasil, kab/kota..." 
+                           class="w-full bg-slate-50 border border-slate-300 rounded-xl pl-9 pr-3 py-2 text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white shadow-2xs transition-all">
+                    <svg class="w-4 h-4 text-slate-400 absolute left-3 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
                 </div>
-                <div class="bg-white/5 rounded-2xl p-3 backdrop-blur-sm border border-white/10">
-                    <div class="text-2xl sm:text-3xl font-black text-emerald-300" id="statGMeetAktif">54</div>
-                    <div class="text-[11px] text-indigo-200 font-bold mt-0.5">GMeet Aktif (100%)</div>
-                </div>
-                <div class="bg-white/5 rounded-2xl p-3 backdrop-blur-sm border border-white/10">
-                    <div class="text-2xl sm:text-3xl font-black text-amber-300">3</div>
-                    <div class="text-[11px] text-indigo-200 font-bold mt-0.5">Kelas Penggabungan</div>
-                </div>
-                <div class="bg-white/5 rounded-2xl p-3 backdrop-blur-sm border border-white/10">
-                    <div class="text-2xl sm:text-3xl font-black text-purple-300" id="statPesertaLMS">1.411+</div>
-                    <div class="text-[11px] text-indigo-200 font-bold mt-0.5">Guru &amp; KS Sasaran</div>
-                </div>
+                <select id="filterKabKota" onchange="applyFilters()" class="w-full sm:w-auto bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs font-bold text-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 shadow-2xs">
+                    <option value="">Semua Wilayah</option>
+                </select>
             </div>
+        </div>
+
+        <!-- TABS TIPE KELAS RINGKAS -->
+        <div class="flex items-center gap-2 mt-3 overflow-x-auto custom-scroll pb-1">
+            <button onclick="setTabFilter('semua')" id="btnTabSemua" class="px-3 py-1.5 rounded-xl text-xs font-bold transition-all bg-indigo-600 text-white shadow-xs">
+                Semua Kelas (<span id="countSemua">54</span>)
+            </button>
+            <button onclick="setTabFilter('mandiri')" id="btnTabMandiri" class="px-3 py-1.5 rounded-xl text-xs font-bold transition-all bg-white border border-slate-200 text-slate-700 hover:bg-slate-50">
+                Kelas Mandiri (<span id="countMandiri">51</span>)
+            </button>
+            <button onclick="setTabFilter('gabungan')" id="btnTabGabungan" class="px-3 py-1.5 rounded-xl text-xs font-bold transition-all bg-white border border-slate-200 text-slate-700 hover:bg-slate-50">
+                Kelas Gabungan (<span id="countGabungan">3</span>)
+            </button>
         </div>
     </header>
-
-    <!-- ============================
-         FILTER & SEARCH CONTROLS
-         ============================ -->
-    <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-        <div class="glass-card rounded-2xl p-4 sm:p-5 shadow-sm space-y-4">
-            <div class="flex flex-col md:flex-row gap-3 items-center justify-between">
-                <!-- Search Box -->
-                <div class="relative w-full md:w-96">
-                    <input type="text" id="searchInput" oninput="applyFilters()" placeholder="Cari nama kombel, kabupaten/kota, fasilitator..." 
-                           class="w-full bg-slate-50 border border-slate-300 rounded-xl pl-10 pr-4 py-2.5 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white transition-all">
-                    <svg class="w-4 h-4 text-slate-400 absolute left-3.5 top-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
-                </div>
-
-                <!-- Dropdown Filter Wilayah -->
-                <div class="flex flex-wrap items-center gap-2 w-full md:w-auto">
-                    <select id="filterKabKota" onchange="applyFilters()" class="bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-xs font-bold text-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 shadow-2xs">
-                        <option value="">Semua Wilayah (Kab / Kota)</option>
-                    </select>
-                </div>
-            </div>
-
-            <!-- TABS TIPE KELAS CEPAT -->
-            <div class="flex items-center gap-2 border-t border-slate-100 pt-3 overflow-x-auto custom-scroll">
-                <button onclick="setTabFilter('semua')" id="btnTabSemua" class="px-3 py-1.5 rounded-xl text-xs font-black transition-all bg-indigo-600 text-white shadow-xs">
-                    Semua Kelas (54)
-                </button>
-                <button onclick="setTabFilter('mandiri')" id="btnTabMandiri" class="px-3 py-1.5 rounded-xl text-xs font-black transition-all bg-slate-100 text-slate-700 hover:bg-slate-200">
-                    Kelas Mandiri (51)
-                </button>
-                <button onclick="setTabFilter('gabungan')" id="btnTabGabungan" class="px-3 py-1.5 rounded-xl text-xs font-black transition-all bg-slate-100 text-slate-700 hover:bg-slate-200">
-                    Kelas Gabungan (3)
-                </button>
-            </div>
-        </div>
-    </section>
 
     <!-- ============================
          GRID DAFTAR 54 KELAS
@@ -230,6 +197,48 @@
             <!-- Modal Footer -->
             <div class="p-4 bg-slate-50 border-t border-slate-100 flex justify-end">
                 <button onclick="closeModalDetail()" class="px-5 py-2 rounded-xl text-xs font-bold bg-slate-200 hover:bg-slate-300 text-slate-700 transition-colors">Tutup</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================
+         DRAWER / PANEL DAFTAR PESERTA (PROGRESSIVE DISCLOSURE LEVEL 2 & 3)
+         ============================ -->
+    <div id="drawerDaftarPeserta" class="hidden fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-xs flex justify-end">
+        <div class="bg-white w-full max-w-md h-full shadow-2xl flex flex-col fade-in border-l border-slate-200">
+            <!-- Header Drawer -->
+            <div class="p-5 border-b border-slate-100 flex items-start justify-between bg-slate-50/80">
+                <div>
+                    <span class="text-[10px] font-black uppercase tracking-wider text-indigo-700 bg-indigo-50 px-2 py-0.5 rounded-md border border-indigo-200">Daftar Peserta</span>
+                    <h3 id="drawerNamaKombel" class="text-base font-black text-slate-900 mt-1 leading-snug">Nama Kombel</h3>
+                    <p id="drawerSubKombel" class="text-xs text-slate-500 mt-0.5">Kabupaten / Kota</p>
+                </div>
+                <button onclick="tutupDrawerPeserta()" class="p-2 text-slate-400 hover:text-slate-700 hover:bg-slate-200/60 rounded-xl transition-colors">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                </button>
+            </div>
+
+            <!-- Search Peserta Inside Drawer -->
+            <div class="p-4 border-b border-slate-100 bg-white">
+                <div class="relative">
+                    <input type="text" id="searchPesertaDrawer" oninput="filterPesertaDrawer()" placeholder="Cari nama peserta..." 
+                           class="w-full bg-slate-50 border border-slate-200 rounded-xl pl-8 pr-3 py-1.5 text-xs focus:ring-2 focus:ring-indigo-500 focus:bg-white outline-none">
+                    <svg class="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                </div>
+                <div class="text-[11px] text-slate-400 mt-1.5 font-medium flex items-center justify-between">
+                    <span id="drawerCountText">0 Peserta</span>
+                    <span class="text-indigo-600 font-semibold">💡 Klik nama untuk lihat kontak</span>
+                </div>
+            </div>
+
+            <!-- List Peserta (Scrollable) -->
+            <div id="drawerListContainer" class="flex-1 overflow-y-auto p-4 space-y-2 custom-scroll">
+                <!-- Injected via JS -->
+            </div>
+
+            <!-- Footer Drawer -->
+            <div class="p-3 border-t border-slate-100 bg-slate-50 text-right">
+                <button onclick="tutupDrawerPeserta()" class="px-4 py-1.5 text-xs font-bold text-slate-600 hover:bg-slate-200 rounded-xl transition-colors">Tutup</button>
             </div>
         </div>
     </div>
@@ -413,9 +422,12 @@
                 return (a.wilayah || '').localeCompare(b.wilayah || '');
             });
 
-            document.getElementById('statTotalKelas').textContent = gKelasList54.length;
-            const withGmeet = gKelasList54.filter(k => k.link_gmeet && k.link_gmeet.includes('meet.google.com')).length;
-            document.getElementById('statGMeetAktif').textContent = withGmeet;
+            const elSemua = document.getElementById('countSemua');
+            if (elSemua) elSemua.textContent = gKelasList54.length;
+            const elMandiri = document.getElementById('countMandiri');
+            if (elMandiri) elMandiri.textContent = gKelasList54.filter(k => k.tipe === 'mandiri').length;
+            const elGabungan = document.getElementById('countGabungan');
+            if (elGabungan) elGabungan.textContent = gKelasList54.filter(k => k.tipe === 'gabungan').length;
         }
 
         function populateFilterWilayah() {
@@ -433,9 +445,9 @@
 
         function setTabFilter(tab) {
             gCurrentFilterTab = tab;
-            document.getElementById('btnTabSemua').className = tab === 'semua' ? 'px-3 py-1.5 rounded-xl text-xs font-black transition-all bg-indigo-600 text-white shadow-xs' : 'px-3 py-1.5 rounded-xl text-xs font-black transition-all bg-slate-100 text-slate-700 hover:bg-slate-200';
-            document.getElementById('btnTabMandiri').className = tab === 'mandiri' ? 'px-3 py-1.5 rounded-xl text-xs font-black transition-all bg-indigo-600 text-white shadow-xs' : 'px-3 py-1.5 rounded-xl text-xs font-black transition-all bg-slate-100 text-slate-700 hover:bg-slate-200';
-            document.getElementById('btnTabGabungan').className = tab === 'gabungan' ? 'px-3 py-1.5 rounded-xl text-xs font-black transition-all bg-indigo-600 text-white shadow-xs' : 'px-3 py-1.5 rounded-xl text-xs font-black transition-all bg-slate-100 text-slate-700 hover:bg-slate-200';
+            document.getElementById('btnTabSemua').className = tab === 'semua' ? 'px-3 py-1.5 rounded-xl text-xs font-bold transition-all bg-indigo-600 text-white shadow-xs' : 'px-3 py-1.5 rounded-xl text-xs font-bold transition-all bg-white border border-slate-200 text-slate-700 hover:bg-slate-50';
+            document.getElementById('btnTabMandiri').className = tab === 'mandiri' ? 'px-3 py-1.5 rounded-xl text-xs font-bold transition-all bg-indigo-600 text-white shadow-xs' : 'px-3 py-1.5 rounded-xl text-xs font-bold transition-all bg-white border border-slate-200 text-slate-700 hover:bg-slate-50';
+            document.getElementById('btnTabGabungan').className = tab === 'gabungan' ? 'px-3 py-1.5 rounded-xl text-xs font-bold transition-all bg-indigo-600 text-white shadow-xs' : 'px-3 py-1.5 rounded-xl text-xs font-bold transition-all bg-white border border-slate-200 text-slate-700 hover:bg-slate-50';
             applyFilters();
         }
 
@@ -487,77 +499,208 @@
                 const countRekaman = sesiList.filter(s => s.link_rekaman).length;
 
                 return `
-                <div class="glass-card rounded-3xl p-5 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col justify-between border ${isGabungan ? 'border-amber-200 bg-amber-50/20' : 'border-slate-200/90'} relative group">
+                <div class="glass-card rounded-2xl p-5 shadow-xs hover:shadow-md transition-all duration-200 flex flex-col justify-between border ${isGabungan ? 'border-amber-300 bg-amber-50/20' : 'border-slate-200'} relative group">
                     <div>
                         <!-- Header Card -->
-                        <div class="flex items-start justify-between gap-2 mb-3">
-                            <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-wider ${isGabungan ? 'bg-amber-100 text-amber-900 border border-amber-300' : 'bg-indigo-50 text-indigo-700 border border-indigo-200'}">
+                        <div class="flex items-start justify-between gap-2 mb-2.5">
+                            <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md text-[10px] font-black uppercase tracking-wider ${isGabungan ? 'bg-amber-100 text-amber-900 border border-amber-300' : 'bg-indigo-50 text-indigo-700 border border-indigo-200'}">
                                 ${isGabungan ? '⭐ KELAS GABUNGAN' : 'KELAS MANDIRI'}
                             </span>
-                            <span class="text-[11px] font-bold text-slate-500 bg-slate-100 px-2.5 py-1 rounded-full truncate max-w-[140px]" title="${k.wilayah}">
+                            <span class="text-[11px] font-bold text-slate-500 bg-slate-100 px-2.5 py-0.5 rounded-md truncate max-w-[140px]" title="${k.wilayah}">
                                 📍 ${k.wilayah}
                             </span>
                         </div>
 
                         <!-- Title -->
-                        <h3 class="text-base font-black text-slate-900 leading-snug mb-1 group-hover:text-indigo-600 transition-colors line-clamp-2" title="${k.nama_kelas}">
+                        <h3 class="text-sm sm:text-base font-black text-slate-900 leading-snug mb-1 group-hover:text-indigo-600 transition-colors line-clamp-2" title="${k.nama_kelas}">
                             ${k.nama_kelas}
                         </h3>
-                        <p class="text-xs text-slate-500 mb-3 flex items-center gap-1.5 font-medium">
+                        <p class="text-xs text-slate-500 mb-3 flex items-center gap-1.5 font-medium truncate">
                             <span>${k.jenjang || '-'}</span> • <span>${k.mapel || '-'}</span>
                         </p>
 
-                        <!-- Fasilitator Box -->
-                        <div class="bg-slate-50/80 rounded-2xl p-3 border border-slate-100 mb-4 space-y-1.5 text-xs">
+                        <!-- Fasilitator & Admin Box -->
+                        <div class="bg-slate-50/90 rounded-xl p-2.5 border border-slate-100 mb-3 space-y-1 text-xs">
                             <div class="flex items-center justify-between">
-                                <span class="text-slate-400 font-semibold text-[11px]">Fasilitator:</span>
+                                <span class="text-slate-400 font-medium text-[11px]">Fasilitator:</span>
                                 <span class="font-extrabold text-slate-800 truncate max-w-[170px]" title="${k.fasil}">${k.fasil}</span>
                             </div>
                             <div class="flex items-center justify-between">
-                                <span class="text-slate-400 font-semibold text-[11px]">Admin BGTK:</span>
-                                <span class="font-bold text-slate-700 truncate max-w-[170px]" title="${k.admin}">${k.admin}</span>
-                            </div>
-                        </div>
-
-                        <!-- Info Sesi & Rekaman Badge -->
-                        <div class="flex items-center justify-between py-2 px-3 rounded-xl bg-slate-100/70 border border-slate-200/60 text-xs mb-4">
-                            <div class="flex items-center gap-1.5 text-slate-600 font-bold text-[11px]">
-                                <svg class="w-3.5 h-3.5 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-                                <span>${countSesi} Sesi Terjadwal</span>
-                            </div>
-                            <div>
-                                ${countRekaman > 0 
-                                    ? `<span class="inline-flex items-center gap-1 text-[10px] font-black text-purple-700 bg-purple-100 px-2 py-0.5 rounded-full border border-purple-200">🎬 ${countRekaman} Rekaman</span>`
-                                    : `<span class="text-[10px] font-bold text-slate-400">Belum ada rekaman</span>`}
+                                <span class="text-slate-400 font-medium text-[11px]">Admin BGTK:</span>
+                                <span class="font-semibold text-slate-700 truncate max-w-[170px]" title="${k.admin}">${k.admin}</span>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Action Buttons -->
+                    <!-- Action Buttons: Progressive Disclosure 3-Tier -->
                     <div class="space-y-2 pt-2 border-t border-slate-100">
+                        <!-- Primary: Gabung GMeet -->
                         <div class="flex items-center gap-2">
                             ${hasMeet 
-                                ? `<a href="${k.link_gmeet}" target="_blank" class="flex-1 text-center bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xs py-2.5 px-3 rounded-xl transition-all shadow-2xs hover:shadow-md flex items-center justify-center gap-1.5">
+                                ? `<a href="${k.link_gmeet}" target="_blank" class="flex-1 text-center bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xs py-2 px-3 rounded-xl transition-all shadow-2xs hover:shadow-xs flex items-center justify-center gap-1.5">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
                                     <span>Gabung GMeet</span>
                                    </a>`
-                                : `<button disabled class="flex-1 bg-slate-200 text-slate-400 font-bold text-xs py-2.5 px-3 rounded-xl cursor-not-allowed">GMeet Belum Ada</button>`}
+                                : `<button disabled class="flex-1 bg-slate-100 text-slate-400 font-bold text-xs py-2 px-3 rounded-xl cursor-not-allowed">GMeet Belum Ada</button>`}
                             
                             ${hasMeet 
-                                ? `<button onclick="salinLinkCard('${k.link_gmeet}')" title="Salin Tautan GMeet" class="p-2.5 bg-slate-100 hover:bg-emerald-50 hover:text-emerald-700 text-slate-600 rounded-xl border border-slate-200 transition-colors">
+                                ? `<button onclick="salinLinkCard('${k.link_gmeet}')" title="Salin Tautan GMeet" class="p-2 bg-slate-100 hover:bg-emerald-50 hover:text-emerald-700 text-slate-600 rounded-xl border border-slate-200 transition-colors">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
                                    </button>`
                                 : ''}
                         </div>
 
-                        <button onclick="bukaDetailKelas('${k.id}')" class="w-full text-center bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-bold text-xs py-2 rounded-xl border border-indigo-200/80 transition-colors flex items-center justify-center gap-1">
-                            <span>Lihat Jadwal Sesi &amp; Rekaman</span>
-                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
-                        </button>
+                        <!-- Secondary: 2 Clean Minimalist Buttons (Peserta & Sesi Rekaman) -->
+                        <div class="grid grid-cols-2 gap-2">
+                            <button onclick="bukaDrawerPeserta('${k.id}')" class="text-center bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-[11px] py-1.5 px-2 rounded-xl border border-slate-200 transition-colors flex items-center justify-center gap-1">
+                                <span>👥 ${k.peserta_count || 0} Peserta</span>
+                                <svg class="w-3 h-3 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                            </button>
+                            <button onclick="bukaDetailKelas('${k.id}')" class="text-center bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-bold text-[11px] py-1.5 px-2 rounded-xl border border-indigo-200/80 transition-colors flex items-center justify-center gap-1">
+                                <span>🗓️ ${countSesi} Sesi &amp; Rekaman</span>
+                                <svg class="w-3 h-3 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                            </button>
+                        </div>
                     </div>
                 </div>
                 `;
             }).join('');
+        }
+
+        // ==============================================================
+        // FITUR DRAWER PESERTA (PROGRESSIVE DISCLOSURE TINGKAT 2 & 3)
+        // ==============================================================
+        let gActiveDrawerPesertaList = [];
+
+        function bukaDrawerPeserta(kelasId) {
+            const k = gKelasList54.find(item => item.id === kelasId);
+            if (!k) return;
+
+            document.getElementById('drawerNamaKombel').textContent = k.nama_kelas;
+            document.getElementById('drawerSubKombel').textContent = `${k.wilayah} • Fasilitator: ${k.fasil}`;
+
+            let list = [];
+            if (k.tipe === 'gabungan') {
+                const k1 = gMasterKombels[k.primary_id] || {};
+                const k2 = gMasterKombels[k.secondary_id] || {};
+                const p1 = Array.isArray(k1.peserta) ? k1.peserta : Object.values(k1.peserta || {});
+                const p2 = Array.isArray(k2.peserta) ? k2.peserta : Object.values(k2.peserta || {});
+                list = [...p1, ...p2];
+            } else {
+                const kData = gMasterKombels[k.id] || {};
+                list = Array.isArray(kData.peserta) ? kData.peserta : Object.values(kData.peserta || {});
+            }
+
+            gActiveDrawerPesertaList = list;
+            document.getElementById('searchPesertaDrawer').value = '';
+            document.getElementById('drawerCountText').textContent = `${list.length} Peserta Terdaftar`;
+
+            renderDrawerPesertaItems(list);
+            document.getElementById('drawerDaftarPeserta').classList.remove('hidden');
+        }
+
+        function tutupDrawerPeserta() {
+            document.getElementById('drawerDaftarPeserta').classList.add('hidden');
+        }
+
+        function filterPesertaDrawer() {
+            const q = (document.getElementById('searchPesertaDrawer').value || '').toLowerCase().trim();
+            if (!q) {
+                renderDrawerPesertaItems(gActiveDrawerPesertaList);
+                return;
+            }
+            const filtered = gActiveDrawerPesertaList.filter(p => {
+                const nama = (p.nama_anggota || p.nama || '').toLowerCase();
+                const sek = (p.sekolah || p.instansi || '').toLowerCase();
+                return nama.includes(q) || sek.includes(q);
+            });
+            renderDrawerPesertaItems(filtered);
+        }
+
+        function renderDrawerPesertaItems(list) {
+            const container = document.getElementById('drawerListContainer');
+            if (!list || list.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-10 text-slate-400">
+                        <svg class="w-8 h-8 mx-auto mb-2 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+                        <p class="text-xs font-semibold">Tidak ada data peserta</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = list.map((p, idx) => {
+                const nama = p.nama_anggota || p.nama || `Peserta #${idx + 1}`;
+                const sekolah = p.sekolah || p.instansi || '-';
+                const peran = p.peran || 'Anggota';
+                const email = p.email || '';
+                const noHp = p.no_hp || p.telepon || p.wa || '';
+                const detailId = `peserta_detail_${idx}`;
+
+                return `
+                <div class="bg-slate-50 hover:bg-white rounded-2xl border border-slate-200/80 transition-all overflow-hidden shadow-2xs">
+                    <!-- LEVEL 2: NAMA SAJA (Glanceable) -->
+                    <div onclick="togglePesertaDetail('${detailId}')" class="p-3 flex items-center justify-between cursor-pointer group">
+                        <div class="flex items-center gap-2.5 min-w-0">
+                            <span class="w-6 h-6 rounded-lg bg-indigo-100 text-indigo-800 font-extrabold text-[11px] flex items-center justify-center shrink-0">
+                                ${idx + 1}
+                            </span>
+                            <div class="min-w-0">
+                                <h4 class="text-xs font-bold text-slate-800 group-hover:text-indigo-600 transition-colors truncate">
+                                    ${nama}
+                                </h4>
+                                <p class="text-[10px] text-slate-400 truncate">${sekolah}</p>
+                            </div>
+                        </div>
+                        <span class="text-slate-400 group-hover:text-indigo-500 transition-colors shrink-0 text-xs pl-2">
+                            <svg id="icon_${detailId}" class="w-4 h-4 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                        </span>
+                    </div>
+
+                    <!-- LEVEL 3: DETAIL KONTAK (Revealed on Click) -->
+                    <div id="${detailId}" class="hidden px-3 pb-3 pt-1 border-t border-slate-100 bg-white space-y-2 text-[11px] text-slate-600 fade-in">
+                        <div class="grid grid-cols-2 gap-2 text-[10px] pt-1">
+                            <div>
+                                <span class="text-slate-400 block">Peran:</span>
+                                <span class="font-bold text-slate-700">${peran}</span>
+                            </div>
+                            <div>
+                                <span class="text-slate-400 block">Asal Sekolah:</span>
+                                <span class="font-bold text-slate-700 truncate block" title="${sekolah}">${sekolah}</span>
+                            </div>
+                        </div>
+
+                        ${email ? `
+                        <div class="flex items-center gap-1.5 pt-1">
+                            <span class="text-slate-400">✉️</span>
+                            <a href="mailto:${email}" class="text-indigo-600 hover:underline font-mono truncate text-[10px]">${email}</a>
+                        </div>` : ''}
+
+                        ${noHp ? `
+                        <div class="flex items-center justify-between pt-1.5 border-t border-slate-100">
+                            <span class="font-mono text-slate-700 font-bold text-[10px]">📱 ${noHp}</span>
+                            <a href="https://wa.me/${noHp.replace(/[^0-9]/g, '')}" target="_blank" class="px-2 py-0.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-md text-[10px] flex items-center gap-1 shadow-2xs">
+                                <span>Chat WA</span>
+                            </a>
+                        </div>` : ''}
+                    </div>
+                </div>
+                `;
+            }).join('');
+        }
+
+        function togglePesertaDetail(id) {
+            const el = document.getElementById(id);
+            const icon = document.getElementById('icon_' + id);
+            if (!el) return;
+            const isHidden = el.classList.contains('hidden');
+            if (isHidden) {
+                el.classList.remove('hidden');
+                if (icon) icon.style.transform = 'rotate(180deg)';
+            } else {
+                el.classList.add('hidden');
+                if (icon) icon.style.transform = 'rotate(0deg)';
+            }
         }
 
         let gCurrentKelasModal = null;
