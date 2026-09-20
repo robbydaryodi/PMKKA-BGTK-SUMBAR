@@ -2468,16 +2468,29 @@
                 <!-- Info Link GMeet Permanen -->
                 <div class="bg-emerald-50 border border-emerald-200 rounded-2xl p-4 flex flex-col sm:flex-row items-center justify-between gap-3">
                     <div class="min-w-0 flex-1">
-                        <div class="text-[10px] font-bold text-emerald-800 uppercase tracking-wider">Link Google Meet Permanen</div>
+                        <div class="text-[10px] font-bold text-emerald-800 uppercase tracking-wider">Link Google Meet Permanen (Ruang Utama)</div>
                         <div class="text-xs font-mono font-bold text-emerald-950 truncate" id="mSesiGMeetLinkText">https://meet.google.com/...</div>
                     </div>
                     <div class="flex items-center gap-2">
                         <a id="mSesiBtnBukaGMeet" href="#" target="_blank" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold transition-all shadow-xs flex items-center gap-1">
-                            <span>Buka GMeet</span>
+                            <span>Buka Ruang Utama</span>
                         </a>
                         <button onclick="salinGMeetAdminModal()" id="btnSalinGMeetModalAdmin" class="px-3 py-1.5 bg-white hover:bg-emerald-100 text-emerald-800 rounded-xl text-xs font-bold border border-emerald-300">
                             📋 Salin
                         </button>
+                    </div>
+                </div>
+
+                <!-- Info Breakout Room (BOR 1 - 5) -->
+                <div class="bg-teal-50 border border-teal-200 rounded-2xl p-4 space-y-2.5">
+                    <div class="flex items-center justify-between">
+                        <div class="text-[10px] font-black text-teal-900 uppercase tracking-wider flex items-center gap-1.5">
+                            <span>🗂️ Ruang Diskusi Kelompok (BOR 1 - 5)</span>
+                        </div>
+                        <span class="text-[9px] bg-teal-100 text-teal-800 font-bold px-2 py-0.5 rounded-full border border-teal-200">Open &amp; Auto-Record</span>
+                    </div>
+                    <div id="mSesiBorListContainer" class="space-y-1.5">
+                        <!-- Populated by JS -->
                     </div>
                 </div>
 
@@ -2550,6 +2563,27 @@
 
             <div class="p-4 bg-slate-50 border-t border-slate-100 flex justify-end">
                 <button onclick="closeModalKelolaSesi()" class="px-5 py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold rounded-xl text-xs transition-colors">Tutup</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL BOR ADMIN STANDALONE -->
+    <div id="modalBorAdmin" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 z-50 hidden fade-in">
+        <div class="bg-white rounded-3xl max-w-md w-full overflow-hidden flex flex-col shadow-2xl border border-slate-100">
+            <div class="bg-gradient-to-r from-teal-800 to-emerald-800 p-5 text-white flex justify-between items-start flex-shrink-0">
+                <div>
+                    <span class="inline-block px-2 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-white/20 border border-white/20 mb-1">Breakout Room (BOR 1 - 5)</span>
+                    <h3 class="text-base font-black leading-snug" id="modalBorAdminNamaKelas">Nama Kelas</h3>
+                    <p class="text-teal-200 text-xs mt-0.5" id="modalBorAdminWilayah">Wilayah</p>
+                </div>
+                <button onclick="closeModalBorAdmin()" class="p-1.5 text-white/70 hover:text-white hover:bg-white/10 rounded-full transition-colors">✕</button>
+            </div>
+            <div class="p-4 space-y-2 max-h-[60vh] overflow-y-auto" id="modalBorAdminListContainer">
+                <!-- BOR items -->
+            </div>
+            <div class="p-3 bg-slate-50 border-t border-slate-100 flex items-center justify-between">
+                <span class="text-[11px] text-slate-500 font-medium">Setting: Open &amp; Rekam Otomatis</span>
+                <button onclick="closeModalBorAdmin()" class="px-4 py-1.5 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-xl text-xs font-bold transition-colors">Tutup</button>
             </div>
         </div>
     </div>
@@ -6891,6 +6925,7 @@
                 const k1 = gAllKombels[cfg.primary_id] || {};
                 const k2 = gAllKombels[cfg.secondary_id] || {};
                 const link = k1.link_gmeet || k2.link_gmeet || cfg.link_gmeet;
+                const borLinks = k1.bor_links || k2.bor_links || [];
 
                 gGMeetAdminRawList.push({
                     id: cfg.id,
@@ -6904,6 +6939,7 @@
                     fasil: cfg.fasil,
                     admin: cfg.admin,
                     link_gmeet: link,
+                    bor_links: borLinks,
                     keterangan: cfg.keterangan
                 });
             });
@@ -6927,6 +6963,7 @@
                     fasil: k.fasil_nama || '-',
                     admin: k.admin_nama || '-',
                     link_gmeet: k.link_gmeet || '',
+                    bor_links: k.bor_links || [],
                     keterangan: 'Kelas Mandiri Tunggal'
                 });
             });
@@ -7040,6 +7077,13 @@
                                 </button>
                                </div>`
                             : `<span class="text-slate-400 text-xs italic">Belum dibuat</span>`}
+                        ${(Array.isArray(k.bor_links) && k.bor_links.length > 0) ? `
+                            <div class="mt-1.5 flex items-center gap-1">
+                                <button onclick="openModalBorAdmin('${k.id}')" class="px-2 py-0.5 rounded text-[10px] font-bold bg-teal-100 hover:bg-teal-200 text-teal-900 border border-teal-200 transition-colors inline-flex items-center gap-1 shadow-2xs">
+                                    <span>🗂️ 5 Ruang BOR</span>
+                                </button>
+                            </div>
+                        ` : ''}
                     </td>
                     <td class="px-4 py-4 text-center">
                         <div class="inline-flex flex-col items-center gap-1">
@@ -7082,6 +7126,7 @@
 
             resetFormSesi();
             renderModalExistingSesiList();
+            renderAdminModalBorItems(k.bor_links);
 
             document.getElementById('modalKelolaSesiGMeet').classList.remove('hidden');
         }
@@ -7089,6 +7134,92 @@
         function closeModalKelolaSesi() {
             document.getElementById('modalKelolaSesiGMeet').classList.add('hidden');
             gCurrentModalGMeetKelas = null;
+        }
+
+        function renderAdminModalBorItems(borLinks) {
+            const container = document.getElementById('mSesiBorListContainer');
+            if (!container) return;
+            if (!Array.isArray(borLinks) || borLinks.length === 0) {
+                container.innerHTML = `
+                    <div class="p-2.5 bg-white/70 rounded-xl border border-teal-200/50 text-center">
+                        <p class="text-[11px] text-teal-800 italic">Ruang breakout room (BOR 1-5) sedang disiapkan oleh sistem.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = borLinks.map(b => {
+                const no = b.nomor || 1;
+                const link = b.link || '#';
+                return `
+                <div class="p-2 bg-white rounded-xl border border-teal-200 flex items-center justify-between gap-2 shadow-2xs hover:border-teal-400 transition-colors">
+                    <div class="flex items-center gap-2 min-w-0">
+                        <span class="w-6 h-6 rounded-lg bg-teal-100 text-teal-800 font-black text-[10px] flex items-center justify-center shrink-0">
+                            ${no}
+                        </span>
+                        <div class="min-w-0">
+                            <h5 class="text-xs font-bold text-slate-800 truncate">${b.nama || `BOR ${no}`}</h5>
+                            <span class="text-[10px] font-mono text-teal-700 truncate block">${link.replace('https://meet.google.com/', '')}</span>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-1 shrink-0">
+                        <a href="${link}" target="_blank" class="px-2.5 py-1 bg-teal-600 hover:bg-teal-700 text-white rounded-lg text-[11px] font-bold transition-all shadow-2xs flex items-center gap-1">
+                            <span>Masuk</span>
+                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+                        </a>
+                        <button onclick="salinLinkGMeetTable('${link}')" title="Salin Tautan" class="p-1 text-teal-700 hover:bg-teal-50 border border-teal-200 rounded-lg text-xs">
+                            📋
+                        </button>
+                    </div>
+                </div>
+                `;
+            }).join('');
+        }
+
+        function openModalBorAdmin(kelasId) {
+            const k = gGMeetAdminRawList.find(item => item.id === kelasId);
+            if (!k) return;
+            document.getElementById('modalBorAdminNamaKelas').textContent = k.nama_kelas;
+            document.getElementById('modalBorAdminWilayah').textContent = `📍 ${k.wilayah} • Fasil: ${k.fasil || '-'}`;
+
+            const container = document.getElementById('modalBorAdminListContainer');
+            const borLinks = Array.isArray(k.bor_links) ? k.bor_links : [];
+            if (borLinks.length === 0) {
+                container.innerHTML = `<div class="p-6 text-center text-slate-400 text-xs">Ruang BOR sedang disiapkan.</div>`;
+            } else {
+                container.innerHTML = borLinks.map(b => {
+                    const no = b.nomor || 1;
+                    const link = b.link || '#';
+                    return `
+                    <div class="p-3 bg-slate-50 hover:bg-teal-50/50 rounded-xl border border-slate-200 hover:border-teal-300 transition-all flex items-center justify-between gap-3">
+                        <div class="flex items-center gap-2.5 min-w-0">
+                            <div class="w-7 h-7 rounded-lg bg-teal-600 text-white font-black text-xs flex items-center justify-center shrink-0 shadow-2xs">
+                                ${no}
+                            </div>
+                            <div class="min-w-0">
+                                <h4 class="text-xs font-bold text-slate-900 truncate">${b.nama || `Ruang Diskusi BOR ${no}`}</h4>
+                                <span class="text-[10px] font-mono text-teal-700 font-semibold truncate block">${link}</span>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-1.5 shrink-0">
+                            <a href="${link}" target="_blank" class="px-3 py-1.5 bg-teal-600 hover:bg-teal-700 text-white text-xs font-bold rounded-lg transition-all shadow-2xs flex items-center gap-1">
+                                <span>Masuk</span>
+                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+                            </a>
+                            <button onclick="salinLinkGMeetTable('${link}')" title="Salin Tautan" class="p-1.5 text-slate-500 hover:bg-white border border-slate-200 rounded-lg text-xs">
+                                📋
+                            </button>
+                        </div>
+                    </div>
+                    `;
+                }).join('');
+            }
+
+            document.getElementById('modalBorAdmin').classList.remove('hidden');
+        }
+
+        function closeModalBorAdmin() {
+            document.getElementById('modalBorAdmin').classList.add('hidden');
         }
 
         function resetFormSesi() {
