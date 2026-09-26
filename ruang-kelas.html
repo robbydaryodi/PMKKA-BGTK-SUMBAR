@@ -85,6 +85,11 @@
                 <select id="filterKabKota" onchange="applyFilters()" class="bg-white border border-slate-300 rounded-xl px-2.5 py-1.5 text-xs font-bold text-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-900/10 shadow-2xs">
                     <option value="">Semua Wilayah</option>
                 </select>
+                <select id="filterStatusRekaman" onchange="applyFilters()" class="bg-white border border-slate-300 rounded-xl px-2.5 py-1.5 text-xs font-bold text-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-900/10 shadow-2xs">
+                    <option value="">Semua Rekaman</option>
+                    <option value="ada">🎬 Ada Rekaman</option>
+                    <option value="belum">⏳ Belum Rekaman</option>
+                </select>
                 <!-- Hidden placeholders for countMandiri and countGabungan so JS won't break -->
                 <span id="countMandiri" class="hidden">51</span>
                 <span id="countGabungan" class="hidden">3</span>
@@ -223,6 +228,38 @@
             <div class="p-3 border-t border-slate-100 bg-slate-50 flex items-center justify-between">
                 <span class="text-[11px] text-slate-500 font-medium">Klik tautan untuk langsung bergabung</span>
                 <button onclick="tutupModalBorRuangKelas()" class="px-4 py-1.5 text-xs font-bold text-slate-600 hover:bg-slate-200 rounded-xl transition-colors">Tutup</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================
+         MODAL PEMUTAR REKAMAN VIDEO (IN-APP PLAYER)
+         ============================ -->
+    <div id="modalPlayerRekaman" class="hidden fixed inset-0 z-60 bg-slate-950/85 backdrop-blur-sm flex items-center justify-center p-3 sm:p-5">
+        <div class="bg-slate-900 rounded-2xl w-full max-w-4xl shadow-2xl border border-slate-800 overflow-hidden flex flex-col fade-in">
+            <!-- Player Header -->
+            <div class="p-3.5 sm:p-4 border-b border-slate-800 flex items-center justify-between text-white bg-slate-900/90">
+                <div class="min-w-0 pr-3">
+                    <div class="flex items-center gap-2 mb-0.5">
+                        <span class="text-[9px] font-black uppercase tracking-wider text-purple-400 bg-purple-950/80 px-2 py-0.5 rounded border border-purple-800">Pemutar Rekaman GMeet</span>
+                        <span id="modalPlayerDurasiBadge" class="hidden text-[10px] font-bold text-amber-300 bg-amber-950/60 px-2 py-0.5 rounded border border-amber-800">⏱️ -</span>
+                    </div>
+                    <h3 id="modalPlayerJudul" class="text-xs sm:text-sm font-bold text-white truncate">Judul Sesi Rekaman</h3>
+                    <div id="modalPlayerMeta" class="text-[11px] text-slate-400 mt-0.5 font-medium">Tanggal • Durasi</div>
+                </div>
+                <div class="flex items-center gap-2 shrink-0">
+                    <a id="modalPlayerDriveLink" href="#" target="_blank" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-purple-600 hover:bg-purple-700 text-white rounded-xl text-xs font-bold transition shadow-xs">
+                        <span>Buka Drive</span>
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+                    </a>
+                    <button onclick="tutupModalPlayerRekaman()" class="p-1.5 text-slate-400 hover:text-white hover:bg-slate-800 rounded-xl transition">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                    </button>
+                </div>
+            </div>
+            <!-- Video Iframe Embed Container (16:9) -->
+            <div class="relative w-full aspect-video bg-black flex items-center justify-center">
+                <iframe id="iframePlayerRekaman" class="w-full h-full border-0" allow="autoplay; fullscreen" allowfullscreen></iframe>
             </div>
         </div>
     </div>
@@ -441,6 +478,7 @@
         function applyFilters() {
             const q = (document.getElementById('searchInput').value || '').toLowerCase().trim();
             const kab = document.getElementById('filterKabKota').value;
+            const filterRekaman = (document.getElementById('filterStatusRekaman')?.value || '');
 
             const filtered = gKelasList54.filter(k => {
                 // Tab filter
@@ -449,6 +487,15 @@
 
                 // Select filter kab
                 if (kab && k.wilayah !== kab) return false;
+
+                // Filter Rekaman
+                if (filterRekaman) {
+                    const sesiObj = gSesiKombels[k.primary_id] || (k.secondary_id ? gSesiKombels[k.secondary_id] : null) || {};
+                    const sesiList = Object.values(sesiObj);
+                    const hasRekaman = sesiList.some(s => s && !!s.link_rekaman);
+                    if (filterRekaman === 'ada' && !hasRekaman) return false;
+                    if (filterRekaman === 'belum' && hasRekaman) return false;
+                }
 
                 // Search
                 if (q) {
@@ -482,7 +529,9 @@
                 // Ambil daftar sesi dari Firebase jika ada
                 const sesiObj = gSesiKombels[k.primary_id] || (k.secondary_id ? gSesiKombels[k.secondary_id] : null) || {};
                 const sesiList = Object.values(sesiObj);
+                const rekamanList = sesiList.filter(s => s && !!s.link_rekaman);
                 const countSesi = sesiList.length;
+                const countRekaman = rekamanList.length;
 
                 return `
                 <div class="px-4 py-3.5 sm:px-6 sm:py-4 hover:bg-slate-50/80 transition-colors flex flex-col sm:flex-row sm:items-center justify-between gap-3 group border-b border-slate-100 last:border-b-0">
@@ -505,7 +554,7 @@
                                 <span class="text-slate-300">•</span>
                                 <span>Admin: <strong class="text-slate-700">${k.admin || '-'}</strong></span>
                                 <span class="text-slate-300">•</span>
-                                <span>${countSesi > 0 ? `<strong class="text-purple-700">🎬 ${countSesi} Sesi Rekaman</strong>` : '<span class="text-slate-400">0 Rekaman</span>'}</span>
+                                <span>${countRekaman > 0 ? `<strong class="text-purple-700 bg-purple-50 border border-purple-200 px-1.5 py-0.2 rounded">🎬 ${countRekaman} Rekaman</strong>` : (countSesi > 0 ? `<span class="text-amber-700">${countSesi} Sesi</span>` : '<span class="text-slate-400">0 Rekaman</span>')}</span>
                             </div>
                         </div>
                     </div>
@@ -523,6 +572,12 @@
                         ` : `
                             <span class="text-[11px] text-slate-400 font-medium px-2 py-1 bg-slate-100 rounded-lg">Belum ada link</span>
                         `}
+                        ${countRekaman > 0 ? `
+                            <button onclick="bukaDrawerKombel('${k.id}')" title="Buka dan tonton ${countRekaman} rekaman sesi" class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-purple-50 hover:bg-purple-100 text-purple-700 border border-purple-200 text-xs font-bold transition-all shadow-2xs">
+                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 011.555.832l3.197-2.132a1 1 0 000-1.664z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                                <span>Tonton (${countRekaman})</span>
+                            </button>
+                        ` : ''}
                         ${(Array.isArray(k.bor_links) && k.bor_links.length > 0) ? `
                             <button onclick="bukaModalBorRuangKelas('${k.id}')" title="Buka Daftar Ruang Diskusi (BOR 1-5)" class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-teal-50 hover:bg-teal-100 text-teal-800 border border-teal-200 text-xs font-bold transition-all shadow-2xs">
                                 <span>🗂️ BOR (5)</span>
@@ -786,8 +841,9 @@
                             </span>
                             <div>
                                 <h5 class="text-xs font-bold text-slate-900">${s.topik || `Sesi Pertemuan ${noSesi}`}</h5>
-                                <div class="text-[10px] text-slate-500 font-medium">
-                                    📅 ${tgl} ${jam ? `• ⏰ ${jam}` : ''}
+                                <div class="text-[10px] text-slate-500 font-medium flex items-center flex-wrap gap-1.5 mt-0.5">
+                                    <span>📅 ${tgl} ${jam ? `• ⏰ ${jam}` : ''}</span>
+                                    ${s.durasi ? `<span class="inline-flex items-center gap-1 font-bold text-purple-700 bg-purple-50 border border-purple-200 px-1.5 py-0.2 rounded text-[9px]">⏱️ ${s.durasi}</span>` : ''}
                                 </div>
                             </div>
                         </div>
@@ -800,10 +856,15 @@
 
                     <div class="flex flex-wrap items-center gap-1.5 pt-1 border-t border-slate-100">
                         ${hasRekaman 
-                            ? `<a href="${s.link_rekaman}" target="_blank" class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[11px] font-bold bg-purple-600 hover:bg-purple-700 text-white transition-colors shadow-2xs">
-                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 011.555.832l3.197-2.132a1 1 0 000-1.664z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                                <span>Tonton Rekaman</span>
-                               </a>`
+                            ? `
+                                <button onclick="putarVideoModal('${(s.topik || `Sesi ${noSesi}`).replace(/'/g, "\\'")}', '${s.link_rekaman}', '${tgl}', '${s.durasi || ''}')" class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[11px] font-bold bg-purple-600 hover:bg-purple-700 text-white transition-colors shadow-2xs">
+                                    <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                                    <span>Putar Video</span>
+                                </button>
+                                <a href="${s.link_rekaman}" target="_blank" class="inline-flex items-center gap-1 px-2 py-1 rounded-lg text-[10px] font-bold text-purple-700 hover:bg-purple-50 transition-colors" title="Buka di Google Drive">
+                                    <span>Buka Drive ↗</span>
+                                </a>
+                            `
                             : `<span class="text-[10px] font-medium text-slate-400 bg-slate-50 px-2 py-0.5 rounded">⏳ Rekaman Belum Ada</span>`}
 
                         ${hasMateri 
@@ -815,6 +876,53 @@
                 </div>
                 `;
             }).join('');
+        }
+
+        function putarVideoModal(judul, url, tanggal, durasi) {
+            const modal = document.getElementById('modalPlayerRekaman');
+            const iframe = document.getElementById('iframePlayerRekaman');
+            const judulEl = document.getElementById('modalPlayerJudul');
+            const metaEl = document.getElementById('modalPlayerMeta');
+            const durasiBadge = document.getElementById('modalPlayerDurasiBadge');
+            const driveLink = document.getElementById('modalPlayerDriveLink');
+
+            if (!modal || !iframe) return;
+
+            // Format embed URL untuk preview Google Drive yang lancar di iframe
+            let embedUrl = url;
+            const driveMatch = url.match(/drive\.google\.com\/file\/d\/([a-zA-Z0-9_-]+)/);
+            if (driveMatch && driveMatch[1]) {
+                embedUrl = `https://drive.google.com/file/d/${driveMatch[1]}/preview`;
+            }
+
+            if (judulEl) judulEl.textContent = judul || 'Rekaman Sesi Google Meet';
+            if (metaEl) {
+                const parts = [];
+                if (tanggal) parts.push(`📅 ${tanggal}`);
+                if (durasi) parts.push(`⏱️ Durasi: ${durasi}`);
+                metaEl.textContent = parts.join(' • ') || 'Rekaman Video';
+            }
+
+            if (durasiBadge) {
+                if (durasi) {
+                    durasiBadge.textContent = `⏱️ ${durasi}`;
+                    durasiBadge.classList.remove('hidden');
+                } else {
+                    durasiBadge.classList.add('hidden');
+                }
+            }
+
+            if (driveLink) driveLink.href = url;
+            iframe.src = embedUrl;
+
+            modal.classList.remove('hidden');
+        }
+
+        function tutupModalPlayerRekaman() {
+            const modal = document.getElementById('modalPlayerRekaman');
+            const iframe = document.getElementById('iframePlayerRekaman');
+            if (modal) modal.classList.add('hidden');
+            if (iframe) iframe.src = '';
         }
 
         function togglePesertaDetail(id) {
