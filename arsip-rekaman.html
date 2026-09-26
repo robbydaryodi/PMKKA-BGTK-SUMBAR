@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Repositori Arsip Rekaman GMeet – PM-KKA BGTK Sumatera Barat 2026</title>
+    <meta name="description" content="Pusat pencarian dan penelusuran seluruh rekaman sesi Google Meet pendampingan BGTK Sumbar, termasuk Sekolah Model dan Kombel.">
+    <link rel="icon" type="image/jpeg" href="./favicon.jpg" />
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    colors: { primary: '#4f46e5', secondary: '#0f172a' }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body { background: linear-gradient(135deg, #f8fafc 0%, #eef2ff 50%, #f1f5f9 100%); min-height: 100vh; }
+        .glass-card { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(12px); border: 1px solid rgba(226, 232, 240, 0.9); }
+        .fade-in { animation: fadeIn 0.25s ease-out forwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+        .custom-scroll::-webkit-scrollbar { width: 6px; height: 6px; }
+        .custom-scroll::-webkit-scrollbar-track { background: #f1f5f9; }
+        .custom-scroll::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 9999px; }
+    </style>
+
+    <!-- Firebase v10+ Compat CDN -->
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+</head>
+<body class="text-slate-800 antialiased font-sans">
+
+    <!-- ============================
+         NAVBAR
+         ============================ -->
+    <nav class="bg-white/95 backdrop-blur-md border-b border-slate-200 sticky top-0 z-40 shadow-xs">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16 items-center">
+                <a href="index.html" class="flex items-center gap-3 hover:opacity-90 transition-opacity">
+                    <img src="./logo.png" alt="Logo BGTK" class="h-10 sm:h-11 w-auto object-contain">
+                    <div class="border-l-2 border-slate-200 pl-3 ml-1">
+                        <span class="font-black text-slate-900 text-sm sm:text-base block leading-none">PM-KKA BGTK Sumbar</span>
+                        <span class="text-[11px] text-purple-700 font-bold mt-0.5 block">Repositori Arsip Rekaman GMeet</span>
+                    </div>
+                </a>
+                <div class="flex items-center gap-2 sm:gap-3">
+                    <a href="ruang-kelas.html" class="text-xs font-bold text-slate-600 hover:text-indigo-600 flex items-center gap-1.5 px-3 py-2 rounded-xl hover:bg-slate-100 transition-colors">
+                        <span>Ruang Kelas Kombel (54)</span>
+                    </a>
+                    <a href="admin.html" class="text-xs font-bold text-slate-600 hover:text-slate-900 flex items-center gap-1 px-3 py-2 rounded-xl hover:bg-slate-100 transition-colors">
+                        <span>Portal Admin</span>
+                    </a>
+                    <a href="index.html" class="text-xs font-bold text-slate-700 bg-slate-100 hover:bg-slate-200 flex items-center gap-1 px-3 py-2 rounded-xl transition-colors">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+                        <span class="hidden sm:inline">Beranda</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ============================
+         HEADER & FILTER AREA (ZERO NOISE)
+         ============================ -->
+    <header class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-3">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-slate-200/80">
+            <div>
+                <div class="flex items-center gap-2 mb-1">
+                    <span class="text-[10px] font-black uppercase tracking-wider text-purple-700 bg-purple-100 px-2.5 py-0.5 rounded-full border border-purple-200">Siklus 4: Repositori &amp; Arsip</span>
+                    <span id="badgeTotalRekaman" class="text-[10px] font-black text-slate-600 bg-white border border-slate-200 px-2 py-0.5 rounded-full shadow-2xs">Memuat...</span>
+                </div>
+                <h1 class="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">Repositori Arsip Rekaman GMeet</h1>
+                <p class="text-xs text-slate-500 mt-1">Seluruh arsip video rekaman Google Meet BGTK Sumbar (Sekolah Model &amp; Kombel) yang otomatis terindeks dari Google Drive.</p>
+            </div>
+
+            <!-- Total stats box -->
+            <div class="flex items-center gap-2 shrink-0">
+                <div class="bg-white border border-slate-200 rounded-2xl px-4 py-2 shadow-2xs text-right">
+                    <div class="text-[10px] font-bold text-slate-400 uppercase">Rekaman Terindeks</div>
+                    <div class="text-base font-black text-purple-700" id="statCountRekaman">-</div>
+                </div>
+                <button onclick="muatDataArsip()" title="Segarkan Data" class="p-2.5 bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 rounded-2xl shadow-2xs transition-colors">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- Filter & Search Toolbar -->
+        <div class="mt-4 grid grid-cols-1 sm:grid-cols-12 gap-2.5">
+            <!-- Search Input -->
+            <div class="sm:col-span-6 relative">
+                <input type="text" id="inputSearch" oninput="terapkanFilter()" placeholder="Cari judul rekaman, nama sekolah, fasilitator..." 
+                       class="w-full bg-white border border-slate-300 rounded-xl pl-9 pr-3 py-2 text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-600 shadow-2xs transition-all">
+                <svg class="w-4 h-4 text-slate-400 absolute left-3 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+            </div>
+
+            <!-- Date Filter -->
+            <div class="sm:col-span-3 flex items-center gap-1.5">
+                <input type="date" id="inputFilterTanggal" onchange="terapkanFilter()" 
+                       class="w-full bg-white border border-slate-300 rounded-xl px-3 py-2 text-xs font-bold text-slate-700 focus:outline-none focus:ring-2 focus:ring-purple-500/20 shadow-2xs">
+                <button onclick="resetFilterTanggal()" title="Reset Tanggal" class="p-2 text-slate-400 hover:text-slate-700 bg-white border border-slate-300 rounded-xl shadow-2xs hover:bg-slate-50 transition-colors">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                </button>
+            </div>
+
+            <!-- Sort Select -->
+            <div class="sm:col-span-3">
+                <select id="selectSort" onchange="terapkanFilter()" class="w-full bg-white border border-slate-300 rounded-xl px-3 py-2 text-xs font-bold text-slate-700 focus:outline-none focus:ring-2 focus:ring-purple-500/20 shadow-2xs">
+                    <option value="terbaru">Urutan: Terbaru</option>
+                    <option value="terlama">Urutan: Terlama</option>
+                    <option value="durasi_desc">Durasi: Terpanjang</option>
+                    <option value="nama_asc">Judul: A - Z</option>
+                </select>
+            </div>
+        </div>
+    </header>
+
+    <!-- ============================
+         DAFTAR ARSIP REKAMAN
+         ============================ -->
+    <main class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4 pb-24">
+        <!-- Loading State -->
+        <div id="loadingState" class="text-center py-20">
+            <div class="inline-block w-8 h-8 border-3 border-purple-200 border-t-purple-700 rounded-full animate-spin mb-3"></div>
+            <p class="text-xs font-bold text-slate-500">Menghubungkan ke repositori rekaman...</p>
+        </div>
+
+        <!-- Container List (Linear Style) -->
+        <div id="containerListArsip" class="bg-white rounded-2xl border border-slate-200/90 shadow-2xs divide-y divide-slate-100 overflow-hidden hidden">
+            <!-- Items injected by JS -->
+        </div>
+
+        <!-- Empty State -->
+        <div id="emptyState" class="hidden text-center py-16 bg-white rounded-2xl border border-slate-200">
+            <div class="w-12 h-12 bg-purple-50 text-purple-600 rounded-full flex items-center justify-center mx-auto mb-2 text-xl font-bold">🎬</div>
+            <h3 class="text-sm font-bold text-slate-800">Tidak ada rekaman yang sesuai</h3>
+            <p class="text-xs text-slate-400 mt-1 max-w-sm mx-auto">Coba sesuaikan kata kunci pencarian atau bersihkan filter tanggal.</p>
+            <button onclick="resetSemuaFilter()" class="mt-3 px-3.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-xl transition">Reset Semua Filter</button>
+        </div>
+    </main>
+
+    <!-- ============================
+         MODAL PEMUTAR REKAMAN VIDEO (IN-APP PLAYER)
+         ============================ -->
+    <div id="modalPlayerRekaman" class="hidden fixed inset-0 z-60 bg-slate-950/85 backdrop-blur-sm flex items-center justify-center p-3 sm:p-5">
+        <div class="bg-slate-900 rounded-2xl w-full max-w-4xl shadow-2xl border border-slate-800 overflow-hidden flex flex-col fade-in">
+            <!-- Player Header -->
+            <div class="p-3.5 sm:p-4 border-b border-slate-800 flex items-center justify-between text-white bg-slate-900/90">
+                <div class="min-w-0 pr-3">
+                    <div class="flex items-center gap-2 mb-0.5">
+                        <span class="text-[9px] font-black uppercase tracking-wider text-purple-400 bg-purple-950/80 px-2 py-0.5 rounded border border-purple-800">Pemutar Rekaman GMeet</span>
+                        <span id="modalPlayerDurasiBadge" class="hidden text-[10px] font-bold text-amber-300 bg-amber-950/60 px-2 py-0.5 rounded border border-amber-800">⏱️ -</span>
+                    </div>
+                    <h3 id="modalPlayerJudul" class="text-xs sm:text-sm font-bold text-white truncate">Judul Sesi Rekaman</h3>
+                    <div id="modalPlayerMeta" class="text-[11px] text-slate-400 mt-0.5 font-medium">Tanggal • Durasi</div>
+                </div>
+                <div class="flex items-center gap-2 shrink-0">
+                    <a id="modalPlayerDriveLink" href="#" target="_blank" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-purple-600 hover:bg-purple-700 text-white rounded-xl text-xs font-bold transition shadow-xs">
+                        <span>Buka Drive</span>
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+                    </a>
+                    <button onclick="tutupModalPlayerRekaman()" class="p-1.5 text-slate-400 hover:text-white hover:bg-slate-800 rounded-xl transition">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                    </button>
+                </div>
+            </div>
+            <!-- Video Iframe Embed Container (16:9) -->
+            <div class="relative w-full aspect-video bg-black flex items-center justify-center">
+                <iframe id="iframePlayerRekaman" class="w-full h-full border-0" allow="autoplay; fullscreen" allowfullscreen></iframe>
+            </div>
+        </div>
+    </div>
+
+    <!-- TOAST NOTIFIKASI -->
+    <div id="toastCopy" class="hidden fixed bottom-6 right-6 z-70 bg-slate-900 text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow-xl border border-slate-700 flex items-center gap-2 fade-in">
+        <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+        <span id="toastCopyText">Tautan rekaman berhasil disalin!</span>
+    </div>
+
+    <!-- ============================
+         JAVASCRIPT LOGIC
+         ============================ -->
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyCAMKzhVnGGUxdVKAWeoPXYTAZvPSq6yKY",
+            authDomain: "sekolah-model-2026.firebaseapp.com",
+            databaseURL: "https://sekolah-model-2026-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "sekolah-model-2026",
+            storageBucket: "sekolah-model-2026.firebasestorage.app",
+            messagingSenderId: "1014570073770",
+            appId: "1:1014570073770:web:770e7e6cef2a52a3825ad3"
+        };
+        firebase.initializeApp(firebaseConfig);
+        if (firebase.auth && !firebase.auth().currentUser) {
+            firebase.auth().signInAnonymously().catch(err => console.warn("Firebase Auth:", err));
+        }
+        const db = firebase.database();
+        const FIREBASE_DB_URL = "https://sekolah-model-2026-default-rtdb.asia-southeast1.firebasedatabase.app";
+
+        let gSemuaArsip = [];
+
+        async function muatDataArsip() {
+            document.getElementById('loadingState').classList.remove('hidden');
+            document.getElementById('containerListArsip').classList.add('hidden');
+            document.getElementById('emptyState').classList.add('hidden');
+
+            const itemMap = new Map();
+
+            // 1. Ambil dari arsip_rekaman_drive jika ada
+            try {
+                const resArsip = await fetch(`${FIREBASE_DB_URL}/arsip_rekaman_drive.json`);
+                if (resArsip.ok) {
+                    const dataArsip = await resArsip.json();
+                    if (dataArsip) {
+                        Object.entries(dataArsip).forEach(([fId, item]) => {
+                            if (!item) return;
+                            itemMap.set(item.link || fId, {
+                                id: fId,
+                                judul: item.judul || item.nama_file || 'Rekaman GMeet',
+                                tanggal: item.tanggal || '',
+                                jam: item.jam || '',
+                                durasi: item.durasi || '',
+                                link: item.link || `https://drive.google.com/file/d/${fId}/view`,
+                                sumber: 'Google Drive'
+                            });
+                        });
+                    }
+                }
+            } catch(e) {
+                console.warn("Fetch arsip_rekaman_drive:", e);
+            }
+
+            // 2. Ambil juga dari seluruh sesi master_kombel yang memiliki rekaman
+            try {
+                const resKombel = await fetch(`${FIREBASE_DB_URL}/master_kombel.json`);
+                if (resKombel.ok) {
+                    const dataKombel = await resKombel.json();
+                    if (dataKombel) {
+                        Object.values(dataKombel).forEach(k => {
+                            if (!k || !k.jadwal_sesi) return;
+                            Object.entries(k.jadwal_sesi).forEach(([sKey, s]) => {
+                                if (s && s.link_rekaman) {
+                                    const key = s.link_rekaman;
+                                    if (!itemMap.has(key)) {
+                                        const cleanDesc = (s.deskripsi || '').replace(/^Rekaman (sesi|otomatis):\s*/i, '');
+                                        const judulTampil = cleanDesc || `${k.nama_kombel || 'Kombel'} - ${s.topik || 'Sesi Pertemuan'}`;
+                                        itemMap.set(key, {
+                                            id: sKey,
+                                            judul: judulTampil,
+                                            tanggal: s.tanggal || '',
+                                            jam: s.jam_mulai || '',
+                                            durasi: s.durasi || '',
+                                            link: s.link_rekaman,
+                                            sumber: k.nama_kombel || 'Kombel'
+                                        });
+                                    }
+                                }
+                            });
+                        });
+                    }
+                }
+            } catch(e) {
+                console.warn("Fetch master_kombel sesi:", e);
+            }
+
+            gSemuaArsip = Array.from(itemMap.values());
+            document.getElementById('statCountRekaman').textContent = `${gSemuaArsip.length} File`;
+            document.getElementById('badgeTotalRekaman').textContent = `${gSemuaArsip.length} Rekaman`;
+
+            document.getElementById('loadingState').classList.add('hidden');
+            terapkanFilter();
+        }
+
+        function terapkanFilter() {
+            const q = (document.getElementById('inputSearch')?.value || '').toLowerCase().trim();
+            const filterTgl = document.getElementById('inputFilterTanggal')?.value || '';
+            const sortMode = document.getElementById('selectSort')?.value || 'terbaru';
+
+            let filtered = gSemuaArsip.filter(item => {
+                // Filter tanggal
+                if (filterTgl && item.tanggal !== filterTgl) {
+                    return false;
+                }
+
+                // Filter search query
+                if (q) {
+                    const matchJudul = (item.judul || '').toLowerCase().includes(q);
+                    const matchTgl = (item.tanggal || '').includes(q);
+                    const matchSumber = (item.sumber || '').toLowerCase().includes(q);
+                    if (!matchJudul && !matchTgl && !matchSumber) return false;
+                }
+
+                return true;
+            });
+
+            // Sorting
+            filtered.sort((a, b) => {
+                if (sortMode === 'terbaru') {
+                    const dateA = (a.tanggal || '') + ' ' + (a.jam || '');
+                    const dateB = (b.tanggal || '') + ' ' + (b.jam || '');
+                    return dateB.localeCompare(dateA);
+                } else if (sortMode === 'terlama') {
+                    const dateA = (a.tanggal || '') + ' ' + (a.jam || '');
+                    const dateB = (b.tanggal || '') + ' ' + (b.jam || '');
+                    return dateA.localeCompare(dateB);
+                } else if (sortMode === 'nama_asc') {
+                    return (a.judul || '').localeCompare(b.judul || '');
+                } else if (sortMode === 'durasi_desc') {
+                    return (b.durasi || '').localeCompare(a.durasi || '');
+                }
+                return 0;
+            });
+
+            renderList(filtered);
+        }
+
+        function renderList(list) {
+            const container = document.getElementById('containerListArsip');
+            const empty = document.getElementById('emptyState');
+
+            if (list.length === 0) {
+                container.innerHTML = '';
+                container.classList.add('hidden');
+                empty.classList.remove('hidden');
+                return;
+            }
+
+            empty.classList.add('hidden');
+            container.classList.remove('hidden');
+
+            container.innerHTML = list.map((item, idx) => {
+                const tgl = item.tanggal || 'Tanggal tidak terdata';
+                const jam = item.jam ? `${item.jam} WIB` : '';
+                const hasDurasi = !!item.durasi;
+                const safeJudul = (item.judul || 'Rekaman Video GMeet').replace(/'/g, "\\'");
+
+                return `
+                <div class="px-4 py-3.5 sm:px-6 sm:py-4 hover:bg-slate-50/80 transition-colors flex flex-col sm:flex-row sm:items-center justify-between gap-3 group border-b border-slate-100 last:border-b-0 fade-in">
+                    <!-- Left: Metadata Video -->
+                    <div class="flex items-start sm:items-center gap-3.5 min-w-0 flex-1">
+                        <div class="w-8 h-8 rounded-xl bg-purple-50 text-purple-700 font-extrabold text-xs flex items-center justify-center shrink-0 mt-0.5 sm:mt-0">
+                            ${idx + 1}
+                        </div>
+                        <div class="min-w-0 flex-1">
+                            <h3 class="text-xs sm:text-sm font-bold text-slate-900 group-hover:text-purple-700 transition-colors leading-snug">
+                                ${item.judul}
+                            </h3>
+                            <div class="text-[11px] text-slate-500 flex flex-wrap items-center gap-x-2.5 gap-y-1 mt-1 font-medium">
+                                <span>📅 ${tgl} ${jam ? `• ⏰ ${jam}` : ''}</span>
+                                ${hasDurasi ? `
+                                    <span class="text-slate-300">•</span>
+                                    <span class="inline-flex items-center gap-1 font-bold text-purple-800 bg-purple-50 border border-purple-200 px-2 py-0.2 rounded-md text-[10px]">
+                                        ⏱️ ${item.durasi}
+                                    </span>
+                                ` : ''}
+                                ${item.sumber ? `
+                                    <span class="text-slate-300">•</span>
+                                    <span class="text-slate-400 text-[10px]">Asal: ${item.sumber}</span>
+                                ` : ''}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right: Minimalist Actions -->
+                    <div class="flex items-center gap-1.5 shrink-0 pt-1 sm:pt-0">
+                        <button onclick="putarVideoModal('${safeJudul}', '${item.link}', '${tgl}', '${item.durasi || ''}')" 
+                                class="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold transition-all shadow-2xs">
+                            <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                            <span>Putar Video</span>
+                        </button>
+                        <button onclick="salinLink('${item.link}')" title="Salin Tautan Video" 
+                                class="p-1.5 text-slate-500 hover:text-slate-800 hover:bg-slate-100 rounded-xl border border-slate-200 transition-colors">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+                        </button>
+                        <a href="${item.link}" target="_blank" title="Buka di Google Drive" 
+                           class="p-1.5 text-slate-500 hover:text-purple-700 hover:bg-purple-50 rounded-xl border border-slate-200 transition-colors">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+                        </a>
+                    </div>
+                </div>
+                `;
+            }).join('');
+        }
+
+        function resetFilterTanggal() {
+            document.getElementById('inputFilterTanggal').value = '';
+            terapkanFilter();
+        }
+
+        function resetSemuaFilter() {
+            document.getElementById('inputSearch').value = '';
+            document.getElementById('inputFilterTanggal').value = '';
+            document.getElementById('selectSort').value = 'terbaru';
+            terapkanFilter();
+        }
+
+        function salinLink(url) {
+            if (!url) return;
+            navigator.clipboard.writeText(url).then(() => {
+                tampilkanToast("Tautan rekaman berhasil disalin!");
+            }).catch(() => {
+                prompt("Salin tautan rekaman:", url);
+            });
+        }
+
+        function tampilkanToast(msg) {
+            const toast = document.getElementById('toastCopy');
+            const text = document.getElementById('toastCopyText');
+            if (!toast || !text) return;
+            text.textContent = msg;
+            toast.classList.remove('hidden');
+            setTimeout(() => {
+                toast.classList.add('hidden');
+            }, 2500);
+        }
+
+        function putarVideoModal(judul, url, tanggal, durasi) {
+            const modal = document.getElementById('modalPlayerRekaman');
+            const iframe = document.getElementById('iframePlayerRekaman');
+            const judulEl = document.getElementById('modalPlayerJudul');
+            const metaEl = document.getElementById('modalPlayerMeta');
+            const durasiBadge = document.getElementById('modalPlayerDurasiBadge');
+            const driveLink = document.getElementById('modalPlayerDriveLink');
+
+            if (!modal || !iframe) return;
+
+            let embedUrl = url;
+            const driveMatch = url.match(/drive\.google\.com\/file\/d\/([a-zA-Z0-9_-]+)/);
+            if (driveMatch && driveMatch[1]) {
+                embedUrl = `https://drive.google.com/file/d/${driveMatch[1]}/preview`;
+            }
+
+            if (judulEl) judulEl.textContent = judul || 'Rekaman Sesi Google Meet';
+            if (metaEl) {
+                const parts = [];
+                if (tanggal) parts.push(`📅 ${tanggal}`);
+                if (durasi) parts.push(`⏱️ Durasi: ${durasi}`);
+                metaEl.textContent = parts.join(' • ') || 'Rekaman Video';
+            }
+
+            if (durasiBadge) {
+                if (durasi) {
+                    durasiBadge.textContent = `⏱️ ${durasi}`;
+                    durasiBadge.classList.remove('hidden');
+                } else {
+                    durasiBadge.classList.add('hidden');
+                }
+            }
+
+            if (driveLink) driveLink.href = url;
+            iframe.src = embedUrl;
+
+            modal.classList.remove('hidden');
+        }
+
+        function tutupModalPlayerRekaman() {
+            const modal = document.getElementById('modalPlayerRekaman');
+            const iframe = document.getElementById('iframePlayerRekaman');
+            if (modal) modal.classList.add('hidden');
+            if (iframe) iframe.src = '';
+        }
+
+        // Init page
+        document.addEventListener('DOMContentLoaded', muatDataArsip);
+    </script>
+</body>
+</html>
